@@ -443,10 +443,11 @@ claude/
 ├── eval/
 │   ├── structural-checks.md
 │   └── semantic-checks.md
-├── guides/
-│   ├── methodology-overview.md
+├── docs/
+│   ├── vibeloom-methodology.md
 │   └── profile-selection.md
-└── docs/
+└── site/
+    ├── index.html
     └── learn-more.html
 ```
 

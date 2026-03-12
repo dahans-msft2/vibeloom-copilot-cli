@@ -324,8 +324,8 @@ Interfaces:
 
 **Syntax:** `/vibeloom help [topic]`
 - No argument: show available commands + current project state + suggested next action
-- `methodology` — load and present `guides/methodology-overview.md`
-- `profiles` — load and present `guides/profile-selection.md`
+- `methodology` — load and present `docs/vibeloom-methodology.md`
+- `profiles` — load and present `docs/profile-selection.md`
 - `evals` — explain the three eval tiers
 - `commands` — show full command reference
 - `templates` — list available templates and their purpose

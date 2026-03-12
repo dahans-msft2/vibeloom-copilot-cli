@@ -14,7 +14,7 @@ This subtree contains the reconciled methodology artifacts for the Codex variant
 | `spec.md` | Technical design for the future Codex runtime and file protocol |
 | `templates/` | Canonical templates aligned with the reconciled methodology |
 | `eval/` | Structural and semantic evaluation instructions |
-| `docs/` | Protocol, context-loading, and competitor comparison notes |
+| `docs/` | Protocol notes, methodology guide, competitor comparison, and the static marketing site |
 
 ## Artifact Roles
 
@@ -34,3 +34,8 @@ This phase defines the methodology and its artifacts only.
 ## Relationship To `/claude`
 
 `/codex` and `/claude` are parallel subtrees. This package does not reconcile, overwrite, or depend on the contents of `/claude`.
+
+## Additional Docs
+
+- `docs/vibeloom-methodology.md` explains the methodology itself without runtime implementation details.
+- `docs/site/` contains a static website draft for `https://vibeloom.ai/` with a landing page and a detailed learn-more page.

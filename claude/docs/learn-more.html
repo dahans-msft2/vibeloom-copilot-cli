@@ -3,145 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom — Contract-Driven Vibe Coding</title>
+<title>VibeLoom Methodology — Contract-Driven Vibe Coding</title>
+<meta name="description" content="Deep dive into VibeLoom's contract-driven methodology: tiered spec stack, eval framework, multi-agent modules, Lite and Full profiles, and the complete /vibeloom command reference.">
+<meta name="keywords" content="vibe coding methodology, spec-driven development, contract-first AI, domain-driven design, multi-agent coordination, Claude Code skill">
+<meta name="author" content="VibeLoom">
+<link rel="canonical" href="https://vibeloom.ai/learn-more">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://vibeloom.ai/learn-more">
+<meta property="og:title" content="VibeLoom Methodology — How Contract-Driven Vibe Coding Works">
+<meta property="og:description" content="The complete guide to VibeLoom's tiered spec stack, eval framework, module interface contracts, and multi-agent coordination.">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VibeLoom Methodology">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🧶</text></svg>">
+
 <style>
   :root {
-    --color-bg: #fafbfc;
-    --color-surface: #ffffff;
-    --color-text: #1a1a2e;
-    --color-text-secondary: #5a5a7a;
-    --color-border: #e8e8f0;
-    --color-accent: #6366f1;
-    --color-accent-light: #eef2ff;
-    --color-product: #3b82f6;
-    --color-product-light: #dbeafe;
-    --color-tech: #10b981;
-    --color-tech-light: #d1fae5;
-    --color-code: #8b5cf6;
-    --color-code-light: #ede9fe;
-    --color-warn: #f59e0b;
-    --color-warn-light: #fef3c7;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
-    --max-width: 900px;
-    --radius: 12px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-tertiary: #1a1a26;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8a8a9a;
+    --text-tertiary: #5a5a6a;
+    --accent: #7c5cfc;
+    --accent-hover: #9b7fff;
+    --accent-glow: rgba(124, 92, 252, 0.15);
+    --accent-2: #5cf6c8;
+    --accent-3: #5cb8f6;
+    --warn: #f6c35c;
+    --error: #f65c5c;
+    --gradient-accent: linear-gradient(135deg, #7c5cfc 0%, #5cb8f6 50%, #5cf6c8 100%);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --max-width: 860px;
+    --nav-height: 64px;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: var(--font-sans);
-    background: var(--color-bg);
-    color: var(--color-text);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Hero */
-  .hero {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-    color: white;
-    padding: 80px 24px 60px;
-    text-align: center;
-  }
-  .hero h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin-bottom: 16px;
-  }
-  .hero .tagline {
-    font-size: 1.2rem;
-    opacity: 0.92;
-    max-width: 600px;
-    margin: 0 auto 32px;
-    line-height: 1.6;
-  }
-  .hero .badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 20px;
-    padding: 6px 16px;
-    font-size: 0.85rem;
-    font-weight: 500;
+  ::selection {
+    background: rgba(124, 92, 252, 0.3);
+    color: #fff;
   }
 
-  /* Container */
-  .container {
+  /* ═══ NAV ═══ */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--nav-height);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(10, 10, 15, 0.8);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .nav-logo svg { width: 28px; height: 28px; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a.active { color: var(--text-primary); }
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #fff !important;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .nav-cta:hover { background: var(--accent-hover) !important; }
+
+  /* ═══ LAYOUT ═══ */
+  .page-header {
+    padding: calc(var(--nav-height) + 64px) 24px 48px;
+    text-align: center;
+    position: relative;
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(124,92,252,0.1), transparent);
+    pointer-events: none;
+  }
+  .page-header h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .page-header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .content {
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 24px 120px;
   }
 
-  /* Sections */
-  section {
+  /* ═══ ARTICLE SECTIONS ═══ */
+  .doc-section {
     padding: 64px 0;
+    border-bottom: 1px solid var(--border);
   }
-  section + section {
-    border-top: 1px solid var(--color-border);
-  }
-  section h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+  .doc-section:last-child { border-bottom: none; }
+
+  .doc-section .label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
     margin-bottom: 12px;
   }
-  section .section-lead {
-    color: var(--color-text-secondary);
+  .doc-section h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .doc-section .lead {
     font-size: 1.05rem;
+    color: var(--text-secondary);
     margin-bottom: 32px;
-    max-width: 680px;
+    line-height: 1.7;
   }
+  .doc-section p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+  .doc-section ul, .doc-section ol {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    padding-left: 20px;
+  }
+  .doc-section li { margin-bottom: 6px; }
+  .doc-section strong { color: var(--text-primary); }
 
-  /* Cards */
-  .card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: var(--shadow-sm);
-  }
-  .card + .card { margin-top: 16px; }
-
-  /* Problem cards */
-  .problem-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-    margin-top: 24px;
-  }
-  .problem-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-shadow: var(--shadow-sm);
-  }
-  .problem-card .stat {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    margin-bottom: 4px;
-  }
-  .problem-card .label {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-  }
-
-  /* Expandable */
+  /* ═══ EXPANDABLE ═══ */
   .expandable {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    border-radius: 12px;
     overflow: hidden;
-    margin-top: 16px;
-    background: var(--color-surface);
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    transition: border-color 0.2s;
   }
-  .expandable + .expandable { margin-top: 8px; }
+  .expandable:hover { border-color: var(--border-hover); }
   .expandable-header {
-    padding: 16px 20px;
+    padding: 16px 24px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -151,654 +206,684 @@
     user-select: none;
     transition: background 0.15s;
   }
-  .expandable-header:hover {
-    background: var(--color-accent-light);
-  }
+  .expandable-header:hover { background: var(--bg-tertiary); }
   .expandable-header .arrow {
     transition: transform 0.2s;
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
   }
-  .expandable.open .expandable-header .arrow {
-    transform: rotate(90deg);
-  }
+  .expandable.open .expandable-header .arrow { transform: rotate(90deg); }
   .expandable-body {
     display: none;
-    padding: 0 20px 20px;
+    padding: 0 24px 24px;
     font-size: 0.92rem;
     line-height: 1.7;
-    color: var(--color-text-secondary);
+    color: var(--text-secondary);
   }
-  .expandable.open .expandable-body {
-    display: block;
-  }
+  .expandable.open .expandable-body { display: block; }
+  .expandable-body p { margin-bottom: 12px; }
+  .expandable-body ul { margin-bottom: 12px; }
 
-  /* Diagram */
-  .diagram-wrapper {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 32px 16px;
-    box-shadow: var(--shadow-sm);
+  /* ═══ TABLES ═══ */
+  .table-wrap {
     overflow-x: auto;
-    text-align: center;
-    margin: 24px 0;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
   }
-  .diagram-wrapper svg {
-    max-width: 100%;
-    height: auto;
-  }
-
-  /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
-    margin: 16px 0;
+    font-size: 0.88rem;
   }
   th, td {
-    padding: 10px 14px;
+    padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
   }
   th {
     font-weight: 600;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-text-secondary);
-    background: var(--color-bg);
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    white-space: nowrap;
   }
-
-  /* Code blocks */
-  code {
+  td { color: var(--text-secondary); }
+  tr:last-child td { border-bottom: none; }
+  td code {
     font-family: var(--font-mono);
-    background: var(--color-accent-light);
+    font-size: 0.82em;
+    background: var(--bg-tertiary);
     padding: 2px 6px;
     border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* ═══ CODE ═══ */
+  code {
+    font-family: var(--font-mono);
     font-size: 0.85em;
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
   }
   pre {
-    background: #1e1e2e;
-    color: #cdd6f4;
-    padding: 16px 20px;
-    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    border-radius: 12px;
     overflow-x: auto;
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.6;
-    margin: 16px 0;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin: 20px 0;
   }
+  pre .comment { color: var(--text-tertiary); }
+  pre .keyword { color: var(--accent); }
+  pre .string { color: var(--accent-2); }
+  pre .type { color: var(--accent-3); }
 
-  /* Color tags */
+  /* ═══ DIAGRAM ═══ */
+  .diagram-wrap {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 40px 24px;
+    margin: 32px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-wrap svg { max-width: 100%; height: auto; }
+
+  /* ═══ TAGS ═══ */
   .tag {
     display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 0.78rem;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
     font-weight: 600;
+    font-family: var(--font-mono);
   }
-  .tag-product { background: var(--color-product-light); color: var(--color-product); }
-  .tag-tech { background: var(--color-tech-light); color: var(--color-tech); }
-  .tag-code { background: var(--color-code-light); color: var(--color-code); }
-  .tag-warn { background: var(--color-warn-light); color: var(--color-warn); }
+  .tag-block { background: rgba(246, 92, 92, 0.1); color: var(--error); }
+  .tag-warn { background: rgba(246, 195, 92, 0.1); color: var(--warn); }
+  .tag-ok { background: rgba(92, 246, 200, 0.1); color: var(--accent-2); }
+  .tag-accent { background: rgba(124, 92, 252, 0.1); color: var(--accent); }
 
-  /* Profile comparison */
+  /* ═══ PROFILE CARDS ═══ */
   .profile-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
-    margin-top: 24px;
+    margin: 24px 0;
   }
-  @media (max-width: 640px) {
-    .profile-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 640px) { .profile-grid { grid-template-columns: 1fr; } }
   .profile-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 24px;
-    box-shadow: var(--shadow-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: border-color 0.2s;
   }
-  .profile-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-  }
-  .profile-card .subtitle {
-    color: var(--color-text-secondary);
-    font-size: 0.88rem;
-    margin-bottom: 16px;
-  }
-  .profile-card ul {
-    list-style: none;
-    padding: 0;
-  }
+  .profile-card:hover { border-color: var(--border-hover); }
+  .profile-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+  .profile-card .subtitle { font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 16px; }
+  .profile-card ul { list-style: none; padding: 0; }
   .profile-card li {
-    padding: 6px 0;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--color-border);
+    padding: 8px 0;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
   }
   .profile-card li:last-child { border-bottom: none; }
-  .profile-card li::before {
-    content: '✓ ';
-    color: var(--color-tech);
-    font-weight: 700;
-  }
+  .profile-card li .check { color: var(--accent-2); font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
 
-  /* Quickstart */
+  /* ═══ COMMAND GRID ═══ */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 24px 0;
+  }
+  @media (max-width: 640px) { .cmd-grid { grid-template-columns: 1fr; } }
+  .cmd-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .cmd-row:hover { border-color: var(--border-hover); }
+  .cmd-row code { min-width: 170px; font-size: 0.82rem; background: transparent; padding: 0; }
+  .cmd-row span { font-size: 0.82rem; color: var(--text-tertiary); }
+
+  /* ═══ QUICKSTART ═══ */
   .steps {
     counter-reset: step;
     list-style: none;
     padding: 0;
+    margin: 24px 0;
   }
   .steps li {
     counter-increment: step;
-    padding: 20px 20px 20px 64px;
+    padding: 20px 20px 20px 60px;
     position: relative;
-    border-left: 2px solid var(--color-border);
-    margin-left: 20px;
+    border-left: 1px solid var(--border);
+    margin-left: 16px;
   }
   .steps li:last-child { border-left-color: transparent; }
   .steps li::before {
     content: counter(step);
     position: absolute;
-    left: -15px;
-    top: 18px;
-    width: 28px;
-    height: 28px;
-    background: var(--color-accent);
+    left: -14px; top: 18px;
+    width: 28px; height: 28px;
+    background: var(--accent);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 700;
   }
-  .steps li strong {
-    display: block;
-    margin-bottom: 4px;
-  }
+  .steps li strong { display: block; color: var(--text-primary); margin-bottom: 4px; }
 
-  /* Footer */
-  .footer {
+  /* ═══ TOC ═══ */
+  .toc {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+  }
+  .toc h4 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin-bottom: 12px;
+  }
+  .toc a {
+    display: block;
+    padding: 5px 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--accent); }
+
+  /* ═══ FOOTER ═══ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px;
     text-align: center;
-    padding: 48px 24px;
-    color: var(--color-text-secondary);
-    font-size: 0.88rem;
-    border-top: 1px solid var(--color-border);
+  }
+  footer p { color: var(--text-tertiary); font-size: 0.82rem; }
+  footer a { color: var(--text-secondary); text-decoration: none; }
+  footer a:hover { color: var(--text-primary); }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .nav-links a:not(.nav-cta) { display: none; }
+    .content { padding: 0 16px 80px; }
+    .page-header { padding: calc(var(--nav-height) + 40px) 16px 32px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Hero -->
-<div class="hero">
-  <div class="container">
-    <h1>VibeLoom</h1>
-    <p class="tagline">From intent to production code via structured contracts. A methodology that makes vibe coding actually work — at scale, over time, across teams.</p>
-    <span class="badge">Works inside Claude Code &amp; Codex</span>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="28" height="28" rx="7" fill="url(#lg)"/>
+      <path d="M8 14C8 10 11 7 14 7C17 7 18 9 18 11C18 14 14 15 14 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="14" cy="21" r="1.5" fill="white"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#7c5cfc"/><stop offset="1" stop-color="#5cb8f6"/></linearGradient></defs>
+    </svg>
+    VibeLoom
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#" class="active">Methodology</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+    <a href="index.html#get-started" class="nav-cta">Get Started</a>
   </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <h1>The VibeLoom Methodology</h1>
+  <p>A deep dive into contract-driven vibe coding: how it works, why each layer exists, and how to use it effectively.</p>
 </div>
 
-<!-- Problem -->
-<section>
-  <div class="container">
-    <h2>The Problem with Vibe Coding</h2>
-    <p class="section-lead">AI code generation is powerful for prototypes. It falls apart when you need architectural coherence, team coordination, and long-term maintainability.</p>
+<!-- CONTENT -->
+<div class="content">
 
-    <div class="problem-grid">
-      <div class="problem-card">
-        <div class="stat">1.7&times;</div>
-        <div class="label">more issues in AI-generated PRs vs human-written code</div>
+  <!-- TOC -->
+  <div class="toc">
+    <h4>On this page</h4>
+    <a href="#core-thesis">Core Thesis</a>
+    <a href="#contract-stack">The Contract Stack</a>
+    <a href="#workflow">Workflow Diagram</a>
+    <a href="#profiles">Lite vs Full Profiles</a>
+    <a href="#evals">Eval Framework</a>
+    <a href="#modules">Multi-Agent Modules</a>
+    <a href="#commands">Command Reference</a>
+    <a href="#quickstart">Quickstart</a>
+  </div>
+
+  <!-- ═══ CORE THESIS ═══ -->
+  <div class="doc-section" id="core-thesis">
+    <span class="label">Foundation</span>
+    <h2>Core Thesis</h2>
+    <p class="lead">Four principles that underpin everything VibeLoom does.</p>
+
+    <div class="expandable open">
+      <div class="expandable-header"><span>1. Prompts are not contracts</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Prompt-first generation is insufficient for long-lived systems. A natural-language prompt is vague by nature and cannot serve as a verifiable contract. Multiple semantic layers are missing between "build me a scheduling app" and the code that implements it: requirements, user stories, domain model, architecture decisions.</p>
       </div>
-      <div class="problem-card">
-        <div class="stat">4&times;</div>
-        <div class="label">increase in code duplication since AI coding tools</div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>2. AI makes specs economically viable again</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Historically, teams were lax about maintaining high-quality specifications — the overhead was too high. With AI agents, generating and maintaining structured specs is cheap. This doesn't mean returning to 200-page requirements documents. It means concise, structured specs that humans can scan in minutes, verify, and spot-edit.</p>
       </div>
-      <div class="problem-card">
-        <div class="stat">76%</div>
-        <div class="label">larger codebases from AI generation vs human equivalent</div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>3. Upstream specs must be evals</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Every derived artifact and every implementation unit is checked against its upstream contracts. This is the enforcement mechanism — not aspiration, but concrete evaluations with defined pass/fail criteria and blocking behavior.</p>
       </div>
-      <div class="problem-card">
-        <div class="stat">89%</div>
-        <div class="label">of CTOs report production incidents from AI-generated code</div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>4. Modules enable multi-agent development</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Breaking the application into modules scoped to bounded contexts enables parallel agent work, controls context window usage, and provides clear ownership boundaries. Each module fits in one agent's context window. Interface contracts prevent incompatible APIs between agents working in parallel.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══ CONTRACT STACK ═══ -->
+  <div class="doc-section" id="contract-stack">
+    <span class="label">Architecture</span>
+    <h2>The Contract Stack</h2>
+    <p class="lead">Six tiers from loose prose to running code. Each constrains the next. Upstream specs serve as evals for downstream work.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tier</th><th>Artifact</th><th>Role</th><th>ID Format</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-accent">Prose</span></td><td><code>intent.md</code></td><td>Loose description of what to build</td><td>—</td></tr>
+          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>PRD-001</code></td></tr>
+          <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>USM-E01-S03</code></td></tr>
+          <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>DM-BC1-E05</code></td></tr>
+          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>SPEC-API-03</code></td></tr>
+          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td>—</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="expandable">
-      <div class="expandable-header">
-        <span>Why does this happen?</span>
-        <span class="arrow">&#9654;</span>
-      </div>
+      <div class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
-        <p>AI agents optimize locally — they generate code that works for the immediate task but drifts from the overall architecture. Without shared contracts, parallel agents create incompatible interfaces. Without upstream specs to check against, there's no way to detect when the code no longer matches what was intended.</p>
-        <p style="margin-top:12px">The missing piece isn't smarter AI — it's structured specifications that act as contracts between humans and agents, and between agents and other agents.</p>
+        <p>Every item in every artifact gets a rigid, machine-parseable ID. This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>DM-BC1-E05</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
+      </div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>Why the domain model is the semantic anchor</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p><code>dm.md</code> defines entities, relationships, and invariants as seen by system users — not internal technical details. It captures user value independently of implementation choices. The domain model is the most stable layer: UIs change, APIs change, databases change, but "a Customer has Orders which contain LineItems" rarely does.</p>
       </div>
     </div>
   </div>
-</section>
 
-<!-- Solution: Contract Stack Diagram -->
-<section>
-  <div class="container">
-    <h2>The Solution: A Contract Stack</h2>
-    <p class="section-lead">VibeLoom generates a tiered stack of structured specs. Each tier constrains the next. Upstream specs serve as evaluations for downstream work.</p>
+  <!-- ═══ WORKFLOW DIAGRAM ═══ -->
+  <div class="doc-section" id="workflow">
+    <span class="label">Workflow</span>
+    <h2>How It All Fits Together</h2>
+    <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates at each tier.</p>
 
-    <div class="diagram-wrapper">
-      <svg viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg" style="max-width:800px">
-        <!-- Definitions -->
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg" style="max-width:760px">
         <defs>
-          <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,0 L5,10 L10,0" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+          <marker id="ad" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
           </marker>
-          <marker id="arrow-up" viewBox="0 0 10 10" refX="5" refY="0" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M0,10 L5,0 L10,10" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
-          </marker>
-          <filter id="shadow" x="-4%" y="-4%" width="108%" height="116%">
-            <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
-          </filter>
         </defs>
 
-        <!-- Intent node -->
-        <rect x="300" y="20" width="200" height="48" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="400" y="50" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="14" font-weight="600" fill="#475569">intent.md</text>
-        <text x="400" y="16" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#94a3b8">PROSE</text>
+        <rect x="280" y="20" width="200" height="46" rx="10" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <text x="380" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#8a8a9a">intent.md</text>
 
-        <!-- Arrow down -->
-        <line x1="400" y1="68" x2="400" y2="98" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow-down)"/>
+        <rect x="348" y="78" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
+        <text x="380" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
+        <line x1="380" y1="66" x2="380" y2="78" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="380" y1="96" x2="380" y2="114" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- Approval gate 1 -->
-        <rect x="368" y="80" width="64" height="18" rx="9" fill="#6366f1" opacity="0.15"/>
-        <text x="400" y="93" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" font-weight="600" fill="#6366f1">APPROVE</text>
+        <rect x="180" y="120" width="140" height="46" rx="10" fill="#16161f" stroke="rgba(92,184,246,0.3)" stroke-width="1"/>
+        <text x="250" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#5cb8f6">prd.md + usm</text>
+        <text x="250" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements + stories</text>
 
-        <!-- PRD + USM node -->
-        <rect x="220" y="108" width="160" height="48" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="300" y="136" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="600" fill="#1e40af">prd.md + usm</text>
-        <text x="300" y="122" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#3b82f6">PRODUCT</text>
+        <rect x="340" y="120" width="40" height="46" rx="6" fill="transparent"/>
+        <text x="360" y="148" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" fill="#5a5a6a">+</text>
 
-        <!-- DM node -->
-        <rect x="420" y="108" width="160" height="48" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="500" y="136" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="600" fill="#1e40af">dm.md</text>
-        <text x="500" y="122" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#3b82f6">DOMAIN MODEL</text>
+        <rect x="400" y="120" width="160" height="46" rx="10" fill="#16161f" stroke="rgba(92,184,246,0.4)" stroke-width="1.5"/>
+        <text x="480" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#5cb8f6">dm.md</text>
+        <text x="480" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
 
-        <!-- Connecting line between prd and dm -->
-        <line x1="380" y1="132" x2="420" y2="132" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,3"/>
+        <rect x="348" y="182" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
+        <text x="380" y="195" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
+        <line x1="380" y1="166" x2="380" y2="182" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="380" y1="200" x2="380" y2="220" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- Arrow down from product tier -->
-        <line x1="400" y1="156" x2="400" y2="198" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow-down)"/>
+        <rect x="310" y="210" width="140" height="24" rx="6" fill="rgba(92,246,200,0.06)" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
+        <text x="380" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5cf6c8">Profile: Lite or Full</text>
+        <line x1="380" y1="234" x2="380" y2="254" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- Approval gate 2 -->
-        <rect x="368" y="170" width="64" height="18" rx="9" fill="#6366f1" opacity="0.15"/>
-        <text x="400" y="183" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" font-weight="600" fill="#6366f1">APPROVE</text>
+        <rect x="260" y="258" width="240" height="46" rx="10" fill="#16161f" stroke="rgba(92,246,200,0.3)" stroke-width="1"/>
+        <text x="380" y="278" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#5cf6c8">spec.md</text>
+        <text x="380" y="293" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">architecture + modules + interfaces</text>
 
-        <!-- Spec node -->
-        <rect x="280" y="208" width="240" height="48" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="1.5" filter="url(#shadow)"/>
-        <text x="400" y="236" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="13" font-weight="600" fill="#065f46">spec.md</text>
-        <text x="400" y="222" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#10b981">TECHNICAL DESIGN</text>
+        <rect x="348" y="318" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
+        <text x="380" y="331" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
+        <line x1="380" y1="304" x2="380" y2="318" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- Arrow down, branching -->
-        <line x1="400" y1="256" x2="400" y2="290" stroke="#94a3b8" stroke-width="1.5"/>
+        <line x1="380" y1="336" x2="380" y2="356" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="380" y1="356" x2="180" y2="376" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="380" y1="356" x2="380" y2="376" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="380" y1="356" x2="580" y2="376" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- Approval gate 3 -->
-        <rect x="368" y="268" width="64" height="18" rx="9" fill="#6366f1" opacity="0.15"/>
-        <text x="400" y="281" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" font-weight="600" fill="#6366f1">APPROVE</text>
+        <rect x="110" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
+        <text x="180" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-orders</text>
 
-        <!-- Module branches (Full profile) -->
-        <line x1="400" y1="290" x2="200" y2="320" stroke="#94a3b8" stroke-width="1"/>
-        <line x1="400" y1="290" x2="400" y2="320" stroke="#94a3b8" stroke-width="1"/>
-        <line x1="400" y1="290" x2="600" y2="320" stroke="#94a3b8" stroke-width="1"/>
+        <rect x="310" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
+        <text x="380" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-inventory</text>
 
-        <!-- Module 1 -->
-        <rect x="120" y="320" width="160" height="44" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1" filter="url(#shadow)"/>
-        <text x="200" y="346" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#065f46">mod-orders</text>
+        <rect x="510" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
+        <text x="580" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-payments</text>
 
-        <!-- Module 2 -->
-        <rect x="320" y="320" width="160" height="44" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1" filter="url(#shadow)"/>
-        <text x="400" y="346" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#065f46">mod-inventory</text>
+        <line x1="250" y1="400" x2="310" y2="400" stroke="rgba(92,246,200,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="450" y1="400" x2="510" y2="400" stroke="rgba(92,246,200,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="380" y="438" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">interface contracts</text>
 
-        <!-- Module 3 -->
-        <rect x="520" y="320" width="160" height="44" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1" filter="url(#shadow)"/>
-        <text x="600" y="346" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#065f46">mod-payments</text>
+        <line x1="180" y1="420" x2="180" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <line x1="380" y1="420" x2="380" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <line x1="580" y1="420" x2="580" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- Interface contract lines between modules -->
-        <line x1="280" y1="342" x2="320" y2="342" stroke="#10b981" stroke-width="1" stroke-dasharray="3,3"/>
-        <line x1="480" y1="342" x2="520" y2="342" stroke="#10b981" stroke-width="1" stroke-dasharray="3,3"/>
-        <text x="400" y="380" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="9" fill="#10b981">interface contracts</text>
+        <rect x="120" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
+        <text x="180" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
 
-        <!-- Arrows down to code -->
-        <line x1="200" y1="364" x2="200" y2="410" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow-down)"/>
-        <line x1="400" y1="364" x2="400" y2="410" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow-down)"/>
-        <line x1="600" y1="364" x2="600" y2="410" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow-down)"/>
+        <rect x="320" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
+        <text x="380" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
 
-        <!-- Code nodes -->
-        <rect x="140" y="416" width="120" height="40" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
-        <text x="200" y="440" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#5b21b6">src/ + tests/</text>
+        <rect x="520" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
+        <text x="580" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
 
-        <rect x="340" y="416" width="120" height="40" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
-        <text x="400" y="440" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#5b21b6">src/ + tests/</text>
+        <path d="M700,480 L700,40 L480,40" fill="none" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+        <text x="714" y="270" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#7c5cfc" opacity="0.5" transform="rotate(-90,714,270)">EVALS: verify against upstream</text>
 
-        <rect x="540" y="416" width="120" height="40" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
-        <text x="600" y="440" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="12" font-weight="600" fill="#5b21b6">src/ + tests/</text>
-
-        <!-- Eval arrows (going UP on the right side) -->
-        <path d="M720,440 L720,50 L500,50" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow-up)"/>
-        <text x="730" y="250" font-family="-apple-system,sans-serif" font-size="10" font-weight="600" fill="#f59e0b" transform="rotate(-90,730,250)">EVAL: check against upstream specs</text>
-
-        <!-- Legend -->
-        <rect x="20" y="472" width="12" height="12" rx="2" fill="#dbeafe" stroke="#3b82f6"/>
-        <text x="38" y="483" font-family="-apple-system,sans-serif" font-size="10" fill="#475569">Product specs</text>
-
-        <rect x="140" y="472" width="12" height="12" rx="2" fill="#d1fae5" stroke="#10b981"/>
-        <text x="158" y="483" font-family="-apple-system,sans-serif" font-size="10" fill="#475569">Technical specs</text>
-
-        <rect x="270" y="472" width="12" height="12" rx="2" fill="#ede9fe" stroke="#8b5cf6"/>
-        <text x="288" y="483" font-family="-apple-system,sans-serif" font-size="10" fill="#475569">Generated code</text>
-
-        <rect x="390" y="472" width="12" height="12" rx="2" fill="#6366f1" opacity="0.15"/>
-        <text x="408" y="483" font-family="-apple-system,sans-serif" font-size="10" fill="#475569">Human approval gate</text>
-
-        <line x1="530" y1="478" x2="560" y2="478" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <text x="568" y="483" font-family="-apple-system,sans-serif" font-size="10" fill="#475569">Eval (upstream check)</text>
+        <rect x="20" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(92,184,246,0.4)"/>
+        <text x="36" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Product specs</text>
+        <rect x="130" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(92,246,200,0.3)"/>
+        <text x="146" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Technical specs</text>
+        <rect x="250" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(124,92,252,0.3)"/>
+        <text x="266" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Generated code</text>
+        <rect x="370" y="516" width="10" height="10" rx="2" fill="rgba(124,92,252,0.15)"/>
+        <text x="386" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
+        <line x1="470" y1="521" x2="500" y2="521" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
+        <text x="506" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
       </svg>
     </div>
   </div>
-</section>
 
-<!-- How It Works -->
-<section>
-  <div class="container">
-    <h2>How It Works</h2>
-    <p class="section-lead">A single command — <code>/vibeloom</code> — guides you through the entire lifecycle: from initial idea to production code, and through every change after that.</p>
-
-    <div class="expandable">
-      <div class="expandable-header">
-        <span>1. Start with Intent</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p>Run <code>/vibeloom init</code> to scaffold your project. Describe what you want to build in plain language — or let the Agent interview you. The result is <code>intent.md</code>, a structured capture of your vision.</p>
-        <p style="margin-top:8px">Already have code? <code>/vibeloom import</code> analyzes your existing codebase and generates specs that describe what it currently does.</p>
-      </div>
-    </div>
-
-    <div class="expandable">
-      <div class="expandable-header">
-        <span>2. Generate Product Specs</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p>After approving the intent, the Agent generates three product-level specs as a batch:</p>
-        <ul style="margin:8px 0 8px 20px">
-          <li><strong>PRD</strong> — structured requirements with priorities and acceptance criteria</li>
-          <li><strong>User Story Map</strong> — epics and stories that reveal user workflows</li>
-          <li><strong>Domain Model</strong> — DDD-style entities, relationships, and invariants</li>
-        </ul>
-        <p>You review all three together. Edit any of them — the Agent checks consistency across the batch and flags contradictions.</p>
-      </div>
-    </div>
-
-    <div class="expandable">
-      <div class="expandable-header">
-        <span>3. Generate Technical Specs</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p>Once product specs are approved, the Agent selects a profile (Lite or Full) based on domain complexity, then generates the architecture/design spec: tech stack, API design, data model, security, deployment, and module decomposition.</p>
-        <p style="margin-top:8px">For Full profile projects, each module gets its own spec with explicit interface contracts — defining what it exports, what it imports, and its boundaries.</p>
-      </div>
-    </div>
-
-    <div class="expandable">
-      <div class="expandable-header">
-        <span>4. Generate Code &amp; Tests</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p>With all specs approved, <code>/vibeloom generate code</code> produces the implementation. For Full profile, generation is per-module — each module fits in a single Agent context window.</p>
-        <p style="margin-top:8px"><code>/vibeloom generate tests</code> derives test scenarios from user stories, domain invariant tests from the domain model, and contract tests from interface specs.</p>
-      </div>
-    </div>
-
-    <div class="expandable">
-      <div class="expandable-header">
-        <span>5. Evolve with Confidence</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p><code>/vibeloom develop "add CSV export"</code> — describe your change in natural language. The Agent maps it to affected specs, proposes spec changes first, then generates code. You choose whether to review specs and code separately or as a batch.</p>
-        <p style="margin-top:8px">Manual spec edits? <code>/vibeloom reconcile</code> runs a bounded consistency check: one upstream pass, one downstream pass, one final validation. No infinite loops.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Profiles -->
-<section>
-  <div class="container">
-    <h2>Two Profiles for Every Scale</h2>
-    <p class="section-lead">VibeLoom adapts to your project's complexity. The Agent recommends a profile based on domain model analysis; you have the final say.</p>
+  <!-- ═══ PROFILES ═══ -->
+  <div class="doc-section" id="profiles">
+    <span class="label">Scaling</span>
+    <h2>Lite vs Full Profiles</h2>
+    <p class="lead">VibeLoom adapts to project complexity. The Agent recommends a profile after analyzing the domain model; you have the final say.</p>
 
     <div class="profile-grid">
       <div class="profile-card">
         <h3>Lite</h3>
         <div class="subtitle">Single domain, single agent</div>
         <ul>
-          <li>Up to ~15 entities, one bounded context</li>
-          <li>USM inlined in PRD (fewer files)</li>
-          <li>No module decomposition</li>
-          <li>2 approval gates</li>
-          <li>Best for MVPs, tools, internal apps</li>
+          <li><span class="check">&#10003;</span> Up to ~15 entities, one bounded context</li>
+          <li><span class="check">&#10003;</span> USM inlined in PRD (fewer files)</li>
+          <li><span class="check">&#10003;</span> No module decomposition</li>
+          <li><span class="check">&#10003;</span> 2 approval gates</li>
+          <li><span class="check">&#10003;</span> Best for MVPs, tools, internal apps</li>
         </ul>
       </div>
       <div class="profile-card">
         <h3>Full</h3>
         <div class="subtitle">Multiple domains, parallel agents</div>
         <ul>
-          <li>Multiple bounded contexts</li>
-          <li>Separate USM with full story structure</li>
-          <li>Modules with interface contracts</li>
-          <li>3 approval gates</li>
-          <li>Best for platforms, SaaS, team projects</li>
+          <li><span class="check">&#10003;</span> Multiple bounded contexts</li>
+          <li><span class="check">&#10003;</span> Separate USM with full story structure</li>
+          <li><span class="check">&#10003;</span> Modules with interface contracts + DAG</li>
+          <li><span class="check">&#10003;</span> 3 approval gates</li>
+          <li><span class="check">&#10003;</span> Best for platforms, SaaS, team projects</li>
         </ul>
       </div>
     </div>
-
-    <div class="expandable" style="margin-top:24px">
-      <div class="expandable-header">
-        <span>Profile selection criteria</span>
-        <span class="arrow">&#9654;</span>
-      </div>
-      <div class="expandable-body">
-        <p><strong>Use Full when ANY of these are true:</strong></p>
-        <ul style="margin:8px 0 8px 20px">
-          <li>The domain model has natural subdomain boundaries</li>
-          <li>Multiple agents or developers will work in parallel</li>
-          <li>The codebase will exceed ~50 files or ~10K lines</li>
-          <li>Independent deployment of subsystems is needed</li>
-        </ul>
-        <p><strong>Otherwise, use Lite.</strong> You can upgrade from Lite to Full later if the project grows.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Eval Framework -->
-<section>
-  <div class="container">
-    <h2>Specs as Evals</h2>
-    <p class="section-lead">Specifications aren't just documentation — they're verification contracts. Three tiers of evaluation ensure everything stays consistent.</p>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Tier</th>
-          <th>Type</th>
-          <th>What it checks</th>
-          <th>Blocking?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="tag tag-tech">Tier 1</span></td>
-          <td>Structural</td>
-          <td>IDs valid, cross-refs resolve, required sections present, module directories match spec</td>
-          <td><strong>Yes</strong> — must pass to proceed</td>
-        </tr>
-        <tr>
-          <td><span class="tag tag-warn">Tier 2</span></td>
-          <td>Semantic</td>
-          <td>Coverage gaps, contradictions, orphan entities, NFRs not addressed</td>
-          <td>No — warnings, human decides</td>
-        </tr>
-        <tr>
-          <td><span class="tag tag-code">Tier 3</span></td>
-          <td>Behavioral</td>
-          <td>Test scenarios from stories, invariant tests from domain model, contract tests</td>
-          <td>Separate step (<code>generate tests</code>)</td>
-        </tr>
-      </tbody>
-    </table>
 
     <div class="expandable">
-      <div class="expandable-header">
-        <span>How evals work in practice</span>
-        <span class="arrow">&#9654;</span>
-      </div>
+      <div class="expandable-header"><span>Selection heuristics</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
-        <p>Every artifact uses <strong>rigid IDs</strong> (e.g., <code>PRD-001</code>, <code>DM-BC1-E05</code>, <code>USM-E01-S03</code>) that enable mechanical cross-referencing. When you run <code>/vibeloom eval</code>, the Agent reads all artifacts and checks that every reference resolves, every requirement has covering stories, every entity has an owning module.</p>
-        <p style="margin-top:8px">Tier 1 evals run automatically after every generation or edit. Tier 2 runs before you approve. If anything fails, you see exactly what's wrong and what to fix.</p>
+        <p><strong>Use Full when ANY of these are true:</strong></p>
+        <ul>
+          <li>The domain model has natural bounded context boundaries</li>
+          <li>Multiple agents or developers will work in parallel</li>
+          <li>The codebase will exceed ~50 files or ~10K LOC</li>
+          <li>Independent deployment of subsystems is needed</li>
+        </ul>
+        <p><strong>Otherwise, use Lite.</strong> You can upgrade from Lite to Full later.</p>
       </div>
     </div>
   </div>
-</section>
 
-<!-- Multi-Agent -->
-<section>
-  <div class="container">
-    <h2>Built for Multi-Agent Development</h2>
-    <p class="section-lead">Modules aren't just code organization — they're agent boundaries. Each module fits in a context window and can be worked on independently.</p>
+  <!-- ═══ EVALS ═══ -->
+  <div class="doc-section" id="evals">
+    <span class="label">Quality</span>
+    <h2>Eval Framework</h2>
+    <p class="lead">Specifications aren't documentation — they're verification contracts. Three tiers of evaluation keep everything consistent.</p>
 
-    <div class="card">
+    <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Mechanism</th>
-            <th>What it enables</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Tier</th><th>Type</th><th>What it checks</th><th>Blocking?</th></tr></thead>
         <tbody>
-          <tr>
-            <td><strong>Module decomposition</strong></td>
-            <td>Each agent works within one module's scope, loading only its spec + interfaces</td>
-          </tr>
-          <tr>
-            <td><strong>Interface contracts</strong></td>
-            <td>Typed exports/imports prevent agents from creating incompatible APIs</td>
-          </tr>
-          <tr>
-            <td><strong>Dependency DAG</strong></td>
-            <td>Enforces build order and prevents circular dependencies</td>
-          </tr>
-          <tr>
-            <td><strong>Shared types with ownership</strong></td>
-            <td>Only the owning module can change a type; others adapt</td>
-          </tr>
-          <tr>
-            <td><strong>Context loading protocol</strong></td>
-            <td>60% code, 30% specs, 10% system prompt — prevents context overflow</td>
-          </tr>
+          <tr><td><span class="tag tag-block">Tier 1</span></td><td>Structural</td><td>IDs valid, cross-refs resolve, required sections present, module dirs match spec</td><td><strong>Yes</strong></td></tr>
+          <tr><td><span class="tag tag-warn">Tier 2</span></td><td>Semantic</td><td>Coverage gaps, contradictions between tiers, orphan entities, NFRs not addressed</td><td>Warnings</td></tr>
+          <tr><td><span class="tag tag-ok">Tier 3</span></td><td>Behavioral</td><td>Test scenarios from stories, invariant tests from dm.md, contract tests</td><td>Separate</td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="expandable" style="margin-top:16px">
-      <div class="expandable-header">
-        <span>How context loading works</span>
-        <span class="arrow">&#9654;</span>
-      </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>Tier 1: Structural checks (6 checks, blocking)</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
-        <p>When an agent generates code for a module, it loads:</p>
-        <ul style="margin:8px 0 8px 20px">
-          <li><strong>Verbatim:</strong> module spec, module AGENTS.md, interface contracts</li>
-          <li><strong>Summarized:</strong> domain model (own bounded context only), root spec overview</li>
-          <li><strong>Not loaded:</strong> other modules' code, upstream prose specs</li>
+        <ol>
+          <li><strong>ID format compliance</strong> — all items use defined patterns (<code>PRD-001</code>, <code>DM-BC1-E05</code>)</li>
+          <li><strong>Cross-reference integrity</strong> — every referenced ID exists upstream</li>
+          <li><strong>Artifact completeness</strong> — required sections per template are present</li>
+          <li><strong>Module structure compliance</strong> — directories match spec.md (Full)</li>
+          <li><strong>Upstream-ref validity</strong> — frontmatter refs point to existing artifacts</li>
+          <li><strong>Frontmatter validity</strong> — required fields present with valid values</li>
+        </ol>
+      </div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>Tier 2: Semantic checks (10 checks, warnings)</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <ul>
+          <li>Requirements &harr; Stories coverage</li>
+          <li>Stories &harr; Entities coverage</li>
+          <li>Orphan detection (entities with no stories)</li>
+          <li>Contradiction detection between tiers</li>
+          <li>Module &harr; Entity ownership (one owner per entity)</li>
+          <li>Interface contract completeness (imports match exports)</li>
+          <li>Dependency DAG validation (no cycles)</li>
+          <li>NFR coverage in spec.md</li>
+          <li>Story-to-API traceability</li>
+          <li>Invariant preservation in API design</li>
         </ul>
-        <p>Specs have recommended maximum lengths (module spec &le; 3K tokens). Exceeding the limit signals the decomposition is too coarse.</p>
+      </div>
+    </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>Tier 3: Behavioral (test generation, separate step)</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Triggered via <code>/vibeloom generate tests</code>:</p>
+        <ul>
+          <li>Scenario descriptions from usm.md stories</li>
+          <li>Domain invariant tests from dm.md</li>
+          <li>Interface contract tests from module specs (Full)</li>
+        </ul>
       </div>
     </div>
   </div>
-</section>
 
-<!-- Command Reference -->
-<section>
-  <div class="container">
-    <h2>Command Reference</h2>
-    <p class="section-lead">One entry point: <code>/vibeloom</code>. With no arguments, it detects your project state and suggests what to do next.</p>
+  <!-- ═══ MODULES ═══ -->
+  <div class="doc-section" id="modules">
+    <span class="label">Multi-Agent</span>
+    <h2>Module Interface Contracts</h2>
+    <p class="lead">Modules aren't just code organization — they're agent boundaries. Each fits in one context window with typed interfaces.</p>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Command</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td><code>/vibeloom init</code></td><td>Scaffold a new project with intent template</td></tr>
-        <tr><td><code>/vibeloom import</code></td><td>Generate specs from existing codebase</td></tr>
-        <tr><td><code>/vibeloom generate</code></td><td>Generate next artifact (auto-detects) or specific: <code>prd</code>, <code>dm</code>, <code>spec</code>, <code>code</code>, <code>tests</code></td></tr>
-        <tr><td><code>/vibeloom approve</code></td><td>Approve current drafts after eval checks</td></tr>
-        <tr><td><code>/vibeloom develop</code></td><td>Incremental change: describe it, specs update first, then code</td></tr>
-        <tr><td><code>/vibeloom eval</code></td><td>Run structural + semantic consistency checks</td></tr>
-        <tr><td><code>/vibeloom review</code></td><td>Interactive walkthrough of artifacts</td></tr>
-        <tr><td><code>/vibeloom reconcile</code></td><td>Bounded consistency fix after manual edits</td></tr>
-        <tr><td><code>/vibeloom status</code></td><td>Show all artifacts, profile, eval results</td></tr>
-        <tr><td><code>/vibeloom help</code></td><td>Guidance on commands, methodology, profiles</td></tr>
-      </tbody>
-    </table>
+    <div class="expandable open">
+      <div class="expandable-header"><span>Interface contract example</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+<pre><span class="comment">## Interface: mod-orders</span>
+
+<span class="keyword">### Exports</span>
+<span class="type">- API-01:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
+<span class="type">- EVT-01:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
+
+<span class="keyword">### Imports</span>
+<span class="comment">- From mod-inventory:</span> <span class="string">checkAvailability(sku: string) &rarr; AvailabilityResult</span>
+<span class="comment">- From mod-payments:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span></pre>
+      </div>
+    </div>
+
+    <div class="expandable">
+      <div class="expandable-header"><span>Dependency rules &amp; shared types</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <ul>
+          <li>Dependency graph must be a <strong>DAG</strong> (no cycles)</li>
+          <li>New cross-module dependencies require <code>spec.md</code> amendment (human-approved)</li>
+          <li>Shared types have an <strong>owner module</strong> — only the owner can change the definition</li>
+        </ul>
+        <p>When an interface changes: eval identifies downstream modules &rarr; marks stale &rarr; specs update &rarr; contract tests regenerate.</p>
+      </div>
+    </div>
+
+    <div class="expandable">
+      <div class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>Each agent task gets a <strong>context envelope</strong>:</p>
+        <ul>
+          <li><strong>Verbatim:</strong> module spec, AGENTS.md, interface contracts</li>
+          <li><strong>Summarized:</strong> dm.md (own BC), root spec overview</li>
+          <li><strong>Not loaded:</strong> other modules' code, upstream prose</li>
+        </ul>
+        <p><strong>Budget:</strong> 60% code, 30% specs, 10% system prompt. Module spec &le; 3K tokens — exceeding signals decomposition is too coarse.</p>
+      </div>
+    </div>
   </div>
-</section>
 
-<!-- Getting Started -->
-<section>
-  <div class="container">
-    <h2>Get Started in 3 Steps</h2>
+  <!-- ═══ COMMANDS ═══ -->
+  <div class="doc-section" id="commands">
+    <span class="label">Interface</span>
+    <h2>Command Reference</h2>
+    <p class="lead"><code>/vibeloom</code> with no arguments detects project state and suggests the next action.</p>
+
+    <div class="cmd-grid">
+      <div class="cmd-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
+      <div class="cmd-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
+      <div class="cmd-row"><code>/vibeloom generate</code> <span>Generate next artifact or code</span></div>
+      <div class="cmd-row"><code>/vibeloom approve</code> <span>Approve drafts after eval</span></div>
+      <div class="cmd-row"><code>/vibeloom develop</code> <span>Incremental change (specs first)</span></div>
+      <div class="cmd-row"><code>/vibeloom eval</code> <span>Run consistency checks</span></div>
+      <div class="cmd-row"><code>/vibeloom review</code> <span>Interactive walkthrough</span></div>
+      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Fix after manual edits</span></div>
+      <div class="cmd-row"><code>/vibeloom status</code> <span>Show project state</span></div>
+      <div class="cmd-row"><code>/vibeloom help</code> <span>Guidance &amp; docs</span></div>
+    </div>
+
+    <div class="expandable" style="margin-top:16px">
+      <div class="expandable-header"><span>Key workflow: /vibeloom develop</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <ol>
+          <li>Describe a change: <code>/vibeloom develop "add CSV export"</code></li>
+          <li>Agent maps to affected specs (stories, entities, modules)</li>
+          <li>Agent proposes spec changes first (shows diffs)</li>
+          <li>You choose: review separately, or batch spec+code approval</li>
+          <li>Agent runs bounded reconciliation if upstream affected</li>
+          <li>Agent generates code scoped to affected modules</li>
+          <li>Agent runs evals on the result</li>
+        </ol>
+        <p><strong>Specs always lead.</strong> Code is always a derivative of approved specifications.</p>
+      </div>
+    </div>
+
+    <div class="expandable">
+      <div class="expandable-header"><span>Reconciliation: bounded, not infinite</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>After manual edits: <strong>1 up-pass + 1 down-pass + 1 validation.</strong> No infinite loops.</p>
+        <p>Escape hatch: <code>approved-with-known-issues</code> — force-approve with documented inconsistencies, tracked in every subsequent eval.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QUICKSTART ═══ -->
+  <div class="doc-section" id="quickstart">
+    <span class="label">Get Started</span>
+    <h2>Three Steps</h2>
 
     <ol class="steps">
       <li>
         <strong>Open Claude Code or Codex in an empty folder</strong>
-        Create a project directory and open your AI coding environment.
+        <span style="color:var(--text-tertiary)">Create a project directory and open your AI coding environment.</span>
       </li>
       <li>
         <strong>Run <code>/vibeloom init</code></strong>
-        The Agent scaffolds your project and interviews you about what you want to build. Your answers become a structured intent document.
+        <span style="color:var(--text-tertiary)">The Agent scaffolds your project and interviews you about what you want to build.</span>
       </li>
       <li>
         <strong>Follow the prompts</strong>
-        Approve the intent, review generated specs, approve them, generate code. At every step, you're in control — edit specs, ask questions, override decisions.
+        <span style="color:var(--text-tertiary)">Approve intent, review specs, generate code. You're in control at every step.</span>
       </li>
     </ol>
 
-    <div class="card" style="margin-top:32px; text-align:center; padding:32px">
-      <p style="font-size:1.1rem; font-weight:600; margin-bottom:8px">No API keys. No subscription fees. No setup.</p>
-      <p style="color:var(--color-text-secondary)">VibeLoom runs as a skill inside your existing Claude Code or Codex environment.</p>
+    <div style="text-align:center; margin-top:48px">
+      <p style="font-size:1.05rem; font-weight:600; margin-bottom:8px">No API keys. No subscription fees. No setup.</p>
+      <p style="color:var(--text-tertiary); margin-bottom:32px">VibeLoom runs as a skill inside your existing Claude Code or Codex environment.</p>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:var(--accent); color:#fff; border-radius:10px; font-weight:600; text-decoration:none; font-size:0.95rem;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+      </a>
     </div>
   </div>
-</section>
 
-<!-- Footer -->
-<div class="footer">
-  <p>VibeLoom &mdash; Contract-Driven Vibe Coding</p>
-  <p style="margin-top:4px; font-size:0.82rem">Built for technically savvy product managers and engineering leaders who believe AI code generation deserves better guardrails.</p>
 </div>
 
+<footer>
+  <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
+  <p style="margin-top:8px"><a href="index.html">Home</a> &middot; <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></p>
+</footer>
+
 <script>
-// Expandable sections
-document.querySelectorAll('.expandable-header').forEach(function(header) {
-  header.addEventListener('click', function() {
-    var parent = this.parentElement;
-    parent.classList.toggle('open');
-  });
+document.querySelectorAll('.expandable-header').forEach(function(h) {
+  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
 });
 </script>
 </body>

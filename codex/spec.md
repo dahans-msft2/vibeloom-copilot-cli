@@ -23,12 +23,12 @@ profile: full
 
 ## Purpose
 
-This document defines the technical design for the future Codex runtime that will consume the methodology artifacts in this package. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the future command surface without implementing the runtime yet.
+This document defines the technical design for the future Codex runtime that will consume the methodology artifacts in this package. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the command surface that is currently packaged as a Codex skill without implementing a separate runtime binary yet.
 
 ## Current Phase Boundary
 
-- This phase ships Markdown artifacts only.
-- No executable command router is defined here.
+- This phase ships Markdown artifacts and the Codex skill package.
+- No separate executable command router is defined here beyond the skill instructions.
 - Runtime language selection is deferred.
 
 ## Repository Layout
@@ -36,6 +36,10 @@ This document defines the technical design for the future Codex runtime that wil
 | Path | Responsibility |
 | --- | --- |
 | `constitution.md` | Foundational rules applied to every governed project |
+| `SKILL.md` | Codex skill entrypoint and command interface |
+| `agents/openai.yaml` | Skill UI metadata and invocation policy |
+| `references/` | On-demand operational references for the skill |
+| `assets/` | Skill icons and UI assets |
 | `intent.md` | Methodology package intent |
 | `prd.md` | Methodology product requirements |
 | `usm.md` | User workflow and acceptance semantics |

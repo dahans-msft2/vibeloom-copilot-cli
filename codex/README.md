@@ -6,6 +6,10 @@ This subtree contains the reconciled methodology artifacts for the Codex variant
 
 | Path | Purpose |
 | --- | --- |
+| `SKILL.md` | Actual Codex skill entrypoint for the strict `/vibeloom ...` interface |
+| `agents/` | UI metadata and explicit invocation policy |
+| `references/` | On-demand operational references for the skill |
+| `assets/` | Skill icons and UI assets |
 | `constitution.md` | Foundational rules that keep downstream specs concise and mechanically checkable |
 | `intent.md` | Intent for the methodology-as-product |
 | `prd.md` | Product requirements for the methodology package |
@@ -26,9 +30,10 @@ This subtree contains the reconciled methodology artifacts for the Codex variant
 
 ## Phase Boundary
 
-This phase defines the methodology and its artifacts only.
+This package now includes the actual Codex skill plus the methodology artifacts it relies on.
 
-- No runnable skill command is created here.
+- The skill interface exists in `SKILL.md`.
+- No external parser or runtime binary is implemented here.
 - No generated live `AGENTS.md` instances are checked in here.
 - No automation or runtime code is created here.
 

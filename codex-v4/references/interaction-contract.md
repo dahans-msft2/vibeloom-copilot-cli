@@ -24,6 +24,7 @@ For `init project`, if the input is underspecified:
 - keep the interview brief and concrete
 - summarize the captured facts before drafting `intent.md`
 - use `Affected IDs` as `none yet` until the first artifact draft exists
+- keep profile selection provisional and session-local until the product slice is approved
 
 ## Adaptive Summary Rules
 
@@ -104,6 +105,21 @@ Add regression coverage for the 2-hour TTL, then reconcile spec and code in the 
 
 ## Init Interview Responses
 
+Keep the interview to the smallest set of facts that makes `intent.md` and the first downstream recommendations credible:
+
+- project type and system goal
+- scope size and expected lifetime
+- primary users and first-release outcomes
+- hard constraints or technology exclusions
+- likely bounded contexts, if already obvious from the workflows
+
+If the bounded contexts are unclear, ask for the main workflows instead and defer the profile recommendation.
+
+When useful, end the interview summary with:
+- provisional `lite` or `full` recommendation
+- the reason for that recommendation
+- the reminder that profile choice is not final until the product slice is approved
+
 Example:
 
 ```text
@@ -111,13 +127,13 @@ Scope
 Init interview for a new governed project.
 
 Decision / Findings
-The request identifies the domain but not the target users, hard constraints, or first success signal. Those details are needed to draft a stable intent artifact.
+The request identifies the domain but not the target users, likely scope size, hard constraints, or first success signal. Those details are needed to draft a stable intent artifact and make a credible provisional profile recommendation.
 
 Affected IDs
 none yet
 
 Next action
-Capture the product goal, primary users, hard constraints, and first success metric, then draft intent.md.
+Capture the system goal, primary users, initial workflow scope, hard constraints, and first success metric, then draft intent.md.
 ```
 
 ## Status Responses

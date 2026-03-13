@@ -25,6 +25,7 @@ This skill is for governed, contract-driven work over the canonical stack:
 - Verbs and nouns are strict. The remaining tail is freeform.
 - If the noun is missing or invalid, do not guess. Return the valid grammar for that verb and the closest valid forms.
 - Bare `$vibeloom` with no `/vibeloom ...` command triggers state-aware triage.
+- If triage finds no governed project or a clearly first-time operator, keep the first reply short and point to `/vibeloom help topic methodology` and `/vibeloom help topic templates` before expanding further.
 
 Read [references/command-surface.md](references/command-surface.md) for the full grammar, aliases, and examples.
 

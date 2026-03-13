@@ -66,19 +66,25 @@ Load:
 
 If the freeform seed is missing, short, or obviously incomplete, enter a brief init interview and gather:
 - system goal
+- project type
+- expected scope size and expected lifetime
 - primary users
 - hard constraints
 - first success signal
 - whether the repo is greenfield or brownfield
+- likely bounded contexts if the workflows already imply them
 
 Useful prompt wording:
 - What are you building?
+- Is this a small single-context product, or do you expect several major capability areas?
 - Who are the primary users?
 - What are the 3-5 most important outcomes?
 - Are there technologies you want to use or avoid?
 - Are there scale, performance, compliance, or platform constraints?
+- Does this need to stay small, or do you expect a larger long-lived codebase with multiple ownership boundaries?
 
 Draft `intent.md` first. Do not infer downstream approvals or a profile automatically.
+If a provisional profile recommendation is useful, explain it as session-local guidance only and wait for product approval before treating it as selected.
 
 ### `import repo`
 

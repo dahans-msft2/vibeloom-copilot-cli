@@ -27,17 +27,19 @@ This file is derived operational guidance. It is not a canonical source of truth
 ## Commands
 
 ```bash
-# install dependencies
-# run the dev server or worker
-# run tests
-# run linter
-# build the affected target
+# install dependencies, e.g. pnpm install / npm install / bundle install
+# run the dev server or worker, e.g. pnpm dev / npm run worker
+# run tests for the touched slice, e.g. pnpm test --filter billing
+# run linter, e.g. pnpm lint
+# build the affected target, e.g. pnpm build
 ```
 
 ## Project Structure
 
 ```text
 src/              # core application code
+src/app/          # entrypoints or UI routes, when present
+src/lib/          # shared domain logic or infrastructure helpers
 modules/          # full-profile module directories, when present
 tests/            # test files or test helpers
 docs/             # governance artifacts, if kept near code
@@ -108,6 +110,7 @@ docs/             # governance artifacts, if kept near code
 - run structural checks on touched artifacts
 - run targeted semantic checks for touched stories, entities, invariants, and interfaces
 - run the relevant project commands for lint, tests, and build health
+- record the exact validation commands that were used when deriving this file for a concrete repo
 - confirm tests trace to the changed contract items
 
 ## VibeLoom Integration

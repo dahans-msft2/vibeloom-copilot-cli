@@ -201,8 +201,8 @@ MOD-[MODULE] -> MOD-[OTHER]
 
 ### Inputs
 
-- touched paths or artifacts
-- referenced IDs
+- touched paths or artifacts, e.g. `spec.md`, `modules/billing/**`
+- referenced IDs, e.g. `STORY-014`, `ENT-009`, `IFACE-004`
 - active profile
 - current dependency or stale graph
 - current approved upstream slice
@@ -224,6 +224,10 @@ Approved upstream truth is authoritative. Downstream edits may challenge it, but
 3. generate `spec.md`
 4. derive operational artifacts only after the canonical stack is ready
 
+Example:
+- a single-context internal tool may stay `lite` with one application module
+- a multi-context product with separate billing and identity concerns should normally move to `full`
+
 ## Brownfield Import Notes
 
 - `import` is only for unmanaged or heavily drifted repos.
@@ -241,10 +245,15 @@ Approved upstream truth is authoritative. Downstream edits may challenge it, but
 - approved upstream changes stale dependent downstream artifacts through explicit dependency edges
 - stale status propagates only through declared dependencies, not intuition
 - downstream code drift may trigger a proposal, but may not silently rewrite approved upstream truth
+- example: a changed `IFACE-*` may stale the owning module spec, dependent module specs, and any derived contract tests that declare that interface
 
 ## Future Command Surface Notes
 
 Use this section only for non-authoritative notes about future runtime behavior. The current source of truth for command semantics remains the skill package and operational references.
+
+Example notes:
+- `/vibeloom init project ...` scaffolds the canonical stack, but approval still stays human-driven
+- `/vibeloom eval scope module billing` should stay a projection over canonical artifacts, not a new source of truth
 
 ## Allowed Durable Projections
 

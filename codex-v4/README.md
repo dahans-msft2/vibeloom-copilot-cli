@@ -28,6 +28,15 @@ This subtree contains the next merged Codex package for VibeLoom. It uses `/code
 - `AGENTS.md` and `plan.md` are derived operational artifacts. They guide execution, but they are not source-of-truth contracts.
 - Machine-readable projections are intentionally limited to three conceptual outputs: trace index, dependency/stale graph, and interface/schema manifests.
 
+## Operator Quickstart
+
+Use this package through the skill first, then drill into docs only when needed.
+
+1. Invoke bare `$vibeloom` to get the current governed state, blockers, and next safe commands.
+2. If this is your first run, use `/vibeloom help topic methodology` for the contract model and `/vibeloom help topic templates` for artifact shapes.
+3. For a new governed project, start with `/vibeloom init project [intent seed]`.
+4. For an existing governed repo, use `/vibeloom status repo` before changing anything.
+
 ## Phase Boundary
 
 This package includes the actual Codex skill plus the methodology artifacts it relies on.

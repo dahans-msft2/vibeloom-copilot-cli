@@ -1,0 +1,385 @@
+# VibeLoom Methodology
+
+VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence.
+
+---
+
+## The Problem
+
+AI code generation is excellent at producing local momentum. It is weak at preserving long-term meaning.
+
+Four systemic failure modes appear as projects grow:
+
+1. **Semantic drift.** Concepts, workflows, and invariants shift subtly with every prompt.
+2. **Context fragmentation.** Large codebases exceed what one agent can safely hold in context, so ownership and responsibilities become guesswork.
+3. **Invisible governance.** If intent lives only in chat history, there is no durable review surface for humans.
+4. **Reconciliation failure.** Manual edits, bugfixes, and drift have no principled path back to the specification layer.
+
+VibeLoom addresses all four by treating structured specifications as the durable source of truth rather than relying on code, chat history, or agent memory.
+
+---
+
+## Core Thesis
+
+Five principles anchor the methodology:
+
+1. **Intent becomes contracts, not just prompts.**
+2. **Structured contracts are cheaper to review than generated code.**
+3. **The contract stack doubles as the eval stack.**
+4. **Modularization is how agents scale safely.**
+5. **Workflow semantics and domain semantics must remain separate, which is why `USM` and `DM` are both mandatory.**
+
+---
+
+## The Contract Stack
+
+VibeLoom organizes project knowledge into a tiered stack of artifacts with distinct responsibilities and audiences.
+
+| Tier | Artifact | Purpose | Primary audience |
+| --- | --- | --- | --- |
+| 0 | Constitution | Universal rules and defaults | Methodology itself |
+| 1 | Intent | What the system is for | Product owner |
+| 2 | PRD | Goals, requirements, scope, NFRs | Product + engineering leads |
+| 3 | USM | Epics, stories, acceptance criteria, workflows | Product owner + designers |
+| 4 | Domain Model | Entities, relationships, invariants, bounded contexts | Domain experts + architects |
+| 5 | Technical Spec | Modules, interfaces, data architecture, deployment | Engineers + agents |
+| - | Derived (`AGENTS`, `plan`) | Scoped execution guidance | Agents only |
+
+```mermaid
+flowchart TD
+    subgraph "Canonical Contracts"
+        CONST["Constitution"]
+        INT["Intent"]
+        PRD["PRD"]
+        USM["USM"]
+        DM["Domain Model"]
+        SPEC["Technical Spec"]
+    end
+
+    subgraph "Derived Artifacts"
+        AGENTS["AGENTS.md"]
+        PLAN["plan.md"]
+    end
+
+    subgraph "Implementation"
+        CODE["Code + Tests"]
+    end
+
+    CONST -.-> INT
+    INT --> PRD
+    PRD --> USM
+    USM --> DM
+    DM --> SPEC
+    SPEC --> AGENTS
+    SPEC --> PLAN
+    AGENTS --> CODE
+    PLAN --> CODE
+
+    CODE -. "eval up" .-> SPEC
+    SPEC -. "eval up" .-> DM
+    DM -. "eval up" .-> USM
+    USM -. "eval up" .-> PRD
+```
+
+### Why each tier exists
+
+**Constitution** keeps universal defaults out of downstream artifacts.  
+**Intent** anchors purpose.  
+**PRD** defines product expectations.  
+**USM** exposes workflows, value delivery, and acceptance.  
+**DM** stabilizes the ubiquitous language and invariants.  
+**Spec** turns semantics into safe implementation boundaries.  
+**Derived artifacts** help execution but never become semantic truth.
+
+---
+
+## Why `USM` And `DM` Stay Separate
+
+`USM` and `DM` are not redundant.
+
+- `USM` is the easiest place for humans to verify whether the system serves real user needs.
+- `DM` is the best place to stabilize concepts, relationships, and invariants that should survive implementation churn.
+
+Going straight from PRD to DM hides workflow mistakes. Going from PRD to USM to DM forces the methodology to surface actors, sequence, acceptance, and value before the semantic model is finalized.
+
+```mermaid
+flowchart LR
+    REQ["Requirements"] --> FLOW["Stories + Acceptance"]
+    FLOW --> SEM["Entities + Invariants"]
+    SEM --> TECH["Modules + Interfaces"]
+    TECH --> IMPL["Code + Tests"]
+```
+
+---
+
+## The Domain Model As Semantic Anchor
+
+The domain model is the semantic anchor of the methodology.
+
+Three properties make it the natural center of gravity:
+
+1. **Stability.** Domain concepts change less often than UI or API details.
+2. **Vocabulary.** It establishes the ubiquitous language that every artifact should reuse.
+3. **Invariants.** It makes the hardest-to-recover rules explicit and checkable.
+
+```mermaid
+flowchart LR
+    USM["USM Stories"] -->|"reference entities"| DM["Domain Model"]
+    DM -->|"maps to owners"| SPEC["Modules + Interfaces"]
+    DM -->|"constrains"| SPEC
+```
+
+If the domain model is weak, downstream technical structure becomes arbitrary. If it is strong, module boundaries and interface ownership become much easier to reason about.
+
+---
+
+## Bidirectional Consistency
+
+The stack is not a one-way waterfall.
+
+### Top-down generation
+
+Each tier generates the next tier down:
+
+`intent -> prd -> usm -> dm -> spec -> code`
+
+### Bottom-up evaluation
+
+Consistency checks run upward. Every downstream artifact is evaluated against its upstream contracts.
+
+### Change propagation
+
+When an upstream contract changes, dependent downstream artifacts become stale through explicit dependency edges. The system does not rely on intuition or chat memory to decide what must be revisited.
+
+```mermaid
+flowchart TD
+    INT["Intent"] --> PRD["PRD"]
+    PRD --> USM["USM"]
+    USM --> DM["DM"]
+    DM --> SPEC["Spec"]
+    SPEC --> CODE["Code"]
+
+    CODE -->|"evals"| SPEC
+    SPEC -->|"evals"| DM
+    DM -->|"evals"| USM
+    USM -->|"evals"| PRD
+```
+
+---
+
+## Authority And Human Governance
+
+Not every artifact carries the same authority.
+
+- `constitution`, `intent`, `prd`, `usm`, `dm`, and `spec` are normative.
+- `AGENTS.md` and `plan.md` are derived, regenerable, and non-canonical.
+
+Three governance rules follow:
+
+1. **Only humans approve canonical contracts.**
+2. **Humans may edit any canonical artifact at any time.**
+3. **Lifecycle states stay limited to `draft`, `approved`, `stale`, and `superseded`. Known issues are surfaced in evals, not encoded as a fifth approval state.**
+
+That last point matters. VibeLoom does not permit a fifth approval state for "known issues" because that would dilute approval semantics and create ambiguity about what is truly authoritative.
+
+---
+
+## Profiles
+
+VibeLoom has only two profiles:
+
+| Profile | Meaning |
+| --- | --- |
+| `lite` | One cohesive semantic boundary or low coordination risk |
+| `full` | Multiple bounded contexts or meaningful parallel execution risk |
+
+Both profiles keep the full canonical stack. `lite` does not inline `usm.md` into `prd.md`, and it does not drop `dm.md`. The difference is decomposition depth, not whether semantics are recorded.
+
+Read [profile-selection.md](profile-selection.md) for selection heuristics and upgrade or downgrade guidance.
+
+---
+
+## Change Classes
+
+Every change is classified before execution:
+
+| Class | Scope | Context needed |
+| --- | --- | --- |
+| `local` | Implementation detail only; no workflow, concept, invariant, interface, or NFR change | current module spec + constitution |
+| `behavioral-in-module` | Behavior change inside one bounded context or one technical boundary | module spec + relevant stories + touched entities and invariants |
+| `boundary-changing` | Change affecting actors, workflows, concepts, interfaces, or NFRs across boundaries | full affected upstream chain + all affected modules |
+
+If classification is uncertain, VibeLoom escalates upward. Agents should never under-scope the context they need to make a safe change.
+
+---
+
+## Modularization And Multi-Agent Development
+
+In `full` profile, modules exist to make parallel work safe and to keep agent context bounded.
+
+Each module should own:
+
+- a write surface
+- a bounded context or coherent semantic slice
+- explicit exports and imports
+- interface contracts with single ownership
+
+```mermaid
+flowchart LR
+    ROOT["Root Spec"] --> A_SPEC["Module A Spec"]
+    ROOT --> B_SPEC["Module B Spec"]
+    ROOT --> C_SPEC["Module C Spec"]
+
+    A_CODE["Module A Code"] -->|"imports"| B_CODE["Module B Code"]
+    A_CODE -->|"imports"| C_CODE["Module C Code"]
+
+    A_SPEC --> A_CODE
+    B_SPEC --> B_CODE
+    C_SPEC --> C_CODE
+```
+
+This structure enables:
+
+- **Parallel agent execution** with smaller context slices
+- **Change isolation** inside one boundary
+- **Interface discipline** through owned APIs, events, and schemas
+
+---
+
+## Asymmetric Reconciliation
+
+Reconciliation is how VibeLoom handles drift.
+
+The key rule is asymmetry:
+
+- approved upstream contracts define intended semantics
+- downstream artifacts and code may reveal drift
+- drift triggers proposals; it does not silently rewrite approved upstream truth
+
+When drift is detected, the agent proposes one of two directions:
+
+1. amend upstream truth, then stale and reconcile downstream artifacts
+2. preserve upstream truth, then correct downstream artifacts or code
+
+Humans choose the direction whenever the resolution is semantically meaningful.
+
+### Bounded reconciliation
+
+To prevent infinite loops, reconciliation is bounded:
+
+1. one up-pass against upstream truth
+2. one down-pass across affected downstream artifacts
+3. one final structural validation
+
+```mermaid
+flowchart TD
+    EDIT["Manual edit or drift"] --> UP["Up-pass"]
+    UP --> DECIDE["Choose proposal path"]
+    DECIDE --> DOWN["Down-pass"]
+    DOWN --> VALIDATE["Final validation"]
+```
+
+---
+
+## Traceability As Evals
+
+The methodology is useful only if traceability is real. VibeLoom requires an explicit chain:
+
+```text
+Intent capability -> PRD requirement -> USM story -> DM entity/invariant -> Spec module/interface -> Test
+```
+
+This is why the stack is more than documentation. The contracts are eval surfaces.
+
+Example:
+
+| Tier | Example |
+| --- | --- |
+| `PRD` | `PRD-FR-004` workspace sharing must require explicit invite approval |
+| `USM` | `STORY-018` owner approves a workspace invite |
+| `DM` | `ENT-012` Invite, `INV-009` invite must be pending before approval |
+| `spec` | `MOD-workspaces`, `IFACE-006` approve-invite API |
+| `test` | `TEST-INVITE-003` approval flow regression |
+
+---
+
+## Context Loading
+
+The methodology assumes agents have finite attention and finite context windows. VibeLoom therefore uses deterministic context scoping:
+
+- **Always loaded:** constitution, root spec, current module spec when relevant, derived `AGENTS.md`, and trace entries for referenced IDs
+- **Conditionally loaded:** PRD, USM, or DM slices only when workflows, concepts, or invariants are touched
+- **Never loaded by default:** unrelated modules, unrelated epics or bounded contexts, historical superseded artifacts
+
+The goal is not to load less at all costs. The goal is to load enough truth without drowning the task.
+
+---
+
+## Brownfield Import Vs. Steady-State Bugfix
+
+VibeLoom treats these as different paths:
+
+- **Import** is a bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contracts from code and marks uncertainty explicitly for human review.
+- **Bugfix** is the steady-state path for governed repos. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
+
+Once a repo is governed, routine defects should be resolved against the approved stack rather than by re-inferring semantics from code on every fix.
+
+---
+
+## Projection Restraint
+
+To avoid methodology-induced artifact sprawl, VibeLoom allows only three durable machine-readable projections:
+
+1. trace index
+2. dependency or stale graph
+3. interface or schema manifests
+
+All other analysis outputs should be generated on demand or held in memory during a session.
+
+---
+
+## What Codex V3 Adds
+
+Codex V3 keeps the strongest Codex package properties:
+
+- strict, validator-compatible skill packaging
+- explicit invocation and deterministic command grammar
+- mandatory `USM + DM`
+- derived, non-canonical `AGENTS.md` and `plan.md`
+- limited durable projections only
+
+It then selectively adds the strongest ideas surfaced in the Claude comparison:
+
+- richer teaching docs and diagrams
+- stronger onboarding and smart-entry guidance in references
+- more operationally useful `AGENTS` guidance
+- more explanatory technical templates
+- explicit anti-regression checks for rejected behaviors
+
+---
+
+## What VibeLoom Is Not
+
+- It is not a giant prose process manual.
+- It is not a replacement for engineering judgment.
+- It is not a promise that every task needs the full stack every time.
+- It is not permission for derived guidance to replace approved semantics.
+- It is not a waterfall process. The stack evolves through bounded reconciliation.
+
+---
+
+## Design Principles
+
+1. **Conciseness over completeness**
+2. **Structure over prose**
+3. **Stability over flexibility**
+4. **Asymmetry over democracy**
+5. **Scoping over loading**
+6. **Explicit over implicit**
+7. **Bounded over infinite**
+8. **Separate workflow semantics from domain semantics**
+9. **Human authority over agent autonomy**
+
+## Summary
+
+VibeLoom is strongest where the codebase is large enough, long-lived enough, or parallel enough that prompt-only generation stops being reliable. Its purpose is to let agents move fast without letting the system forget what it is supposed to mean.

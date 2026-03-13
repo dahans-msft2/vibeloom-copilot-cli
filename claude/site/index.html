@@ -109,6 +109,7 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a.active { color: var(--text-primary); }
   .nav-cta {
     background: var(--accent) !important;
     color: #fff !important;
@@ -961,6 +962,33 @@
     });
   }, { threshold: 0.15 });
   reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>
+
+<!-- Scroll Spy — highlight active nav link -->
+<script>
+(function() {
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var current = '';
+    sections.forEach(function(section) {
+      if (scrollY >= section.offsetTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(function(link) {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
 })();
 </script>
 </body>

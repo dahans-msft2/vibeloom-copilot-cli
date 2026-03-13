@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn More | VibeLoom Methodology</title>
+  <meta name="description" content="Learn how VibeLoom uses intent, PRD, USM, domain modeling, technical specs, and scoped agent guidance to support long-lived AI-built software systems.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://vibeloom.ai/learn-more/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Learn More | VibeLoom Methodology">
+  <meta property="og:description" content="A detailed walkthrough of the VibeLoom contract-driven methodology for serious AI coding.">
+  <meta property="og:url" content="https://vibeloom.ai/learn-more/">
+  <meta property="og:image" content="https://vibeloom.ai/assets/social-card.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Learn More | VibeLoom Methodology">
+  <meta name="twitter:description" content="A detailed walkthrough of the VibeLoom contract-driven methodology for serious AI coding.">
+  <meta name="twitter:image" content="https://vibeloom.ai/assets/social-card.svg">
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "VibeLoom Methodology",
+      "description": "Detailed explanation of the contract-driven, intent-first methodology behind VibeLoom.",
+      "author": {
+        "@type": "Organization",
+        "name": "VibeLoom"
+      },
+      "url": "https://vibeloom.ai/learn-more/"
+    }
+  </script>
+</head>
+<body class="theme-dark">
+  <div class="site-shell">
+    <header class="topbar compact">
+      <a class="brand" href="../index.html" aria-label="VibeLoom home">
+        <span class="brand-mark">VL</span>
+        <span class="brand-copy">
+          <strong>VibeLoom</strong>
+          <span>Methodology guide</span>
+        </span>
+      </a>
+      <nav class="topnav" aria-label="Primary">
+        <a href="#principles">Principles</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#profiles">Profiles</a>
+      </nav>
+      <a class="button button-secondary" href="../index.html">Back to landing</a>
+    </header>
+
+    <main class="content-shell">
+      <aside class="content-rail" data-reveal>
+        <div class="rail-panel">
+          <span class="eyebrow">On this page</span>
+          <a href="#why">Why it exists</a>
+          <a href="#principles">Core principles</a>
+          <a href="#stack">Contract stack</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#profiles">Profiles and change classes</a>
+          <a href="#compare">Where it differs</a>
+        </div>
+      </aside>
+
+      <article class="content-main">
+        <section class="content-hero" id="why" data-reveal>
+          <span class="eyebrow">Learn more</span>
+          <h1>VibeLoom is a methodology for AI-built codebases that need to remain coherent after the first sprint.</h1>
+          <p>
+            The problem is not that agents cannot generate code. The problem is that prompt-first systems struggle to preserve workflow truth, domain meaning, and interface ownership as the codebase evolves. VibeLoom introduces a compact set of contracts that keep those layers explicit without turning the process into prose theater.
+          </p>
+        </section>
+
+        <section class="content-section" id="principles" data-reveal>
+          <h2>Core principles</h2>
+          <div class="principle-grid">
+            <article class="principle-card">
+              <h3>Intent-first</h3>
+              <p>The methodology starts from what the system is for, then climbs toward technical realization instead of beginning with architecture or pseudocode.</p>
+            </article>
+            <article class="principle-card">
+              <h3>USM and DM are both mandatory</h3>
+              <p>User workflows and domain semantics are separate layers. VibeLoom refuses to collapse them into one blurry artifact.</p>
+            </article>
+            <article class="principle-card">
+              <h3>Derived guidance stays derived</h3>
+              <p>Agent instructions and change plans are execution aids, not semantic authorities.</p>
+            </article>
+            <article class="principle-card">
+              <h3>Projection restraint</h3>
+              <p>The system allows only a trace index, stale graph, and interface manifests as durable projections so the method does not create its own context burden.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-section" id="stack" data-reveal>
+          <h2>The contract stack</h2>
+          <div class="diagram-card">
+            <div class="diagram-track">
+              <span>Intent</span>
+              <span>PRD</span>
+              <span>USM</span>
+              <span>DM</span>
+              <span>Spec</span>
+              <span>Derived AGENTS / Plan</span>
+              <span>Code + Tests</span>
+            </div>
+          </div>
+          <div class="copy-grid">
+            <div>
+              <h3>Why USM matters</h3>
+              <p>USM is the easiest semantic layer for humans to validate. It reveals user value, story order, and workflow assumptions before the project hardens into technical structure.</p>
+            </div>
+            <div>
+              <h3>Why DM matters</h3>
+              <p>DM protects ubiquitous language, invariants, and concept ownership. It is the layer most likely to survive architectural churn without losing the meaning of the system.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" id="workflow" data-reveal>
+          <h2>Workflow</h2>
+          <div class="timeline">
+            <div class="timeline-step">
+              <strong>1. Greenfield initialization</strong>
+              <p>Draft intent, then reconcile PRD, USM, and DM before technical decomposition begins.</p>
+            </div>
+            <div class="timeline-step">
+              <strong>2. Technical design</strong>
+              <p>Translate approved semantics into module boundaries, interface ownership, and execution policies.</p>
+            </div>
+            <div class="timeline-step">
+              <strong>3. Derived execution</strong>
+              <p>Generate scoped agent guidance and a change plan from the approved truth instead of improvising from a giant prompt.</p>
+            </div>
+            <div class="timeline-step">
+              <strong>4. Reconcile change</strong>
+              <p>When manual edits or code drift appear, propose whether upstream semantics or downstream implementation should move.</p>
+            </div>
+          </div>
+          <div class="note-panel">
+            <strong>Import is bootstrap, not routine defect handling.</strong>
+            <p>Brownfield repos can be brought under governance through import. Once governed, defects should be resolved locally from a repro, expected behavior, and regression coverage.</p>
+          </div>
+        </section>
+
+        <section class="content-section" id="profiles" data-reveal>
+          <h2>Profiles and change classes</h2>
+          <div class="compare-table">
+            <div class="compare-row compare-head">
+              <span>Concept</span>
+              <span>Definition</span>
+            </div>
+            <div class="compare-row">
+              <span>Lite</span>
+              <span>Lower coordination risk, but still requires both USM and DM.</span>
+            </div>
+            <div class="compare-row">
+              <span>Full</span>
+              <span>Multiple bounded contexts, explicit modules, interface ownership, and dependency rules.</span>
+            </div>
+            <div class="compare-row">
+              <span>Local</span>
+              <span>Small implementation or content change with no semantic or interface impact.</span>
+            </div>
+            <div class="compare-row">
+              <span>Behavioral-in-module</span>
+              <span>Behavior changes inside one semantic or technical boundary.</span>
+            </div>
+            <div class="compare-row">
+              <span>Boundary-changing</span>
+              <span>Actors, workflows, concepts, interfaces, or NFRs change across boundaries.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" id="compare" data-reveal>
+          <h2>Where VibeLoom differs from adjacent approaches</h2>
+          <div class="principle-grid">
+            <article class="principle-card">
+              <h3>Tighter than prompt-only</h3>
+              <p>It is willing to introduce explicit contracts because long-lived systems need stronger semantic memory than a chat transcript can provide.</p>
+            </article>
+            <article class="principle-card">
+              <h3>Heavier than lightweight feature specs</h3>
+              <p>That weight is intentional. VibeLoom is for larger and longer-lived codebases, not for squeezing the most speed out of every tiny edit.</p>
+            </article>
+            <article class="principle-card">
+              <h3>Lighter than process theater</h3>
+              <p>It keeps the artifacts concise, structured, and machine-checkable. It refuses an unlimited pile of projections and generated paperwork.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-section" data-reveal>
+          <div class="cta-panel">
+            <div>
+              <span class="eyebrow">Need the short version?</span>
+              <h2>VibeLoom helps agents move fast without letting the codebase forget what it means.</h2>
+            </div>
+            <a class="button button-primary" href="../index.html">Return to landing</a>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <strong>VibeLoom</strong>
+        <p>Contract-driven vibe coding for serious software systems.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="../../docs/vibeloom-methodology.md">Markdown guide</a>
+        <a href="../index.html">Landing page</a>
+      </nav>
+    </footer>
+  </div>
+  <script src="../assets/site.js" defer></script>
+</body>
+</html>

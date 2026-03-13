@@ -1,0 +1,14 @@
+<svg width="512" height="256" viewBox="0 0 512 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="256" rx="36" fill="#08111D"/>
+  <rect x="36" y="36" width="132" height="132" rx="28" fill="url(#paint0_linear_2_1)"/>
+  <path d="M69 63L106 164H94L57 63H69Z" fill="#07111D"/>
+  <path d="M134 63L97 164H109L146 63H134Z" fill="#07111D"/>
+  <text x="196" y="110" fill="#EDF6FF" font-family="Sora, sans-serif" font-size="54" font-weight="700">VibeLoom</text>
+  <text x="196" y="150" fill="#9DB2C7" font-family="Instrument Sans, sans-serif" font-size="22">Contract-driven vibe coding</text>
+  <defs>
+    <linearGradient id="paint0_linear_2_1" x1="44" y1="44" x2="156" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7EE0FF"/>
+      <stop offset="1" stop-color="#B7FF70"/>
+    </linearGradient>
+  </defs>
+</svg>

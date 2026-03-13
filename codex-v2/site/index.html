@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeLoom — Contract-Driven Vibe Coding</title>
+<meta name="description" content="VibeLoom transforms vibe coding from prototyping trick to production methodology. Structured specs, multi-agent coordination, and bidirectional consistency — as a Claude Code and Codex skill.">
+<meta name="keywords" content="vibe coding, AI code generation, spec-driven development, Claude Code, Codex, contract-first development, multi-agent coding, domain-driven design">
+<meta name="author" content="VibeLoom">
+<link rel="canonical" href="https://vibeloom.ai/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vibeloom.ai/">
+<meta property="og:title" content="VibeLoom — Contract-Driven Vibe Coding">
+<meta property="og:description" content="From intent to production code via structured contracts. A methodology that makes vibe coding work at scale, over time, across agent swarms.">
+<meta property="og:image" content="https://vibeloom.ai/og-image.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VibeLoom — Contract-Driven Vibe Coding">
+<meta name="twitter:description" content="From intent to production code via structured contracts. A methodology that makes vibe coding work at scale.">
+
+<!-- Favicon placeholder -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='7' fill='%237c5cfc'/%3E%3Cpath d='M7 7L14 19L21 7' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M14 19V23H21' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-tertiary: #1a1a26;
+    --bg-card: #16161f;
+    --bg-card-hover: #1c1c28;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --text-primary: #f0f0f5;
+    --text-secondary: #8a8a9a;
+    --text-tertiary: #5a5a6a;
+    --accent: #7c5cfc;
+    --accent-hover: #9b7fff;
+    --accent-glow: rgba(124, 92, 252, 0.15);
+    --accent-2: #5cf6c8;
+    --accent-3: #5cb8f6;
+    --gradient-text: linear-gradient(135deg, #f0f0f5 0%, #a0a0b8 100%);
+    --gradient-accent: linear-gradient(135deg, #7c5cfc 0%, #5cb8f6 50%, #5cf6c8 100%);
+    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 92, 252, 0.15), transparent);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --max-width: 1200px;
+    --nav-height: 64px;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(124, 92, 252, 0.3);
+    color: #fff;
+  }
+
+  /* ═══ NAV ═══ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(10, 10, 15, 0.8);
+    transition: background 0.3s;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-logo svg { width: 28px; height: 28px; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-links a.active { color: var(--text-primary); }
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #fff !important;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover {
+    background: var(--accent-hover) !important;
+    transform: translateY(-1px);
+  }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: calc(var(--nav-height) + 80px) 24px 80px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--gradient-hero);
+    pointer-events: none;
+  }
+  /* Grid background */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 40%, black, transparent);
+    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 40%, black, transparent);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 6px 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-hover);
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    animation: fadeInUp 0.6s ease-out;
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px;
+    background: var(--accent-2);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  .hero h1 {
+    position: relative;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    max-width: 900px;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+  }
+  .hero h1 .gradient {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    position: relative;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    animation: fadeInUp 0.6s ease-out 0.2s both;
+  }
+
+  .hero-actions {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 24px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 32px var(--accent-glow);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-hover);
+  }
+  .btn-secondary:hover {
+    background: var(--bg-tertiary);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .hero-visual {
+    position: relative;
+    margin-top: 80px;
+    width: 100%;
+    max-width: 800px;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+  }
+
+  /* Terminal mockup */
+  .terminal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-hover);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4), 0 0 60px var(--accent-glow);
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+  }
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green { background: #28c840; }
+  .terminal-title {
+    flex: 1;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+  }
+  .terminal-body {
+    padding: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+  .terminal-body .prompt { color: var(--accent-2); }
+  .terminal-body .cmd { color: var(--text-primary); font-weight: 500; }
+  .terminal-body .output { color: var(--text-tertiary); }
+  .terminal-body .success { color: var(--accent-2); }
+  .terminal-body .info { color: var(--accent-3); }
+  .terminal-body .dim { color: var(--text-tertiary); }
+
+  /* ═══ SECTIONS ═══ */
+  section {
+    position: relative;
+    padding: 120px 24px;
+  }
+  .section-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+  .section-label {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    max-width: 700px;
+  }
+  .section-desc {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  /* Divider glow */
+  section + section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-hover), transparent);
+  }
+
+  /* ═══ PROBLEM SECTION ═══ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-card {
+    background: var(--bg-secondary);
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+
+  /* ═══ FEATURE CARDS ═══ */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  @media (max-width: 900px) {
+    .features-grid { grid-template-columns: 1fr; }
+  }
+  .feature-card {
+    background: var(--bg-secondary);
+    padding: 40px 32px;
+    transition: background 0.2s;
+  }
+  .feature-card:hover { background: var(--bg-card-hover); }
+  .feature-icon {
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+  }
+  .feature-icon.purple { background: rgba(124, 92, 252, 0.15); color: var(--accent); }
+  .feature-icon.green { background: rgba(92, 246, 200, 0.1); color: var(--accent-2); }
+  .feature-icon.blue { background: rgba(92, 184, 246, 0.1); color: var(--accent-3); }
+  .feature-card h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .feature-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ═══ HOW IT WORKS ═══ */
+  .workflow-steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 900px) {
+    .workflow-steps { grid-template-columns: 1fr; gap: 16px; }
+    .workflow-steps::after { display: none; }
+    .workflow-step::after { display: none; }
+  }
+  .workflow-step {
+    text-align: center;
+    padding: 0 12px;
+    position: relative;
+  }
+  .workflow-step::after {
+    content: '';
+    position: absolute;
+    top: 24px;
+    right: -2px;
+    width: 40%;
+    height: 1px;
+    background: var(--border-hover);
+  }
+  .workflow-step:last-child::after { display: none; }
+  .workflow-step .step-num {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-hover);
+    background: var(--bg-tertiary);
+  }
+  .workflow-step:nth-child(1) .step-num { color: var(--accent); border-color: rgba(124,92,252,0.3); }
+  .workflow-step:nth-child(2) .step-num { color: var(--accent-3); border-color: rgba(92,184,246,0.3); }
+  .workflow-step:nth-child(3) .step-num { color: var(--accent-3); border-color: rgba(92,184,246,0.3); }
+  .workflow-step:nth-child(4) .step-num { color: var(--accent-2); border-color: rgba(92,246,200,0.3); }
+  .workflow-step:nth-child(5) .step-num { color: var(--accent-2); border-color: rgba(92,246,200,0.3); }
+  .workflow-step h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .workflow-step p {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+
+  /* ═══ STACK VISUAL ═══ */
+  .stack-visual {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-hover);
+    border-radius: 16px;
+    padding: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stack-visual::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(124,92,252,0.05), transparent 70%);
+    pointer-events: none;
+  }
+  .stack-tier {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    z-index: 1;
+  }
+  .stack-tier .tier-label {
+    width: 80px;
+    text-align: right;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+  .stack-tier .tier-bar {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    border: 1px solid;
+  }
+  .tier-prose .tier-bar { background: rgba(255,255,255,0.03); border-color: var(--border-hover); color: var(--text-secondary); }
+  .tier-product .tier-bar { background: rgba(92,184,246,0.06); border-color: rgba(92,184,246,0.2); color: var(--accent-3); }
+  .tier-domain .tier-bar { background: rgba(92,184,246,0.08); border-color: rgba(92,184,246,0.3); color: var(--accent-3); }
+  .tier-tech .tier-bar { background: rgba(92,246,200,0.06); border-color: rgba(92,246,200,0.2); color: var(--accent-2); }
+  .tier-code .tier-bar { background: rgba(124,92,252,0.08); border-color: rgba(124,92,252,0.3); color: var(--accent); }
+
+  .stack-arrow {
+    color: var(--text-tertiary);
+    font-size: 0.7rem;
+    margin-left: 92px;
+  }
+  .stack-eval-label {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-lr;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+
+  /* ═══ COMMAND SECTION ═══ */
+  .commands-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 768px) {
+    .commands-grid { grid-template-columns: 1fr; }
+  }
+  .command-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .command-row:hover { border-color: var(--border-hover); }
+  .command-row code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+    min-width: 180px;
+  }
+  .command-row span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  /* ═══ CTA SECTION ═══ */
+  .cta-section {
+    text-align: center;
+    padding: 120px 24px;
+    position: relative;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse 50% 80% at 50% 100%, rgba(124,92,252,0.1), transparent);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .cta-section p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .cta-section .btn { position: relative; }
+
+  /* ═══ FOOTER ═══ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px;
+    text-align: center;
+  }
+  footer p {
+    color: var(--text-tertiary);
+    font-size: 0.82rem;
+  }
+  footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  footer a:hover { color: var(--text-primary); }
+
+  /* ═══ ANIMATIONS ═══ */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .nav-links a:not(.nav-cta) { display: none; }
+    section { padding: 80px 16px; }
+    .hero { padding: calc(var(--nav-height) + 40px) 16px 40px; }
+    .stat-number { font-size: 2rem; }
+    .feature-card { padding: 28px 20px; }
+    .terminal-body { padding: 16px; font-size: 0.78rem; }
+    .stack-tier .tier-label { width: 60px; font-size: 0.65rem; }
+  }
+</style>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "VibeLoom",
+  "applicationCategory": "DeveloperApplication",
+  "description": "Contract-driven vibe coding methodology implemented as a Claude Code and Codex skill. Generates structured specs from intent to code with multi-agent coordination.",
+  "url": "https://vibeloom.ai",
+  "operatingSystem": "Cross-platform",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <a href="/" class="nav-logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="28" height="28" rx="7" fill="url(#logo-g)"/>
+      <!-- V: two strokes meeting at bottom-center -->
+      <path d="M7 7L14 19L21 7" stroke="url(#logo-mark)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- L: vertical from V's meeting point + horizontal base -->
+      <path d="M14 19V23H21" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <defs>
+        <linearGradient id="logo-g" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#7c5cfc"/><stop offset="1" stop-color="#5cb8f6"/></linearGradient>
+        <linearGradient id="logo-mark" x1="7" y1="7" x2="21" y2="19"><stop stop-color="#fff"/><stop offset="1" stop-color="#c0c0d8"/></linearGradient>
+      </defs>
+    </svg>
+    VibeLoom
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="learn-more.html">Methodology</a>
+    <a href="#get-started" class="nav-cta">Get Started</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Works inside Claude Code &amp; Codex — zero setup
+  </div>
+
+  <h1>
+    Vibe coding that<br>
+    <span class="gradient">actually ships</span>
+  </h1>
+
+  <p class="hero-sub">
+    From a loose idea to production code via structured contracts.
+    Multi-agent ready. Bidirectionally consistent. Human-governed.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#get-started" class="btn btn-primary">
+      Get Started
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="learn-more.html" class="btn btn-secondary">
+      Learn More
+    </a>
+  </div>
+
+  <!-- Terminal mockup -->
+  <div class="hero-visual">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green"></div>
+        <div class="terminal-title">claude code — ~/my-project</div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">/vibeloom init</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✓</span> Created intent.md <span class="dim">(draft)</span></div>
+        <div class="output"><span class="info">?</span> Would you like me to interview you about your project?</div>
+        <div style="margin-top:16px"><span class="prompt">$</span> <span class="cmd">/vibeloom approve intent</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✓</span> intent.md <span class="dim">→ approved</span></div>
+        <div class="output"><span class="success">✓</span> Generating prd.md + dm.md <span class="dim">... done (draft)</span></div>
+        <div class="output"><span class="info">ℹ</span> Profile recommendation: <span class="cmd">Lite</span> <span class="dim">(8 entities, single BC)</span></div>
+        <div style="margin-top:16px"><span class="prompt">$</span> <span class="cmd">/vibeloom status</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✅</span> intent.md — approved</div>
+        <div class="output">✏️  prd.md — draft</div>
+        <div class="output">✏️  dm.md — draft</div>
+        <div class="output"><span class="dim">⏳ spec.md — not yet generated</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM ═══ -->
+<section id="problem">
+  <div class="section-inner reveal">
+    <span class="section-label">The Problem</span>
+    <h2 class="section-title">Vibe coding breaks at scale</h2>
+    <p class="section-desc">AI code generation works for prototypes. It fails when you need architectural coherence, team coordination, and long-term maintainability.</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">1.7&times;</div>
+        <div class="stat-label">More issues in<br>AI-generated PRs</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4&times;</div>
+        <div class="stat-label">Increase in<br>code duplication</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">76%</div>
+        <div class="stat-label">Larger codebases<br>vs human-written</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">89%</div>
+        <div class="stat-label">CTOs report AI<br>production incidents</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section id="features">
+  <div class="section-inner reveal">
+    <span class="section-label">The Solution</span>
+    <h2 class="section-title">Structured specs that<br>act as contracts</h2>
+    <p class="section-desc">VibeLoom generates a tiered stack of specifications. Each tier constrains the next. Upstream specs serve as evaluations for downstream work.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 4h14M3 8h10M3 12h14M3 16h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Contract Stack</h3>
+        <p>Intent &rarr; PRD &rarr; Domain Model &rarr; Architecture Spec &rarr; Code. Each tier is verified against its upstream contracts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16M2 10h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3>Domain Model Anchor</h3>
+        <p>DDD-style domain model is the semantic core. It captures user value independently of technical decisions — the most stable layer.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 6h4v4H4zM12 6h4v4h-4zM8 12h4v4H8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 10v2h2M14 10v4h-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Multi-Agent Ready</h3>
+        <p>Modules derived from bounded contexts. Each fits one context window. Interface contracts prevent incompatible APIs between parallel agents.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Specs as Evals</h3>
+        <p>Three-tier evaluation: structural checks (blocking), semantic coverage analysis (warnings), and test generation from specs (on-demand).</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.5 5.5l2.8 2.8M11.7 11.7l2.8 2.8M5.5 14.5l2.8-2.8M11.7 8.3l2.8-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Bidirectional Consistency</h3>
+        <p>Edit any spec — upstream and downstream are checked automatically. Bounded reconciliation: one up-pass, one down-pass, no infinite loops.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9h6M7 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Human Governed</h3>
+        <p>Every tier requires human approval. Agents generate, you verify. Force-approve with documented issues when pragmatism demands it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how-it-works">
+  <div class="section-inner reveal">
+    <span class="section-label">Workflow</span>
+    <h2 class="section-title">Five steps from idea to code</h2>
+    <p class="section-desc">One command guides you through the entire lifecycle. The Agent handles generation; you handle decisions.</p>
+
+    <div class="workflow-steps">
+      <div class="workflow-step">
+        <div class="step-num">1</div>
+        <h4>Describe</h4>
+        <p>Write your intent in plain language or let the Agent interview you</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">2</div>
+        <h4>Generate Specs</h4>
+        <p>PRD, stories, and domain model generated as a batch for review</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">3</div>
+        <h4>Design</h4>
+        <p>Architecture spec with modules, APIs, data model, and deployment</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">4</div>
+        <h4>Generate Code</h4>
+        <p>Implementation per module, verified against specs, with tests</p>
+      </div>
+      <div class="workflow-step">
+        <div class="step-num">5</div>
+        <h4>Evolve</h4>
+        <p>Describe changes &mdash; specs update first, then code follows</p>
+      </div>
+    </div>
+
+    <!-- Contract Stack Visual -->
+    <div class="stack-visual">
+      <span class="stack-eval-label">↑ Evals check upstream ↑</span>
+      <div class="stack-tier tier-prose">
+        <span class="tier-label">Prose</span>
+        <div class="tier-bar">intent.md</div>
+      </div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-tier tier-product">
+        <span class="tier-label">Product</span>
+        <div class="tier-bar">prd.md + usm</div>
+      </div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-tier tier-domain">
+        <span class="tier-label">Domain</span>
+        <div class="tier-bar">dm.md <span style="opacity:0.5; font-size:0.75rem">— semantic anchor</span></div>
+      </div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-tier tier-tech">
+        <span class="tier-label">Technical</span>
+        <div class="tier-bar">spec.md + module specs</div>
+      </div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-tier tier-code">
+        <span class="tier-label">Code</span>
+        <div class="tier-bar">src/ + tests/</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMMANDS ═══ -->
+<section id="commands">
+  <div class="section-inner reveal">
+    <span class="section-label">Interface</span>
+    <h2 class="section-title">One command to rule them all</h2>
+    <p class="section-desc">Type <code style="background:var(--bg-tertiary); color:var(--accent)">/vibeloom</code> with no arguments and the Agent figures out what to do based on your project state.</p>
+
+    <div class="commands-grid">
+      <div class="command-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
+      <div class="command-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
+      <div class="command-row"><code>/vibeloom generate</code> <span>Generate next artifact</span></div>
+      <div class="command-row"><code>/vibeloom approve</code> <span>Approve after review</span></div>
+      <div class="command-row"><code>/vibeloom develop</code> <span>Incremental changes</span></div>
+      <div class="command-row"><code>/vibeloom eval</code> <span>Run consistency checks</span></div>
+      <div class="command-row"><code>/vibeloom reconcile</code> <span>Fix after manual edits</span></div>
+      <div class="command-row"><code>/vibeloom status</code> <span>See project state</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section" id="get-started">
+  <h2>Start in 30 seconds</h2>
+  <p>Open Claude Code or Codex in an empty folder and type <code style="background:var(--bg-tertiary); color:var(--accent)">/vibeloom init</code></p>
+  <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
+    <a href="learn-more.html" class="btn btn-primary">
+      Read the Methodology
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" class="btn btn-secondary" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
+  <p style="margin-top:8px"><a href="learn-more.html">Methodology</a> &middot; <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></p>
+</footer>
+
+<!-- Scroll Reveal -->
+<script>
+(function() {
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>
+
+<!-- Scroll Spy — highlight active nav link -->
+<script>
+(function() {
+  var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  // Only track sections that have a matching nav link
+  var trackedIds = [];
+  navLinks.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    if (id) trackedIds.push(id);
+  });
+  var sections = [];
+  trackedIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) sections.push(el);
+  });
+
+  function updateActive() {
+    var scrollY = window.scrollY + 120;
+    var current = '';
+    sections.forEach(function(section) {
+      if (scrollY >= section.offsetTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(function(link) {
+      link.classList.remove('active');
+      if (current && link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+})();
+</script>
+</body>
+</html>

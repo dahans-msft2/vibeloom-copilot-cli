@@ -1,0 +1,141 @@
+# Interaction Contract Reference
+
+This file defines how the skill should present results.
+
+## Mandatory Output Shape
+
+Every command response uses:
+
+1. `Scope`
+2. `Decision / Findings`
+3. `Affected IDs`
+4. `Next action`
+
+Keep output terse. Prefer findings and decisions over process narration.
+
+## Adaptive Summary Rules
+
+### Workflow-facing review
+
+For:
+- `review artifact prd`
+- `review artifact usm`
+
+Lead with workflow and user-value language, but always cite the IDs:
+- `PRD-FR-*`
+- `STORY-*`
+- `AC-*`
+- implied `ENT-*` where relevant
+
+Example:
+
+```text
+Scope
+USM review for onboarding and invite workflows.
+
+Decision / Findings
+STORY-014 and STORY-017 describe the same user outcome with conflicting acceptance criteria.
+The flow implies a shared workspace concept, but the story set never names the concept consistently.
+
+Affected IDs
+STORY-014, STORY-017, AC-022, AC-026, ENT-009 (implied)
+
+Next action
+Unify the workflow language in USM, then confirm whether ENT-009 should be formalized in DM.
+```
+
+### Technical-governance review
+
+For:
+- `review artifact dm`
+- `review artifact spec`
+- `eval`
+- `reconcile`
+
+Lead with:
+- semantic ownership
+- invariants
+- module boundaries
+- interface ownership
+- stale implications
+
+Always cite:
+- `ENT-*`
+- `INV-*`
+- `MOD-*`
+- `IFACE-*`
+
+## Bugfix Responses
+
+`fix issue` starts with:
+- repro
+- expected behavior
+- violated or missing contract
+- regression impact
+
+Example:
+
+```text
+Scope
+Bugfix path for invite expiration.
+
+Decision / Findings
+The repro shows invite links expiring at 59 minutes, while the expected behavior is 2 hours.
+The likely mismatch is between IFACE-INV-002 TTL handling and INV-014.
+
+Affected IDs
+IFACE-INV-002, INV-014, STORY-031
+
+Next action
+Add regression coverage for the 2-hour TTL, then reconcile spec and code in the invite module.
+```
+
+## Error Contract
+
+When the command is invalid:
+- one line naming the invalid token or missing segment
+- one line showing the correct form
+- one line showing nearest valid alternatives when helpful
+
+Example:
+
+```text
+Invalid noun `artifacts` for verb `review`.
+Use: /vibeloom review artifact <intent|prd|usm|dm|spec|constitution>
+Closest forms: /vibeloom review artifact usm, /vibeloom review module billing
+```
+
+## Status Responses
+
+Example:
+
+```text
+Scope
+Repo status for the governed workspace.
+
+Decision / Findings
+Profile is `full`. The product stack is approved, but `spec.md` is still draft and `MOD-billing` is stale because IFACE-004 changed upstream.
+
+Affected IDs
+ART-SPEC-001, MOD-billing, IFACE-004
+
+Next action
+Review the stale billing interface slice, then run /vibeloom reconcile module billing.
+```
+
+## Help Topic Responses
+
+For `help topic ...`:
+- answer from the requested topic only
+- summarize the most actionable rules first
+- end with one or two example commands when relevant
+
+## Triage Contract
+
+Bare `$vibeloom` returns:
+- governed state
+- blockers
+- profile when known
+- next 3 valid commands
+
+Do not return the full command catalog unless the repo state is empty or broken.

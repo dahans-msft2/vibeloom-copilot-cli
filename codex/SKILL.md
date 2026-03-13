@@ -1,6 +1,6 @@
 ---
 name: vibeloom
-description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, reconcile, or evolve a governed codebase through VibeLoom's strict /vibeloom command interface and contract stack of intent -> prd -> usm -> dm -> spec.
+description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, reconcile, or evolve a governed codebase through VibeLoom's strict command interface and contract stack of intent, prd, usm, dm, and spec.
 metadata:
   short-description: Contract-driven vibe coding workflows
 ---

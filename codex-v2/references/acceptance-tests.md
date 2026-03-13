@@ -100,7 +100,22 @@ $vibeloom
 Expected:
 - return governed state
 - return blockers
+- return profile when known
 - return next 3 valid commands
+- give state-aware command suggestions instead of the full catalog
+
+### Init interview
+
+Input:
+
+```text
+/vibeloom init project build a recruiting platform
+```
+
+Expected:
+- if the seed is underspecified, ask only for missing product facts
+- do not jump straight to downstream artifacts
+- keep the next action focused on drafting `intent.md`
 
 ### Topic help
 
@@ -124,3 +139,4 @@ Any finding must name the affected IDs explicitly, even when the wording is work
 - No response elevates `AGENTS.md` or `plan.md` to canonical status.
 - No response omits `USM` or `DM` from the methodology.
 - No response implies implicit activation; the skill remains explicit-invocation only.
+- No response introduces unapproved lifecycle states, collapses the USM into the PRD for Lite, or requires an external truth-bearing state ledger.

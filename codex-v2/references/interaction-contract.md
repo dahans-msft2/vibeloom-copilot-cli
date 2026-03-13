@@ -13,6 +13,18 @@ Every command response uses:
 
 Keep output terse. Prefer findings and decisions over process narration.
 
+For `status repo`, render:
+- profile or `undecided`
+- artifact state summary
+- blockers or stale warnings
+- next 3 valid commands
+
+For `init project`, if the input is underspecified:
+- ask only for the minimum missing product facts
+- keep the interview brief and concrete
+- summarize the captured facts before drafting `intent.md`
+- use `Affected IDs` as `none yet` until the first artifact draft exists
+
 ## Adaptive Summary Rules
 
 ### Workflow-facing review
@@ -90,6 +102,24 @@ Next action
 Add regression coverage for the 2-hour TTL, then reconcile spec and code in the invite module.
 ```
 
+## Init Interview Responses
+
+Example:
+
+```text
+Scope
+Init interview for a new governed project.
+
+Decision / Findings
+The request identifies the domain but not the target users, hard constraints, or first success signal. Those details are needed to draft a stable intent artifact.
+
+Affected IDs
+none yet
+
+Next action
+Capture the product goal, primary users, hard constraints, and first success metric, then draft intent.md.
+```
+
 ## Error Contract
 
 When the command is invalid:
@@ -137,5 +167,7 @@ Bare `$vibeloom` returns:
 - blockers
 - profile when known
 - next 3 valid commands
+
+When possible, include one short reason per suggested next command.
 
 Do not return the full command catalog unless the repo state is empty or broken.

@@ -54,6 +54,16 @@ Load:
 - `references/methodology.md`
 - `references/evals-and-templates.md`
 - templates for `intent`
+- the overview sections of `../docs/vibeloom-methodology.md`
+
+If the freeform seed is missing, short, or obviously incomplete, enter a brief init interview and gather:
+- system goal
+- primary users
+- hard constraints
+- first success signal
+- whether the repo is greenfield or brownfield
+
+Draft `intent.md` first. Do not infer downstream approvals or a profile automatically.
 
 ### `import repo`
 

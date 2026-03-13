@@ -444,7 +444,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">
+  <a href="../index.html" class="nav-logo">
     <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="28" height="28" rx="7" fill="url(#lg)"/>
       <!-- V: two strokes meeting at bottom-center -->
@@ -459,10 +459,10 @@
     VibeLoom
   </a>
   <div class="nav-links">
-    <a href="index.html#features">Features</a>
-    <a href="index.html#how-it-works">How it works</a>
+    <a href="../index.html#features">Features</a>
+    <a href="../index.html#how-it-works">How it works</a>
     <a href="#" class="active">Methodology</a>
-    <a href="index.html#get-started" class="nav-cta">Get Started</a>
+    <a href="../index.html#get-started" class="nav-cta">Get Started</a>
   </div>
 </nav>
 
@@ -492,7 +492,7 @@
   <div class="doc-section" id="core-thesis">
     <span class="label">Foundation</span>
     <h2>Core Thesis</h2>
-    <p class="lead">Four principles that underpin everything VibeLoom does.</p>
+    <p class="lead">Five principles that underpin everything VibeLoom does.</p>
 
     <div class="expandable open">
       <div class="expandable-header"><span>1. Prompts are not contracts</span><span class="arrow">&#9654;</span></div>
@@ -518,24 +518,31 @@
         <p>Breaking the application into modules scoped to bounded contexts enables parallel agent work, controls context window usage, and provides clear ownership boundaries. Each module fits in one agent's context window. Interface contracts prevent incompatible APIs between agents working in parallel.</p>
       </div>
     </div>
+    <div class="expandable">
+      <div class="expandable-header"><span>5. Workflow semantics and domain semantics must stay separate</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-body">
+        <p>The User Story Map (USM) captures workflows, user value, and acceptance criteria. The Domain Model (DM) captures entities, relationships, and invariants. Both are mandatory in every profile. Merging them hides workflow mistakes inside semantic models or buries domain rules inside user stories. Keeping them separate ensures each layer can be reviewed, evaluated, and evolved independently.</p>
+      </div>
+    </div>
   </div>
 
   <!-- ═══ CONTRACT STACK ═══ -->
   <div class="doc-section" id="contract-stack">
     <span class="label">Architecture</span>
     <h2>The Contract Stack</h2>
-    <p class="lead">Six tiers from loose prose to running code. Each constrains the next. Upstream specs serve as evals for downstream work.</p>
+    <p class="lead">Seven tiers from foundational rules to running code. Each constrains the next. Upstream specs serve as evals for downstream work.</p>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Tier</th><th>Artifact</th><th>Role</th><th>ID Format</th></tr></thead>
+        <thead><tr><th>Tier</th><th>Artifact</th><th>Role</th><th>ID Prefixes</th></tr></thead>
         <tbody>
+          <tr><td><span class="tag tag-accent">Foundation</span></td><td><code>constitution.md</code></td><td>Universal rules, lifecycle states, ID grammar</td><td><code>ART-</code>, <code>EVAL-</code></td></tr>
           <tr><td><span class="tag tag-accent">Prose</span></td><td><code>intent.md</code></td><td>Loose description of what to build</td><td>—</td></tr>
-          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>PRD-001</code></td></tr>
-          <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>USM-E01-S03</code></td></tr>
-          <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>DM-BC1-E05</code></td></tr>
-          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>SPEC-API-03</code></td></tr>
-          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td>—</td></tr>
+          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>PRD-FR-</code>, <code>NFR-</code>, <code>USR-</code>, <code>GOAL-</code></td></tr>
+          <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>EPIC-</code>, <code>STORY-</code>, <code>AC-</code></td></tr>
+          <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>BC-</code>, <code>ENT-</code>, <code>INV-</code>, <code>EVT-</code></td></tr>
+          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>IFACE-</code></td></tr>
+          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td><code>TASK-</code>, <code>TEST-</code></td></tr>
         </tbody>
       </table>
     </div>
@@ -543,7 +550,7 @@
     <div class="expandable">
       <div class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
-        <p>Every item in every artifact gets a rigid, machine-parseable ID. This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>DM-BC1-E05</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
+        <p>Every item in every artifact gets a rigid, machine-parseable ID using 17 standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>IFACE-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
       </div>
     </div>
     <div class="expandable">
@@ -577,7 +584,7 @@
         <line x1="380" y1="96" x2="380" y2="114" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
         <rect x="180" y="120" width="140" height="46" rx="10" fill="#16161f" stroke="rgba(92,184,246,0.3)" stroke-width="1"/>
-        <text x="250" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#5cb8f6">prd.md + usm</text>
+        <text x="250" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#5cb8f6">prd.md + usm.md</text>
         <text x="250" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements + stories</text>
 
         <rect x="340" y="120" width="40" height="46" rx="6" fill="transparent"/>
@@ -664,9 +671,9 @@
         <div class="subtitle">Single domain, single agent</div>
         <ul>
           <li><span class="check">&#10003;</span> Up to ~15 entities, one bounded context</li>
-          <li><span class="check">&#10003;</span> USM inlined in PRD (fewer files)</li>
-          <li><span class="check">&#10003;</span> No module decomposition</li>
-          <li><span class="check">&#10003;</span> 2 approval gates</li>
+          <li><span class="check">&#10003;</span> Separate USM + DM (always mandatory)</li>
+          <li><span class="check">&#10003;</span> Shallow module decomposition</li>
+          <li><span class="check">&#10003;</span> 3 approval gates (intent, product, spec)</li>
           <li><span class="check">&#10003;</span> Best for MVPs, tools, internal apps</li>
         </ul>
       </div>
@@ -675,9 +682,9 @@
         <div class="subtitle">Multiple domains, parallel agents</div>
         <ul>
           <li><span class="check">&#10003;</span> Multiple bounded contexts</li>
-          <li><span class="check">&#10003;</span> Separate USM with full story structure</li>
-          <li><span class="check">&#10003;</span> Modules with interface contracts + DAG</li>
-          <li><span class="check">&#10003;</span> 3 approval gates</li>
+          <li><span class="check">&#10003;</span> Module specs with interface contracts + DAG</li>
+          <li><span class="check">&#10003;</span> Explicit interface ownership rules</li>
+          <li><span class="check">&#10003;</span> 3 approval gates (intent, product, spec)</li>
           <li><span class="check">&#10003;</span> Best for platforms, SaaS, team projects</li>
         </ul>
       </div>
@@ -688,10 +695,10 @@
       <div class="expandable-body">
         <p><strong>Use Full when ANY of these are true:</strong></p>
         <ul>
-          <li>The domain model has natural bounded context boundaries</li>
+          <li>More than one bounded context is clearly named</li>
+          <li>One module cannot own the full write surface without ambiguity</li>
+          <li>Interfaces between semantic areas need stable contracts</li>
           <li>Multiple agents or developers will work in parallel</li>
-          <li>The codebase will exceed ~50 files or ~10K LOC</li>
-          <li>Independent deployment of subsystems is needed</li>
         </ul>
         <p><strong>Otherwise, use Lite.</strong> You can upgrade from Lite to Full later.</p>
       </div>
@@ -716,15 +723,19 @@
     </div>
 
     <div class="expandable">
-      <div class="expandable-header"><span>Tier 1: Structural checks (6 checks, blocking)</span><span class="arrow">&#9654;</span></div>
+      <div class="expandable-header"><span>Tier 1: Structural checks (10 checks, blocking)</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
         <ol>
-          <li><strong>ID format compliance</strong> — all items use defined patterns (<code>PRD-001</code>, <code>DM-BC1-E05</code>)</li>
-          <li><strong>Cross-reference integrity</strong> — every referenced ID exists upstream</li>
-          <li><strong>Artifact completeness</strong> — required sections per template are present</li>
-          <li><strong>Module structure compliance</strong> — directories match spec.md (Full)</li>
-          <li><strong>Upstream-ref validity</strong> — frontmatter refs point to existing artifacts</li>
-          <li><strong>Frontmatter validity</strong> — required fields present with valid values</li>
+          <li><strong>Metadata completeness</strong> — required frontmatter fields present with valid values</li>
+          <li><strong>Artifact authority</strong> — canonical vs derived status correctly assigned</li>
+          <li><strong>ID grammar compliance</strong> — all items use the 17 defined prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, etc.)</li>
+          <li><strong>Reference integrity</strong> — every cross-file ID reference resolves to an existing item</li>
+          <li><strong>Lifecycle correctness</strong> — only valid lifecycle states used (draft, approved, stale, superseded)</li>
+          <li><strong>Profile correctness</strong> — lite or full only; USM and DM always mandatory</li>
+          <li><strong>Traceability completeness</strong> — intent &rarr; PRD &rarr; USM &rarr; DM &rarr; spec &rarr; test chain intact</li>
+          <li><strong>Projection budget</strong> — only 3 durable projections allowed</li>
+          <li><strong>Module and interface ownership</strong> — every module has clear ownership (Full profile)</li>
+          <li><strong>Stale edge validity</strong> — stale markers have explicit dependency-driven justification</li>
         </ol>
       </div>
     </div>
@@ -844,7 +855,7 @@
       <div class="expandable-header"><span>Reconciliation: bounded, not infinite</span><span class="arrow">&#9654;</span></div>
       <div class="expandable-body">
         <p>After manual edits: <strong>1 up-pass + 1 down-pass + 1 validation.</strong> No infinite loops.</p>
-        <p>Escape hatch: <code>approved-with-known-issues</code> — force-approve with documented inconsistencies, tracked in every subsequent eval.</p>
+        <p>Reconciliation is asymmetric: approved upstream contracts define intended semantics. Downstream drift produces proposals, not silent rewrites. The agent proposes a direction (amend upstream or fix downstream), and humans choose.</p>
       </div>
     </div>
   </div>
@@ -883,7 +894,7 @@
 
 <footer>
   <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
-  <p style="margin-top:8px"><a href="index.html">Home</a> &middot; <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></p>
+  <p style="margin-top:8px"><a href="../index.html">Home</a> &middot; <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></p>
 </footer>
 
 <script>

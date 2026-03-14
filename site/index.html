@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="From intent to production code via structured contracts. A methodology that makes vibe coding work at scale.">
 
 <!-- Favicon placeholder -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='7' fill='%237c5cfc'/%3E%3Cpath d='M7 7L14 19L21 7' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M14 19V23H21' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 20' fill='none'%3E%3Cg stroke-width='3' stroke-linecap='round' fill='none'%3E%3Cpath d='M16 10 C16 4,22 2,27 5 C32 8,32 12,27 15 C22 18,16 16,16 10Z' stroke='%23c43a50'/%3E%3Cpath d='M16 10 C16 16,10 18,5 15 C0 12,0 8,5 5 C10 2,16 4,16 10Z' stroke='%23e84057'/%3E%3Cpath d='M13.5 6.5 C14.5 8,15.5 9,16 10' stroke='%230e0f11' stroke-width='5.5'/%3E%3Cpath d='M13.5 6.5 C14.5 8,15.5 9,16 10' stroke='%23e84057'/%3E%3Cpath d='M18.5 6.5 C17.5 8,16.5 9,16 10' stroke='%230e0f11' stroke-width='5.5'/%3E%3Cpath d='M18.5 6.5 C17.5 8,16.5 9,16 10' stroke='%23c43a50'/%3E%3C/g%3E%3C/svg%3E">
 
 <style>
   :root {
@@ -36,14 +36,14 @@
     --text-primary: #f0f0f5;
     --text-secondary: #8a8a9a;
     --text-tertiary: #5a5a6a;
-    --accent: #7c5cfc;
-    --accent-hover: #9b7fff;
-    --accent-glow: rgba(124, 92, 252, 0.15);
-    --accent-2: #5cf6c8;
-    --accent-3: #5cb8f6;
+    --accent: #e84057;
+    --accent-hover: #f25a6e;
+    --accent-glow: rgba(232, 64, 87, 0.15);
+    --accent-2: #7aabcc;
+    --accent-3: #e84057;
     --gradient-text: linear-gradient(135deg, #f0f0f5 0%, #a0a0b8 100%);
-    --gradient-accent: linear-gradient(135deg, #7c5cfc 0%, #5cb8f6 50%, #5cf6c8 100%);
-    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 92, 252, 0.15), transparent);
+    --gradient-accent: linear-gradient(135deg, #e84057 0%, #c43a50 100%);
+    --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(232, 64, 87, 0.12), transparent);
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
     --max-width: 1200px;
@@ -67,7 +67,7 @@
   }
 
   ::selection {
-    background: rgba(124, 92, 252, 0.3);
+    background: rgba(232, 64, 87, 0.3);
     color: #fff;
   }
 
@@ -406,9 +406,9 @@
     margin-bottom: 20px;
     font-size: 1.2rem;
   }
-  .feature-icon.purple { background: rgba(124, 92, 252, 0.15); color: var(--accent); }
-  .feature-icon.green { background: rgba(92, 246, 200, 0.1); color: var(--accent-2); }
-  .feature-icon.blue { background: rgba(92, 184, 246, 0.1); color: var(--accent-3); }
+  .feature-icon.purple { background: rgba(232, 64, 87, 0.15); color: var(--accent); }
+  .feature-icon.green { background: rgba(232, 64, 87, 0.10); color: var(--accent); }
+  .feature-icon.blue { background: rgba(232, 64, 87, 0.08); color: var(--accent); }
   .feature-card h3 {
     font-size: 1.05rem;
     font-weight: 700;
@@ -461,11 +461,11 @@
     border: 1px solid var(--border-hover);
     background: var(--bg-tertiary);
   }
-  .workflow-step:nth-child(1) .step-num { color: var(--accent); border-color: rgba(124,92,252,0.3); }
-  .workflow-step:nth-child(2) .step-num { color: var(--accent-3); border-color: rgba(92,184,246,0.3); }
-  .workflow-step:nth-child(3) .step-num { color: var(--accent-3); border-color: rgba(92,184,246,0.3); }
-  .workflow-step:nth-child(4) .step-num { color: var(--accent-2); border-color: rgba(92,246,200,0.3); }
-  .workflow-step:nth-child(5) .step-num { color: var(--accent-2); border-color: rgba(92,246,200,0.3); }
+  .workflow-step:nth-child(1) .step-num { color: var(--accent); border-color: rgba(232,64,87,0.4); }
+  .workflow-step:nth-child(2) .step-num { color: var(--accent); border-color: rgba(232,64,87,0.3); }
+  .workflow-step:nth-child(3) .step-num { color: var(--accent); border-color: rgba(232,64,87,0.25); }
+  .workflow-step:nth-child(4) .step-num { color: var(--accent); border-color: rgba(232,64,87,0.2); }
+  .workflow-step:nth-child(5) .step-num { color: var(--accent); border-color: rgba(232,64,87,0.15); }
   .workflow-step h4 {
     font-size: 0.9rem;
     font-weight: 600;
@@ -494,7 +494,7 @@
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse at center, rgba(124,92,252,0.05), transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(232,64,87,0.05), transparent 70%);
     pointer-events: none;
   }
   .stack-tier {
@@ -526,10 +526,10 @@
     border: 1px solid;
   }
   .tier-prose .tier-bar { background: rgba(255,255,255,0.03); border-color: var(--border-hover); color: var(--text-secondary); }
-  .tier-product .tier-bar { background: rgba(92,184,246,0.06); border-color: rgba(92,184,246,0.2); color: var(--accent-3); }
-  .tier-domain .tier-bar { background: rgba(92,184,246,0.08); border-color: rgba(92,184,246,0.3); color: var(--accent-3); }
-  .tier-tech .tier-bar { background: rgba(92,246,200,0.06); border-color: rgba(92,246,200,0.2); color: var(--accent-2); }
-  .tier-code .tier-bar { background: rgba(124,92,252,0.08); border-color: rgba(124,92,252,0.3); color: var(--accent); }
+  .tier-product .tier-bar { background: rgba(232,64,87,0.04); border-color: rgba(232,64,87,0.15); color: var(--accent); }
+  .tier-domain .tier-bar { background: rgba(232,64,87,0.06); border-color: rgba(232,64,87,0.25); color: var(--accent); }
+  .tier-tech .tier-bar { background: rgba(232,64,87,0.08); border-color: rgba(232,64,87,0.35); color: var(--accent); }
+  .tier-code .tier-bar { background: rgba(232,64,87,0.10); border-color: rgba(232,64,87,0.45); color: var(--accent); }
 
   .stack-arrow {
     color: var(--text-tertiary);
@@ -593,7 +593,7 @@
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse 50% 80% at 50% 100%, rgba(124,92,252,0.1), transparent);
+    background: radial-gradient(ellipse 50% 80% at 50% 100%, rgba(232,64,87,0.1), transparent);
     pointer-events: none;
   }
   .cta-section h2 {
@@ -684,16 +684,25 @@
 <!-- ═══ NAV ═══ -->
 <nav>
   <a href="/" class="nav-logo">
-    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="28" height="28" rx="7" fill="url(#logo-g)"/>
-      <!-- V: two strokes meeting at bottom-center -->
-      <path d="M7 7L14 19L21 7" stroke="url(#logo-mark)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <!-- L: vertical from V's meeting point + horizontal base -->
-      <path d="M14 19V23H21" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <defs>
-        <linearGradient id="logo-g" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#7c5cfc"/><stop offset="1" stop-color="#5cb8f6"/></linearGradient>
-        <linearGradient id="logo-mark" x1="7" y1="7" x2="21" y2="19"><stop stop-color="#fff"/><stop offset="1" stop-color="#c0c0d8"/></linearGradient>
-      </defs>
+    <svg viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:auto;height:22px">
+      <!-- Reef-knot / infinity logo — two interlocking loops with over-under crossings -->
+      <!-- Strand A (lighter red): left loop, goes OVER at left crossing, UNDER at right -->
+      <!-- Strand B (darker red): right loop, goes OVER at right crossing, UNDER at left -->
+      <!-- Background knock-outs create the over-under illusion -->
+      <g stroke-width="3" stroke-linecap="round" fill="none">
+        <!-- Strand B bottom layer: full right loop -->
+        <path d="M16 10 C16 4, 22 2, 27 5 C32 8, 32 12, 27 15 C22 18, 16 16, 16 10Z" stroke="#c43a50"/>
+        <!-- Strand A bottom layer: full left loop -->
+        <path d="M16 10 C16 16, 10 18, 5 15 C0 12, 0 8, 5 5 C10 2, 16 4, 16 10Z" stroke="#e84057"/>
+        <!-- Knock-out for left crossing: A goes over B -->
+        <path d="M13.5 6.5 C14.5 8, 15.5 9, 16 10" stroke="#0e0f11" stroke-width="5.5"/>
+        <!-- Strand A over at left crossing -->
+        <path d="M13.5 6.5 C14.5 8, 15.5 9, 16 10" stroke="#e84057"/>
+        <!-- Knock-out for right crossing: B goes over A -->
+        <path d="M18.5 6.5 C17.5 8, 16.5 9, 16 10" stroke="#0e0f11" stroke-width="5.5"/>
+        <!-- Strand B over at right crossing -->
+        <path d="M18.5 6.5 C17.5 8, 16.5 9, 16 10" stroke="#c43a50"/>
+      </g>
     </svg>
     VibeLoom
   </a>
@@ -801,7 +810,7 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 4h14M3 8h10M3 12h14M3 16h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <h3>Contract Stack</h3>
-        <p>Constitution &rarr; Intent &rarr; PRD + USM &rarr; Domain Model &rarr; Spec &rarr; Code. Each tier is verified against its upstream contracts.</p>
+        <p>Constitution &rarr; Intent &rarr; PRD &rarr; USM &rarr; Domain Model &rarr; Spec &rarr; Code. Each tier is verified against its upstream contracts.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon green">
@@ -892,12 +901,7 @@
       <div class="stack-arrow">↓</div>
       <div class="stack-tier tier-product">
         <span class="tier-label">Product</span>
-        <div class="tier-bar">prd.md + usm.md</div>
-      </div>
-      <div class="stack-arrow">↓</div>
-      <div class="stack-tier tier-domain">
-        <span class="tier-label">Domain</span>
-        <div class="tier-bar">dm.md <span style="opacity:0.5; font-size:0.75rem">— semantic anchor</span></div>
+        <div class="tier-bar">prd.md → usm.md → dm.md <span style="opacity:0.5; font-size:0.75rem">— sequential, batch-approved</span></div>
       </div>
       <div class="stack-arrow">↓</div>
       <div class="stack-tier tier-tech">

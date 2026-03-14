@@ -19,7 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="VibeLoom Methodology">
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='7' fill='%237c5cfc'/%3E%3Cpath d='M7 7L14 19L21 7' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M14 19V23H21' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 20' fill='none'%3E%3Cg stroke-width='3' stroke-linecap='round' fill='none'%3E%3Cpath d='M16 10 C16 4,22 2,27 5 C32 8,32 12,27 15 C22 18,16 16,16 10Z' stroke='%23c43a50'/%3E%3Cpath d='M16 10 C16 16,10 18,5 15 C0 12,0 8,5 5 C10 2,16 4,16 10Z' stroke='%23e84057'/%3E%3Cpath d='M13.5 6.5 C14.5 8,15.5 9,16 10' stroke='%230e0f11' stroke-width='5.5'/%3E%3Cpath d='M13.5 6.5 C14.5 8,15.5 9,16 10' stroke='%23e84057'/%3E%3Cpath d='M18.5 6.5 C17.5 8,16.5 9,16 10' stroke='%230e0f11' stroke-width='5.5'/%3E%3Cpath d='M18.5 6.5 C17.5 8,16.5 9,16 10' stroke='%23c43a50'/%3E%3C/g%3E%3C/svg%3E">
 
 <style>
   :root {
@@ -33,14 +33,14 @@
     --text-primary: #f0f0f5;
     --text-secondary: #8a8a9a;
     --text-tertiary: #5a5a6a;
-    --accent: #7c5cfc;
-    --accent-hover: #9b7fff;
-    --accent-glow: rgba(124, 92, 252, 0.15);
-    --accent-2: #5cf6c8;
-    --accent-3: #5cb8f6;
-    --warn: #f6c35c;
-    --error: #f65c5c;
-    --gradient-accent: linear-gradient(135deg, #7c5cfc 0%, #5cb8f6 50%, #5cf6c8 100%);
+    --accent: #e84057;
+    --accent-hover: #f25a6e;
+    --accent-glow: rgba(232, 64, 87, 0.15);
+    --accent-2: #7aabcc;
+    --accent-3: #e84057;
+    --warn: #d4a054;
+    --error: #e84057;
+    --gradient-accent: linear-gradient(135deg, #e84057 0%, #c43a50 100%);
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
     --max-width: 860px;
@@ -61,7 +61,7 @@
   }
 
   ::selection {
-    background: rgba(124, 92, 252, 0.3);
+    background: rgba(232, 64, 87, 0.3);
     color: #fff;
   }
 
@@ -120,7 +120,7 @@
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(124,92,252,0.1), transparent);
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,64,87,0.1), transparent);
     pointer-events: none;
   }
   .page-header h1 {
@@ -284,8 +284,8 @@
   }
   pre .comment { color: var(--text-tertiary); }
   pre .keyword { color: var(--accent); }
-  pre .string { color: var(--accent-2); }
-  pre .type { color: var(--accent-3); }
+  pre .string { color: #d4a054; }
+  pre .type { color: var(--text-secondary); }
 
   /* ═══ DIAGRAM ═══ */
   .diagram-wrap {
@@ -308,10 +308,10 @@
     font-weight: 600;
     font-family: var(--font-mono);
   }
-  .tag-block { background: rgba(246, 92, 92, 0.1); color: var(--error); }
-  .tag-warn { background: rgba(246, 195, 92, 0.1); color: var(--warn); }
-  .tag-ok { background: rgba(92, 246, 200, 0.1); color: var(--accent-2); }
-  .tag-accent { background: rgba(124, 92, 252, 0.1); color: var(--accent); }
+  .tag-block { background: rgba(232, 64, 87, 0.1); color: var(--error); }
+  .tag-warn { background: rgba(212, 160, 84, 0.1); color: var(--warn); }
+  .tag-ok { background: rgba(122, 171, 204, 0.1); color: var(--accent-2); }
+  .tag-accent { background: rgba(232, 64, 87, 0.1); color: var(--accent); }
 
   /* ═══ PROFILE CARDS ═══ */
   .profile-grid {
@@ -445,16 +445,16 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="28" height="28" rx="7" fill="url(#lg)"/>
-      <!-- V: two strokes meeting at bottom-center -->
-      <path d="M7 7L14 19L21 7" stroke="url(#logo-mark)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <!-- L: vertical from V's meeting point + horizontal base -->
-      <path d="M14 19V23H21" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#7c5cfc"/><stop offset="1" stop-color="#5cb8f6"/></linearGradient>
-        <linearGradient id="logo-mark" x1="7" y1="7" x2="21" y2="19"><stop stop-color="#fff"/><stop offset="1" stop-color="#c0c0d8"/></linearGradient>
-      </defs>
+    <svg viewBox="0 0 32 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:auto;height:22px">
+      <!-- Reef-knot / infinity logo — two interlocking loops with over-under crossings -->
+      <g stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M16 10 C16 4, 22 2, 27 5 C32 8, 32 12, 27 15 C22 18, 16 16, 16 10Z" stroke="#c43a50"/>
+        <path d="M16 10 C16 16, 10 18, 5 15 C0 12, 0 8, 5 5 C10 2, 16 4, 16 10Z" stroke="#e84057"/>
+        <path d="M13.5 6.5 C14.5 8, 15.5 9, 16 10" stroke="#0e0f11" stroke-width="5.5"/>
+        <path d="M13.5 6.5 C14.5 8, 15.5 9, 16 10" stroke="#e84057"/>
+        <path d="M18.5 6.5 C17.5 8, 16.5 9, 16 10" stroke="#0e0f11" stroke-width="5.5"/>
+        <path d="M18.5 6.5 C17.5 8, 16.5 9, 16 10" stroke="#c43a50"/>
+      </g>
     </svg>
     VibeLoom
   </a>
@@ -568,93 +568,124 @@
     <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates at each tier.</p>
 
     <div class="diagram-wrap">
-      <svg viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg" style="max-width:760px">
+      <svg viewBox="0 0 720 660" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
         <defs>
           <marker id="ad" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
             <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
           </marker>
         </defs>
 
-        <rect x="280" y="20" width="200" height="46" rx="10" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <text x="380" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="#8a8a9a">intent.md</text>
+        <!-- ═══ CANONICAL CONTRACTS tier group ═══ -->
+        <rect x="30" y="10" width="620" height="400" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="30" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CANONICAL CONTRACTS</text>
 
-        <rect x="348" y="78" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
-        <text x="380" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
-        <line x1="380" y1="66" x2="380" y2="78" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="380" y1="96" x2="380" y2="114" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <!-- Constitution -->
+        <rect x="240" y="46" width="200" height="38" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <text x="340" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#8a8a9a">constitution</text>
 
-        <rect x="180" y="120" width="140" height="46" rx="10" fill="#16161f" stroke="rgba(92,184,246,0.3)" stroke-width="1"/>
-        <text x="250" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#5cb8f6">prd.md + usm.md</text>
-        <text x="250" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements + stories</text>
+        <!-- dotted arrow: constitution → intent -->
+        <line x1="340" y1="84" x2="340" y2="102" stroke="#5a5a6a" stroke-width="1" stroke-dasharray="4,3"/>
 
-        <rect x="340" y="120" width="40" height="46" rx="6" fill="transparent"/>
-        <text x="360" y="148" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" fill="#5a5a6a">+</text>
+        <!-- Intent -->
+        <rect x="240" y="102" width="200" height="38" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <text x="340" y="126" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#8a8a9a">intent.md</text>
 
-        <rect x="400" y="120" width="160" height="46" rx="10" fill="#16161f" stroke="rgba(92,184,246,0.4)" stroke-width="1.5"/>
-        <text x="480" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#5cb8f6">dm.md</text>
-        <text x="480" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
+        <!-- arrow + APPROVE gate -->
+        <line x1="340" y1="140" x2="340" y2="152" stroke="#5a5a6a" stroke-width="1"/>
+        <rect x="308" y="152" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="165" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
+        <line x1="340" y1="170" x2="340" y2="184" stroke="#5a5a6a" stroke-width="1"/>
 
-        <rect x="348" y="182" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
-        <text x="380" y="195" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
-        <line x1="380" y1="166" x2="380" y2="182" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="380" y1="200" x2="380" y2="220" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <!-- ─── Product Specs sub-group ─── -->
+        <rect x="60" y="184" width="560" height="80" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="80" y="200" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Product Specs — sequential, batch-approved</text>
 
-        <rect x="310" y="210" width="140" height="24" rx="6" fill="rgba(92,246,200,0.06)" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
-        <text x="380" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5cf6c8">Profile: Lite or Full</text>
-        <line x1="380" y1="234" x2="380" y2="254" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <!-- PRD -->
+        <rect x="80" y="210" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="155" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">prd.md</text>
+        <text x="155" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements</text>
 
-        <rect x="260" y="258" width="240" height="46" rx="10" fill="#16161f" stroke="rgba(92,246,200,0.3)" stroke-width="1"/>
-        <text x="380" y="278" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#5cf6c8">spec.md</text>
-        <text x="380" y="293" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">architecture + modules + interfaces</text>
+        <!-- PRD → USM arrow -->
+        <line x1="230" y1="230" x2="260" y2="230" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <rect x="348" y="318" width="64" height="18" rx="9" fill="rgba(124,92,252,0.15)"/>
-        <text x="380" y="331" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#7c5cfc">APPROVE</text>
-        <line x1="380" y1="304" x2="380" y2="318" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- USM -->
+        <rect x="260" y="210" width="160" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="340" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">usm.md</text>
+        <text x="340" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">stories + acceptance</text>
 
-        <line x1="380" y1="336" x2="380" y2="356" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="380" y1="356" x2="180" y2="376" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="380" y1="356" x2="380" y2="376" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="380" y1="356" x2="580" y2="376" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- USM → DM arrow -->
+        <line x1="420" y1="230" x2="450" y2="230" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <rect x="110" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
-        <text x="180" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-orders</text>
+        <!-- DM (semantic anchor — emphasized) -->
+        <rect x="450" y="210" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
+        <text x="525" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">dm.md</text>
+        <text x="525" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
 
-        <rect x="310" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
-        <text x="380" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-inventory</text>
+        <!-- bracket from all three down to APPROVE -->
+        <line x1="155" y1="250" x2="155" y2="276" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="250" x2="340" y2="276" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="525" y1="250" x2="525" y2="276" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="155" y1="276" x2="525" y2="276" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="276" x2="340" y2="286" stroke="#5a5a6a" stroke-width="1"/>
 
-        <rect x="510" y="380" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(92,246,200,0.2)" stroke-width="1"/>
-        <text x="580" y="404" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#5cf6c8">mod-payments</text>
+        <!-- APPROVE gate (product) -->
+        <rect x="308" y="286" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="299" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
+        <line x1="340" y1="304" x2="340" y2="318" stroke="#5a5a6a" stroke-width="1"/>
 
-        <line x1="250" y1="400" x2="310" y2="400" stroke="rgba(92,246,200,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-        <line x1="450" y1="400" x2="510" y2="400" stroke="rgba(92,246,200,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-        <text x="380" y="438" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">interface contracts</text>
+        <!-- Technical Spec -->
+        <rect x="220" y="318" width="240" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1"/>
+        <text x="340" y="337" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#e84057">spec.md</text>
+        <text x="340" y="352" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">architecture + modules + interfaces</text>
 
-        <line x1="180" y1="420" x2="180" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-        <line x1="380" y1="420" x2="380" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-        <line x1="580" y1="420" x2="580" y2="458" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <!-- arrow down from spec + APPROVE gate -->
+        <line x1="340" y1="362" x2="340" y2="374" stroke="#5a5a6a" stroke-width="1"/>
+        <rect x="308" y="374" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="387" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
 
-        <rect x="120" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
-        <text x="180" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
+        <!-- ═══ DERIVED ARTIFACTS tier group ═══ -->
+        <rect x="30" y="424" width="620" height="80" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="444" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">DERIVED ARTIFACTS</text>
 
-        <rect x="320" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
-        <text x="380" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
+        <!-- arrow from APPROVE to derived tier -->
+        <line x1="340" y1="392" x2="340" y2="412" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- fan out to AGENTS and plan -->
+        <line x1="340" y1="412" x2="240" y2="456" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="412" x2="440" y2="456" stroke="#5a5a6a" stroke-width="1"/>
 
-        <rect x="520" y="462" width="120" height="36" rx="8" fill="#16161f" stroke="rgba(124,92,252,0.3)" stroke-width="1"/>
-        <text x="580" y="484" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#7c5cfc">src/ + tests/</text>
+        <!-- AGENTS.md -->
+        <rect x="150" y="456" width="180" height="36" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="240" y="479" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">AGENTS.md</text>
 
-        <path d="M700,480 L700,40 L480,40" fill="none" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
-        <text x="714" y="270" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#7c5cfc" opacity="0.5" transform="rotate(-90,714,270)">EVALS: verify against upstream</text>
+        <!-- plan.md -->
+        <rect x="350" y="456" width="180" height="36" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="440" y="479" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">plan.md</text>
 
-        <rect x="20" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(92,184,246,0.4)"/>
-        <text x="36" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Product specs</text>
-        <rect x="130" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(92,246,200,0.3)"/>
-        <text x="146" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Technical specs</text>
-        <rect x="250" y="516" width="10" height="10" rx="2" fill="transparent" stroke="rgba(124,92,252,0.3)"/>
-        <text x="266" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Generated code</text>
-        <rect x="370" y="516" width="10" height="10" rx="2" fill="rgba(124,92,252,0.15)"/>
-        <text x="386" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
-        <line x1="470" y1="521" x2="500" y2="521" stroke="#7c5cfc" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>
-        <text x="506" y="526" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
+        <!-- ═══ IMPLEMENTATION tier group ═══ -->
+        <rect x="30" y="520" width="620" height="72" rx="12" fill="rgba(232,64,87,0.03)" stroke="rgba(232,64,87,0.12)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="540" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">IMPLEMENTATION</text>
+
+        <!-- arrows from derived to code -->
+        <line x1="240" y1="492" x2="340" y2="550" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="440" y1="492" x2="340" y2="550" stroke="#5a5a6a" stroke-width="1"/>
+
+        <!-- Code + Tests -->
+        <rect x="200" y="550" width="280" height="30" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.40)" stroke-width="1.5"/>
+        <text x="340" y="570" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="600" fill="#e84057">Code + Tests</text>
+
+        <!-- ═══ EVAL arrow (right side, bottom-up) ═══ -->
+        <path d="M670,570 L670,46 L440,46" fill="none" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+        <text x="684" y="320" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#e84057" opacity="0.4" transform="rotate(-90,684,320)">EVALS: verify against upstream</text>
+
+        <!-- ═══ LEGEND ═══ -->
+        <rect x="20" y="616" width="10" height="10" rx="2" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)"/>
+        <text x="36" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Tier group</text>
+        <rect x="120" y="616" width="10" height="10" rx="2" fill="#16161f" stroke="rgba(232,64,87,0.20)"/>
+        <text x="136" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Contract</text>
+        <rect x="210" y="616" width="10" height="10" rx="2" fill="rgba(232,64,87,0.15)"/>
+        <text x="226" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
+        <line x1="330" y1="621" x2="360" y2="621" stroke="#e84057" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="366" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
       </svg>
     </div>
   </div>

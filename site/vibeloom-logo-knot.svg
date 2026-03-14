@@ -1,0 +1,72 @@
+<svg viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">VibeLoom knot logo</title>
+  <desc id="desc">A reef-knot style mark drawn with two woven strands in VibeLoom red and pink.</desc>
+  <defs>
+    <clipPath id="cross-top-left">
+      <circle cx="95" cy="30" r="14"/>
+    </clipPath>
+    <clipPath id="cross-top-right">
+      <circle cx="145" cy="30" r="14"/>
+    </clipPath>
+    <clipPath id="cross-bottom-left">
+      <circle cx="95" cy="90" r="14"/>
+    </clipPath>
+    <clipPath id="cross-bottom-right">
+      <circle cx="145" cy="90" r="14"/>
+    </clipPath>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      id="strand-left"
+      d="M4 32
+         H64
+         C76 32 87 24 96 18
+         C110 9 126 10 139 18
+         C160 31 176 50 180 73
+         C183 90 174 104 159 104
+         H136
+         C122 104 109 98 98 90
+         C86 81 73 74 60 74
+         H4"
+      stroke="#c43a50"
+      stroke-width="18"
+    />
+
+    <path
+      id="strand-right"
+      d="M236 88
+         H176
+         C164 88 153 96 144 102
+         C130 111 114 110 101 102
+         C80 89 64 70 60 47
+         C57 30 66 16 81 16
+         H104
+         C118 16 131 22 142 30
+         C154 39 167 46 180 46
+         H236"
+      stroke="#e84057"
+      stroke-width="18"
+    />
+
+    <g clip-path="url(#cross-top-left)">
+      <use href="#strand-left" stroke="white" stroke-width="32"/>
+      <use href="#strand-left"/>
+    </g>
+
+    <g clip-path="url(#cross-top-right)">
+      <use href="#strand-right" stroke="white" stroke-width="32"/>
+      <use href="#strand-right"/>
+    </g>
+
+    <g clip-path="url(#cross-bottom-left)">
+      <use href="#strand-right" stroke="white" stroke-width="32"/>
+      <use href="#strand-right"/>
+    </g>
+
+    <g clip-path="url(#cross-bottom-right)">
+      <use href="#strand-left" stroke="white" stroke-width="32"/>
+      <use href="#strand-left"/>
+    </g>
+  </g>
+</svg>

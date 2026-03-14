@@ -33,6 +33,16 @@ The governed stack is:
 
 The stack is intent-first and mandatory. `USM` and `DM` are always present.
 
+## Generation And Approval Gates
+
+Generation is sequential and top-down. Approval gates bracket logical groups:
+
+- `approve scope intent` — approves intent, then triggers sequential generation of `prd` → `usm` → `dm` (each using the previous as input, all created as `draft`)
+- `approve scope product` — approves the `prd + usm + dm` batch together
+- `approve scope spec` — approves root spec + module specs
+
+No intermediate approval gates exist within the product generation sequence.
+
 ## Profiles
 
 | Profile | Meaning |

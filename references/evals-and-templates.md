@@ -36,6 +36,16 @@ Derived templates:
 - Preserve IDs when regenerating an existing governed artifact unless a human-approved semantic change requires a new item.
 - Do not present `AGENTS` or `plan` as canonical.
 
+### Generation Cascade After Approval
+
+When `approve scope intent` succeeds, the agent generates the product spec batch sequentially:
+
+1. `prd.md` — from approved intent
+2. `usm.md` — from approved intent + generated PRD
+3. `dm.md` — from approved intent + generated PRD + generated USM
+
+Each artifact feeds the next. All three are created as `draft`. No intermediate approval gates exist between them. The batch is approved together via `approve scope product`.
+
 ## Approval Rules
 
 Allowed approval scopes:

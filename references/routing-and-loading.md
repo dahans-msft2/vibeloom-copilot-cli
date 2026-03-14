@@ -28,11 +28,23 @@ Recommended next commands by state:
 | State | Next commands |
 | --- | --- |
 | No governed project | `init project`, `import repo`, `help command init` |
-| Intent draft | `review artifact intent`, `eval scope artifact intent`, `approve scope intent` |
+| Intent draft | `review artifact intent`, `eval scope intent`, `approve scope intent` → triggers sequential product generation |
 | Product drafts | `review artifact prd`, `review artifact usm`, `approve scope product` |
 | Spec draft | `review artifact spec`, `eval scope spec`, `approve scope spec` |
 | Governed active repo | `status repo`, `develop change ...`, `fix issue ...` |
 | Drift detected | `reconcile repo`, `reconcile artifact <name>`, `eval scope repo` |
+
+### Post-Intent Approval: Sequential Product Generation
+
+When `approve scope intent` succeeds:
+
+1. Generate `prd.md` from the approved intent
+2. Generate `usm.md` from the approved intent + generated PRD
+3. Generate `dm.md` from the approved intent + generated PRD + generated USM
+
+Each artifact is generated sequentially — the next uses the previous as input. All three are created in `draft` status. The agent does not pause for intermediate approvals between them.
+
+The next valid command after generation completes is `approve scope product`, which evaluates and approves all three as a batch (`prd + usm + dm`).
 
 When the state is incomplete or ambiguous:
 - prefer the narrowest next command that resolves the ambiguity

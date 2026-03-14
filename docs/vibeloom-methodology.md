@@ -50,9 +50,10 @@ flowchart TD
     subgraph "Canonical Contracts"
         CONST["Constitution"]
         INT["Intent"]
-        PRD["PRD"]
-        USM["USM"]
-        DM["Domain Model"]
+        subgraph product ["Product Specs — sequential, batch-approved"]
+            direction LR
+            PRD["PRD"] --> USM["USM"] --> DM["Domain Model"]
+        end
         SPEC["Technical Spec"]
     end
 
@@ -67,8 +68,6 @@ flowchart TD
 
     CONST -.-> INT
     INT --> PRD
-    PRD --> USM
-    USM --> DM
     DM --> SPEC
     SPEC --> AGENTS
     SPEC --> PLAN
@@ -142,6 +141,16 @@ The stack is not a one-way waterfall.
 Each tier generates the next tier down:
 
 `intent -> prd -> usm -> dm -> spec -> code`
+
+Generation is sequential — each artifact uses all previously generated artifacts as input. Approval gates bracket logical groups rather than individual artifacts:
+
+| Gate | Trigger | What it covers |
+| --- | --- | --- |
+| Intent approval | `approve scope intent` | `intent.md` alone |
+| Product approval | `approve scope product` | `prd.md` + `usm.md` + `dm.md` as a batch |
+| Spec approval | `approve scope spec` | root `spec.md` + module specs |
+
+After intent approval, the agent generates `prd`, then `usm`, then `dm` sequentially without intermediate human approval. The full product batch is reviewed and approved together.
 
 ### Bottom-up evaluation
 

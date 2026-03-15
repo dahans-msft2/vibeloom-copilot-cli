@@ -168,6 +168,7 @@ MOD-[MODULE] -> MOD-[OTHER]
 - `constitution.md`
 - this `spec.md`
 - the active module spec when a module boundary is touched
+- the derived `AGENTS.md` for the task scope
 - the trace slice for touched IDs
 
 ### Load Conditionally

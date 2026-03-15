@@ -15,10 +15,11 @@ Canonical commands start with:
 
 Rules:
 - `<verb>` is required
-- `<noun>` is required unless the user invoked bare `$vibeloom`
+- canonical `<noun>` is required unless the user invoked bare `$vibeloom`
 - `[tail]` is freeform
-- if `<noun>` is missing, return the valid grammar for that verb instead of guessing
 - normalize official aliases before routing
+- alias normalization runs before noun enforcement, including documented noun-omission shorthands
+- if no alias matches and `<noun>` is missing, return the valid grammar for that verb instead of guessing
 - use canonical forms in responses after normalization
 
 ## Core Commands
@@ -87,6 +88,9 @@ Official command aliases:
 - `/vibeloom reconcile` -> `/vibeloom reconcile repo`
 - `/vibeloom approve <selector>` -> `/vibeloom approve scope <selector>`
 - `/vibeloom eval <selector>` -> `/vibeloom eval scope <selector>`
+- `/vibeloom generate <artifact-selector>` -> `/vibeloom generate artifact <artifact-selector>`
+- `/vibeloom review <artifact-selector>` -> `/vibeloom review artifact <artifact-selector>`
+- `/vibeloom help <topic>` -> `/vibeloom help topic <topic>`
 
 This alias set is closed. Do not introduce additional shorthands.
 
@@ -95,7 +99,11 @@ Selector and scope aliases:
 - `tech` -> `spec`
 - `module-spec` -> module-scoped spec generation
 
-No shorthand aliases exist for `review`, `help`, `fix`, or `generate`.
+Constraints:
+- `generate` shorthand applies only to artifact selectors
+- `review` shorthand applies only to artifact selectors; module review still requires `review module <module-name>`
+- `help` shorthand applies only to documented help topics
+- no shorthand alias exists for `fix`
 
 ## Bare Invocation
 
@@ -133,4 +141,7 @@ Documented aliases:
 /vibeloom status
 /vibeloom develop add workspace sharing with invite approval
 /vibeloom eval module billing
+/vibeloom generate dm
+/vibeloom review usm
+/vibeloom help evals
 ```

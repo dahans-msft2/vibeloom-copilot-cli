@@ -1432,8 +1432,9 @@ section + section::before {
 }
 
 .cmd-row {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 14px;
   padding: 14px 18px;
   background: var(--bg-secondary);
@@ -1447,13 +1448,15 @@ section + section::before {
 }
 
 .cmd-row code {
-  min-width: 170px;
+  display: block;
+  min-width: 0;
   font-size: 0.82rem;
   background: transparent;
   padding: 0;
 }
 
 .cmd-row span {
+  min-width: 0;
   font-size: 0.82rem;
   color: var(--text-tertiary);
 }
@@ -1579,6 +1582,12 @@ section + section::before {
   .profile-grid,
   .cmd-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cmd-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 6px;
   }
 
   .stat-number {

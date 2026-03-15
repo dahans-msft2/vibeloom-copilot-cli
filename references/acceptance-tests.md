@@ -28,6 +28,9 @@ Expected:
 /vibeloom reconcile
 /vibeloom approve product
 /vibeloom eval module billing
+/vibeloom generate dm
+/vibeloom review usm
+/vibeloom help surfaces
 ```
 
 Expected:
@@ -52,19 +55,21 @@ Expected:
 
 Expected:
 - return the valid grammar for `review`
-- do not assume `artifact`
+- do not assume `artifact` or `module`
 
 ### Invalid alias or selector
 
 ```text
-/vibeloom help profiles
+/vibeloom help overview
+/vibeloom review profiles
 /vibeloom status module payments-api
 /vibeloom generate tests
 ```
 
 Expected:
-- reject unsupported shorthand aliases for `help`, `review`, `fix`, and `generate`
+- accept documented shorthand only when the trailing token is a valid topic or artifact selector
 - reject unsupported command forms such as `/vibeloom generate tests`
+- for `review`, do not guess `module`; non-artifact review still requires `review module <module-name>`
 - if `payments-api` is invalid, return actual module selectors from the repo
 
 ## Routing Tests

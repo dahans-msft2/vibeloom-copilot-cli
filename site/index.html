@@ -278,7 +278,7 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9h6M7 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </div>
         <h3>Human Governed</h3>
-        <p>Every tier requires human approval. Agents generate, you verify. Four lifecycle states (draft, approved, stale, superseded) keep governance explicit.</p>
+        <p>Three approval gates keep governance explicit: intent, product, and spec. Agents generate, you verify. Four lifecycle states (draft, approved, stale, superseded) keep governance explicit.</p>
       </div>
     </div>
   </div>
@@ -360,7 +360,7 @@
     <div class="commands-grid">
       <div class="command-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
       <div class="command-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
-      <div class="command-row"><code>/vibeloom generate</code> <span>Generate next artifact</span></div>
+      <div class="command-row"><code>/vibeloom generate artifact &lt;selector&gt;</code> <span>Generate next artifact</span></div>
       <div class="command-row"><code>/vibeloom approve</code> <span>Approve after review</span></div>
       <div class="command-row"><code>/vibeloom develop</code> <span>Incremental changes</span></div>
       <div class="command-row"><code>/vibeloom eval</code> <span>Run consistency checks</span></div>

@@ -40,8 +40,8 @@ Expected:
 /vibeloom generate artifact dm
 /vibeloom approve scope product
 /vibeloom eval scope module billing
-/vibeloom help command reconcile
-/vibeloom help topic profiles
+/vibeloom use surface code-first
+/vibeloom help topic surfaces
 ```
 
 ### Missing noun
@@ -115,6 +115,7 @@ $vibeloom
 
 Expected:
 - return governed state
+- return current surface
 - return blockers
 - return profile when known
 - return next 3 valid commands

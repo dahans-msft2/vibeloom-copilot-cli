@@ -10,6 +10,8 @@ VibeLoom has two profiles, but both preserve the same canonical stack:
 
 The profile choice changes decomposition depth, interface discipline, and coordination overhead. It does not change whether workflow and domain semantics are recorded.
 
+Profiles are not surfaces. Surface modes change which layer is shown first; profiles change how much decomposition and interface discipline the project needs. See [surface-modes.md](surface-modes.md).
+
 ## Lite Profile
 
 Use `lite` when all of the following are true:

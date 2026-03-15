@@ -67,6 +67,27 @@ This document defines the package-level technical design for Codex V4. It specif
 - Cross-module interfaces must be owned and listed in the interface manifest.
 - Context maps, dependency DAGs, and module-level execution guidance are expected.
 
+## Surface Modes
+
+Surface modes are a skill/runtime concern layered on top of the same canonical artifacts.
+
+### `product-first`
+
+- default session surface
+- leads with `intent`, `prd`, `usm`, and `dm`
+- appropriate for product framing, workflow review, and semantic clarification
+
+### `code-first`
+
+- advanced engineering surface
+- leads with `spec.md`, module specs, interfaces, ownership, and technical boundaries
+- keeps `prd`, `usm`, and `dm` stored and canonical, but collapsed until the task needs them
+
+Rules:
+- surface selection is session-scoped
+- no repo-tracked surface state is written
+- forced escalation surfaces upstream product/domain slices on semantic or boundary risk
+
 ## Artifact Responsibilities
 
 | Artifact | Responsibility |
@@ -103,6 +124,7 @@ Rules:
 - Referenced IDs
 - Current approved dependency graph
 - Active profile
+- Active surface
 - Requested or inferred change class
 
 ### Behavior
@@ -176,6 +198,10 @@ For a repo already under governance:
 - derived `AGENTS.md` for the task scope
 - trace index slice for the referenced IDs
 
+Surface overlay:
+- `product-first` loads workflow/domain artifacts sooner
+- `code-first` keeps the default view technical and escalates upward only when required
+
 ### Load Conditionally
 
 - `prd` requirements and `usm` stories for behavioral work
@@ -212,6 +238,7 @@ This phase does not implement commands, but the future runtime is expected to su
 | `eval` | Structural and semantic checks |
 | `reconcile` | Targeted drift resolution |
 | `status` | Report artifact states and stale edges |
+| `use surface` | Select `product-first` or `code-first` for the current session |
 | `help topic` | Load focused guidance for methodology, profiles, evals, templates, or commands |
 
 ## Testing Strategy

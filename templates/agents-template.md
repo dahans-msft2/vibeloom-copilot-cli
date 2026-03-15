@@ -49,6 +49,7 @@ docs/             # governance artifacts, if kept near code
 
 ## Task Scope
 
+- Surface:
 - Change class:
 - Owned write surface:
 - Allowed dependencies:
@@ -98,6 +99,8 @@ docs/             # governance artifacts, if kept near code
 - do not change public interfaces without updating the owning spec
 - regenerate this file after upstream contract changes
 - escalate when the loaded slice is not sufficient to make a safe change
+- if `Surface` is `code-first`, keep product/domain layers collapsed only while the task remains safely technical
+- if workflows, actors, concepts, invariants, interfaces, or NFR boundaries become ambiguous, load the relevant `prd/usm/dm` slices and escalate
 
 ## Testing Conventions
 

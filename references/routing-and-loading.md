@@ -22,7 +22,7 @@ Inspect the current repo for:
 Bare `$vibeloom` is a smart entry point. Detect the governed state first, then route the user toward the next safe command instead of dumping the full command catalog.
 
 Return:
-- current state
+- current state and surface
 - blockers
 - profile when known
 - next 3 valid commands
@@ -109,11 +109,13 @@ Load:
 - module selectors if the noun is `module`
 
 Present:
-- profile
+- surface and profile
 - artifact health
 - module and interface warnings when relevant
 - blockers
 - next 3 valid commands
+
+In `code-first`, lead with `spec.md`, module, interface, and ownership state; still mention blocking product artifacts explicitly.
 
 ### `review artifact prd|usm`
 
@@ -137,6 +139,8 @@ Load:
 - `references/methodology.md`
 - `references/evals-and-templates.md`
 - current governed slice selected from trace and artifact dependencies
+
+In `code-first`, start from spec/module/interfaces and escalate to `prd/usm/dm` on workflow, semantic, interface, NFR, or boundary risk.
 
 ### `fix issue`
 
@@ -169,11 +173,15 @@ Load:
 - `references/evals-and-templates.md`
 - only the target templates or eval docs needed for the requested scope
 
+### `use surface`
+Load `references/methodology.md` and `../docs/surface-modes.md`. Return the selected surface, remind the user it is session-scoped, and suggest 2-3 fitting next commands.
+
 ### `help topic`
 
 Load only the relevant reference set:
 - `methodology` -> `../docs/vibeloom-methodology.md`
 - `profiles` -> `../docs/profile-selection.md`
+- `surfaces` -> `../docs/surface-modes.md`
 - `evals` -> `../eval/structural-checks.md`, `../eval/semantic-checks.md`
 - `templates` -> `../templates/`
 - `commands` -> `references/command-surface.md`

@@ -45,8 +45,9 @@ Rules:
 | `/vibeloom generate artifact <selector>` | Generate a canonical or derived artifact |
 | `/vibeloom approve scope <selector>` | Approve an allowed scope |
 | `/vibeloom eval scope <selector>` | Evaluate an allowed scope |
+| `/vibeloom use surface <product-first|code-first>` | Set the current session surface |
 | `/vibeloom help command <verb>` | Explain one verb |
-| `/vibeloom help topic <methodology|profiles|evals|templates|commands>` | Load one guided documentation topic |
+| `/vibeloom help topic <methodology|profiles|surfaces|evals|templates|commands>` | Load one guided documentation topic |
 
 ## Selectors
 
@@ -98,6 +99,7 @@ No shorthand aliases exist for `review`, `help`, `fix`, or `generate`.
 
 Bare `$vibeloom` with no command returns:
 - current governed state
+- current surface
 - blocking issues
 - profile when available
 - next 3 valid commands
@@ -120,7 +122,6 @@ When a command is malformed:
 /vibeloom fix issue invite links expire one hour too early
 /vibeloom eval scope module billing
 /vibeloom eval module billing
+/vibeloom use surface code-first
 /vibeloom approve scope product
-/vibeloom approve product
-/vibeloom help topic profiles
 ```

@@ -154,6 +154,12 @@ profile: lite | full
 | `dm.md` | bounded contexts, entities, relationships, and invariants |
 | `spec.md` | technical realization, ownership model, interfaces, and operational rules |
 
+## Surface Guidance
+
+- `product-first` users usually reach this file after reviewing `prd.md`, `usm.md`, and `dm.md`.
+- `code-first` users may start here. Keep the upstream `PRD-FR-*`, `STORY-*`, `ENT-*`, and `INV-*` links explicit where they materially constrain design.
+- Do not treat `code-first` as permission to hide missing workflow or domain ambiguity. Escalate those upstream instead.
+
 ## Module And Ownership Model
 
 ### Module Responsibilities
@@ -189,6 +195,11 @@ MOD-[MODULE] -> MOD-[OTHER]
 - `prd.md` and `usm.md` slices for behavior changes
 - `dm.md` slices for concept and invariant changes
 - neighboring module specs and interface manifests for cross-boundary work
+
+### Surface Notes
+
+- In `code-first`, this spec and the touched module specs are the default visible layer.
+- If workflow, concept, invariant, interface, or NFR ambiguity appears, surface the relevant `prd/usm/dm` slices explicitly.
 
 ### Escalate When
 
@@ -230,7 +241,7 @@ Example:
 
 ## Brownfield Import Notes
 
-- `/vibeloom import repo` is only for unmanaged or heavily drifted repos.
+- `import` is only for unmanaged or heavily drifted repos.
 - inferred semantics must carry visible confidence until approved.
 
 ## Steady-State Bugfix Path

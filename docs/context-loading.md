@@ -14,6 +14,7 @@ The methodology depends on deterministic context scoping. This document defines 
 - Touched paths, if known
 - Referenced IDs, if known
 - Active profile
+- Active surface
 - Dependency/stale graph
 - Trace index
 
@@ -54,6 +55,10 @@ Always load:
 
 If the task is already inside an approved module boundary, prefer the module slice over the full repo.
 
+Surface overlay:
+- `product-first` loads workflow/domain artifacts sooner.
+- `code-first` keeps the base set technical by default and only expands upward when escalation triggers fire.
+
 ## Conditional Loads
 
 Load `prd.md` slices when:
@@ -88,6 +93,8 @@ Load:
 
 Do not load broader `USM` or `DM` unless the change reveals semantic uncertainty.
 
+When the active surface is `code-first`, this is the default shape.
+
 ### `behavioral-in-module`
 
 Load:
@@ -117,6 +124,8 @@ Escalate scope when any of these are true:
 - a bugfix reveals that the approved workflow or invariant is wrong
 
 When escalation happens, summarize furthest-upstream artifacts first and keep the local technical slice verbatim as long as possible.
+
+In `code-first`, escalation is mandatory when the agent cannot safely keep the task spec-local.
 
 ## Exclusion Rules
 
@@ -184,6 +193,7 @@ The agent should produce a context bundle summary with:
 | Field | Meaning |
 | --- | --- |
 | `change_class` | Chosen class and confidence |
+| `surface` | `product-first` or `code-first` |
 | `artifact_refs` | Files loaded |
 | `item_refs` | IDs loaded |
 | `escalation_reason` | Why broader scope was needed, if applicable |

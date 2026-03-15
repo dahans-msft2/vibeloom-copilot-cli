@@ -236,6 +236,48 @@ Read [profile-selection.md](profile-selection.md) for selection heuristics and u
 
 ---
 
+## Surface Modes
+
+Profiles decide coordination depth. Surfaces decide what a user sees first.
+
+| Surface | Meaning |
+| --- | --- |
+| `product-first` | Lead with intent, requirements, workflows, and domain semantics |
+| `code-first` | Lead with `spec.md`, modules, interfaces, ownership, and implementation-safe technical scope |
+
+Surface modes do **not** change:
+
+- the canonical stack
+- approval gates
+- lifecycle states
+- traceability rules
+- reconcile asymmetry
+
+`product-first` is the default surface. `code-first` is an advanced engineering surface for users who want to stay in architecture and module space during safe technical work.
+
+### Shared Semantics, Personalized Surface
+
+VibeLoom does not fork truth for different users. A PM and an engineer may look at different layers first, but they still share the same stored canonical contracts.
+
+That means:
+
+- surfaces are session-scoped, not repo-scoped
+- product/domain artifacts remain real and reviewable in `code-first`
+- explicit review and approval of product artifacts remain available in both surfaces
+
+### Forced Escalation In `code-first`
+
+`code-first` collapses upstream product/domain layers only while the task is safely technical. It must reveal the relevant `prd/usm/dm` slices when:
+
+- the change is `boundary-changing`
+- workflows or actors are touched or ambiguous
+- concepts, entities, invariants, interfaces, or NFR boundaries are touched or ambiguous
+- semantic drift appears during review, eval, or reconcile
+
+Read [surface-modes.md](surface-modes.md) for the operational rules.
+
+---
+
 ## Change Classes
 
 Every change is classified before execution:

@@ -14,6 +14,7 @@ Every command response uses:
 Keep output terse. Prefer findings and decisions over process narration.
 
 For `status repo`, render:
+- surface
 - profile or `undecided`
 - artifact state summary
 - blockers or stale warnings
@@ -142,7 +143,7 @@ Scope
 Repo status for the governed workspace.
 
 Decision / Findings
-Profile is `full`. The product stack is approved, but `spec.md` is still draft and `MOD-billing` is stale because IFACE-004 changed upstream.
+Surface is `code-first`. Profile is `full`. The active risk is technical: `spec.md` is still draft and `MOD-billing` is stale because IFACE-004 changed upstream. The product stack is approved.
 
 Affected IDs
 ART-SPEC-001, MOD-billing, IFACE-004
@@ -172,6 +173,6 @@ Closest forms: /vibeloom review artifact usm, /vibeloom review module billing
 
 ## Triage Contract
 
-Bare `$vibeloom` returns governed state, blockers, profile when known, and the next 3 valid commands. When possible, include one short reason per suggested next command.
+Bare `$vibeloom` returns governed state, current surface, blockers, profile when known, and the next 3 valid commands. When possible, include one short reason per suggested next command.
 
 Do not return the full command catalog unless the repo state is empty or broken.

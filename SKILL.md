@@ -1,6 +1,6 @@
 ---
 name: vibeloom
-description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, reconcile, or evolve a governed codebase through VibeLoom's strict command interface and contract stack of intent, prd, usm, dm, and spec.
+description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, reconcile, or evolve a governed codebase through VibeLoom's strict command interface, surface modes, and contract stack of intent, prd, usm, dm, and spec.
 metadata:
   short-description: Contract-driven vibe coding workflows
 ---
@@ -63,14 +63,15 @@ Read [references/command-surface.md](references/command-surface.md) for the full
 | `/vibeloom generate artifact <selector>` | Generate a specific artifact or derived artifact |
 | `/vibeloom approve scope <selector>` | Approve an intent, product batch, spec batch, module, or change |
 | `/vibeloom eval scope <selector>` | Run structural and semantic checks over a scope |
+| `/vibeloom use surface <product-first|code-first>` | Set the current session surface |
 | `/vibeloom help command <verb>` | Explain valid grammar and routing for one verb |
-| `/vibeloom help topic <methodology|profiles|evals|templates|commands>` | Load guided help for one documentation topic |
+| `/vibeloom help topic <methodology|profiles|surfaces|evals|templates|commands>` | Load guided help for one documentation topic |
 
 ## Routing Rules
 
 Start with the smallest correct reference set:
 
-1. Read [references/methodology.md](references/methodology.md) for the runtime summary of artifact authority, change classes, and reconcile asymmetry.
+1. Read [references/methodology.md](references/methodology.md) for the runtime summary of artifact authority, surfaces, change classes, and reconcile asymmetry.
 2. Read [references/command-surface.md](references/command-surface.md) to parse the command shape and aliases.
 3. Read [references/routing-and-loading.md](references/routing-and-loading.md) to choose the right repo slice and state-aware next actions.
 4. Read [references/interaction-contract.md](references/interaction-contract.md) before presenting findings or corrections.
@@ -94,6 +95,7 @@ Read [references/interaction-contract.md](references/interaction-contract.md) fo
 
 - Never treat `AGENTS.md` or `plan.md` as canonical semantic authority.
 - Never omit `USM` or `DM` from the governed methodology.
+- Never treat `code-first` as permission to omit, replace, or silently synthesize away `prd`, `usm`, or `dm`.
 - Treat `fix issue` as distinct from `import repo`; do not route routine defects through brownfield bootstrap.
 - Use canonical command forms in responses even when the input used an alias.
 - If a command would violate current methodology state, explain the blocking artifact and the next allowed command.

@@ -4,17 +4,20 @@ These checks are warnings. They do not self-resolve and they do not grant approv
 
 ## Report Format
 
-Use this shape:
+When these checks are surfaced through runtime commands such as `eval` or `approve`, use the mandatory 4-section response contract from `references/interaction-contract.md`:
 
-```text
-Semantic Checks
-===============
+1. `Scope`
+2. `Decision / Findings`
+3. `Affected IDs`
+4. `Next action`
 
-Check: [name]
-Result: PASS | WARNING
-Evidence: [what was compared]
-Details: [specific observations]
-```
+Within `Decision / Findings`, summarize each relevant semantic finding with:
+- `Check`: `EVAL-SEM-*` and check name
+- `Result`: `PASS` or `WARNING`
+- `Evidence`: what was compared
+- `Details`: specific observations, coverage gaps, or judgment calls
+
+This document defines the check criteria. It does not define an alternate top-level runtime response shape.
 
 Use matrices when coverage or ownership is clearer in table form.
 

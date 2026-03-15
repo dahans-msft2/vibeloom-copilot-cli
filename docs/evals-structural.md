@@ -4,17 +4,20 @@ These checks are blocking. A canonical artifact cannot be approved while a struc
 
 ## Report Format
 
-Use this shape:
+When these checks are surfaced through runtime commands such as `eval` or `approve`, use the mandatory 4-section response contract from `references/interaction-contract.md`:
 
-```text
-Structural Checks
-=================
+1. `Scope`
+2. `Decision / Findings`
+3. `Affected IDs`
+4. `Next action`
 
-Check: [name]
-Result: PASS | FAIL
-Evidence: [what was inspected]
-Details: [specific failures]
-```
+Within `Decision / Findings`, summarize each relevant structural finding with:
+- `Check`: `EVAL-STRUCT-*` and check name
+- `Result`: `PASS` or `FAIL`
+- `Evidence`: what was inspected
+- `Details`: specific failures or blocking concerns
+
+This document defines the check criteria. It does not define an alternate top-level runtime response shape.
 
 When useful, include a matrix such as:
 

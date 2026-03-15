@@ -14,7 +14,7 @@ Inspect the current repo for:
 - selected profile
 - module specs
 - stale markers
-- last meaningful eval summary when present
+- current-session eval findings when available
 - current worktree state relevant to governed files
 
 ## Bare Triage
@@ -118,8 +118,10 @@ Constraints:
 Load:
 - current artifact frontmatter
 - dependency or stale indicators if present
-- latest structural and semantic summaries if already present in repo-tracked artifacts or the current session
+- current-session structural and semantic findings when available
 - module selectors if the target is `module`
+
+Do not assume any persisted eval-summary artifact. Only the canonical durable projections defined in `constitution.md` are allowed.
 
 Present:
 - surface and profile

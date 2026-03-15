@@ -42,6 +42,8 @@ depends_on: []
 
 | Item | Prefix |
 | --- | --- |
+| Artifact | `ART-` |
+| Capability | `CAP-` |
 | User / persona | `USR-` |
 | Goal | `GOAL-` |
 | Metric | `METRIC-` |
@@ -56,6 +58,8 @@ depends_on: []
 | Domain event | `EVT-` |
 | Module | `MOD-` |
 | Interface contract | `IFACE-` |
+| Flow | `FLOW-` |
+| Risk / open question | `RISK-` |
 | Task | `TASK-` |
 | Test | `TEST-` |
 | Eval | `EVAL-` |

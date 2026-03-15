@@ -234,12 +234,12 @@
       <table>
         <thead><tr><th>Tier</th><th>Artifact</th><th>Role</th><th>ID Prefixes</th></tr></thead>
         <tbody>
-          <tr><td><span class="tag tag-accent">Foundation</span></td><td><code>constitution.md</code></td><td>Universal rules, lifecycle states, ID grammar</td><td><code>ART-</code>, <code>EVAL-</code></td></tr>
-          <tr><td><span class="tag tag-accent">Prose</span></td><td><code>intent.md</code></td><td>Loose description of what to build</td><td>—</td></tr>
-          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>PRD-FR-</code>, <code>NFR-</code>, <code>USR-</code>, <code>GOAL-</code></td></tr>
+          <tr><td><span class="tag tag-accent">Foundation</span></td><td><code>constitution.md</code></td><td>Universal rules, lifecycle states, ID grammar</td><td><code>ART-</code>, <code>CAP-</code>, <code>EVAL-</code>, <code>RISK-</code></td></tr>
+          <tr><td><span class="tag tag-accent">Prose</span></td><td><code>intent.md</code></td><td>Loose description of what to build</td><td>Optional <code>CAP-</code></td></tr>
+          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>USR-</code>, <code>GOAL-</code>, <code>METRIC-</code>, <code>PRD-FR-</code>, <code>NFR-</code></td></tr>
           <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>EPIC-</code>, <code>STORY-</code>, <code>AC-</code></td></tr>
           <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>BC-</code>, <code>ENT-</code>, <code>INV-</code>, <code>EVT-</code></td></tr>
-          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>IFACE-</code></td></tr>
+          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>IFACE-</code>, <code>FLOW-</code></td></tr>
           <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td><code>TASK-</code>, <code>TEST-</code></td></tr>
         </tbody>
       </table>
@@ -248,7 +248,7 @@
     <details class="expandable">
       <summary class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p>Every item in every artifact gets a rigid, machine-parseable ID using 17 standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>IFACE-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
+        <p>Every traced normative item below draft intent, plus optional reconciled <code>CAP-*</code> intent capabilities when present, gets a rigid, machine-parseable ID using the standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>IFACE-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
       </div>
     </details>
     <details class="expandable">
@@ -457,7 +457,7 @@
         <ol>
           <li><strong>Metadata completeness</strong> — required frontmatter fields present with valid values</li>
           <li><strong>Artifact authority</strong> — canonical vs derived status correctly assigned</li>
-          <li><strong>ID grammar compliance</strong> — all items use the 17 defined prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, etc.)</li>
+          <li><strong>ID grammar compliance</strong> — all items use the defined prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, etc.)</li>
           <li><strong>Reference integrity</strong> — every cross-file ID reference resolves to an existing item</li>
           <li><strong>Lifecycle correctness</strong> — only valid lifecycle states used (draft, approved, stale, superseded)</li>
           <li><strong>Profile correctness</strong> — lite or full only; USM and DM always mandatory</li>
@@ -472,16 +472,16 @@
       <summary class="expandable-header"><span>Tier 2: Semantic checks (10 checks, warnings)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
-          <li>Requirements &harr; Stories coverage</li>
-          <li>Stories &harr; Entities coverage</li>
-          <li>Orphan detection (entities with no stories)</li>
-          <li>Contradiction detection between tiers</li>
-          <li>Module &harr; Entity ownership (one owner per entity)</li>
-          <li>Interface contract completeness (imports match exports)</li>
-          <li>Dependency DAG validation (no cycles)</li>
-          <li>NFR coverage in spec.md</li>
-          <li>Story-to-API traceability</li>
-          <li>Invariant preservation in API design</li>
+          <li>Requirement to story coverage</li>
+          <li>Story to entity coverage</li>
+          <li>Entity and invariant necessity</li>
+          <li>Workflow completeness</li>
+          <li>Boundary sanity</li>
+          <li>Context slice sufficiency</li>
+          <li>Import confidence review</li>
+          <li>Local bugfix path correctness</li>
+          <li>Derived artifact restraint</li>
+          <li>Projection restraint</li>
         </ul>
       </div>
     </details>
@@ -555,14 +555,15 @@
       <div class="cmd-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
       <div class="cmd-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
       <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate next artifact or code</span></div>
-      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [tail]</code> <span>Approve drafts after eval</span></div>
+      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve drafts after eval</span></div>
       <div class="cmd-row"><code>/vibeloom develop</code> <span>Incremental change (specs first)</span></div>
-      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [tail]</code> <span>Run consistency checks</span></div>
-      <div class="cmd-row"><code>/vibeloom review &lt;selector&gt;</code> <span>Interactive walkthrough</span></div>
+      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Fix a steady-state defect</span></div>
+      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Run consistency checks</span></div>
+      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Interactive walkthrough</span></div>
       <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Fix after manual edits</span></div>
       <div class="cmd-row"><code>/vibeloom status</code> <span>Show project state</span></div>
-      <div class="cmd-row"><code>/vibeloom help command &lt;action&gt;</code> <span>Explain one command</span></div>
-      <div class="cmd-row"><code>/vibeloom help &lt;topic&gt;</code> <span>Guidance &amp; docs</span></div>
+      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
+      <div class="cmd-row"><code>/vibeloom help ...</code> <span>Guidance for topics or one command</span></div>
     </div>
 
     <details class="expandable" style="margin-top:16px">

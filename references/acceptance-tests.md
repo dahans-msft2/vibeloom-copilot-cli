@@ -10,13 +10,13 @@ Use these scenarios when validating the skill interface or revising command rout
 /vibeloom status
 /vibeloom review usm
 /vibeloom develop add annual billing
-/vibeloom fix issue invite links expire too early
+/vibeloom fix invite links expire too early
 ```
 
 Expected:
 - each command parses without guessing
 - action and required target shape are recognized
-- freeform tail remains intact
+- freeform context remains intact
 
 ### Concise canonical commands
 
@@ -45,6 +45,7 @@ Expected:
 /vibeloom approve product
 /vibeloom eval module billing
 /vibeloom surface code-first
+/vibeloom fix invite links expire too early
 ```
 
 ### Missing target
@@ -103,7 +104,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom fix issue invite links expire too early
+/vibeloom fix invite links expire too early
 ```
 
 Expected:

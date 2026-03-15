@@ -4,7 +4,7 @@ This file defines runtime response shape, not methodology truth. Use canonical c
 
 ## Mandatory Output Shape
 
-Every command response uses:
+Every successful or stateful command response uses:
 
 1. `Scope`
 2. `Decision / Findings`
@@ -12,6 +12,8 @@ Every command response uses:
 4. `Next action`
 
 Keep output terse. Prefer findings and decisions over process narration.
+
+Malformed command errors use the dedicated `Error Contract` below instead of the 4-section shape.
 
 For `status`, render:
 - surface
@@ -63,6 +65,7 @@ Unify the workflow language in USM, then confirm whether ENT-009 should be forma
 For:
 - `review dm`
 - `review spec`
+- `review module <module-name>`
 - `eval`
 - `reconcile`
 
@@ -81,7 +84,7 @@ Always cite:
 
 ## Bugfix Responses
 
-`fix issue` starts with:
+`fix` starts with:
 - repro
 - expected behavior
 - violated or missing contract
@@ -149,7 +152,7 @@ Affected IDs
 ART-SPEC-001, MOD-billing, IFACE-004
 
 Next action
-Review the stale billing interface slice, then run /vibeloom reconcile module billing.
+Inspect the stale billing interface slice, then run /vibeloom reconcile module billing.
 ```
 
 ## Help Responses
@@ -167,7 +170,7 @@ Example:
 
 ```text
 Invalid target `artifacts` for action `review`.
-Use: /vibeloom review <intent|prd|usm|dm|spec|constitution>
+Use: /vibeloom review <constitution|intent|prd|usm|dm|spec> | /vibeloom review module <module-name>
 Closest forms: /vibeloom review usm, /vibeloom review module billing
 ```
 

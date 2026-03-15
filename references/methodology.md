@@ -22,7 +22,7 @@ This file is the runtime summary loaded during routine skill work.
 - `USM` and `DM` are mandatory in every profile.
 - Only `lite` and `full` profiles exist.
 - Surface modes are session-scoped: default `product-first`; `code-first` only changes which layer is shown first and escalates back to product/domain slices on boundary or semantic risk.
-- `fix issue` is the steady-state bugfix path. Do not route ordinary defects through `import`.
+- `fix` is the steady-state bugfix path. Do not route ordinary defects through `import`.
 
 ## Surface Modes
 

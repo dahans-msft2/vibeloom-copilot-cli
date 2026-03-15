@@ -35,7 +35,7 @@ Recommended next commands by state:
 | Intent draft | `review intent`, `eval intent`, `approve intent` → triggers sequential product generation |
 | Product drafts | `review prd`, `review usm`, `approve product` |
 | Spec draft | `review spec`, `eval spec`, `approve spec` |
-| Governed active repo | `status`, `develop ...`, `fix issue ...` |
+| Governed active repo | `status`, `develop ...`, `fix ...` |
 | Drift detected | `reconcile`, `reconcile artifact <name>`, `eval repo` |
 
 ### Post-Intent Approval: Sequential Product Generation
@@ -146,6 +146,13 @@ Load:
 - linked upstream `usm` or `prd` items
 - relevant module or interface slices
 
+### `review module <module-name>`
+
+Load:
+- `references/interaction-contract.md`
+- the target module slice
+- relevant interface, ownership, and stale-edge context
+
 ### `develop`
 
 Load:
@@ -155,7 +162,7 @@ Load:
 
 In `code-first`, start from spec/module/interfaces and escalate to `prd/usm/dm` on workflow, semantic, interface, NFR, or boundary risk.
 
-### `fix issue`
+### `fix`
 
 Load:
 - `references/methodology.md`

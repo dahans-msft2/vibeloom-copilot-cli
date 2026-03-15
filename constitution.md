@@ -90,6 +90,8 @@ Every stable normative item referenced across artifacts must use a stable upperc
 | Domain event | `EVT-` |
 | Module | `MOD-` |
 | Interface contract | `IFACE-` |
+| Flow | `FLOW-` |
+| Risk / open question | `RISK-` |
 | Task | `TASK-` |
 | Test | `TEST-` |
 | Eval | `EVAL-` |

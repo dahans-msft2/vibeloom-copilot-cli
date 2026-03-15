@@ -3,7 +3,7 @@
 Use this file when a command requires generation, approval, or validation.
 
 - This file is the complete routine runtime eval contract.
-- Routine `generate`, `approve`, `eval`, `develop`, and `fix issue` commands use this file directly.
+- Routine `generate`, `approve`, `eval`, `develop`, and `fix` commands use this file directly.
 - Current runtime evals are `structural` and `semantic` only.
 - Broader methodology framing may mention behavioral or test-generation ideas, but those are not part of the current command surface unless `references/command-surface.md` says so.
 - Load the detailed eval docs only for `help evals` or when the user explicitly asks for the full check definitions.
@@ -48,8 +48,8 @@ Target normalization:
 - `module` -> one named module slice
 
 Target binding rules:
-- `module` target requires the module name in the command tail
-- `artifact` target requires the artifact selector in the command tail
+- `module` target requires the module name in the command context
+- `artifact` target requires the artifact selector in the command context
 
 ## Runtime Eval Output
 
@@ -149,7 +149,7 @@ Normalize:
 | `eval ...` | Run structural and semantic checks on the selected eval target and return findings without approval |
 | `generate ...` | Use templates, then run structural checks on generated output |
 | `develop ...` | Run targeted structural and semantic checks on the touched slice after proposed changes |
-| `fix issue ...` | Run targeted structural and semantic checks on the affected slice after regression framing |
+| `fix ...` | Run targeted structural and semantic checks on the affected slice after regression framing |
 
 ## Detailed Eval Docs
 

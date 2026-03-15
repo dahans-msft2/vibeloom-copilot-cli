@@ -22,7 +22,7 @@ depends_on:
 
 ## Purpose
 
-This document defines the package-level technical design for Codex V4. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the strict command surface packaged as a Codex skill. The package is still documentation-first: it does not implement a separate runtime binary.
+This document defines the package-level technical design for Codex V4. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the strict command surface currently shipped as a Codex skill. The package is still documentation-first: it does not implement a separate runtime binary.
 
 This is a package and protocol spec, not a concrete governed repo instance. It defines what generated governed project specs must support, but it does not claim live module ownership or interface inventories for this repository itself.
 
@@ -38,9 +38,8 @@ This is a package and protocol spec, not a concrete governed repo instance. It d
 | --- | --- |
 | `constitution.md` | Foundational rules applied to every governed project |
 | `SKILL.md` | Codex skill entrypoint and command interface |
-| `agents/openai.yaml` | Skill UI metadata and invocation policy |
+| `agents/` | Skill UI metadata and invocation policy |
 | `references/` | On-demand operational references for the skill |
-| `assets/` | Skill icons and UI assets |
 | `intent.md` | Methodology package intent |
 | `prd.md` | Methodology product requirements |
 | `usm.md` | User workflow and acceptance semantics |
@@ -236,9 +235,11 @@ Escalate context breadth when:
 - Derived operational artifacts are regenerated from the latest approved truth and are not independently marked `approved`.
 - A `local` change does not stale unrelated upstream artifacts.
 
-## Future Command Surface
+## Current Skill Surface
 
-This phase does not implement commands, but the future runtime is expected to support:
+This phase ships the command surface through `SKILL.md` and `references/`. It does not implement a separate runtime binary or external command router.
+
+Any future standalone runtime should preserve this surface unless the canonical skill surface changes.
 
 | Command | Purpose |
 | --- | --- |
@@ -247,7 +248,9 @@ This phase does not implement commands, but the future runtime is expected to su
 | `generate` | Derive the next artifact or targeted downstream artifact |
 | `approve` | Human approval flow for canonical artifacts |
 | `develop` | Incremental change flow |
+| `fix` | Repro-first steady-state bugfix flow |
 | `eval` | Structural and semantic checks |
+| `review` | Guided artifact or module walkthrough |
 | `reconcile` | Targeted drift resolution |
 | `status` | Report artifact states and stale edges |
 | `surface` | Select `product-first` or `code-first` for the current session |

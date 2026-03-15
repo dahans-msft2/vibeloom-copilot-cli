@@ -1,6 +1,6 @@
 ---
 name: vibeloom
-description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, reconcile, or evolve a governed codebase through VibeLoom's strict command interface, surface modes, and contract stack of intent, prd, usm, dm, and spec.
+description: Use when the user explicitly invokes $vibeloom or asks to initialize, import, review, fix, reconcile, or evolve a governed codebase through VibeLoom's strict command interface, surface modes, and contract stack of intent, prd, usm, dm, and spec.
 metadata:
   short-description: Contract-driven vibe coding workflows
 ---
@@ -28,8 +28,8 @@ This skill is for governed, contract-driven work over the canonical stack:
 ## Invocation Model
 
 - The skill is explicit-invocation only.
-- Canonical commands use the documented `/vibeloom <action> ...` forms from `references/command-surface.md`.
-- Some actions use an implicit default target; others require an explicit target token and optional tail.
+- Canonical commands follow the documented `/vibeloom <action> <target> <context>` model from `references/command-surface.md`.
+- Some actions omit the target or context token when the meaning is unambiguous; others require explicit target and context tokens.
 - Normalize documented target expansions before routing.
 - If the target is missing or invalid, do not guess. Return the valid grammar for that action and the closest valid forms.
 - Bare `$vibeloom` with no `/vibeloom ...` command triggers state-aware triage.
@@ -48,10 +48,9 @@ Read [references/command-surface.md](references/command-surface.md) for the full
 | `/vibeloom status` | Report governed state, blockers, and next valid actions |
 | `/vibeloom status artifact <selector>` | Report one canonical artifact |
 | `/vibeloom status module <module-name>` | Report one module |
-| `/vibeloom review <selector>` | Review one canonical artifact |
-| `/vibeloom review module <module-name>` | Review one module slice |
+| `/vibeloom review <target> [context]` | Review one canonical artifact or module slice |
 | `/vibeloom develop <request>` | Run feature or enhancement flow |
-| `/vibeloom fix issue <repro-or-bug>` | Run steady-state bugfix flow |
+| `/vibeloom fix <repro-or-bug>` | Run steady-state bugfix flow |
 | `/vibeloom reconcile` | Reconcile drift across the governed repo |
 | `/vibeloom reconcile artifact <selector>` | Reconcile one artifact |
 | `/vibeloom reconcile module <module-name>` | Reconcile one module |
@@ -61,8 +60,8 @@ Read [references/command-surface.md](references/command-surface.md) for the full
 | Command | Purpose |
 | --- | --- |
 | `/vibeloom generate <selector>` | Generate a specific artifact or derived artifact |
-| `/vibeloom approve <target> [tail]` | Approve an intent, product batch, spec batch, module, or change |
-| `/vibeloom eval <target> [tail]` | Run structural and semantic checks over a selected target |
+| `/vibeloom approve <target> [context]` | Approve an intent, product batch, spec batch, module, or change |
+| `/vibeloom eval <target> [context]` | Run structural and semantic checks over a selected target |
 | `/vibeloom surface <product-first|code-first>` | Set the current session surface |
 | `/vibeloom help command <action>` | Explain valid grammar and routing for one action |
 | `/vibeloom help <methodology|profiles|surfaces|evals|templates|commands>` | Load guided help for one documentation topic |
@@ -81,13 +80,11 @@ Do not load `docs/` during routine commands unless the active command requires d
 
 ## Output Contract
 
-Every command response must use this shape:
-1. `Scope`
-2. `Decision / Findings`
-3. `Affected IDs`
-4. `Next action`
+Use `references/interaction-contract.md` as the authoritative runtime response contract.
 
-Use `references/interaction-contract.md` for review, status, fix, triage, and error-specific phrasing.
+- Successful or stateful command responses use the standard 4-section shape defined there.
+- Malformed command errors use the dedicated error contract defined there.
+- Review, status, fix, triage, and correction phrasing also come from that reference.
 
 Read [references/interaction-contract.md](references/interaction-contract.md) for examples and correction patterns.
 
@@ -96,7 +93,7 @@ Read [references/interaction-contract.md](references/interaction-contract.md) fo
 - Never treat `AGENTS.md` or `plan.md` as canonical semantic authority.
 - Never omit `USM` or `DM` from the governed methodology.
 - Never treat `code-first` as permission to omit, replace, or silently synthesize away `prd`, `usm`, or `dm`.
-- Treat `fix issue` as distinct from `import`; do not route routine defects through brownfield bootstrap.
+- Treat `fix` as distinct from `import`; do not route routine defects through brownfield bootstrap.
 - Use canonical command forms in responses.
 - If a command would violate current methodology state, explain the blocking artifact and the next allowed command.
 - If a selector is invalid, discover valid selectors from the repo when possible and return them explicitly.

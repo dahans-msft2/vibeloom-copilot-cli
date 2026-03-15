@@ -18,86 +18,40 @@ This skill is for governed, contract-driven work over the canonical stack:
 - `dm.md`
 - `spec.md`
 
-## Authority Model
+## Entrypoint Role
 
-- `docs/` owns methodology truth and longer explanations.
-- `references/` is the runtime layer consumed by this skill.
-- `site/` is derivative public documentation and is never authoritative.
-- During routine command execution, load `references/` first and `docs/` only for `help`, deeper explanation, or an explicit runtime escalation.
+- `SKILL.md` is the runtime entrypoint and orchestrator.
+- `references/` is the routine runtime authority for command parsing, routing, eval behavior, and response shape.
+- `docs/` owns deeper methodology explanation and help material.
+- `templates/` are generation inputs only.
+- `site/` is derivative public documentation and is never runtime authority.
 
-## Invocation Model
+## Runtime Bootstrap
+
+On each invocation, start with the smallest correct reference set:
+
+1. Read [references/command-surface.md](references/command-surface.md) to parse the command grammar, selectors, and canonical forms.
+2. Read [references/methodology.md](references/methodology.md) for runtime invariants such as authority boundaries, profiles, surfaces, change classes, and reconcile asymmetry.
+3. Read [references/routing-and-loading.md](references/routing-and-loading.md) to choose the right repo slice, next valid action, and escalation path.
+4. Read [references/interaction-contract.md](references/interaction-contract.md) before presenting findings, errors, triage, or corrections.
+5. Read [references/evals-and-templates.md](references/evals-and-templates.md) when generation, approval, evals, or template loading is involved.
+
+Do not load `docs/` during routine commands unless the user asks for `help`, requests deeper explanation, or a runtime reference explicitly escalates.
+
+## Skill-Specific Behavior
 
 - The skill is explicit-invocation only.
-- Canonical commands follow the documented `/vibeloom <action> <target> <context>` model from `references/command-surface.md`.
-- Some actions omit the target or context token when the meaning is unambiguous; others require explicit target and context tokens.
-- Normalize documented target expansions before routing.
-- If the target is missing or invalid, do not guess. Return the valid grammar for that action and the closest valid forms.
-- Bare `$vibeloom` with no `/vibeloom ...` command triggers state-aware triage.
-- If triage finds no governed project or a clearly first-time operator, keep the first reply short and point to `help methodology` and `help templates`.
+- Bare `$vibeloom` with no `/vibeloom ...` command uses state-aware triage from [references/routing-and-loading.md](references/routing-and-loading.md).
+- If triage finds no governed project or a clearly first-time operator, keep the first reply short and point to `/vibeloom help methodology` and `/vibeloom help templates`.
+- Follow the reference-owned grammar and canonical command forms. Do not invent alternate command surfaces in `SKILL.md`.
 
-Read [references/command-surface.md](references/command-surface.md) for the full grammar, normalization rules, and examples.
-
-## Command Surface
-
-### Core Commands
-
-| Command | Purpose |
-| --- | --- |
-| `/vibeloom init [intent seed]` | Start a governed project from intent |
-| `/vibeloom import [path-or-current]` | Bootstrap governance for an unmanaged repo |
-| `/vibeloom status` | Report governed state, blockers, and next valid actions |
-| `/vibeloom status artifact <selector>` | Report one canonical artifact |
-| `/vibeloom status module <module-name>` | Report one module |
-| `/vibeloom review <target> [context]` | Review one canonical artifact or module slice |
-| `/vibeloom develop <request>` | Run feature or enhancement flow |
-| `/vibeloom fix <repro-or-bug>` | Run steady-state bugfix flow |
-| `/vibeloom reconcile` | Reconcile drift across the governed repo |
-| `/vibeloom reconcile artifact <selector>` | Reconcile one artifact |
-| `/vibeloom reconcile module <module-name>` | Reconcile one module |
-
-### Expert Commands
-
-| Command | Purpose |
-| --- | --- |
-| `/vibeloom generate <selector>` | Generate a specific artifact or derived artifact |
-| `/vibeloom approve <target> [context]` | Approve an intent, product batch, spec batch, module, or change |
-| `/vibeloom eval <target> [context]` | Run structural and semantic checks over a selected target |
-| `/vibeloom surface <product-first|code-first>` | Set the current session surface |
-| `/vibeloom help command <action>` | Explain valid grammar and routing for one action |
-| `/vibeloom help <methodology|profiles|surfaces|evals|templates|commands>` | Load guided help for one documentation topic |
-
-## Routing Rules
-
-Start with the smallest correct reference set:
-
-1. Read [references/methodology.md](references/methodology.md) for the runtime summary of artifact authority, surfaces, change classes, and reconcile asymmetry.
-2. Read [references/command-surface.md](references/command-surface.md) to parse the command shape and normalization rules.
-3. Read [references/routing-and-loading.md](references/routing-and-loading.md) to choose the right repo slice and state-aware next actions.
-4. Read [references/interaction-contract.md](references/interaction-contract.md) before presenting findings or corrections.
-5. Read [references/evals-and-templates.md](references/evals-and-templates.md) when the command requires generation, approval, evals, or template loading.
-
-Do not load `docs/` during routine commands unless the active command requires deeper explanation or a runtime reference explicitly escalates to it.
-
-## Output Contract
-
-Use `references/interaction-contract.md` as the authoritative runtime response contract.
-
-- Successful or stateful command responses use the standard 4-section shape defined there.
-- Malformed command errors use the dedicated error contract defined there.
-- Review, status, fix, triage, and correction phrasing also come from that reference.
-
-Read [references/interaction-contract.md](references/interaction-contract.md) for examples and correction patterns.
-
-## Safety Rules
+## Guardrails
 
 - Never treat `AGENTS.md` or `plan.md` as canonical semantic authority.
 - Never omit `USM` or `DM` from the governed methodology.
-- Never treat `code-first` as permission to omit, replace, or silently synthesize away `prd`, `usm`, or `dm`.
-- Treat `fix` as distinct from `import`; do not route routine defects through brownfield bootstrap.
-- Use canonical command forms in responses.
 - If a command would violate current methodology state, explain the blocking artifact and the next allowed command.
 - If a selector is invalid, discover valid selectors from the repo when possible and return them explicitly.
 
 ## Validation
 
-When updating the skill or validating its behavior, use [references/acceptance-tests.md](references/acceptance-tests.md).
+When updating this skill or its runtime references, validate behavior with [references/acceptance-tests.md](references/acceptance-tests.md).

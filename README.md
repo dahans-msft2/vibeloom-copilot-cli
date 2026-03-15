@@ -23,16 +23,19 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 ## Authority Model
 
-- `docs/` owns the methodology and explanatory truth.
-- `references/` is the skill's runtime layer. It summarizes only what the skill needs to parse, route, and present results.
+- `docs/` owns the canonical prose methodology truth.
+- The root artifact stack is the structured package representation aligned to `docs/`.
+- `references/` is the skill's runtime layer. It carries only the operational guidance the skill needs to parse, route, and present results.
 - `SKILL.md` is the implementation entrypoint that tells Codex how to load and apply `references/`.
-- `site/` is derivative public documentation and must not introduce new semantics.
+- `templates/` is generation-only and must not introduce methodology truth of its own.
+- `site/` is derivative public documentation and marketing material. It must not introduce new semantics.
 - During routine skill execution, load `references/` first. Load `docs/` only for `help topic`, deeper explanation, or explicit escalation from a runtime reference.
 
 ## Artifact Roles
 
 - `constitution.md` is the repo-wide governing baseline. It is normative, but it is not part of the per-project change stack.
-- `intent.md`, `prd.md`, `usm.md`, `dm.md`, and `spec.md` are the canonical long-lived project artifacts.
+- `intent.md`, `prd.md`, `usm.md`, `dm.md`, and `spec.md` are the canonical long-lived project artifacts for this package representation.
+- Draft `intent.md` is prose-first and may remain free of stable item IDs. Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs them.
 - `AGENTS.md` and `plan.md` are derived operational artifacts. They guide execution, but they are not source-of-truth contracts.
 - Machine-readable projections are intentionally limited to three conceptual outputs: trace index, dependency/stale graph, and interface/schema manifests.
 

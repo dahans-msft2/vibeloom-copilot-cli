@@ -25,6 +25,14 @@ This document defines the universal rules that apply to projects governed by the
 | Derived operational artifacts | `AGENTS.md`, `plan.md` | Execution-only, derived from canonical contracts |
 | Machine-readable projections | Trace index, dependency/stale graph, interface/schema manifests | Derived projections used for evals and scoped execution |
 
+## Layer Contract
+
+- `docs/` owns the canonical prose methodology truth.
+- The root artifact stack is the structured package representation aligned to `docs/`.
+- `references/` is the runtime operational layer loaded by the skill during routine execution.
+- `templates/` is generation-only and must not introduce independent methodology truth.
+- `site/` is derivative public documentation and marketing material.
+
 ## Lifecycle States
 
 | State | Meaning | Who can enter it |
@@ -62,11 +70,12 @@ Optional fields:
 
 ## ID Grammar
 
-Every normative item referenced across artifacts must use a stable uppercase prefix.
+Every stable normative item referenced across artifacts must use a stable uppercase prefix.
 
 | Item | Prefix |
 | --- | --- |
 | Artifact | `ART-` |
+| Capability | `CAP-` |
 | User / persona | `USR-` |
 | Goal | `GOAL-` |
 | Metric | `METRIC-` |
@@ -88,6 +97,8 @@ Every normative item referenced across artifacts must use a stable uppercase pre
 Rules:
 - IDs must be stable once approved.
 - Renames change labels, not IDs.
+- Draft `intent.md` may remain prose-first and may omit stable item IDs.
+- Reconciliation may introduce optional `CAP-*` capability IDs when downstream item-level trace needs explicit intent references.
 - Cross-file references must point to existing IDs in approved upstream artifacts unless the referenced item is part of the same draft reconcile session.
 
 ## Profiles
@@ -117,7 +128,9 @@ Rules:
 
 The methodology requires explicit trace links:
 
-- `intent` capabilities feed `prd` goals and requirements.
+- Draft `intent.md` may remain prose-first until reconciliation needs explicit item-level trace.
+- Reconciled `intent` capabilities may be named with optional `CAP-*` IDs.
+- `CAP-*` capabilities feed `prd` goals and requirements once item-level intent trace is claimed.
 - `prd` requirements map to `usm` epics and stories.
 - `usm` stories map to `dm` entities and invariants.
 - `dm` entities and invariants map to `spec` modules, interfaces, storage, and policies.

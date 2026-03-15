@@ -2,6 +2,13 @@
 
 This document defines the exact normative shape of the VibeLoom artifacts used by the Codex package.
 
+The layer contract for this repo is:
+- `docs/` owns canonical prose methodology truth
+- the root artifact stack is the structured package representation aligned to `docs/`
+- `references/` is the runtime operational layer
+- `templates/` is generation-only
+- `site/` is derivative public documentation and marketing material
+
 ## Common Frontmatter
 
 Canonical artifacts must include:
@@ -46,9 +53,14 @@ Required item kinds:
 - core capabilities
 - constraints and preferences
 - non-functional expectations
+- optional reconciled capability index using `CAP-*`
 
 Allowed references:
 - none required upstream
+
+Rules:
+- Draft intent is prose-first and may omit stable item IDs.
+- Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs explicit intent references.
 
 ### `prd.md`
 
@@ -62,7 +74,7 @@ Required item kinds:
 - risks
 
 Allowed references:
-- `intent` capabilities
+- reconciled `CAP-*` capability IDs when item-level intent trace is claimed
 
 ### `usm.md`
 
@@ -118,7 +130,7 @@ Allowed references:
 
 | From | Must reference |
 | --- | --- |
-| `prd` | `intent` capabilities |
+| `prd` | reconciled `CAP-*` capabilities when item-level intent trace is claimed |
 | `usm` | `prd` requirements and `usr` personas |
 | `dm` | `usm` stories and `prd` requirements |
 | `spec` | `prd`, `usm`, and `dm` items |

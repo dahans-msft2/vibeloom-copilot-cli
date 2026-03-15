@@ -34,6 +34,20 @@ The target use case is not one-shot generation. The target is sustained, high-qu
 6. Reconcile manual edits and code drift without silently rewriting approved upstream semantics.
 7. Provide stronger teaching materials, profile guidance, and concrete technical templates without weakening the protocol.
 
+## Capability Index (Optional / Reconciled)
+
+Draft intent may remain prose-first with no stable item IDs. This package artifact includes a reconciled capability index so downstream artifacts can trace back to intent without changing the prose body above.
+
+| ID | Capability |
+| --- | --- |
+| CAP-001 | Convert a human intent into a concise but structured contract stack. |
+| CAP-002 | Keep `USM` and `DM` mandatory so workflow semantics and domain semantics both remain explicit. |
+| CAP-003 | Support greenfield initialization and brownfield import. |
+| CAP-004 | Use upstream contracts as evals for downstream artifacts and code. |
+| CAP-005 | Support modular, multi-agent execution with deterministic context loading and explicit ownership boundaries. |
+| CAP-006 | Reconcile manual edits and code drift without silently rewriting approved upstream semantics. |
+| CAP-007 | Provide stronger teaching materials, profile guidance, and concrete technical templates without weakening the protocol. |
+
 ## Constraints and preferences
 
 - The methodology is intent-first, not design-first.

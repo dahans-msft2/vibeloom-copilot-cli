@@ -27,6 +27,16 @@ depends_on: []
 2. [capability]
 3. [capability]
 
+## Capability Index (Optional / Reconciled)
+
+<!-- Draft intent may remain prose-first with no stable item IDs.
+     Add `CAP-*` entries only when reconciliation or downstream trace needs
+     explicit capability references. -->
+
+| ID | Capability |
+| --- | --- |
+| CAP-001 | |
+
 ## Constraints and preferences
 
 - Preferred technologies:

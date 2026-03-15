@@ -45,19 +45,19 @@ The product is a methodology package that enables users to build and maintain so
 
 ## Functional Requirements
 
-| ID | Requirement | Priority | Users | Acceptance criteria |
-| --- | --- | --- | --- | --- |
-| PRD-FR-001 | The package must define a canonical intent-first contract stack with `intent`, `prd`, `usm`, `dm`, and `spec`. | P0 | USR-001, USR-002, USR-003 | The methodology names each artifact, its authority, and its downstream role. |
-| PRD-FR-002 | The package must make `USM` mandatory as the workflow and acceptance layer. | P0 | USR-001, USR-002 | Every governed project template includes `usm.md`; no profile omits it. |
-| PRD-FR-003 | The package must make `DM` mandatory as the semantic layer. | P0 | USR-002, USR-003 | Every governed project template includes `dm.md`; no profile omits it. |
-| PRD-FR-004 | The package must define deterministic context loading so agents use the smallest safe contract slice. | P0 | USR-002, USR-003 | The package documents always-load, conditional-load, and escalation rules. |
-| PRD-FR-005 | The package must define asymmetric reconciliation after manual edits or code drift. | P0 | USR-002, USR-003 | The methodology distinguishes upstream semantic truth from downstream drift and requires explicit proposals. |
-| PRD-FR-006 | The package must support greenfield initialization and brownfield import. | P0 | USR-001, USR-002 | The workflow defines both a greenfield path and an `import` bootstrap path. |
-| PRD-FR-007 | The package must treat `AGENTS.md` and `plan.md` as derived operational artifacts, not canonical peers. | P0 | USR-002, USR-003 | Templates and docs describe them as derived and regenerable. |
-| PRD-FR-008 | The package must support a steady-state local bugfix path for governed repos. | P1 | USR-002, USR-003 | The technical spec defines repro-first, regression-first, targeted reconcile behavior. |
-| PRD-FR-009 | The package must keep machine-readable projections intentionally limited. | P1 | USR-002 | Only trace index, stale graph, and interface/schema manifests are durable outputs. |
-| PRD-FR-010 | The package must provide focused help and explanation paths for methodology, profiles, evals, templates, and commands. | P1 | USR-001, USR-002, USR-003 | The skill exposes topic help and the docs provide targeted guides without bloating the skill body. |
-| PRD-FR-011 | The package must provide concrete technical-design templates without sacrificing governance rules. | P1 | USR-002, USR-003 | Root and module spec templates include runtime architecture detail, ownership rules, and interface structure together. |
+| ID | Requirement | Intent refs | Priority | Users | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- |
+| PRD-FR-001 | The package must define a canonical intent-first contract stack with `intent`, `prd`, `usm`, `dm`, and `spec`. | CAP-001 | P0 | USR-001, USR-002, USR-003 | The methodology names each artifact, its authority, and its downstream role. |
+| PRD-FR-002 | The package must make `USM` mandatory as the workflow and acceptance layer. | CAP-002 | P0 | USR-001, USR-002 | Every governed project template includes `usm.md`; no profile omits it. |
+| PRD-FR-003 | The package must make `DM` mandatory as the semantic layer. | CAP-002 | P0 | USR-002, USR-003 | Every governed project template includes `dm.md`; no profile omits it. |
+| PRD-FR-004 | The package must define deterministic context loading so agents use the smallest safe contract slice. | CAP-004, CAP-005 | P0 | USR-002, USR-003 | The package documents always-load, conditional-load, and escalation rules. |
+| PRD-FR-005 | The package must define asymmetric reconciliation after manual edits or code drift. | CAP-006 | P0 | USR-002, USR-003 | The methodology distinguishes upstream semantic truth from downstream drift and requires explicit proposals. |
+| PRD-FR-006 | The package must support greenfield initialization and brownfield import. | CAP-003 | P0 | USR-001, USR-002 | The workflow defines both a greenfield path and an `import` bootstrap path. |
+| PRD-FR-007 | The package must treat `AGENTS.md` and `plan.md` as derived operational artifacts, not canonical peers. | CAP-005 | P0 | USR-002, USR-003 | Templates and docs describe them as derived and regenerable. |
+| PRD-FR-008 | The package must support a steady-state local bugfix path for governed repos. | CAP-006 | P1 | USR-002, USR-003 | The technical spec defines repro-first, regression-first, targeted reconcile behavior. |
+| PRD-FR-009 | The package must keep machine-readable projections intentionally limited. | CAP-005 | P1 | USR-002 | Only trace index, stale graph, and interface/schema manifests are durable outputs. |
+| PRD-FR-010 | The package must provide focused help and explanation paths for methodology, profiles, evals, templates, and commands. | CAP-007 | P1 | USR-001, USR-002, USR-003 | The skill exposes topic help and the docs provide targeted guides without bloating the skill body. |
+| PRD-FR-011 | The package must provide concrete technical-design templates without sacrificing governance rules. | CAP-005, CAP-007 | P1 | USR-002, USR-003 | Root and module spec templates include runtime architecture detail, ownership rules, and interface structure together. |
 
 ## Non-Functional Requirements
 

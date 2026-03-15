@@ -38,9 +38,12 @@ depends_on:
 
 ## Functional Requirements
 
-| ID | Requirement | Priority | Users | Acceptance criteria |
-| --- | --- | --- | --- | --- |
-| PRD-FR-001 | | P0 / P1 / P2 | USR-001 | [plain-language acceptance summary] |
+<!-- Use `CAP-*` references when the intent capability index has been introduced
+     through reconciliation. -->
+
+| ID | Requirement | Intent refs | Priority | Users | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- |
+| PRD-FR-001 | | CAP-001 | P0 / P1 / P2 | USR-001 | [plain-language acceptance summary] |
 
 ## Non-Functional Requirements
 

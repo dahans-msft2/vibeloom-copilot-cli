@@ -28,26 +28,26 @@ depends_on:
 
 #### Entities
 
-| ID | Entity | Description | Key attributes | Invariants |
-| --- | --- | --- | --- | --- |
-| ENT-001 | Artifact | A canonical or derived document in the methodology | `artifact_id`, `artifact_type`, `status`, `version` | INV-001, INV-002 |
-| ENT-002 | Contract Item | A stable item inside an artifact, such as a requirement, story, entity, invariant, or module | `item_id`, `kind`, `label`, `artifact_id` | INV-003 |
-| ENT-003 | Trace Link | A typed relationship connecting upstream and downstream contract items | `source_id`, `target_id`, `link_type` | INV-004 |
-| ENT-004 | Eval Run | A structural or semantic evaluation pass over a slice of artifacts | `eval_id`, `scope`, `result`, `timestamp` | INV-005 |
-| ENT-005 | Reconcile Session | A bounded attempt to resolve drift between approved truth and downstream reality | `session_id`, `trigger`, `resolution_path` | INV-006 |
-| ENT-006 | Change Class | A classification of scope used to choose context breadth and approval path | `class`, `confidence`, `reason` | INV-007 |
+| ID | Entity | Description | Key attributes | Invariants | Driven by stories / requirements |
+| --- | --- | --- | --- | --- | --- |
+| ENT-001 | Artifact | A canonical or derived document in the methodology | `artifact_id`, `artifact_type`, `status`, `version` | INV-001, INV-002 | STORY-001, STORY-002, STORY-006, STORY-008, STORY-010; PRD-FR-001, PRD-FR-007 |
+| ENT-002 | Contract Item | A stable item inside an artifact, such as a requirement, story, entity, invariant, or module | `item_id`, `kind`, `label`, `artifact_id` | INV-003 | STORY-003, STORY-004, STORY-012; PRD-FR-001 |
+| ENT-003 | Trace Link | A typed relationship connecting upstream and downstream contract items | `source_id`, `target_id`, `link_type` | INV-004 | STORY-012, STORY-013; PRD-FR-004, PRD-FR-009 |
+| ENT-004 | Eval Run | A structural or semantic evaluation pass over a slice of artifacts | `eval_id`, `scope`, `result`, `timestamp` | INV-005 | STORY-002, STORY-008, STORY-009; PRD-FR-005, PRD-FR-008 |
+| ENT-005 | Reconcile Session | A bounded attempt to resolve drift between approved truth and downstream reality | `session_id`, `trigger`, `resolution_path` | INV-006 | STORY-008, STORY-009; PRD-FR-005, PRD-FR-008 |
+| ENT-006 | Change Class | A classification of scope used to choose context breadth and approval path | `class`, `confidence`, `reason` | INV-007 | STORY-007, STORY-013; PRD-FR-004 |
 
 #### Invariants
 
-| ID | Invariant | Applies to |
-| --- | --- | --- |
-| INV-001 | Each artifact has exactly one active lifecycle state at a time. | ENT-001 |
-| INV-002 | Only humans may approve canonical artifacts. | ENT-001 |
-| INV-003 | Every stable contract item belongs to exactly one canonical artifact version. | ENT-002 |
-| INV-004 | Every downstream normative item must trace to at least one upstream normative item unless it is explicitly marked foundational. | ENT-003 |
-| INV-005 | Structural eval failures block approval; semantic eval warnings do not self-resolve. | ENT-004 |
-| INV-006 | A reconcile session must end with either an upstream amendment proposal or a downstream correction proposal. | ENT-005 |
-| INV-007 | Uncertain change classification escalates to the broader scope. | ENT-006 |
+| ID | Invariant | Applies to | Driven by stories / requirements |
+| --- | --- | --- | --- |
+| INV-001 | Each artifact has exactly one active lifecycle state at a time. | ENT-001 | STORY-002, STORY-008; PRD-FR-001 |
+| INV-002 | Only humans may approve canonical artifacts. | ENT-001 | STORY-002; PRD-FR-001 |
+| INV-003 | Every stable contract item belongs to exactly one canonical artifact version. | ENT-002 | STORY-012; PRD-FR-001 |
+| INV-004 | Every downstream normative item must trace to at least one upstream normative item unless it is explicitly marked foundational. | ENT-003 | STORY-012; PRD-FR-004, PRD-FR-009 |
+| INV-005 | Structural eval failures block approval; semantic eval warnings do not self-resolve. | ENT-004 | STORY-002, STORY-008; PRD-FR-005 |
+| INV-006 | A reconcile session must end with either an upstream amendment proposal or a downstream correction proposal. | ENT-005 | STORY-008; PRD-FR-005 |
+| INV-007 | Uncertain change classification escalates to the broader scope. | ENT-006 | STORY-007, STORY-013; PRD-FR-004 |
 
 #### Relationships
 
@@ -67,24 +67,24 @@ depends_on:
 
 #### Entities
 
-| ID | Entity | Description | Key attributes | Invariants |
-| --- | --- | --- | --- | --- |
-| ENT-007 | Profile | A repo-level operating mode for artifact depth and module decomposition | `profile`, `selection_reason` | INV-008 |
-| ENT-008 | Module | A unit of ownership and parallel execution derived from the technical spec | `module_id`, `name`, `bounded_context`, `write_surface` | INV-009, INV-010 |
-| ENT-009 | Interface Contract | An owned API, event, schema, or other cross-boundary contract | `interface_id`, `owner_module`, `consumer_modules` | INV-011 |
-| ENT-010 | Context Slice | The minimal set of artifacts and IDs loaded for a task | `slice_id`, `change_class`, `artifact_refs`, `item_refs` | INV-012 |
-| ENT-011 | Import Assessment | An inference result produced during brownfield import | `assessment_id`, `confidence`, `source_evidence` | INV-013 |
+| ID | Entity | Description | Key attributes | Invariants | Driven by stories / requirements |
+| --- | --- | --- | --- | --- | --- |
+| ENT-007 | Profile | A repo-level operating mode for artifact depth and module decomposition | `profile`, `selection_reason` | INV-008 | STORY-014; PRD-FR-010 |
+| ENT-008 | Module | A unit of ownership and parallel execution derived from the technical spec | `module_id`, `name`, `bounded_context`, `write_surface` | INV-009, INV-010 | STORY-005, STORY-014; PRD-FR-011 |
+| ENT-009 | Interface Contract | An owned API, event, schema, or other cross-boundary contract | `interface_id`, `owner_module`, `consumer_modules` | INV-011 | STORY-005; PRD-FR-011 |
+| ENT-010 | Context Slice | The minimal set of artifacts and IDs loaded for a task | `slice_id`, `change_class`, `artifact_refs`, `item_refs` | INV-012 | STORY-006, STORY-007, STORY-013, STORY-015; PRD-FR-004, PRD-FR-010 |
+| ENT-011 | Import Assessment | An inference result produced during brownfield import | `assessment_id`, `confidence`, `source_evidence` | INV-013 | STORY-010, STORY-011; PRD-FR-006 |
 
 #### Invariants
 
-| ID | Invariant | Applies to |
-| --- | --- | --- |
-| INV-008 | Exactly one repo profile is active at a time. | ENT-007 |
-| INV-009 | Every write surface is owned by at most one module. | ENT-008 |
-| INV-010 | Module dependencies must form an acyclic graph in `full` profile. | ENT-008 |
-| INV-011 | Every interface contract has exactly one owner module. | ENT-009 |
-| INV-012 | A context slice must include all referenced upstream truth and exclude unrelated modules unless escalation is required. | ENT-010 |
-| INV-013 | Imported semantics must carry confidence signals until human approval removes uncertainty. | ENT-011 |
+| ID | Invariant | Applies to | Driven by stories / requirements |
+| --- | --- | --- | --- |
+| INV-008 | Exactly one repo profile is active at a time. | ENT-007 | STORY-014; PRD-FR-010 |
+| INV-009 | Every write surface is owned by at most one module. | ENT-008 | STORY-005; PRD-FR-011, NFR-004 |
+| INV-010 | Module dependencies must form an acyclic graph in `full` profile. | ENT-008 | STORY-005; PRD-FR-011, NFR-004 |
+| INV-011 | Every interface contract has exactly one owner module. | ENT-009 | STORY-005; PRD-FR-011, NFR-004 |
+| INV-012 | A context slice must include all referenced upstream truth and exclude unrelated modules unless escalation is required. | ENT-010 | STORY-006, STORY-007, STORY-013; PRD-FR-004, NFR-002 |
+| INV-013 | Imported semantics must carry confidence signals until human approval removes uncertainty. | ENT-011 | STORY-010, STORY-011; PRD-FR-006 |
 
 #### Relationships
 

@@ -16,7 +16,6 @@ depends_on:
   - ART-PRD-CODEX-V4
   - ART-USM-CODEX-V4
   - ART-DM-CODEX-V4
-profile: full
 ---
 
 # Technical Spec: Codex V4 Methodology Package
@@ -24,6 +23,8 @@ profile: full
 ## Purpose
 
 This document defines the package-level technical design for Codex V4. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the strict command surface packaged as a Codex skill. The package is still documentation-first: it does not implement a separate runtime binary.
+
+This is a package and protocol spec, not a concrete governed repo instance. It defines what generated governed project specs must support, but it does not claim live module ownership or interface inventories for this repository itself.
 
 ## Current Phase Boundary
 
@@ -101,6 +102,17 @@ Rules:
 Derived operational artifacts:
 - `AGENTS.md` packages the relevant policy and context slice for execution.
 - `plan.md` packages a per-change task graph, touched IDs, acceptance signals, and validation steps.
+
+## Upstream Trace Matrix
+
+| Spec area | PRD refs | STORY refs | ENT refs | INV refs |
+| --- | --- | --- | --- | --- |
+| Package layering and authority model | PRD-FR-001, PRD-FR-010 | STORY-001, STORY-015 | ENT-001, ENT-010 | INV-003, INV-012 |
+| Profiles and module/interface ownership rules | PRD-FR-011 | STORY-005, STORY-014 | ENT-007, ENT-008, ENT-009 | INV-008, INV-009, INV-010, INV-011 |
+| Context loading and surface routing | PRD-FR-004, PRD-FR-010 | STORY-006, STORY-007, STORY-013, STORY-015 | ENT-006, ENT-010 | INV-007, INV-012 |
+| Reconcile engine and stale propagation | PRD-FR-005, PRD-FR-008 | STORY-008, STORY-009, STORY-012 | ENT-003, ENT-004, ENT-005 | INV-004, INV-005, INV-006 |
+| Import and steady-state bugfix paths | PRD-FR-006, PRD-FR-008 | STORY-009, STORY-010, STORY-011 | ENT-004, ENT-005, ENT-011 | INV-013 |
+| Derived artifacts and projection restraint | PRD-FR-007, PRD-FR-009 | STORY-006, STORY-012 | ENT-001, ENT-003, ENT-010 | INV-004, INV-012 |
 
 ## Allowed Durable Projections
 

@@ -102,6 +102,16 @@ profile: lite | full
 | downstream dependency failure | | NFR-001 |
 | idempotent retry / duplicate submission | | STORY-001 |
 
+## Upstream Trace Matrix
+
+| Spec area | PRD refs | STORY refs | ENT refs | INV refs |
+| --- | --- | --- | --- | --- |
+| runtime architecture | PRD-FR-001 | STORY-001 | ENT-001 | INV-001 |
+| data and storage | PRD-FR-001 | STORY-001 | ENT-001 | INV-001 |
+| interfaces and ownership | PRD-FR-001 | STORY-001 | ENT-001 | INV-001 |
+| context loading | PRD-FR-001 | STORY-001 | ENT-001 | INV-001 |
+| reconcile and bugfix behavior | PRD-FR-001 | STORY-001 | ENT-001 | INV-001 |
+
 ## Security And Trust Boundaries
 
 | Concern | Approach | Requirement / Invariant |
@@ -129,36 +139,6 @@ profile: lite | full
 | CI/CD | | |
 | Scaling | | |
 | Secrets management | | |
-
-## Repository Layout
-
-| Path | Responsibility |
-| --- | --- |
-| `src/` | |
-| `tests/` | |
-| `modules/` | Full profile only |
-| `constitution.md` | |
-| `intent.md` | |
-| `prd.md` | |
-| `usm.md` | |
-| `dm.md` | |
-| `spec.md` | |
-
-## Artifact Responsibilities
-
-| Artifact | Responsibility |
-| --- | --- |
-| `intent.md` | human goal, audience, constraints, and capability outline |
-| `prd.md` | requirements, NFRs, scope, and success signals |
-| `usm.md` | workflows, stories, acceptance criteria, and user-visible sequence |
-| `dm.md` | bounded contexts, entities, relationships, and invariants |
-| `spec.md` | technical realization, ownership model, interfaces, and operational rules |
-
-## Surface Guidance
-
-- `product-first` users usually reach this file after reviewing `prd.md`, `usm.md`, and `dm.md`.
-- `code-first` users may start here. Keep the upstream `PRD-FR-*`, `STORY-*`, `ENT-*`, and `INV-*` links explicit where they materially constrain design.
-- Do not treat `code-first` as permission to hide missing workflow or domain ambiguity. Escalate those upstream instead.
 
 ## Module And Ownership Model
 
@@ -228,22 +208,6 @@ MOD-[MODULE] -> MOD-[OTHER]
 
 Approved upstream truth is authoritative. Downstream edits may challenge it, but may not silently replace it.
 
-## Greenfield Flow
-
-1. draft and approve `intent.md`
-2. generate and reconcile `prd.md`, `usm.md`, and `dm.md`
-3. generate `spec.md`
-4. derive operational artifacts only after the canonical stack is ready
-
-Example:
-- a single-context internal tool may stay `lite` with one application module
-- a multi-context product with separate billing and identity concerns should normally move to `full`
-
-## Brownfield Import Notes
-
-- `import` is only for unmanaged or heavily drifted repos.
-- inferred semantics must carry visible confidence until approved.
-
 ## Steady-State Bugfix Path
 
 1. capture repro and expected behavior
@@ -257,14 +221,6 @@ Example:
 - stale status propagates only through declared dependencies, not intuition
 - downstream code drift may trigger a proposal, but may not silently rewrite approved upstream truth
 - example: a changed `IFACE-*` may stale the owning module spec, dependent module specs, and any derived contract tests that declare that interface
-
-## Future Command Surface Notes
-
-Use this section only for non-authoritative notes about future runtime behavior. The current source of truth for command semantics remains the skill package and operational references.
-
-Example notes:
-- `/vibeloom init project ...` scaffolds the canonical stack, but approval still stays human-driven
-- `/vibeloom eval scope module billing` should stay a projection over canonical artifacts, not a new source of truth
 
 ## Allowed Durable Projections
 

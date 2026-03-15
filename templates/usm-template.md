@@ -28,9 +28,9 @@ depends_on:
 
 **Goal:** [one sentence]
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-001 | | USR-001 | | | P0 / P1 / P2 | ENT-001 | AC-001, AC-002 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-001 | | USR-001 | | | PRD-FR-001 | P0 / P1 / P2 | ENT-001 | AC-001, AC-002 |
 
 ## Acceptance Criteria
 
@@ -40,9 +40,9 @@ depends_on:
 
 ## Cross-Cutting Concerns
 
-| ID | Story | Affects epics | Priority |
-| --- | --- | --- | --- |
-| STORY-999 | | EPIC-001 | P0 |
+| ID | Story | Requirements | Affects epics | Priority |
+| --- | --- | --- | --- | --- |
+| STORY-999 | | PRD-FR-001 | EPIC-001 | P0 |
 
 ## Story Dependencies
 

@@ -2,8 +2,11 @@
 
 This file is the runtime summary loaded during routine skill work.
 
-- `docs/` owns methodology truth.
-- `references/` owns runtime-efficient execution guidance.
+- `docs/` owns canonical prose methodology truth.
+- The root artifact stack is the structured package representation aligned to `docs/`.
+- `references/` owns runtime-efficient execution guidance only.
+- `templates/` is generation-only.
+- `site/` is derivative marketing documentation and is not part of runtime authority.
 - Load `docs/` only when the user asks for deeper explanation, uses `help topic`, or another runtime reference points there.
 
 ## Authority
@@ -15,6 +18,7 @@ This file is the runtime summary loaded during routine skill work.
 ## Runtime Invariants
 
 - The governed stack is intent-first: `intent -> prd -> usm -> dm -> spec`
+- Draft `intent.md` may remain prose-first with no stable item IDs. Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs explicit intent references.
 - `USM` and `DM` are mandatory in every profile.
 - Only `lite` and `full` profiles exist.
 - Surface modes are session-scoped: default `product-first`; `code-first` only changes which layer is shown first and escalates back to product/domain slices on boundary or semantic risk.

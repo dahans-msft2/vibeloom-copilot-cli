@@ -30,56 +30,56 @@ depends_on:
 
 **Goal:** A user can start a governed project with the methodology scaffolding in place before code generation begins.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-001 | Create a new governed project | USR-001 | initialize a project from an intent | the repo starts from a shared source of truth instead of an untracked prompt | P0 | ENT-001, ENT-006 | AC-001, AC-002 |
-| STORY-002 | Approve foundational artifacts | USR-002 | review and approve the initial stack | downstream work is gated by explicit human approval | P0 | ENT-001, ENT-004, ENT-005 | AC-003 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-001 | Create a new governed project | USR-001 | initialize a project from an intent | the repo starts from a shared source of truth instead of an untracked prompt | PRD-FR-001, PRD-FR-006 | P0 | ENT-001, ENT-006 | AC-001, AC-002 |
+| STORY-002 | Approve foundational artifacts | USR-002 | review and approve the initial stack | downstream work is gated by explicit human approval | PRD-FR-001 | P0 | ENT-001, ENT-004, ENT-005 | AC-003 |
 
 ### Epic: EPIC-002 — Reveal User Value And Semantics
 
 **Goal:** The methodology exposes user workflows before technical decomposition happens.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-003 | Map user workflows with USM | USR-001 | express epics, stories, and acceptance criteria | the intended user value is easy to validate | P0 | ENT-002, ENT-003 | AC-004, AC-005 |
-| STORY-004 | Derive domain concepts from workflows | USR-002 | model entities, relationships, and invariants | the system preserves ubiquitous language across implementation changes | P0 | ENT-002, ENT-007, ENT-008 | AC-006 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-003 | Map user workflows with USM | USR-001 | express epics, stories, and acceptance criteria | the intended user value is easy to validate | PRD-FR-002 | P0 | ENT-002, ENT-003 | AC-004, AC-005 |
+| STORY-004 | Derive domain concepts from workflows | USR-002 | model entities, relationships, and invariants | the system preserves ubiquitous language across implementation changes | PRD-FR-003 | P0 | ENT-002, ENT-007, ENT-008 | AC-006 |
 
 ### Epic: EPIC-003 — Design Safe Execution Boundaries
 
 **Goal:** The methodology turns semantics into technical boundaries safe for Codex agents.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-005 | Define module boundaries and interfaces | USR-002 | derive modules and owned interfaces from the approved semantics | parallel work has clear write surfaces and interface ownership | P0 | ENT-008, ENT-009 | AC-007 |
-| STORY-006 | Generate derived operational guidance | USR-003 | receive a scoped `AGENTS.md` and change plan | execution uses minimal relevant context without elevating derived docs to source of truth | P0 | ENT-001, ENT-010 | AC-008 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-005 | Define module boundaries and interfaces | USR-002 | derive modules and owned interfaces from the approved semantics | parallel work has clear write surfaces and interface ownership | PRD-FR-011 | P0 | ENT-008, ENT-009 | AC-007 |
+| STORY-006 | Generate derived operational guidance | USR-003 | receive a scoped `AGENTS.md` and change plan | execution uses minimal relevant context without elevating derived docs to source of truth | PRD-FR-004, PRD-FR-007 | P0 | ENT-001, ENT-010 | AC-008 |
 
 ### Epic: EPIC-004 — Evolve A Governed Codebase
 
 **Goal:** Approved contracts remain durable while the code and downstream artifacts continue to change.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-007 | Classify a change before execution | USR-003 | identify whether a change is local, behavioral, or boundary-changing | the system loads only the safe context slice and applies the correct approval path | P0 | ENT-006, ENT-010 | AC-009 |
-| STORY-008 | Reconcile manual edits asymmetrically | USR-002 | detect drift and choose whether semantics or implementation should change | approved upstream truth is not silently overwritten | P0 | ENT-001, ENT-004, ENT-005 | AC-010 |
-| STORY-009 | Fix defects locally in governed repos | USR-002 | start from a repro and regression test | defect handling stays fast without re-importing the whole repo | P1 | ENT-004, ENT-005 | AC-011 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-007 | Classify a change before execution | USR-003 | identify whether a change is local, behavioral, or boundary-changing | the system loads only the safe context slice and applies the correct approval path | PRD-FR-004 | P0 | ENT-006, ENT-010 | AC-009 |
+| STORY-008 | Reconcile manual edits asymmetrically | USR-002 | detect drift and choose whether semantics or implementation should change | approved upstream truth is not silently overwritten | PRD-FR-005 | P0 | ENT-001, ENT-004, ENT-005 | AC-010 |
+| STORY-009 | Fix defects locally in governed repos | USR-002 | start from a repro and regression test | defect handling stays fast without re-importing the whole repo | PRD-FR-008 | P1 | ENT-004, ENT-005 | AC-011 |
 
 ### Epic: EPIC-005 — Import Existing Repositories
 
 **Goal:** An unmanaged repo can enter the methodology with controlled uncertainty.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-010 | Import an unmanaged codebase | USR-002 | reconstruct draft contracts from code, tests, and docs | I can bring a brownfield repo under governance | P1 | ENT-001, ENT-004, ENT-011 | AC-012 |
-| STORY-011 | Review inferred confidence | USR-002 | see where the import is uncertain | I can approve or correct inferred semantics before downstream work resumes | P1 | ENT-011, ENT-005 | AC-013 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-010 | Import an unmanaged codebase | USR-002 | reconstruct draft contracts from code, tests, and docs | I can bring a brownfield repo under governance | PRD-FR-006 | P1 | ENT-001, ENT-004, ENT-011 | AC-012 |
+| STORY-011 | Review inferred confidence | USR-002 | see where the import is uncertain | I can approve or correct inferred semantics before downstream work resumes | PRD-FR-006 | P1 | ENT-011, ENT-005 | AC-013 |
 
 ### Epic: EPIC-006 — Teach The Operator Without Diluting The Protocol
 
 **Goal:** The methodology stays learnable and usable without collapsing back into vague conversational guidance.
 
-| ID | Story | As a... | I want to... | So that... | Priority | Entities | Acceptance criteria |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| STORY-014 | Choose the right profile with explicit guidance | USR-002 | review clear Lite vs Full heuristics | the repo takes on only the coordination overhead it actually needs | P1 | ENT-007, ENT-010 | AC-014 |
-| STORY-015 | Ask for focused help topics | USR-001 | load methodology, profile, eval, template, or command guidance on demand | the skill stays lean while the docs stay teachable | P1 | ENT-001, ENT-010 | AC-015 |
+| ID | Story | As a... | I want to... | So that... | Requirements | Priority | Entities | Acceptance criteria |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| STORY-014 | Choose the right profile with explicit guidance | USR-002 | review clear Lite vs Full heuristics | the repo takes on only the coordination overhead it actually needs | PRD-FR-010 | P1 | ENT-007, ENT-010 | AC-014 |
+| STORY-015 | Ask for focused help topics | USR-001 | load methodology, profile, eval, template, or command guidance on demand | the skill stays lean while the docs stay teachable | PRD-FR-010 | P1 | ENT-001, ENT-010 | AC-015 |
 
 ## Acceptance Criteria
 
@@ -103,10 +103,10 @@ depends_on:
 
 ## Cross-Cutting Concerns
 
-| ID | Story | Affects epics | Priority |
-| --- | --- | --- | --- |
-| STORY-012 | Maintain trace links across every tier | EPIC-001, EPIC-002, EPIC-003, EPIC-004, EPIC-005 | P0 |
-| STORY-013 | Keep context slices small enough for efficient execution | EPIC-003, EPIC-004, EPIC-005 | P0 |
+| ID | Story | Requirements | Affects epics | Priority |
+| --- | --- | --- | --- | --- |
+| STORY-012 | Maintain trace links across every tier | PRD-FR-001, PRD-FR-004, PRD-FR-009 | EPIC-001, EPIC-002, EPIC-003, EPIC-004, EPIC-005 | P0 |
+| STORY-013 | Keep context slices small enough for efficient execution | PRD-FR-004 | EPIC-003, EPIC-004, EPIC-005 | P0 |
 
 ## Story Dependencies
 

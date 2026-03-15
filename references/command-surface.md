@@ -88,6 +88,8 @@ Official command aliases:
 - `/vibeloom approve <selector>` -> `/vibeloom approve scope <selector>`
 - `/vibeloom eval <selector>` -> `/vibeloom eval scope <selector>`
 
+This alias set is closed. Do not introduce additional shorthands.
+
 Selector and scope aliases:
 - `product` -> `prd+usm+dm`
 - `tech` -> `spec`
@@ -113,15 +115,22 @@ When a command is malformed:
 
 ## Examples
 
+Canonical forms:
+
 ```text
 /vibeloom status repo
-/vibeloom status
 /vibeloom review artifact usm
 /vibeloom develop change add workspace sharing with invite approval
-/vibeloom develop add workspace sharing with invite approval
 /vibeloom fix issue invite links expire one hour too early
 /vibeloom eval scope module billing
-/vibeloom eval module billing
 /vibeloom use surface code-first
 /vibeloom approve scope product
+```
+
+Documented aliases:
+
+```text
+/vibeloom status
+/vibeloom develop add workspace sharing with invite approval
+/vibeloom eval module billing
 ```

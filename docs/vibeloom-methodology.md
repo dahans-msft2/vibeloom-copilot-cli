@@ -4,6 +4,14 @@ VibeLoom is a contract-driven methodology for long-lived vibe coding. It is buil
 
 This file owns methodology truth and longer explanation. The runtime skill loads `references/` first during routine work and reaches into `docs/` mainly through `help topic` or explicit deeper-explanation flows.
 
+## Layer Contract
+
+- `docs/` owns the canonical prose methodology truth.
+- The root artifact stack is the structured package representation aligned to `docs/`.
+- `references/` is the runtime operational layer and should stay narrow, structured, and low-context.
+- `templates/` is generation-only and should provide shape rather than methodology prose.
+- `site/` is derivative public documentation and marketing material.
+
 ---
 
 ## The Problem
@@ -40,7 +48,7 @@ VibeLoom organizes project knowledge into a tiered stack of artifacts with disti
 | Tier | Artifact | Purpose | Primary audience |
 | --- | --- | --- | --- |
 | 0 | Constitution | Universal rules and defaults | Methodology itself |
-| 1 | Intent | What the system is for | Product owner |
+| 1 | Intent | What the system is for, prose-first in draft | Product owner |
 | 2 | PRD | Goals, requirements, scope, NFRs | Product + engineering leads |
 | 3 | USM | Epics, stories, acceptance criteria, workflows | Product owner + designers |
 | 4 | Domain Model | Entities, relationships, invariants, bounded contexts | Domain experts + architects |
@@ -85,7 +93,7 @@ flowchart TD
 ### Why each tier exists
 
 **Constitution** keeps universal defaults out of downstream artifacts.  
-**Intent** anchors purpose.  
+**Intent** anchors purpose and may stay prose-first until reconciliation needs explicit capability trace.
 **PRD** defines product expectations.  
 **USM** exposes workflows, value delivery, and acceptance.  
 **DM** stabilizes the ubiquitous language and invariants.  
@@ -362,10 +370,10 @@ flowchart TD
 
 ## Rigid Traceability
 
-Every normative item in the contract stack carries a stable ID. Those IDs create an explicit chain:
+Every traced normative item below draft intent carries a stable ID. Draft intent may remain prose-first until reconciliation introduces optional `CAP-*` capability IDs. Those IDs create an explicit chain:
 
 ```text
-Intent capability -> PRD requirement -> USM story -> DM entity/invariant -> Spec module/interface -> Test
+Reconciled CAP capability -> PRD requirement -> USM story -> DM entity/invariant -> Spec module/interface -> Test
 ```
 
 This chain enables:
@@ -381,6 +389,7 @@ Example:
 
 | Tier | Example |
 | --- | --- |
+| `intent` | `CAP-004` upstream contracts act as evals |
 | `PRD` | `PRD-FR-004` workspace sharing must require explicit invite approval |
 | `USM` | `STORY-018` owner approves a workspace invite |
 | `DM` | `ENT-012` Invite, `INV-009` invite must be pending before approval |

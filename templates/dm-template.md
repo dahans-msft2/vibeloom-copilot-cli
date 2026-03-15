@@ -38,9 +38,9 @@ depends_on:
 <!-- Key attributes should capture the important business shape, not the full
      technical schema. -->
 
-| ID | Entity | Description | Key attributes | Invariants |
-| --- | --- | --- | --- | --- |
-| ENT-001 | | | | INV-001 |
+| ID | Entity | Description | Key attributes | Invariants | Driven by stories / requirements |
+| --- | --- | --- | --- | --- | --- |
+| ENT-001 | | | | INV-001 | STORY-001, PRD-FR-001 |
 
 #### Invariants
 

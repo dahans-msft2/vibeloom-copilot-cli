@@ -68,6 +68,7 @@ Fail if:
 What to check:
 - all stable IDs use approved prefixes from the constitution and artifact protocol
 - duplicate IDs do not exist inside one governed scope
+- draft `intent.md` is allowed to remain prose-first until reconciliation introduces optional `CAP-*`
 
 How to check:
 1. list all IDs in scope
@@ -82,6 +83,7 @@ Fail if:
 - an item uses an undefined prefix
 - an expected stable item lacks an ID
 - duplicate IDs exist in the same governed scope
+- a draft intent artifact is failed only because it remains prose-first with no `CAP-*`
 
 ### EVAL-STRUCT-004 - Reference integrity
 
@@ -167,7 +169,7 @@ Evidence:
 - trace chain table
 
 Expected chain:
-- intent capability -> PRD requirement
+- reconciled `CAP-*` capability -> PRD requirement
 - PRD requirement -> USM story
 - USM story -> DM entity or invariant
 - DM entity or invariant -> spec module or interface
@@ -176,6 +178,7 @@ Expected chain:
 Fail if:
 - a tier breaks the required chain
 - a required link type is missing from the methodology
+- a reconciled or downstream-traced product slice claims item-level intent trace without `CAP-*`
 
 ### EVAL-STRUCT-008 - Projection budget
 

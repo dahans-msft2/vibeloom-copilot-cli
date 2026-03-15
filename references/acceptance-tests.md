@@ -59,10 +59,12 @@ Expected:
 ```text
 /vibeloom help profiles
 /vibeloom status module payments-api
+/vibeloom generate tests
 ```
 
 Expected:
 - reject unsupported shorthand aliases for `help`, `review`, `fix`, and `generate`
+- reject unsupported command forms such as `/vibeloom generate tests`
 - if `payments-api` is invalid, return actual module selectors from the repo
 
 ## Routing Tests
@@ -134,6 +136,18 @@ Expected:
 - do not jump straight to downstream artifacts
 - keep the next action focused on drafting `intent.md`
 
+### Prose-first draft intent
+
+Expected:
+- draft `intent.md` may remain prose-first and omit stable item IDs
+- the draft remains valid until reconciliation or downstream trace needs explicit item-level intent references
+
+### Reconciled capability index
+
+Expected:
+- reconciliation may add optional `CAP-*` capability IDs to `intent.md`
+- when product artifacts claim item-level intent trace, `PRD-FR-*` items reference one or more `CAP-*`
+
 ### Profile recommendation
 
 Input:
@@ -185,3 +199,4 @@ Any finding must name the affected IDs explicitly, even when the wording is work
 - No response implies implicit activation; the skill remains explicit-invocation only.
 - No response introduces a fifth approval state, collapses the USM into the PRD for Lite, or requires an external truth-bearing state ledger.
 - No response invents aliases outside the documented alias set.
+- No runtime rule requires stable item IDs in draft intent before reconciliation introduces optional `CAP-*`.

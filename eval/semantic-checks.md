@@ -25,6 +25,7 @@ Use matrices when coverage or ownership is clearer in table form.
 What to check:
 - each `PRD-FR-*` requirement is represented by one or more `STORY-*` items
 - the acceptance criteria plausibly satisfy the requirement
+- draft intent may remain prose-first unless downstream artifacts are already claiming item-level `CAP-*` trace
 
 How to check:
 1. list `PRD-FR-*` items
@@ -46,6 +47,7 @@ Example matrix:
 Warn if:
 - a requirement is unrepresented
 - only a vague story appears to cover the requirement
+- a downstream artifact claims item-level intent trace but the reconciled capability index is still missing
 
 ### EVAL-SEM-002 - Story to entity coverage
 

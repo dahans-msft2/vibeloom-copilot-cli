@@ -2,12 +2,9 @@
 
 This document defines the exact normative shape of the VibeLoom artifacts used by the Codex package.
 
-The layer contract for this repo is:
-- `docs/` owns canonical prose methodology truth
-- the root artifact stack is the structured package representation aligned to `docs/`
-- `references/` is the runtime operational layer
-- `templates/` is generation-only
-- `site/` is derivative public documentation and marketing material
+It assumes the canonical layer contract from [vibeloom-methodology.md](vibeloom-methodology.md): `docs/` own methodology prose, `references/` own routine runtime behavior, `templates/` are generation-only, and `site/` is derivative.
+
+This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering in full.
 
 ## Common Frontmatter
 
@@ -26,7 +23,7 @@ Canonical artifacts must include:
 | `depends_on` | list | Approved upstream artifacts |
 
 Optional fields:
-- `profile`
+- `profile`: concrete project specs; not required for methodology-package meta-specs
 - `module_id`
 - `bounded_context`
 
@@ -107,7 +104,7 @@ Allowed references:
 ### `spec.md`
 
 Required item kinds:
-- profile declaration
+- profile declaration for concrete governed repo specs, or an explicit meta-spec exception when the package spec describes multiple supported profiles
 - module responsibilities
 - module ownership rules
 - interface ownership rules
@@ -125,6 +122,10 @@ Allowed references:
 - `INV-*`
 - `MOD-*`
 - `IFACE-*`
+
+Rules:
+- Concrete governed project `spec.md` files must declare one selected `lite` or `full` profile and align their ownership and decomposition rules to it.
+- A methodology-package `spec.md` may act as a meta-spec that documents both supported profiles and generated-repo expectations. When it does, it must say so explicitly and may omit a selected-profile frontmatter field.
 
 ## Cross-Reference Rules
 

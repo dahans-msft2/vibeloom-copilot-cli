@@ -27,10 +27,11 @@ This document defines the universal rules that apply to projects governed by the
 
 ## Layer Contract
 
-- `docs/` owns the canonical prose methodology truth.
-- The root artifact stack is the structured package representation aligned to `docs/`.
-- `references/` is the runtime operational layer loaded by the skill during routine execution.
-- `templates/` is generation-only and must not introduce independent methodology truth.
+This package uses the canonical layer contract defined in `docs/vibeloom-methodology.md`.
+
+- The root artifact stack is the normative package representation aligned to that methodology prose.
+- `references/` is the routine runtime operational layer loaded by the skill during routine execution.
+- `templates/` are generation-only and must not introduce independent methodology truth.
 - `site/` is derivative public documentation and marketing material.
 
 ## Lifecycle States

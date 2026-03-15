@@ -19,6 +19,10 @@ depends_on:
 profile: lite | full
 ---
 
+<!-- This template is for a concrete governed project spec.
+     It requires one selected profile.
+     It is not the shape used by the checked-in VibeLoom methodology-package meta-spec. -->
+
 # Technical Spec: [Project Name]
 
 ## Purpose

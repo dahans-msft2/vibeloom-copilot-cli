@@ -2,12 +2,12 @@
 
 This file is the runtime summary loaded during routine skill work.
 
-- `docs/` owns canonical prose methodology truth.
-- The root artifact stack is the structured package representation aligned to `docs/`.
-- `references/` owns runtime-efficient execution guidance only.
-- `templates/` is generation-only.
-- `site/` is derivative marketing documentation and is not part of runtime authority.
-- Load `docs/` only when the user asks for deeper explanation, uses `help`, or another runtime reference points there.
+Apply the canonical layer contract from `../docs/vibeloom-methodology.md` in runtime form:
+- the root artifact stack is the structured package representation aligned to `docs/`
+- `references/` owns runtime-efficient execution guidance only
+- `templates/` are generation-only
+- `site/` is derivative marketing documentation and is not part of runtime authority
+- load `docs/` only when the user asks for deeper explanation, uses `help`, or another runtime reference points there
 
 ## Authority
 

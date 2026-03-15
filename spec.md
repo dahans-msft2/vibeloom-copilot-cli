@@ -22,9 +22,13 @@ depends_on:
 
 ## Purpose
 
-This document defines the package-level technical design for Codex V4. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the strict command surface currently shipped as a Codex skill. The package is still documentation-first: it does not implement a separate runtime binary.
+This document defines the package-level technical design for Codex V4. It specifies file responsibilities, reconciliation behavior, scoped context loading, and the technical runtime boundary the package must preserve. The package is still documentation-first: it does not implement a separate runtime binary.
+
+The exact routine command grammar, routing behavior, eval behavior, and response contract live in `references/`. This spec defines the technical rules a runtime must honor; it does not restate the routine command catalog inline.
 
 This is a package and protocol spec, not a concrete governed repo instance. It defines what generated governed project specs must support, but it does not claim live module ownership or interface inventories for this repository itself.
+
+Because this checked-in spec is a methodology-package meta-spec, it intentionally documents both supported profiles and generated-repo expectations. Unlike a concrete governed project `spec.md`, it does not select one active `profile` in frontmatter.
 
 ## Current Phase Boundary
 
@@ -37,20 +41,22 @@ This is a package and protocol spec, not a concrete governed repo instance. It d
 | Path | Responsibility |
 | --- | --- |
 | `constitution.md` | Foundational rules applied to every governed project |
-| `SKILL.md` | Codex skill entrypoint and command interface |
+| `SKILL.md` | Codex skill entrypoint that loads and applies runtime references |
 | `agents/` | Skill UI metadata and invocation policy |
-| `references/` | On-demand operational references for the skill |
+| `references/` | Routine runtime authority for command parsing, routing, eval behavior, and response shape |
 | `intent.md` | Methodology package intent |
 | `prd.md` | Methodology product requirements |
 | `usm.md` | User workflow and acceptance semantics |
 | `dm.md` | Methodology domain language and invariants |
-| `spec.md` | Technical protocol and future runtime behavior |
+| `spec.md` | Package-level technical protocol and generated-repo technical expectations |
 | `templates/` | Canonical document templates |
 | `docs/evals-*.md` | Detailed structural and semantic evaluation references |
 | `docs/` | Supporting protocol explanations |
 | `docs/profile-selection.md` | Lite vs Full guidance and transition rules |
 
-## Profiles
+## Supported Profiles
+
+Generated governed project specs select one profile. This package spec documents the supported profile shapes that those concrete specs must follow.
 
 ### `lite`
 
@@ -235,26 +241,25 @@ Escalate context breadth when:
 - Derived operational artifacts are regenerated from the latest approved truth and are not independently marked `approved`.
 - A `local` change does not stale unrelated upstream artifacts.
 
-## Current Skill Surface
+## Runtime Interface Boundary
 
-This phase ships the command surface through `SKILL.md` and `references/`. It does not implement a separate runtime binary or external command router.
+This phase ships the runtime interface through `SKILL.md` and `references/`. It does not implement a separate runtime binary or external command router.
 
-Any future standalone runtime should preserve this surface unless the canonical skill surface changes.
+Runtime ownership:
+- `references/command-surface.md` owns the exact command grammar, selectors, and canonical forms.
+- `references/routing-and-loading.md` owns routine command routing and load selection.
+- `references/evals-and-templates.md` owns routine eval and generation behavior.
+- `references/interaction-contract.md` owns runtime response shape and correction patterns.
 
-| Command | Purpose |
-| --- | --- |
-| `init` | Create a governed project from intent |
-| `import` | Bootstrap governance for an existing repo |
-| `generate` | Derive the next artifact or targeted downstream artifact |
-| `approve` | Human approval flow for canonical artifacts |
-| `develop` | Incremental change flow |
-| `fix` | Repro-first steady-state bugfix flow |
-| `eval` | Structural and semantic checks |
-| `review` | Guided artifact or module walkthrough |
-| `reconcile` | Targeted drift resolution |
-| `status` | Report artifact states and stale edges |
-| `surface` | Select `product-first` or `code-first` for the current session |
-| `help` | Load focused guidance for methodology, profiles, evals, templates, or commands |
+This spec owns the underlying technical rules a runtime must preserve:
+- artifact layering and authority boundaries
+- profile and surface semantics
+- context-loading and escalation behavior
+- reconcile asymmetry and stale propagation
+- greenfield, import, and steady-state bugfix boundaries
+- durable projection limits
+
+Any future standalone runtime should preserve those rules. Changes to the routine command surface belong in the runtime references and acceptance tests, not as duplicated inline command tables here.
 
 ## Testing Strategy
 

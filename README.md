@@ -14,7 +14,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 | `prd.md` | Product requirements for the methodology package |
 | `usm.md` | Workflow- and user-centered semantic layer |
 | `dm.md` | Domain model for the methodology itself |
-| `spec.md` | Technical design for the canonical package and future runtime protocol |
+| `spec.md` | Package-level technical meta-spec for the methodology package and future runtime protocol |
 | `templates/` | Canonical templates aligned with the reconciled methodology |
 | `docs/evals-*.md` | Detailed structural and semantic evaluation references |
 | `docs/` | Methodology truth and operator reading material loaded mainly through `help` or explicit deeper-explanation flows |
@@ -22,18 +22,17 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 ## Authority Model
 
-- `docs/` owns the canonical prose methodology truth.
-- The root artifact stack is the structured package representation aligned to `docs/`.
-- `references/` is the skill's runtime layer. It carries only the operational guidance the skill needs to parse, route, and present results.
-- `SKILL.md` is the implementation entrypoint that tells Codex how to load and apply `references/`.
-- `templates/` is generation-only and must not introduce methodology truth of its own.
-- `site/` is derivative public documentation and marketing material. It must not introduce new semantics.
+The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md).
+
+- The root artifact stack is the structured package representation aligned to that methodology prose.
 - During routine skill execution, load `references/` first. Load `docs/` only for `help`, deeper explanation, or explicit escalation from a runtime reference.
+- `templates/` are generation-only. `site/` is derivative public documentation and must not introduce new semantics.
 
 ## Artifact Roles
 
 - `constitution.md` is the repo-wide governing baseline. It is normative, but it is not part of the per-project change stack.
 - `intent.md`, `prd.md`, `usm.md`, `dm.md`, and `spec.md` are the canonical long-lived project artifacts for this package representation.
+- The checked-in `spec.md` is a package-level meta-spec for this methodology repo; generated governed project specs still declare one selected profile.
 - Draft `intent.md` is prose-first and may remain free of stable item IDs. Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs them.
 - `AGENTS.md` and `plan.md` are derived operational artifacts. They guide execution, but they are not source-of-truth contracts.
 - Machine-readable projections are intentionally limited to three conceptual outputs: trace index, dependency/stale graph, and interface/schema manifests.

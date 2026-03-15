@@ -4,12 +4,14 @@ VibeLoom is a contract-driven methodology for long-lived vibe coding. It is buil
 
 This file owns methodology truth and longer explanation. The runtime skill loads `references/` first during routine work and reaches into `docs/` mainly through `help` or explicit deeper-explanation flows.
 
-## Layer Contract
+## Canonical Layer Contract
+
+This section is the canonical prose statement of repo layering and authority. Other docs should point here instead of restating the same boilerplate at length.
 
 - `docs/` owns the canonical prose methodology truth.
 - The root artifact stack is the structured package representation aligned to `docs/`.
-- `references/` is the runtime operational layer and should stay narrow, structured, and low-context.
-- `templates/` is generation-only and should provide shape rather than methodology prose.
+- `references/` is the routine runtime operational layer and should stay narrow, structured, and low-context.
+- `templates/` are generation inputs only and should provide shape rather than methodology prose.
 - `site/` is derivative public documentation and marketing material.
 
 ---

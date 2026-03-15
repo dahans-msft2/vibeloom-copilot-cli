@@ -536,9 +536,9 @@
       <div class="expandable-body">
         <p>Each agent task gets a <strong>context envelope</strong>:</p>
         <ul>
-          <li><strong>Verbatim:</strong> module spec, AGENTS.md, interface contracts</li>
-          <li><strong>Summarized:</strong> dm.md (own BC), root spec overview</li>
-          <li><strong>Not loaded:</strong> other modules' code, upstream prose</li>
+          <li><strong>Always loaded:</strong> constitution, relevant root spec, current module spec when relevant, AGENTS.md, and trace entries for referenced IDs</li>
+          <li><strong>Loaded conditionally:</strong> relevant PRD, USM, and DM slices when workflows, concepts, invariants, or cross-boundary ownership are touched</li>
+          <li><strong>Not loaded by default:</strong> unrelated modules' code, unrelated product or domain slices, and deeper methodology prose</li>
         </ul>
         <p><strong>Budget:</strong> 60% code, 30% specs, 10% system prompt. Module spec &le; 3K tokens — exceeding signals decomposition is too coarse.</p>
       </div>
@@ -554,7 +554,7 @@
     <div class="cmd-grid">
       <div class="cmd-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
       <div class="cmd-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
-      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate next artifact or code</span></div>
+      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a selected artifact</span></div>
       <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve drafts after eval</span></div>
       <div class="cmd-row"><code>/vibeloom develop</code> <span>Incremental change (specs first)</span></div>
       <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Fix a steady-state defect</span></div>
@@ -573,10 +573,10 @@
           <li>Describe a change: <code>/vibeloom develop "add CSV export"</code></li>
           <li>Agent maps to affected specs (stories, entities, modules)</li>
           <li>Agent proposes spec changes first (shows diffs)</li>
-          <li>You choose: review separately, or batch spec+code approval</li>
+          <li>You review and approve affected canonical artifacts through the normal intent, product, or spec gates</li>
           <li>Agent runs bounded reconciliation if upstream affected</li>
-          <li>Agent generates code scoped to affected modules</li>
-          <li>Agent runs evals on the result</li>
+          <li>Agent continues with the scoped downstream work against the approved slice</li>
+          <li>Agent runs evals on the affected result</li>
         </ol>
         <p><strong>Specs always lead.</strong> Code is always a derivative of approved specifications.</p>
       </div>

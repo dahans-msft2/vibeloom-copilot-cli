@@ -6,9 +6,9 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 | Path | Purpose |
 | --- | --- |
-| `SKILL.md` | Canonical Codex skill entrypoint for the strict `/vibeloom ...` interface |
+| `SKILL.md` | Codex skill entrypoint for the canonical `/vibeloom <verb> <noun> [tail]` grammar and documented aliases |
 | `agents/` | UI metadata and explicit invocation policy |
-| `references/` | On-demand operational references for the skill |
+| `references/` | Runtime-efficient operational references loaded by the skill during routine command execution |
 | `assets/` | Skill icons and UI assets |
 | `constitution.md` | Foundational rules that keep downstream specs concise and mechanically checkable |
 | `intent.md` | Intent for the methodology-as-product |
@@ -18,8 +18,16 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 | `spec.md` | Technical design for the canonical package and future runtime protocol |
 | `templates/` | Canonical templates aligned with the reconciled methodology |
 | `eval/` | Structural and semantic evaluation instructions |
-| `docs/` | Protocol notes, methodology guide, profile selection, and competitor comparison |
-| `site/` | Static site content for `https://vibeloom.ai/` |
+| `docs/` | Methodology truth and operator reading material loaded mainly through `help topic` or explicit deeper-explanation flows |
+| `site/` | Derivative public documentation for `https://vibeloom.ai/` |
+
+## Authority Model
+
+- `docs/` owns the methodology and explanatory truth.
+- `references/` is the skill's runtime layer. It summarizes only what the skill needs to parse, route, and present results.
+- `SKILL.md` is the implementation entrypoint that tells Codex how to load and apply `references/`.
+- `site/` is derivative public documentation and must not introduce new semantics.
+- During routine skill execution, load `references/` first. Load `docs/` only for `help topic`, deeper explanation, or explicit escalation from a runtime reference.
 
 ## Artifact Roles
 
@@ -43,11 +51,6 @@ This repo includes the actual Codex skill plus the methodology artifacts it reli
 - No external parser or runtime binary is implemented here.
 - No generated live `AGENTS.md` instances are checked in here.
 - No automation or runtime code is created here.
-
-## Legacy Reference Files
-
-- `intent-0.md` is a retained legacy draft and is not part of the canonical root package.
-- `prd-template-0.md` is a retained legacy reference and is not part of the canonical root package.
 
 ## Additional Docs
 

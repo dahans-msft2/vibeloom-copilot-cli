@@ -1,10 +1,13 @@
 # Command Surface Reference
 
-This file defines the exact `/vibeloom` command grammar.
+This file defines the runtime command grammar consumed by the skill.
+
+- `docs/` owns methodology truth.
+- This file owns parsing, normalization, and examples for the runtime interface.
 
 ## Grammar
 
-All commands start with:
+Canonical commands start with:
 
 ```text
 /vibeloom <verb> <noun> [tail]
@@ -15,6 +18,8 @@ Rules:
 - `<noun>` is required unless the user invoked bare `$vibeloom`
 - `[tail]` is freeform
 - if `<noun>` is missing, return the valid grammar for that verb instead of guessing
+- normalize official aliases before routing
+- use canonical forms in responses after normalization
 
 ## Core Commands
 
@@ -73,10 +78,21 @@ Allowed values:
 
 ## Aliases
 
-Normalize internally:
+Official command aliases:
+- `/vibeloom init [intent seed]` -> `/vibeloom init project [intent seed]`
+- `/vibeloom import [path-or-current]` -> `/vibeloom import repo [path-or-current]`
+- `/vibeloom status` -> `/vibeloom status repo`
+- `/vibeloom develop <request>` -> `/vibeloom develop change <request>`
+- `/vibeloom reconcile` -> `/vibeloom reconcile repo`
+- `/vibeloom approve <selector>` -> `/vibeloom approve scope <selector>`
+- `/vibeloom eval <selector>` -> `/vibeloom eval scope <selector>`
+
+Selector and scope aliases:
 - `product` -> `prd+usm+dm`
 - `tech` -> `spec`
 - `module-spec` -> module-scoped spec generation
+
+No shorthand aliases exist for `review`, `help`, `fix`, or `generate`.
 
 ## Bare Invocation
 
@@ -97,10 +113,14 @@ When a command is malformed:
 
 ```text
 /vibeloom status repo
+/vibeloom status
 /vibeloom review artifact usm
 /vibeloom develop change add workspace sharing with invite approval
+/vibeloom develop add workspace sharing with invite approval
 /vibeloom fix issue invite links expire one hour too early
 /vibeloom eval scope module billing
+/vibeloom eval module billing
 /vibeloom approve scope product
+/vibeloom approve product
 /vibeloom help topic profiles
 ```

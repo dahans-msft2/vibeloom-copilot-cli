@@ -18,6 +18,22 @@ Expected:
 - verb and noun are recognized
 - freeform tail remains intact
 
+### Official aliases
+
+```text
+/vibeloom init build a recruiting platform
+/vibeloom import .
+/vibeloom status
+/vibeloom develop add annual billing
+/vibeloom reconcile
+/vibeloom approve product
+/vibeloom eval module billing
+```
+
+Expected:
+- each alias normalizes to its canonical form before routing
+- follow-up messages and suggested commands use canonical forms
+
 ### Valid expert commands
 
 ```text
@@ -41,12 +57,12 @@ Expected:
 ### Invalid alias or selector
 
 ```text
-/vibeloom review artifact tech
+/vibeloom help profiles
 /vibeloom status module payments-api
 ```
 
 Expected:
-- normalize `tech` to `spec` when aliasing is allowed
+- reject unsupported shorthand aliases for `help`, `review`, `fix`, and `generate`
 - if `payments-api` is invalid, return actual module selectors from the repo
 
 ## Routing Tests
@@ -143,6 +159,20 @@ Expected:
 - summarize the structural and semantic tiers concisely
 - avoid dumping the whole methodology
 
+### Runtime loading boundary
+
+Routine commands such as:
+
+```text
+/vibeloom status repo
+/vibeloom develop change add annual billing
+```
+
+Expected:
+- load `references/` first
+- do not pull `docs/` unless a deeper explanation is requested or a runtime reference explicitly escalates
+- keep `help topic` as the primary direct path to `docs/`
+
 ### Adaptive summaries with IDs
 
 Any finding must name the affected IDs explicitly, even when the wording is workflow-oriented.
@@ -153,3 +183,4 @@ Any finding must name the affected IDs explicitly, even when the wording is work
 - No response omits `USM` or `DM` from the methodology.
 - No response implies implicit activation; the skill remains explicit-invocation only.
 - No response introduces a fifth approval state, collapses the USM into the PRD for Lite, or requires an external truth-bearing state ledger.
+- No response invents aliases outside the documented alias set.

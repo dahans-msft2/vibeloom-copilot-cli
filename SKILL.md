@@ -18,14 +18,22 @@ This skill is for governed, contract-driven work over the canonical stack:
 - `dm.md`
 - `spec.md`
 
+## Authority Model
+
+- `docs/` owns methodology truth and longer explanations.
+- `references/` is the runtime layer consumed by this skill.
+- `site/` is derivative public documentation and is never authoritative.
+- During routine command execution, load `references/` first and `docs/` only for `help topic`, deeper explanation, or an explicit runtime escalation.
+
 ## Invocation Model
 
 - The skill is explicit-invocation only.
-- Once active, parse commands in the form `/vibeloom <verb> <noun> [tail]`.
-- Verbs and nouns are strict. The remaining tail is freeform.
+- Canonical commands use `/vibeloom <verb> <noun> [tail]`.
+- Normalize the documented aliases from `references/command-surface.md` before routing.
+- Verbs and nouns are strict after alias normalization. The remaining tail is freeform.
 - If the noun is missing or invalid, do not guess. Return the valid grammar for that verb and the closest valid forms.
 - Bare `$vibeloom` with no `/vibeloom ...` command triggers state-aware triage.
-- If triage finds no governed project or a clearly first-time operator, keep the first reply short and point to `/vibeloom help topic methodology` and `/vibeloom help topic templates` before expanding further.
+- If triage finds no governed project or a clearly first-time operator, keep the first reply short and point to `help topic methodology` and `help topic templates`.
 
 Read [references/command-surface.md](references/command-surface.md) for the full grammar, aliases, and examples.
 
@@ -62,28 +70,23 @@ Read [references/command-surface.md](references/command-surface.md) for the full
 
 Start with the smallest correct reference set:
 
-1. Read [references/methodology.md](references/methodology.md) for artifact authority, profiles, change classes, and reconcile asymmetry.
+1. Read [references/methodology.md](references/methodology.md) for the runtime summary of artifact authority, change classes, and reconcile asymmetry.
 2. Read [references/command-surface.md](references/command-surface.md) to parse the command shape and aliases.
 3. Read [references/routing-and-loading.md](references/routing-and-loading.md) to choose the right repo slice and state-aware next actions.
 4. Read [references/interaction-contract.md](references/interaction-contract.md) before presenting findings or corrections.
 5. Read [references/evals-and-templates.md](references/evals-and-templates.md) when the command requires generation, approval, evals, or template loading.
 
-Only load additional methodology docs or templates when the active command requires them.
+Do not load `docs/` during routine commands unless the active command requires deeper explanation or a runtime reference explicitly escalates to it.
 
 ## Output Contract
 
 Every command response must use this shape:
-
 1. `Scope`
 2. `Decision / Findings`
 3. `Affected IDs`
 4. `Next action`
 
-Adaptive summary rules:
-- For `review artifact prd|usm`, lead with workflow and value language, but always cite `PRD-FR-*`, `STORY-*`, `AC-*`, and any implied `ENT-*`.
-- For `review artifact dm|spec`, `eval`, and `reconcile`, lead with technical governance language and always cite `ENT-*`, `INV-*`, `MOD-*`, `IFACE-*`, and stale implications when relevant.
-- For `fix issue`, always start from repro, expected behavior, violated or missing contract, and regression impact.
-- For `status repo`, summarize profile, artifact health, and blockers before listing the next 3 valid commands.
+Use `references/interaction-contract.md` for review, status, fix, triage, and error-specific phrasing.
 
 Read [references/interaction-contract.md](references/interaction-contract.md) for examples and correction patterns.
 
@@ -92,6 +95,7 @@ Read [references/interaction-contract.md](references/interaction-contract.md) fo
 - Never treat `AGENTS.md` or `plan.md` as canonical semantic authority.
 - Never omit `USM` or `DM` from the governed methodology.
 - Treat `fix issue` as distinct from `import repo`; do not route routine defects through brownfield bootstrap.
+- Use canonical command forms in responses even when the input used an alias.
 - If a command would violate current methodology state, explain the blocking artifact and the next allowed command.
 - If a selector is invalid, discover valid selectors from the repo when possible and return them explicitly.
 

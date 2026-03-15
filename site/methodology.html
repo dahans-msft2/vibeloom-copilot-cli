@@ -20,429 +20,10 @@
 <meta name="twitter:title" content="VibeLoom Methodology">
 
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
-
-<style>
-  :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #12121a;
-    --bg-tertiary: #1a1a26;
-    --bg-card: #16161f;
-    --bg-card-hover: #1c1c28;
-    --border: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(255, 255, 255, 0.12);
-    --text-primary: #f0f0f5;
-    --text-secondary: #8a8a9a;
-    --text-tertiary: #5a5a6a;
-    --accent: #e84057;
-    --accent-hover: #f25a6e;
-    --accent-glow: rgba(232, 64, 87, 0.15);
-    --accent-2: #7aabcc;
-    --accent-3: #e84057;
-    --warn: #d4a054;
-    --error: #e84057;
-    --gradient-accent: linear-gradient(135deg, #e84057 0%, #c43a50 100%);
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-    --max-width: 860px;
-    --nav-height: 64px;
-  }
-
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--font-sans);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.7;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  ::selection {
-    background: rgba(232, 64, 87, 0.3);
-    color: #fff;
-  }
-
-  /* ═══ NAV ═══ */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: var(--nav-height);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background: rgba(10, 10, 15, 0.8);
-  }
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    text-decoration: none;
-  }
-  .nav-logo img { width: 28px; height: 28px; display: block; }
-  .nav-links { display: flex; align-items: center; gap: 32px; }
-  .nav-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--text-primary); }
-  .nav-links a.active { color: var(--text-primary); }
-  .nav-cta {
-    background: var(--accent) !important;
-    color: #fff !important;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-  }
-  .nav-cta:hover { background: var(--accent-hover) !important; }
-
-  /* ═══ LAYOUT ═══ */
-  .page-header {
-    padding: calc(var(--nav-height) + 64px) 24px 48px;
-    text-align: center;
-    position: relative;
-  }
-  .page-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,64,87,0.1), transparent);
-    pointer-events: none;
-  }
-  .page-header h1 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .page-header p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .content {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 24px 120px;
-  }
-
-  /* ═══ ARTICLE SECTIONS ═══ */
-  .doc-section {
-    padding: 64px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .doc-section:last-child { border-bottom: none; }
-
-  .doc-section .label {
-    display: inline-block;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-  .doc-section h2 {
-    font-size: 1.75rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 8px;
-  }
-  .doc-section .lead {
-    font-size: 1.05rem;
-    color: var(--text-secondary);
-    margin-bottom: 32px;
-    line-height: 1.7;
-  }
-  .doc-section p {
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    line-height: 1.7;
-  }
-  .doc-section ul, .doc-section ol {
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    padding-left: 20px;
-  }
-  .doc-section li { margin-bottom: 6px; }
-  .doc-section strong { color: var(--text-primary); }
-
-  /* ═══ EXPANDABLE ═══ */
-  .expandable {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 8px;
-    background: var(--bg-secondary);
-    transition: border-color 0.2s;
-  }
-  .expandable:hover { border-color: var(--border-hover); }
-  .expandable-header {
-    padding: 16px 24px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
-    font-size: 0.95rem;
-    user-select: none;
-    transition: background 0.15s;
-  }
-  .expandable-header:hover { background: var(--bg-tertiary); }
-  .expandable-header .arrow {
-    transition: transform 0.2s;
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-  }
-  .expandable.open .expandable-header .arrow { transform: rotate(90deg); }
-  .expandable-body {
-    display: none;
-    padding: 0 24px 24px;
-    font-size: 0.92rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-  }
-  .expandable.open .expandable-body { display: block; }
-  .expandable-body p { margin-bottom: 12px; }
-  .expandable-body ul { margin-bottom: 12px; }
-
-  /* ═══ TABLES ═══ */
-  .table-wrap {
-    overflow-x: auto;
-    margin: 20px 0;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.88rem;
-  }
-  th, td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
-  th {
-    font-weight: 600;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
-    background: var(--bg-tertiary);
-    white-space: nowrap;
-  }
-  td { color: var(--text-secondary); }
-  tr:last-child td { border-bottom: none; }
-  td code {
-    font-family: var(--font-mono);
-    font-size: 0.82em;
-    background: var(--bg-tertiary);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--accent);
-  }
-
-  /* ═══ CODE ═══ */
-  code {
-    font-family: var(--font-mono);
-    font-size: 0.85em;
-    background: var(--bg-tertiary);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--accent);
-  }
-  pre {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    padding: 20px 24px;
-    border-radius: 12px;
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin: 20px 0;
-  }
-  pre .comment { color: var(--text-tertiary); }
-  pre .keyword { color: var(--accent); }
-  pre .string { color: #d4a054; }
-  pre .type { color: var(--text-secondary); }
-
-  /* ═══ DIAGRAM ═══ */
-  .diagram-wrap {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-hover);
-    border-radius: 16px;
-    padding: 40px 24px;
-    margin: 32px 0;
-    text-align: center;
-    overflow-x: auto;
-  }
-  .diagram-wrap svg { max-width: 100%; height: auto; }
-
-  /* ═══ TAGS ═══ */
-  .tag {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    font-family: var(--font-mono);
-  }
-  .tag-block { background: rgba(232, 64, 87, 0.1); color: var(--error); }
-  .tag-warn { background: rgba(212, 160, 84, 0.1); color: var(--warn); }
-  .tag-ok { background: rgba(122, 171, 204, 0.1); color: var(--accent-2); }
-  .tag-accent { background: rgba(232, 64, 87, 0.1); color: var(--accent); }
-
-  /* ═══ PROFILE CARDS ═══ */
-  .profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 24px 0;
-  }
-  @media (max-width: 640px) { .profile-grid { grid-template-columns: 1fr; } }
-  .profile-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 24px;
-    transition: border-color 0.2s;
-  }
-  .profile-card:hover { border-color: var(--border-hover); }
-  .profile-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-  .profile-card .subtitle { font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 16px; }
-  .profile-card ul { list-style: none; padding: 0; }
-  .profile-card li {
-    padding: 8px 0;
-    font-size: 0.88rem;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .profile-card li:last-child { border-bottom: none; }
-  .profile-card li .check { color: var(--accent-2); font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
-
-  /* ═══ COMMAND GRID ═══ */
-  .cmd-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin: 24px 0;
-  }
-  @media (max-width: 640px) { .cmd-grid { grid-template-columns: 1fr; } }
-  .cmd-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: border-color 0.2s;
-  }
-  .cmd-row:hover { border-color: var(--border-hover); }
-  .cmd-row code { min-width: 170px; font-size: 0.82rem; background: transparent; padding: 0; }
-  .cmd-row span { font-size: 0.82rem; color: var(--text-tertiary); }
-
-  /* ═══ QUICKSTART ═══ */
-  .steps {
-    counter-reset: step;
-    list-style: none;
-    padding: 0;
-    margin: 24px 0;
-  }
-  .steps li {
-    counter-increment: step;
-    padding: 20px 20px 20px 60px;
-    position: relative;
-    border-left: 1px solid var(--border);
-    margin-left: 16px;
-  }
-  .steps li:last-child { border-left-color: transparent; }
-  .steps li::before {
-    content: counter(step);
-    position: absolute;
-    left: -14px; top: 18px;
-    width: 28px; height: 28px;
-    background: var(--accent);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.82rem;
-    font-weight: 700;
-  }
-  .steps li strong { display: block; color: var(--text-primary); margin-bottom: 4px; }
-
-  /* ═══ TOC ═══ */
-  .toc {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 40px;
-  }
-  .toc h4 {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
-    margin-bottom: 12px;
-  }
-  .toc a {
-    display: block;
-    padding: 5px 0;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-  .toc a:hover { color: var(--accent); }
-
-  /* ═══ FOOTER ═══ */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 40px 24px;
-    text-align: center;
-  }
-  footer p { color: var(--text-tertiary); font-size: 0.82rem; }
-  footer a { color: var(--text-secondary); text-decoration: none; }
-  footer a:hover { color: var(--text-primary); }
-
-  @media (max-width: 640px) {
-    nav { padding: 0 16px; }
-    .nav-links a:not(.nav-cta) { display: none; }
-    .content { padding: 0 16px 80px; }
-    .page-header { padding: calc(var(--nav-height) + 40px) 16px 32px; }
-  }
-</style>
+<link rel="stylesheet" href="shared.css">
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">
     <img src="vibeloom-logo-loom.svg" alt="VibeLoom logo">
@@ -451,13 +32,13 @@
   <div class="nav-links">
     <a href="index.html#features">Features</a>
     <a href="index.html#how-it-works">How it works</a>
-    <a href="#" class="active">Methodology</a>
+    <a href="methodology.html" class="active">Methodology</a>
     <a href="index.html#get-started" class="nav-cta">Get Started</a>
   </div>
 </nav>
 
 <!-- HEADER -->
-<div class="page-header">
+<div class="page-header reveal">
   <h1>The VibeLoom Methodology</h1>
   <p>A deep dive into contract-driven vibe coding: how it works, why each layer exists, and how to use it effectively.</p>
 </div>
@@ -466,7 +47,7 @@
 <div class="content">
 
   <!-- TOC -->
-  <div class="toc">
+  <div class="toc reveal">
     <h4>On this page</h4>
     <a href="#core-thesis">Core Thesis</a>
     <a href="#contract-stack">The Contract Stack</a>
@@ -479,45 +60,45 @@
   </div>
 
   <!-- ═══ CORE THESIS ═══ -->
-  <div class="doc-section" id="core-thesis">
+  <div class="doc-section reveal" id="core-thesis">
     <span class="label">Foundation</span>
     <h2>Core Thesis</h2>
     <p class="lead">Five principles that underpin everything VibeLoom does.</p>
 
-    <div class="expandable open">
-      <div class="expandable-header"><span>1. Prompts are not contracts</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable" open>
+      <summary class="expandable-header"><span>1. Prompts are not contracts</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Prompt-first generation is insufficient for long-lived systems. A natural-language prompt is vague by nature and cannot serve as a verifiable contract. Multiple semantic layers are missing between "build me a scheduling app" and the code that implements it: requirements, user stories, domain model, architecture decisions.</p>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>2. AI makes specs economically viable again</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>2. AI makes specs economically viable again</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Historically, teams were lax about maintaining high-quality specifications — the overhead was too high. With AI agents, generating and maintaining structured specs is cheap. This doesn't mean returning to 200-page requirements documents. It means concise, structured specs that humans can scan in minutes, verify, and spot-edit.</p>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>3. Upstream specs must be evals</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>3. Upstream specs must be evals</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Every derived artifact and every implementation unit is checked against its upstream contracts. This is the enforcement mechanism — not aspiration, but concrete evaluations with defined pass/fail criteria and blocking behavior.</p>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>4. Modules enable multi-agent development</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>4. Modules enable multi-agent development</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Breaking the application into modules scoped to bounded contexts enables parallel agent work, controls context window usage, and provides clear ownership boundaries. Each module fits in one agent's context window. Interface contracts prevent incompatible APIs between agents working in parallel.</p>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>5. Workflow semantics and domain semantics must stay separate</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>5. Workflow semantics and domain semantics must stay separate</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>The User Story Map (USM) captures workflows, user value, and acceptance criteria. The Domain Model (DM) captures entities, relationships, and invariants. Both are mandatory in every profile. Merging them hides workflow mistakes inside semantic models or buries domain rules inside user stories. Keeping them separate ensures each layer can be reviewed, evaluated, and evolved independently.</p>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ CONTRACT STACK ═══ -->
-  <div class="doc-section" id="contract-stack">
+  <div class="doc-section reveal" id="contract-stack">
     <span class="label">Architecture</span>
     <h2>The Contract Stack</h2>
     <p class="lead">Seven tiers from foundational rules to running code. Each constrains the next. Upstream specs serve as evals for downstream work.</p>
@@ -537,22 +118,22 @@
       </table>
     </div>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Every item in every artifact gets a rigid, machine-parseable ID using 17 standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>IFACE-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>Why the domain model is the semantic anchor</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Why the domain model is the semantic anchor</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p><code>dm.md</code> defines entities, relationships, and invariants as seen by system users — not internal technical details. It captures user value independently of implementation choices. The domain model is the most stable layer: UIs change, APIs change, databases change, but "a Customer has Orders which contain LineItems" rarely does.</p>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ WORKFLOW DIAGRAM ═══ -->
-  <div class="doc-section" id="workflow">
+  <div class="doc-section reveal" id="workflow">
     <span class="label">Workflow</span>
     <h2>How It All Fits Together</h2>
     <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates at each tier.</p>
@@ -681,7 +262,7 @@
   </div>
 
   <!-- ═══ PROFILES ═══ -->
-  <div class="doc-section" id="profiles">
+  <div class="doc-section reveal" id="profiles">
     <span class="label">Scaling</span>
     <h2>Lite vs Full Profiles</h2>
     <p class="lead">VibeLoom adapts to project complexity. The Agent recommends a profile after analyzing the domain model; you have the final say.</p>
@@ -711,8 +292,8 @@
       </div>
     </div>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Selection heuristics</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Selection heuristics</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p><strong>Use Full when ANY of these are true:</strong></p>
         <ul>
@@ -723,11 +304,11 @@
         </ul>
         <p><strong>Otherwise, use Lite.</strong> You can upgrade from Lite to Full later.</p>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ EVALS ═══ -->
-  <div class="doc-section" id="evals">
+  <div class="doc-section reveal" id="evals">
     <span class="label">Quality</span>
     <h2>Eval Framework</h2>
     <p class="lead">Specifications aren't documentation — they're verification contracts. Three tiers of evaluation keep everything consistent.</p>
@@ -743,8 +324,8 @@
       </table>
     </div>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Tier 1: Structural checks (10 checks, blocking)</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Tier 1: Structural checks (10 checks, blocking)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ol>
           <li><strong>Metadata completeness</strong> — required frontmatter fields present with valid values</li>
@@ -759,9 +340,9 @@
           <li><strong>Stale edge validity</strong> — stale markers have explicit dependency-driven justification</li>
         </ol>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>Tier 2: Semantic checks (10 checks, warnings)</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Tier 2: Semantic checks (10 checks, warnings)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
           <li>Requirements &harr; Stories coverage</li>
@@ -776,9 +357,9 @@
           <li>Invariant preservation in API design</li>
         </ul>
       </div>
-    </div>
-    <div class="expandable">
-      <div class="expandable-header"><span>Tier 3: Behavioral (test generation, separate step)</span><span class="arrow">&#9654;</span></div>
+    </details>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Tier 3: Behavioral (test generation, separate step)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Triggered via <code>/vibeloom generate tests</code>:</p>
         <ul>
@@ -787,17 +368,17 @@
           <li>Interface contract tests from module specs (Full)</li>
         </ul>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ MODULES ═══ -->
-  <div class="doc-section" id="modules">
+  <div class="doc-section reveal" id="modules">
     <span class="label">Multi-Agent</span>
     <h2>Module Interface Contracts</h2>
     <p class="lead">Modules aren't just code organization — they're agent boundaries. Each fits in one context window with typed interfaces.</p>
 
-    <div class="expandable open">
-      <div class="expandable-header"><span>Interface contract example</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable" open>
+      <summary class="expandable-header"><span>Interface contract example</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
 <pre><span class="comment">## Interface: mod-orders</span>
 
@@ -809,10 +390,10 @@
 <span class="comment">- From mod-inventory:</span> <span class="string">checkAvailability(sku: string) &rarr; AvailabilityResult</span>
 <span class="comment">- From mod-payments:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span></pre>
       </div>
-    </div>
+    </details>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Dependency rules &amp; shared types</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Dependency rules &amp; shared types</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
           <li>Dependency graph must be a <strong>DAG</strong> (no cycles)</li>
@@ -821,10 +402,10 @@
         </ul>
         <p>When an interface changes: eval identifies downstream modules &rarr; marks stale &rarr; specs update &rarr; contract tests regenerate.</p>
       </div>
-    </div>
+    </details>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Each agent task gets a <strong>context envelope</strong>:</p>
         <ul>
@@ -834,11 +415,11 @@
         </ul>
         <p><strong>Budget:</strong> 60% code, 30% specs, 10% system prompt. Module spec &le; 3K tokens — exceeding signals decomposition is too coarse.</p>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ COMMANDS ═══ -->
-  <div class="doc-section" id="commands">
+  <div class="doc-section reveal" id="commands">
     <span class="label">Interface</span>
     <h2>Command Reference</h2>
     <p class="lead"><code>/vibeloom</code> with no arguments detects project state and suggests the next action.</p>
@@ -856,8 +437,8 @@
       <div class="cmd-row"><code>/vibeloom help</code> <span>Guidance &amp; docs</span></div>
     </div>
 
-    <div class="expandable" style="margin-top:16px">
-      <div class="expandable-header"><span>Key workflow: /vibeloom develop</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable" style="margin-top:16px">
+      <summary class="expandable-header"><span>Key workflow: /vibeloom develop</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ol>
           <li>Describe a change: <code>/vibeloom develop "add CSV export"</code></li>
@@ -870,19 +451,19 @@
         </ol>
         <p><strong>Specs always lead.</strong> Code is always a derivative of approved specifications.</p>
       </div>
-    </div>
+    </details>
 
-    <div class="expandable">
-      <div class="expandable-header"><span>Reconciliation: bounded, not infinite</span><span class="arrow">&#9654;</span></div>
+    <details class="expandable">
+      <summary class="expandable-header"><span>Reconciliation: bounded, not infinite</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>After manual edits: <strong>1 up-pass + 1 down-pass + 1 validation.</strong> No infinite loops.</p>
         <p>Reconciliation is asymmetric: approved upstream contracts define intended semantics. Downstream drift produces proposals, not silent rewrites. The agent proposes a direction (amend upstream or fix downstream), and humans choose.</p>
       </div>
-    </div>
+    </details>
   </div>
 
   <!-- ═══ QUICKSTART ═══ -->
-  <div class="doc-section" id="quickstart">
+  <div class="doc-section reveal" id="quickstart">
     <span class="label">Get Started</span>
     <h2>Three Steps</h2>
 
@@ -915,13 +496,11 @@
 
 <footer>
   <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
-  <p style="margin-top:8px"><a href="index.html">Home</a> &middot; <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></p>
+  <p class="footer-links">
+    <a href="index.html">Home</a>
+    &middot;
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+  </p>
 </footer>
-
-<script>
-document.querySelectorAll('.expandable-header').forEach(function(h) {
-  h.addEventListener('click', function() { this.parentElement.classList.toggle('open'); });
-});
-</script>
 </body>
 </html>

@@ -2,6 +2,10 @@
 
 Use this file when a command requires generation, approval, or validation.
 
+- This file describes the current runtime eval surface.
+- Current runtime evals are structural and semantic only.
+- Broader methodology framing may mention behavioral or test-generation ideas, but those are not part of the current command surface unless `references/command-surface.md` says so.
+
 ## Eval Sources
 
 Structural evals:

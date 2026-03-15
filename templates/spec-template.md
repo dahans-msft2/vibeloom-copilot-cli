@@ -230,7 +230,7 @@ Example:
 
 ## Brownfield Import Notes
 
-- `import` is only for unmanaged or heavily drifted repos.
+- `/vibeloom import repo` is only for unmanaged or heavily drifted repos.
 - inferred semantics must carry visible confidence until approved.
 
 ## Steady-State Bugfix Path

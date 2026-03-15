@@ -1,6 +1,6 @@
 # Interaction Contract Reference
 
-This file defines how the skill should present results.
+This file defines runtime response shape, not methodology truth. Use canonical command forms in suggested next actions even when the input arrived through an alias.
 
 ## Mandatory Output Shape
 
@@ -115,10 +115,7 @@ Keep the interview to the smallest set of facts that makes `intent.md` and the f
 
 If the bounded contexts are unclear, ask for the main workflows instead and defer the profile recommendation.
 
-When useful, end the interview summary with:
-- provisional `lite` or `full` recommendation
-- the reason for that recommendation
-- the reminder that profile choice is not final until the product slice is approved
+When useful, end the interview summary with a provisional `lite` or `full` recommendation, the reason for it, and the reminder that profile choice is not final until the product slice is approved.
 
 Example:
 
@@ -156,10 +153,7 @@ Review the stale billing interface slice, then run /vibeloom reconcile module bi
 
 ## Help Topic Responses
 
-For `help topic ...`:
-- answer from the requested topic only
-- summarize the most actionable rules first
-- end with one or two example commands when relevant
+For `help topic ...`, answer from the requested topic only, summarize the most actionable rules first, and end with one or two example commands when relevant.
 
 ## Error Contract
 
@@ -178,12 +172,6 @@ Closest forms: /vibeloom review artifact usm, /vibeloom review module billing
 
 ## Triage Contract
 
-Bare `$vibeloom` returns:
-- governed state
-- blockers
-- profile when known
-- next 3 valid commands
-
-When possible, include one short reason per suggested next command.
+Bare `$vibeloom` returns governed state, blockers, profile when known, and the next 3 valid commands. When possible, include one short reason per suggested next command.
 
 Do not return the full command catalog unless the repo state is empty or broken.

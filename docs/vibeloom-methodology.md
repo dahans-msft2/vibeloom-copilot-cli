@@ -2,6 +2,8 @@
 
 VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence.
 
+This file owns methodology truth and longer explanation. The runtime skill loads `references/` first during routine work and reaches into `docs/` mainly through `help topic` or explicit deeper-explanation flows.
+
 ---
 
 ## The Problem
@@ -197,6 +199,8 @@ These verify meaning: requirement coverage, workflow completeness, entity necess
 ### Tier 3 — Behavioral checks
 
 These derive scenario tests, invariant tests, and contract tests from the approved stack. They validate runtime behavior, but they are not themselves a canonical source of truth.
+
+Current package boundary: the shipped runtime references document structural and semantic eval flows directly. Behavioral checks remain methodology-level guidance and future-facing runtime direction rather than a dedicated current command in the skill surface.
 
 ---
 

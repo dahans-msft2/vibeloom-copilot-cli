@@ -6,8 +6,7 @@ owner: methodology
 approved_by:
 last_reviewed: YYYY-MM-DD
 version: 1
-derived_from:
-  - ../intent-0.md
+derived_from: []
 depends_on: []
 ---
 

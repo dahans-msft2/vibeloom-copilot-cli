@@ -2,6 +2,10 @@
 
 This file defines what to load for each command and how to choose the next valid action.
 
+- Treat `references/` as the default runtime layer.
+- Do not load `docs/` during routine commands unless the user asked for deeper explanation, used `help topic`, or a runtime rule here explicitly escalates.
+- Use canonical command forms in suggested next actions even when the input used an alias.
+
 ## State Detection
 
 Inspect the current repo for:
@@ -74,11 +78,9 @@ Load:
 - `references/methodology.md`
 - `references/evals-and-templates.md`
 - templates for `intent`
-- the overview sections of `../docs/vibeloom-methodology.md`
 
 If the freeform seed is missing, short, or obviously incomplete, enter a brief init interview and gather:
 - system goal
-- project type
 - expected scope size and expected lifetime
 - primary users
 - hard constraints
@@ -86,16 +88,8 @@ If the freeform seed is missing, short, or obviously incomplete, enter a brief i
 - whether the repo is greenfield or brownfield
 - likely bounded contexts if the workflows already imply them
 
-Useful prompt wording:
-- What are you building?
-- Is this a small single-context product, or do you expect several major capability areas?
-- Who are the primary users?
-- What are the 3-5 most important outcomes?
-- Are there technologies you want to use or avoid?
-- Are there scale, performance, compliance, or platform constraints?
-- Does this need to stay small, or do you expect a larger long-lived codebase with multiple ownership boundaries?
-
 Draft `intent.md` first. Do not infer downstream approvals or a profile automatically.
+If the operator asks for methodology background before answering, escalate to `../docs/vibeloom-methodology.md`.
 If a provisional profile recommendation is useful, explain it as session-local guidance only and wait for product approval before treating it as selected.
 
 ### `import repo`
@@ -141,7 +135,6 @@ Load:
 
 Load:
 - `references/methodology.md`
-- `references/routing-and-loading.md`
 - `references/evals-and-templates.md`
 - current governed slice selected from trace and artifact dependencies
 
@@ -184,6 +177,8 @@ Load only the relevant reference set:
 - `evals` -> `../eval/structural-checks.md`, `../eval/semantic-checks.md`
 - `templates` -> `../templates/`
 - `commands` -> `references/command-surface.md`
+
+Treat `help topic` as the primary path for direct `docs/` loading.
 
 ## Selector Resolution
 

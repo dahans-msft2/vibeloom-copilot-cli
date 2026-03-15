@@ -119,4 +119,4 @@ docs/             # governance artifacts, if kept near code
 - Module spec ref:
 - Domain model ref:
 - Local ID prefix:
-- After significant changes, run `/vibeloom eval` over the smallest valid scope
+- After significant changes, run `/vibeloom eval scope <smallest-valid-scope>`

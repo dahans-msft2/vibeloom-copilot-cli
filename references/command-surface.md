@@ -10,32 +10,32 @@ This file defines the runtime command grammar consumed by the skill.
 Canonical commands start with:
 
 ```text
-/vibeloom <verb> <noun> [tail]
+/vibeloom <action> ...
 ```
 
 Rules:
-- `<verb>` is required
-- canonical `<noun>` is required unless the user invoked bare `$vibeloom`
-- `[tail]` is freeform
-- normalize official aliases before routing
-- alias normalization runs before noun enforcement, including documented noun-omission shorthands
-- if no alias matches and `<noun>` is missing, return the valid grammar for that verb instead of guessing
+- `<action>` is required
+- each action has one documented shape
+- some actions use an implicit default target
+- explicit target tokens and freeform tails appear only where shown below
+- normalize documented target expansions before routing
+- if a required target or tail segment is missing, return the valid grammar for that action instead of guessing
 - use canonical forms in responses after normalization
 
 ## Core Commands
 
 | Command | Meaning |
 | --- | --- |
-| `/vibeloom init project [intent seed]` | Initialize a governed project |
-| `/vibeloom import repo [path-or-current]` | Bootstrap governance for an existing repo |
-| `/vibeloom status repo` | Report overall governed state |
+| `/vibeloom init [intent seed]` | Initialize a governed project |
+| `/vibeloom import [path-or-current]` | Bootstrap governance for an existing repo |
+| `/vibeloom status` | Report overall governed state |
 | `/vibeloom status artifact <selector>` | Report one canonical artifact |
 | `/vibeloom status module <module-name>` | Report one module |
-| `/vibeloom review artifact <selector>` | Review one artifact |
+| `/vibeloom review <selector>` | Review one artifact |
 | `/vibeloom review module <module-name>` | Review one module |
-| `/vibeloom develop change <request>` | Run feature or enhancement flow |
+| `/vibeloom develop <request>` | Run feature or enhancement flow |
 | `/vibeloom fix issue <repro-or-bug>` | Run bugfix flow |
-| `/vibeloom reconcile repo` | Reconcile repo-wide drift |
+| `/vibeloom reconcile` | Reconcile repo-wide drift |
 | `/vibeloom reconcile artifact <selector>` | Reconcile one artifact |
 | `/vibeloom reconcile module <module-name>` | Reconcile one module |
 
@@ -43,14 +43,14 @@ Rules:
 
 | Command | Meaning |
 | --- | --- |
-| `/vibeloom generate artifact <selector>` | Generate a canonical or derived artifact |
-| `/vibeloom approve scope <selector>` | Approve an allowed scope |
-| `/vibeloom eval scope <selector>` | Evaluate an allowed scope |
-| `/vibeloom use surface <product-first|code-first>` | Set the current session surface |
-| `/vibeloom help command <verb>` | Explain one verb |
-| `/vibeloom help topic <methodology|profiles|surfaces|evals|templates|commands>` | Load one guided documentation topic |
+| `/vibeloom generate <selector>` | Generate a canonical or derived artifact |
+| `/vibeloom approve <target> [tail]` | Approve an allowed target |
+| `/vibeloom eval <target> [tail]` | Evaluate an allowed target |
+| `/vibeloom surface <product-first|code-first>` | Set the current session surface |
+| `/vibeloom help command <action>` | Explain one action |
+| `/vibeloom help <methodology|profiles|surfaces|evals|templates|commands>` | Load one guided documentation topic |
 
-## Selectors
+## Targets And Selectors
 
 ### Artifact Selectors
 
@@ -67,7 +67,19 @@ Derived selectors for generation only:
 - `agents`
 - `plan`
 
-### Scope Selectors
+### Approval Targets
+
+Allowed values:
+- `intent`
+- `product`
+- `spec`
+- `module`
+- `change`
+
+`module` requires the module name in the command tail:
+- `/vibeloom approve module <module-name>`
+
+### Eval Targets
 
 Allowed values:
 - `intent`
@@ -78,32 +90,24 @@ Allowed values:
 - `repo`
 - `artifact`
 
-## Aliases
+Target forms with required tail:
+- `/vibeloom eval module <module-name>`
+- `/vibeloom eval artifact <artifact-selector>`
 
-Official command aliases:
-- `/vibeloom init [intent seed]` -> `/vibeloom init project [intent seed]`
-- `/vibeloom import [path-or-current]` -> `/vibeloom import repo [path-or-current]`
-- `/vibeloom status` -> `/vibeloom status repo`
-- `/vibeloom develop <request>` -> `/vibeloom develop change <request>`
-- `/vibeloom reconcile` -> `/vibeloom reconcile repo`
-- `/vibeloom approve <selector>` -> `/vibeloom approve scope <selector>`
-- `/vibeloom eval <selector>` -> `/vibeloom eval scope <selector>`
-- `/vibeloom generate <artifact-selector>` -> `/vibeloom generate artifact <artifact-selector>`
-- `/vibeloom review <artifact-selector>` -> `/vibeloom review artifact <artifact-selector>`
-- `/vibeloom help <topic>` -> `/vibeloom help topic <topic>`
+## Normalization
 
-This alias set is closed. Do not introduce additional shorthands.
-
-Selector and scope aliases:
+Target and selector expansions:
 - `product` -> `prd+usm+dm`
 - `tech` -> `spec`
 - `module-spec` -> module-scoped spec generation
 
 Constraints:
-- `generate` shorthand applies only to artifact selectors
-- `review` shorthand applies only to artifact selectors; module review still requires `review module <module-name>`
-- `help` shorthand applies only to documented help topics
-- no shorthand alias exists for `fix`
+- `approve` supports `intent`, `product`, `spec`, `change`, and `module <module-name>`
+- `eval` supports `intent`, `product`, `spec`, `change`, `repo`, `artifact <artifact-selector>`, and `module <module-name>`
+- `generate` accepts artifact selectors directly
+- `review` accepts artifact selectors directly; module review still requires `review module <module-name>`
+- `help` accepts documented help topics directly; command-specific help uses `help command <action>`
+- no shorter form exists for `fix`
 
 ## Bare Invocation
 
@@ -126,22 +130,13 @@ When a command is malformed:
 Canonical forms:
 
 ```text
-/vibeloom status repo
-/vibeloom review artifact usm
-/vibeloom develop change add workspace sharing with invite approval
-/vibeloom fix issue invite links expire one hour too early
-/vibeloom eval scope module billing
-/vibeloom use surface code-first
-/vibeloom approve scope product
-```
-
-Documented aliases:
-
-```text
 /vibeloom status
-/vibeloom develop add workspace sharing with invite approval
-/vibeloom eval module billing
-/vibeloom generate dm
 /vibeloom review usm
+/vibeloom develop add workspace sharing with invite approval
+/vibeloom fix issue invite links expire one hour too early
+/vibeloom eval module billing
+/vibeloom surface code-first
+/vibeloom generate dm
+/vibeloom approve product
 /vibeloom help evals
 ```

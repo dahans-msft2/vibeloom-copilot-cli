@@ -40,7 +40,7 @@ Use `code-first` when the user wants to lead with:
 
 Surface mode is session-scoped only.
 
-- switch with `/vibeloom use surface <product-first|code-first>`
+- switch with `/vibeloom surface <product-first|code-first>`
 - do not persist it to repo state
 - do not infer a permanent repo preference
 
@@ -58,9 +58,9 @@ When `code-first` is active, automatically surface the relevant `prd/usm/dm` sli
 
 All approvals remain available in both surfaces:
 
-- `approve scope intent`
-- `approve scope product`
-- `approve scope spec`
+- `approve intent`
+- `approve product`
+- `approve spec`
 
 `code-first` may collapse the product/domain layers, but it must never hide that product approval is still required when product artifacts are draft, stale, or blocking.
 
@@ -83,11 +83,11 @@ Use `code-first` for:
 ## Examples
 
 ```text
-/vibeloom use surface code-first
-/vibeloom status repo
-/vibeloom develop change add CSV export to billing module
-/vibeloom review artifact spec
-/vibeloom review artifact usm
+/vibeloom surface code-first
+/vibeloom status
+/vibeloom develop add CSV export to billing module
+/vibeloom review spec
+/vibeloom review usm
 ```
 
-In the example above, `status`, `develop`, and `review spec` should lead with technical context. `review artifact usm` should still surface the workflow layer directly because the user asked for it.
+In the example above, `status`, `develop`, and `review spec` should lead with technical context. `review usm` should still surface the workflow layer directly because the user asked for it.

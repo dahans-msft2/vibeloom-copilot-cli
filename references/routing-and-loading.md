@@ -3,8 +3,8 @@
 This file defines what to load for each command and how to choose the next valid action.
 
 - Treat `references/` as the default runtime layer.
-- Do not load `docs/` during routine commands unless the user asked for deeper explanation, used `help topic`, or a runtime rule here explicitly escalates.
-- Use canonical command forms in suggested next actions even when the input used an alias.
+- Do not load `docs/` during routine commands unless the user asked for deeper explanation, used `help`, or a runtime rule here explicitly escalates.
+- Use canonical command forms in suggested next actions.
 
 ## State Detection
 
@@ -31,16 +31,16 @@ Recommended next commands by state:
 
 | State | Next commands |
 | --- | --- |
-| No governed project | `init project`, `import repo`, `help command init` |
-| Intent draft | `review artifact intent`, `eval scope intent`, `approve scope intent` → triggers sequential product generation |
-| Product drafts | `review artifact prd`, `review artifact usm`, `approve scope product` |
-| Spec draft | `review artifact spec`, `eval scope spec`, `approve scope spec` |
-| Governed active repo | `status repo`, `develop change ...`, `fix issue ...` |
-| Drift detected | `reconcile repo`, `reconcile artifact <name>`, `eval scope repo` |
+| No governed project | `init`, `import`, `help command init` |
+| Intent draft | `review intent`, `eval intent`, `approve intent` → triggers sequential product generation |
+| Product drafts | `review prd`, `review usm`, `approve product` |
+| Spec draft | `review spec`, `eval spec`, `approve spec` |
+| Governed active repo | `status`, `develop ...`, `fix issue ...` |
+| Drift detected | `reconcile`, `reconcile artifact <name>`, `eval repo` |
 
 ### Post-Intent Approval: Sequential Product Generation
 
-When `approve scope intent` succeeds:
+When `approve intent` succeeds:
 
 1. Generate `prd.md` from the approved intent
 2. Generate `usm.md` from the approved intent + generated PRD
@@ -48,18 +48,18 @@ When `approve scope intent` succeeds:
 
 Each artifact is generated sequentially — the next uses the previous as input. All three are created in `draft` status. The agent does not pause for intermediate approvals between them.
 
-The next valid command after generation completes is `approve scope product`, which evaluates and approves all three as a batch (`prd + usm + dm`).
+The next valid command after generation completes is `approve product`, which evaluates and approves all three as a batch (`prd + usm + dm`).
 
 When the state is incomplete or ambiguous:
 - prefer the narrowest next command that resolves the ambiguity
-- recommend `help topic profiles` before guessing a profile
-- recommend `review artifact dm` before proposing new module boundaries
+- recommend `help profiles` before guessing a profile
+- recommend `review dm` before proposing new module boundaries
 
 When possible, present each suggested next command with one short reason.
 
 ## Profile Selection Heuristic
 
-After `approve scope product`, propose a profile using the current approved product slice:
+After `approve product`, propose a profile using the current approved product slice:
 
 1. load `dm.md`
 2. count bounded contexts and total entities
@@ -72,7 +72,7 @@ This heuristic is session-local and recommendation-only. Do not persist profile 
 
 ## Command Routing
 
-### `init project`
+### `init`
 
 Load:
 - `references/methodology.md`
@@ -92,13 +92,26 @@ Draft `intent.md` first. Do not infer downstream approvals or a profile automati
 If the operator asks for methodology background before answering, escalate to `../docs/vibeloom-methodology.md`.
 If a provisional profile recommendation is useful, explain it as session-local guidance only and wait for product approval before treating it as selected.
 
-### `import repo`
+### `import`
 
 Load:
 - `references/methodology.md`
-- `references/routing-and-loading.md`
 - `references/evals-and-templates.md`
-- import-related sections from `../spec.md`
+- the current repo evidence needed for inference, such as code, tests, schemas, routes, configs, and existing docs
+
+Purpose:
+- bootstrap an unmanaged or heavily drifted repo into draft governance
+
+Behavior:
+1. inspect code, tests, schemas, routes, configs, and docs
+2. infer draft `intent.md`, `prd.md`, `usm.md`, `dm.md`, and `spec.md`
+3. attach confidence signals or equivalent uncertainty markers to inferred items
+4. require human approval before treating the repo as governed
+
+Constraints:
+- import is a bootstrap path, not the default path for routine fixes
+- low-confidence semantic inferences must remain visible until corrected or approved
+- do not present imported drafts as approved truth
 
 ### `status`
 
@@ -106,7 +119,7 @@ Load:
 - current artifact frontmatter
 - dependency or stale indicators if present
 - latest structural and semantic summaries if already present in repo-tracked artifacts or the current session
-- module selectors if the noun is `module`
+- module selectors if the target is `module`
 
 Present:
 - surface and profile
@@ -117,7 +130,7 @@ Present:
 
 In `code-first`, lead with `spec.md`, module, interface, and ownership state; still mention blocking product artifacts explicitly.
 
-### `review artifact prd|usm`
+### `review prd|usm`
 
 Load:
 - `references/interaction-contract.md`
@@ -125,7 +138,7 @@ Load:
 - linked upstream items
 - relevant `dm` slice only when needed to explain implied entities
 
-### `review artifact dm|spec`
+### `review dm|spec`
 
 Load:
 - `references/interaction-contract.md`
@@ -133,7 +146,7 @@ Load:
 - linked upstream `usm` or `prd` items
 - relevant module or interface slices
 
-### `develop change`
+### `develop`
 
 Load:
 - `references/methodology.md`
@@ -171,22 +184,24 @@ Do not loop indefinitely.
 
 Load:
 - `references/evals-and-templates.md`
-- only the target templates or eval docs needed for the requested scope
+- only the target templates needed for generation
 
-### `use surface`
-Load `references/methodology.md` and `../docs/surface-modes.md`. Return the selected surface, remind the user it is session-scoped, and suggest 2-3 fitting next commands.
+Do not load the detailed eval docs during routine command execution.
 
-### `help topic`
+### `surface`
+Load `references/methodology.md`. Return the selected surface, remind the user it is session-scoped, and suggest 2-3 fitting next commands.
+
+### `help`
 
 Load only the relevant reference set:
 - `methodology` -> `../docs/vibeloom-methodology.md`
 - `profiles` -> `../docs/profile-selection.md`
 - `surfaces` -> `../docs/surface-modes.md`
-- `evals` -> `../eval/structural-checks.md`, `../eval/semantic-checks.md`
+- `evals` -> `../docs/evals-structural.md`, `../docs/evals-semantic.md`
 - `templates` -> `../templates/`
 - `commands` -> `references/command-surface.md`
 
-Treat `help topic` as the primary path for direct `docs/` loading.
+Treat `help` as the primary path for direct `docs/` loading.
 
 ## Selector Resolution
 

@@ -1,6 +1,6 @@
 # Interaction Contract Reference
 
-This file defines runtime response shape, not methodology truth. Use canonical command forms in suggested next actions even when the input arrived through an alias.
+This file defines runtime response shape, not methodology truth. Use canonical command forms in suggested next actions.
 
 ## Mandatory Output Shape
 
@@ -13,14 +13,14 @@ Every command response uses:
 
 Keep output terse. Prefer findings and decisions over process narration.
 
-For `status repo`, render:
+For `status`, render:
 - surface
 - profile or `undecided`
 - artifact state summary
 - blockers or stale warnings
 - next 3 valid commands
 
-For `init project`, if the input is underspecified:
+For `init`, if the input is underspecified:
 - ask only for the minimum missing product facts
 - keep the interview brief and concrete
 - summarize the captured facts before drafting `intent.md`
@@ -32,8 +32,8 @@ For `init project`, if the input is underspecified:
 ### Workflow-facing review
 
 For:
-- `review artifact prd`
-- `review artifact usm`
+- `review prd`
+- `review usm`
 
 Lead with workflow and user-value language, but always cite the IDs:
 - `PRD-FR-*`
@@ -61,8 +61,8 @@ Unify the workflow language in USM, then confirm whether ENT-009 should be forma
 ### Technical-governance review
 
 For:
-- `review artifact dm`
-- `review artifact spec`
+- `review dm`
+- `review spec`
 - `eval`
 - `reconcile`
 
@@ -152,9 +152,9 @@ Next action
 Review the stale billing interface slice, then run /vibeloom reconcile module billing.
 ```
 
-## Help Topic Responses
+## Help Responses
 
-For `help topic ...`, answer from the requested topic only, summarize the most actionable rules first, and end with one or two example commands when relevant.
+For `help ...`, answer from the requested topic only, summarize the most actionable rules first, and end with one or two example commands when relevant.
 
 ## Error Contract
 
@@ -166,9 +166,9 @@ When the command is invalid:
 Example:
 
 ```text
-Invalid noun `artifacts` for verb `review`.
-Use: /vibeloom review artifact <intent|prd|usm|dm|spec|constitution>
-Closest forms: /vibeloom review artifact usm, /vibeloom review module billing
+Invalid target `artifacts` for action `review`.
+Use: /vibeloom review <intent|prd|usm|dm|spec|constitution>
+Closest forms: /vibeloom review usm, /vibeloom review module billing
 ```
 
 ## Triage Contract

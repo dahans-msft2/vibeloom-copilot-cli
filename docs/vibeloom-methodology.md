@@ -2,7 +2,7 @@
 
 VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence.
 
-This file owns methodology truth and longer explanation. The runtime skill loads `references/` first during routine work and reaches into `docs/` mainly through `help topic` or explicit deeper-explanation flows.
+This file owns methodology truth and longer explanation. The runtime skill loads `references/` first during routine work and reaches into `docs/` mainly through `help` or explicit deeper-explanation flows.
 
 ## Layer Contract
 
@@ -156,11 +156,11 @@ Generation is sequential — each artifact uses all previously generated artifac
 
 | Gate | Trigger | What it covers |
 | --- | --- | --- |
-| Intent approval | `approve scope intent` | `intent.md` alone |
-| Product approval | `approve scope product` | `prd.md` + `usm.md` + `dm.md` as a batch |
-| Spec approval | `approve scope spec` | root `spec.md` + module specs |
+| Intent approval | `approve intent` | `intent.md` alone |
+| Product approval | `approve product` | `prd.md` + `usm.md` + `dm.md` as a batch |
+| Spec approval | `approve spec` | root `spec.md` + module specs |
 
-After intent approval, the agent generates `prd`, then `usm`, then `dm` sequentially without intermediate human approval. The full product batch is reviewed and approved together.
+After intent approval, the agent generates `prd`, then `usm`, then `dm` sequentially without intermediate human approval. The full product batch is reviewed and approved together via `approve product`.
 
 ### Bottom-up evaluation
 

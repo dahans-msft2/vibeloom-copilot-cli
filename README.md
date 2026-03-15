@@ -6,7 +6,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 | Path | Purpose |
 | --- | --- |
-| `SKILL.md` | Codex skill entrypoint for the canonical `/vibeloom <verb> <noun> [tail]` grammar and documented aliases |
+| `SKILL.md` | Codex skill entrypoint for the canonical `/vibeloom <action> ...` command syntax |
 | `agents/` | UI metadata and explicit invocation policy |
 | `references/` | Runtime-efficient operational references loaded by the skill during routine command execution |
 | `assets/` | Skill icons and UI assets |
@@ -17,8 +17,8 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 | `dm.md` | Domain model for the methodology itself |
 | `spec.md` | Technical design for the canonical package and future runtime protocol |
 | `templates/` | Canonical templates aligned with the reconciled methodology |
-| `eval/` | Structural and semantic evaluation instructions |
-| `docs/` | Methodology truth and operator reading material loaded mainly through `help topic` or explicit deeper-explanation flows |
+| `docs/evals-*.md` | Detailed structural and semantic evaluation references |
+| `docs/` | Methodology truth and operator reading material loaded mainly through `help` or explicit deeper-explanation flows |
 | `site/` | Derivative public documentation for `https://vibeloom.ai/` |
 
 ## Authority Model
@@ -29,7 +29,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 - `SKILL.md` is the implementation entrypoint that tells Codex how to load and apply `references/`.
 - `templates/` is generation-only and must not introduce methodology truth of its own.
 - `site/` is derivative public documentation and marketing material. It must not introduce new semantics.
-- During routine skill execution, load `references/` first. Load `docs/` only for `help topic`, deeper explanation, or explicit escalation from a runtime reference.
+- During routine skill execution, load `references/` first. Load `docs/` only for `help`, deeper explanation, or explicit escalation from a runtime reference.
 
 ## Artifact Roles
 
@@ -42,9 +42,9 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 ## Operator Quickstart
 
 1. Invoke bare `$vibeloom` to get the current governed state, blockers, and next safe commands.
-2. If this is your first run, use `/vibeloom help topic methodology` for the contract model and `/vibeloom help topic templates` for artifact shapes.
-3. For a new governed project, start with `/vibeloom init project [intent seed]`.
-4. For an existing governed repo, use `/vibeloom status repo` before changing anything.
+2. If this is your first run, use `/vibeloom help methodology` for the contract model and `/vibeloom help templates` for artifact shapes.
+3. For a new governed project, start with `/vibeloom init [intent seed]`.
+4. For an existing governed repo, use `/vibeloom status` before changing anything.
 
 ## Phase Boundary
 

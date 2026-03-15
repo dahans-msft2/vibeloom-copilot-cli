@@ -1243,43 +1243,6 @@ section + section::before {
   opacity: 0.6;
 }
 
-.commands-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.command-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  transition: border-color 0.2s;
-}
-
-.command-row:hover {
-  border-color: var(--border-hover);
-}
-
-.command-row code {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--accent);
-  white-space: nowrap;
-  min-width: 180px;
-  background: transparent;
-  padding: 0;
-}
-
-.command-row span {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
 .cta-section {
   text-align: center;
   padding: 120px 24px;
@@ -1546,8 +1509,7 @@ section + section::before {
 }
 
 @media (max-width: 768px) {
-  .stats-grid,
-  .commands-grid {
+  .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
@@ -1578,7 +1540,6 @@ section + section::before {
   }
 
   .stats-grid,
-  .commands-grid,
   .profile-grid,
   .cmd-grid {
     grid-template-columns: 1fr;

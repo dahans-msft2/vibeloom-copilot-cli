@@ -47,7 +47,7 @@ This is a package and protocol spec, not a concrete governed repo instance. It d
 | `dm.md` | Methodology domain language and invariants |
 | `spec.md` | Technical protocol and future runtime behavior |
 | `templates/` | Canonical document templates |
-| `eval/` | Evaluation instructions |
+| `docs/evals-*.md` | Detailed structural and semantic evaluation references |
 | `docs/` | Supporting protocol explanations |
 | `docs/profile-selection.md` | Lite vs Full guidance and transition rules |
 
@@ -250,8 +250,8 @@ This phase does not implement commands, but the future runtime is expected to su
 | `eval` | Structural and semantic checks |
 | `reconcile` | Targeted drift resolution |
 | `status` | Report artifact states and stale edges |
-| `use surface` | Select `product-first` or `code-first` for the current session |
-| `help topic` | Load focused guidance for methodology, profiles, evals, templates, or commands |
+| `surface` | Select `product-first` or `code-first` for the current session |
+| `help` | Load focused guidance for methodology, profiles, evals, templates, or commands |
 
 ## Testing Strategy
 

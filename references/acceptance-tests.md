@@ -7,18 +7,18 @@ Use these scenarios when validating the skill interface or revising command rout
 ### Valid core commands
 
 ```text
-/vibeloom status repo
-/vibeloom review artifact usm
-/vibeloom develop change add annual billing
+/vibeloom status
+/vibeloom review usm
+/vibeloom develop add annual billing
 /vibeloom fix issue invite links expire too early
 ```
 
 Expected:
 - each command parses without guessing
-- verb and noun are recognized
+- action and required target shape are recognized
 - freeform tail remains intact
 
-### Official aliases
+### Concise canonical commands
 
 ```text
 /vibeloom init build a recruiting platform
@@ -26,28 +26,28 @@ Expected:
 /vibeloom status
 /vibeloom develop add annual billing
 /vibeloom reconcile
-/vibeloom approve product
-/vibeloom eval module billing
 /vibeloom generate dm
 /vibeloom review usm
+/vibeloom approve product
+/vibeloom eval module billing
 /vibeloom help surfaces
 ```
 
 Expected:
-- each alias normalizes to its canonical form before routing
-- follow-up messages and suggested commands use canonical forms
+- each command parses as written with no extra structural keyword
+- follow-up messages and suggested commands use the same concise canonical forms
 
 ### Valid expert commands
 
 ```text
-/vibeloom generate artifact dm
-/vibeloom approve scope product
-/vibeloom eval scope module billing
-/vibeloom use surface code-first
-/vibeloom help topic surfaces
+/vibeloom generate dm
+/vibeloom help command review
+/vibeloom approve product
+/vibeloom eval module billing
+/vibeloom surface code-first
 ```
 
-### Missing noun
+### Missing target
 
 ```text
 /vibeloom review
@@ -57,7 +57,7 @@ Expected:
 - return the valid grammar for `review`
 - do not assume `artifact` or `module`
 
-### Invalid alias or selector
+### Invalid target or selector
 
 ```text
 /vibeloom help overview
@@ -67,7 +67,7 @@ Expected:
 ```
 
 Expected:
-- accept documented shorthand only when the trailing token is a valid topic or artifact selector
+- accept documented direct topic and artifact targets only when the trailing token is valid
 - reject unsupported command forms such as `/vibeloom generate tests`
 - for `review`, do not guess `module`; non-artifact review still requires `review module <module-name>`
 - if `payments-api` is invalid, return actual module selectors from the repo
@@ -79,7 +79,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom review artifact usm
+/vibeloom review usm
 ```
 
 Expected:
@@ -91,7 +91,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom review artifact dm
+/vibeloom review dm
 ```
 
 Expected:
@@ -108,7 +108,20 @@ Input:
 
 Expected:
 - route to repro-first bugfix flow
-- do not route to `import repo`
+- do not route to `import`
+
+### Import routing boundary
+
+Input:
+
+```text
+/vibeloom import .
+```
+
+Expected:
+- use runtime import rules from `references/`
+- inspect repo evidence directly rather than loading root `spec.md` as an operational dependency
+- mark inferred semantics as draft with visible confidence or uncertainty
 
 ## UX Tests
 
@@ -133,7 +146,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom init project build a recruiting platform
+/vibeloom init build a recruiting platform
 ```
 
 Expected:
@@ -158,7 +171,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom approve scope product
+/vibeloom approve product
 ```
 
 Expected:
@@ -171,7 +184,7 @@ Expected:
 Input:
 
 ```text
-/vibeloom help topic evals
+/vibeloom help evals
 ```
 
 Expected:
@@ -184,14 +197,19 @@ Expected:
 Routine commands such as:
 
 ```text
-/vibeloom status repo
-/vibeloom develop change add annual billing
+/vibeloom status
+/vibeloom develop add annual billing
+/vibeloom approve product
+/vibeloom eval spec
+/vibeloom surface code-first
 ```
 
 Expected:
 - load `references/` first
 - do not pull `docs/` unless a deeper explanation is requested or a runtime reference explicitly escalates
-- keep `help topic` as the primary direct path to `docs/`
+- for routine `approve` and `eval`, use `references/evals-and-templates.md` instead of the detailed eval docs
+- for `surface`, use runtime surface rules from `references/`, not `docs/surface-modes.md`
+- keep `help` as the primary direct path to `docs/`
 
 ### Adaptive summaries with IDs
 
@@ -203,5 +221,5 @@ Any finding must name the affected IDs explicitly, even when the wording is work
 - No response omits `USM` or `DM` from the methodology.
 - No response implies implicit activation; the skill remains explicit-invocation only.
 - No response introduces a fifth approval state, collapses the USM into the PRD for Lite, or requires an external truth-bearing state ledger.
-- No response invents aliases outside the documented alias set.
+- No response introduces removed long forms or undocumented shorthand.
 - No runtime rule requires stable item IDs in draft intent before reconciliation introduces optional `CAP-*`.

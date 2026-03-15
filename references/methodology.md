@@ -7,7 +7,7 @@ This file is the runtime summary loaded during routine skill work.
 - `references/` owns runtime-efficient execution guidance only.
 - `templates/` is generation-only.
 - `site/` is derivative marketing documentation and is not part of runtime authority.
-- Load `docs/` only when the user asks for deeper explanation, uses `help topic`, or another runtime reference points there.
+- Load `docs/` only when the user asks for deeper explanation, uses `help`, or another runtime reference points there.
 
 ## Authority
 
@@ -22,7 +22,24 @@ This file is the runtime summary loaded during routine skill work.
 - `USM` and `DM` are mandatory in every profile.
 - Only `lite` and `full` profiles exist.
 - Surface modes are session-scoped: default `product-first`; `code-first` only changes which layer is shown first and escalates back to product/domain slices on boundary or semantic risk.
-- `fix issue` is the steady-state bugfix path. Do not route ordinary defects through `import repo`.
+- `fix issue` is the steady-state bugfix path. Do not route ordinary defects through `import`.
+
+## Surface Modes
+
+Runtime surface rules:
+- default surface is `product-first`
+- `code-first` is an advanced engineering surface
+- surface selection is session-scoped only
+- do not persist surface choice to repo state
+- surfaces do not change the canonical stack, approval scopes, lifecycle states, traceability rules, or reconcile asymmetry
+- `code-first` must not omit, replace, or silently synthesize away `prd`, `usm`, or `dm`
+
+When `code-first` is active, escalate to product or domain slices when:
+- the change is `boundary-changing`
+- workflows or actors are touched or ambiguous
+- concepts, entities, invariants, interfaces, or NFR boundaries are touched or ambiguous
+- semantic drift appears during `review`, `eval`, or `reconcile`
+- the user explicitly asks to inspect product or domain artifacts
 
 ## Change Classes
 

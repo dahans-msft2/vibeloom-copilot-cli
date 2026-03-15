@@ -62,10 +62,10 @@ When possible, present each suggested next command with one short reason.
 After `approve product`, propose a profile using the current approved product slice:
 
 1. load `dm.md`
-2. count bounded contexts and total entities
-3. propose `lite` when there is one bounded context and roughly <= 15 entities
-4. propose `full` when there are multiple bounded contexts, ambiguous ownership, or a larger entity surface
-5. show the counts and the reasoning in the response
+2. inspect bounded contexts, ownership seams, interface needs, and expected coordination risk
+3. propose `lite` when the semantics fit one cohesive bounded context and one module can own the write surface safely
+4. propose `full` when there are multiple bounded contexts, ambiguous ownership, stable interface needs, or meaningful parallel execution risk
+5. show the reasoning in the response; include bounded-context or entity counts only as supporting evidence when helpful, not as thresholds
 6. let the user confirm or override
 
 This heuristic is session-local and recommendation-only. Do not persist profile choice to any external state file.

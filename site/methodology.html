@@ -399,10 +399,10 @@
         <h3>Lite</h3>
         <div class="subtitle">Single domain, single agent</div>
         <ul>
-          <li><span class="check">&#10003;</span> Up to ~15 entities, one bounded context</li>
+          <li><span class="check">&#10003;</span> One cohesive bounded context</li>
           <li><span class="check">&#10003;</span> Separate USM + DM (always mandatory)</li>
           <li><span class="check">&#10003;</span> Shallow module decomposition</li>
-          <li><span class="check">&#10003;</span> 3 approval gates (intent, product, spec)</li>
+          <li><span class="check">&#10003;</span> Intent, product, and spec approvals</li>
           <li><span class="check">&#10003;</span> Best for MVPs, tools, internal apps</li>
         </ul>
       </div>
@@ -413,7 +413,7 @@
           <li><span class="check">&#10003;</span> Multiple bounded contexts</li>
           <li><span class="check">&#10003;</span> Module specs with interface contracts + DAG</li>
           <li><span class="check">&#10003;</span> Explicit interface ownership rules</li>
-          <li><span class="check">&#10003;</span> 3 approval gates (intent, product, spec)</li>
+          <li><span class="check">&#10003;</span> Intent, product, and spec approvals</li>
           <li><span class="check">&#10003;</span> Best for platforms, SaaS, team projects</li>
         </ul>
       </div>
@@ -452,7 +452,7 @@
     </div>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 1: Structural checks (10 checks, blocking)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Tier 1: Structural checks (blocking)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ol>
           <li><strong>Metadata completeness</strong> — required frontmatter fields present with valid values</li>
@@ -469,7 +469,7 @@
       </div>
     </details>
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 2: Semantic checks (10 checks, warnings)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Tier 2: Semantic checks (warnings)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
           <li>Requirement to story coverage</li>

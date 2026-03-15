@@ -3,24 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom Methodology — Contract-Driven Vibe Coding</title>
-<meta name="description" content="Deep dive into VibeLoom's contract-driven methodology: tiered spec stack, eval framework, multi-agent modules, Lite and Full profiles, and the complete /vibeloom command reference.">
-<meta name="keywords" content="vibe coding methodology, spec-driven development, contract-first AI, domain-driven design, multi-agent coordination, Claude Code skill">
+<title>VibeLoom Methodology — Spec-Driven, Contract-Driven Development</title>
+<meta name="description" content="A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, approval flow, eval framework, and multi-agent module model.">
 <meta name="author" content="VibeLoom">
 <link rel="canonical" href="https://vibeloom.ai/methodology">
 
 <!-- Open Graph -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://vibeloom.ai/methodology">
-<meta property="og:title" content="VibeLoom Methodology — How Contract-Driven Vibe Coding Works">
-<meta property="og:description" content="The complete guide to VibeLoom's tiered spec stack, eval framework, module interface contracts, and multi-agent coordination.">
+<meta property="og:title" content="VibeLoom Methodology — Spec-Driven, Contract-Driven Development">
+<meta property="og:description" content="The complete guide to VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, module contracts, and multi-agent coordination.">
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VibeLoom Methodology">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VibeLoom Methodology — Spec-Driven, Contract-Driven">
+<meta name="twitter:description" content="A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, and module contracts.">
 
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
 <link rel="stylesheet" href="shared.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "VibeLoom Methodology: Spec-Driven and Contract-Driven Development",
+  "description": "A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, and multi-agent modules.",
+  "url": "https://vibeloom.ai/methodology",
+  "mainEntityOfPage": "https://vibeloom.ai/methodology",
+  "publisher": {
+    "@type": "Organization",
+    "name": "VibeLoom",
+    "url": "https://vibeloom.ai"
+  },
+  "about": [
+    {
+      "@type": "Thing",
+      "name": "spec-driven development"
+    },
+    {
+      "@type": "Thing",
+      "name": "contract-driven development"
+    },
+    {
+      "@type": "Thing",
+      "name": "spec-first development"
+    },
+    {
+      "@type": "Thing",
+      "name": "contract-first development"
+    }
+  ],
+  "keywords": [
+    "spec-driven",
+    "contract-driven",
+    "spec-first",
+    "contract-first",
+    "AI development methodology",
+    "vibe coding methodology"
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -49,6 +90,8 @@
   <!-- TOC -->
   <div class="toc reveal">
     <h4>On this page</h4>
+    <a href="#positioning">Why These Terms Matter</a>
+    <a href="#comparison">Comparison</a>
     <a href="#core-thesis">Core Thesis</a>
     <a href="#contract-stack">The Contract Stack</a>
     <a href="#workflow">Workflow Diagram</a>
@@ -57,6 +100,90 @@
     <a href="#modules">Multi-Agent Modules</a>
     <a href="#commands">Command Reference</a>
     <a href="#quickstart">Quickstart</a>
+  </div>
+
+  <!-- ═══ POSITIONING ═══ -->
+  <div class="doc-section reveal" id="positioning">
+    <span class="label">Context</span>
+    <h2>Why these terms matter</h2>
+    <p class="lead">Spec-first, spec-driven, contract-first, and contract-driven approaches are gaining attention because teams want AI-assisted development to stay reviewable, traceable, and coherent as systems grow.</p>
+
+    <details class="expandable">
+      <summary class="expandable-header"><span>What do these terms mean in practice?</span><span class="arrow">&#9654;</span></summary>
+      <div class="expandable-body">
+        <ul>
+          <li><strong>Spec-first</strong> means requirements and design artifacts are created before implementation starts.</li>
+          <li><strong>Spec-driven</strong> means those specs continue to guide implementation, evaluation, and change management after planning.</li>
+          <li><strong>Contract-first</strong> means interfaces, invariants, and acceptance boundaries are defined before code is generated.</li>
+          <li><strong>Contract-driven</strong> means those contracts remain active constraints on downstream code, tests, and reconciliation.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <!-- ═══ COMPARISON ═══ -->
+  <div class="doc-section reveal" id="comparison">
+    <span class="label">Landscape</span>
+    <h2>How VibeLoom compares</h2>
+    <p class="lead">This comparison focuses on public product framing: whether each tool starts from specs and contracts, and whether those specs and contracts continue to govern the downstream workflow.</p>
+
+    <details class="expandable">
+      <summary class="expandable-header"><span>Open the comparison table</span><span class="arrow">&#9654;</span></summary>
+      <div class="expandable-body">
+        <div class="table-wrap comparison-table">
+          <table>
+            <thead><tr><th>Tool</th><th>Spec-first</th><th>Contract-first</th><th>Spec-driven</th><th>Contract-driven</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>VibeLoom</strong></td>
+                <td><span class="tag tag-ok">Primary</span></td>
+                <td><span class="tag tag-ok">Primary</span></td>
+                <td><span class="tag tag-ok">Primary</span></td>
+                <td><span class="tag tag-ok">Primary</span></td>
+              </tr>
+              <tr class="comparison-workflow-row">
+                <td class="comparison-tool-spacer"></td>
+                <td class="comparison-workflow" colspan="4">Intent, product specs, domain model, and architecture are created and approved up front; those same artifacts are then reused as explicit eval inputs and gating checkpoints for downstream code and reconciliation.</td>
+              </tr>
+              <tr>
+                <td><a href="https://docs.tessl.io/use/spec-driven-development-with-tessl" target="_blank" rel="noopener">Tessl</a></td>
+                <td><span class="tag tag-ok">Strong</span></td>
+                <td><span class="tag tag-warn">Limited</span></td>
+                <td><span class="tag tag-ok">Explicit</span></td>
+                <td><span class="tag tag-warn">Partial</span></td>
+              </tr>
+              <tr class="comparison-workflow-row">
+                <td class="comparison-tool-spacer"></td>
+                <td class="comparison-workflow" colspan="4">A spec is written and approved up front, then code and tests are generated from it; the spec continues to guide downstream work, but contract-style eval and approval gates are less central than in VibeLoom.</td>
+              </tr>
+              <tr>
+                <td><a href="https://kiro.dev/docs/specs/" target="_blank" rel="noopener">Kiro</a></td>
+                <td><span class="tag tag-warn">Variant</span></td>
+                <td><span class="tag tag-accent">Limited</span></td>
+                <td><span class="tag tag-ok">Explicit</span></td>
+                <td><span class="tag tag-accent">Limited</span></td>
+              </tr>
+              <tr class="comparison-workflow-row">
+                <td class="comparison-tool-spacer"></td>
+                <td class="comparison-workflow" colspan="4">Requirements, design, and tasks are created up front for a feature, then used to steer implementation; they remain part of the workflow, but the docs do not frame them as strong later-stage contract gates.</td>
+              </tr>
+              <tr>
+                <td><a href="https://github.github.com/spec-kit/index.html" target="_blank" rel="noopener">GitHub Spec Kit</a></td>
+                <td><span class="tag tag-ok">Strong</span></td>
+                <td><span class="tag tag-accent">Limited</span></td>
+                <td><span class="tag tag-ok">Explicit</span></td>
+                <td><span class="tag tag-accent">Limited</span></td>
+              </tr>
+              <tr class="comparison-workflow-row">
+                <td class="comparison-tool-spacer"></td>
+                <td class="comparison-workflow" colspan="4">A spec, plan, and task list are created up front, then used to organize downstream agent execution; those artifacts stay relevant later, but they are framed more as planning scaffolding than as hard contract eval gates.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="comparison-note">Comparison reflects public docs and product positioning rather than hidden implementation details or internal roadmaps.</p>
+      </div>
+    </details>
   </div>
 
   <!-- ═══ CORE THESIS ═══ -->

@@ -3,23 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom — Contract-Driven Vibe Coding</title>
-<meta name="description" content="A contract-driven code generation to stop prompt-to-code drift, codebase decay, and AI-generated slop. Multi-agent ready. Bidirectionally consistent. Human-gated.">
-<meta name="keywords" content="vibe coding, AI code generation, spec-driven development, Claude Code, Codex, contract-first development, multi-agent coding, domain-driven design">
+<title>VibeLoom — Spec-First, Contract-First Vibe Coding</title>
+<meta name="description" content="VibeLoom is a spec-first, contract-first workflow for AI-assisted software development, built around structured specs, approvals, and downstream code generation.">
 <meta name="author" content="VibeLoom">
 <link rel="canonical" href="https://vibeloom.ai/">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://vibeloom.ai/">
-<meta property="og:title" content="VibeLoom — Contract-Driven Vibe Coding">
-<meta property="og:description" content="A contract-driven code generation to stop prompt-to-code drift, codebase decay, and AI-generated slop. Multi-agent ready. Bidirectionally consistent. Human-gated.">
-<meta property="og:image" content="https://vibeloom.ai/og-image.png">
+<meta property="og:title" content="VibeLoom — Spec-First, Contract-First Vibe Coding">
+<meta property="og:description" content="VibeLoom is a spec-first, contract-first workflow for AI-assisted software development, built around structured specs, approvals, and downstream code generation.">
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VibeLoom — Contract-Driven Vibe Coding">
-<meta name="twitter:description" content="A contract-driven code generation to stop prompt-to-code drift, codebase decay, and AI-generated slop. Multi-agent ready. Bidirectionally consistent. Human-gated.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VibeLoom — Spec-First, Contract-First Vibe Coding">
+<meta name="twitter:description" content="VibeLoom is a spec-first, contract-first workflow for AI-assisted software development, built around structured specs, approvals, and downstream code generation.">
 
 <!-- Favicon placeholder -->
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
@@ -34,9 +32,17 @@
   "@type": "SoftwareApplication",
   "name": "VibeLoom",
   "applicationCategory": "DeveloperApplication",
-  "description": "Contract-driven vibe coding methodology implemented as a Claude Code and Codex skill. Generates structured specs from intent to code with multi-agent coordination.",
+  "description": "VibeLoom is a spec-first, contract-first workflow for AI-assisted software development, built around structured specs, approvals, and downstream code generation.",
   "url": "https://vibeloom.ai",
   "operatingSystem": "Cross-platform",
+  "keywords": [
+    "spec-first",
+    "contract-first",
+    "spec-driven development",
+    "contract-driven development",
+    "AI code generation",
+    "vibe coding"
+  ],
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -123,23 +129,104 @@
     <p class="section-desc">AI code generation works for prototypes. It fails when you need architectural coherence, team coordination, and long-term maintainability.</p>
 
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="grid-card grid-card--stat">
         <div class="stat-number">1.7&times;</div>
         <div class="stat-label">More issues in<br>AI-generated PRs</div>
+        <a class="stat-source" href="https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report" target="_blank" rel="noopener">Source: CodeRabbit</a>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">4&times;</div>
-        <div class="stat-label">Increase in<br>code duplication</div>
+      <div class="grid-card grid-card--stat">
+        <div class="stat-number">75%</div>
+        <div class="stat-label">More logic and<br>correctness issues</div>
+        <a class="stat-source" href="https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report" target="_blank" rel="noopener">Source: CodeRabbit</a>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">76%</div>
-        <div class="stat-label">Larger codebases<br>vs human-written</div>
+      <div class="grid-card grid-card--stat">
+        <div class="stat-number">53%</div>
+        <div class="stat-label">Say AI code looks right<br>but isn&rsquo;t reliable</div>
+        <a class="stat-source" href="https://www.sonarsource.com/company/press-releases/sonar-data-reveals-critical-verification-gap-in-ai-coding/" target="_blank" rel="noopener">Source: Sonar</a>
       </div>
-      <div class="stat-card">
-        <div class="stat-number">89%</div>
-        <div class="stat-label">CTOs report AI<br>production incidents</div>
+      <div class="grid-card grid-card--stat">
+        <div class="stat-number">40%</div>
+        <div class="stat-label">Say AI generates unnecessary<br>or duplicative code</div>
+        <a class="stat-source" href="https://www.sonarsource.com/company/press-releases/sonar-data-reveals-critical-verification-gap-in-ai-coding/" target="_blank" rel="noopener">Source: Sonar</a>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══ CONTEXT ═══ -->
+<section id="context">
+  <div class="section-inner reveal">
+    <span class="section-label">Why Now</span>
+    <h2 class="section-title">"Spec-driven" workflows are getting real attention</h2>
+    <p class="section-desc">More teams are looking for spec-first, spec-driven, contract-first, and contract-driven ways to get better results from AI-assisted development without relying on prompt-only workflows.</p>
+
+    <div class="terms-grid">
+      <div class="grid-card term-card">
+        <h3>Spec-first</h3>
+        <p>Technical specs, implementation-oriented designs, or execution plans are written before implementation starts. The spec exists up front instead of emerging after the code.</p>
+      </div>
+      <div class="grid-card term-card">
+        <h3>Contract-first</h3>
+        <p>Requirements, acceptance criteria, interfaces, invariants, and policies are defined before code generation. Contracts operate at a broader level than technical specs alone.</p>
+      </div>
+      <div class="grid-card term-card">
+        <h3>Spec-driven</h3>
+        <p>Those technical specs keep steering the workflow after planning. They inform implementation, reviews, and change management instead of becoming a stale document.</p>
+      </div>
+      <div class="grid-card term-card">
+        <h3>Contract-driven</h3>
+        <p>Those requirements, acceptance criteria, interfaces, invariants, and policies remain active later as eval inputs, approval gates, and reconciliation checks.</p>
+      </div>
+    </div>
+
+    <div class="positioning-panel">
+      <div class="positioning-copy">
+        <h3>Workflow positioning matrix</h3>
+        <p>Most alternatives stay closer to technical-spec planning. VibeLoom pushes further toward higher-level requirements and contracts, then keeps those artifacts governing implementation over time.</p>
+      </div>
+
+      <div class="positioning-matrix" aria-label="Workflow positioning matrix comparing VibeLoom, Tessl, Kiro, and GitHub Spec Kit">
+        <div class="matrix-y-axis">
+          <div class="matrix-y-label matrix-y-label-top">
+            <span>Ongoing</span>
+            <span>governance</span>
+          </div>
+          <div class="matrix-y-title">Lifecycle role</div>
+          <div class="matrix-y-label matrix-y-label-bottom">
+            <span>Upfront</span>
+            <span>definition</span>
+          </div>
+        </div>
+        <div class="matrix-main">
+          <div class="matrix-canvas">
+            <div class="matrix-point matrix-point-vibeloom" style="left: 77%; top: 19%;">
+              <img src="vibeloom-logo-loom.svg" alt="" aria-hidden="true">
+              <span>VibeLoom</span>
+            </div>
+            <div class="matrix-point matrix-point-secondary matrix-point-with-icon" style="left: 37%; top: 37%;">
+              <img src="tessl-logo.png" alt="" aria-hidden="true">
+              <span>Tessl</span>
+            </div>
+            <div class="matrix-point matrix-point-secondary matrix-point-with-icon matrix-point-kiro" style="left: 28%; top: 60%;">
+              <img src="kiro-logo.svg" alt="" aria-hidden="true">
+              <span>Kiro</span>
+            </div>
+            <div class="matrix-point matrix-point-secondary matrix-point-with-icon" style="left: 31%; top: 74%;">
+              <img src="github-spec-kit-logo.ico" alt="" aria-hidden="true">
+              <span>GitHub Spec Kit</span>
+            </div>
+          </div>
+          <div class="matrix-x-axis">
+            <div class="matrix-x-label matrix-x-label-left">Technical specs</div>
+            <div class="matrix-x-title">Artifact scope</div>
+            <div class="matrix-x-label matrix-x-label-right">Requirements and contracts</div>
+          </div>
+          <p class="matrix-caption">VibeLoom sits in the upper-right because it starts from broader requirements and contracts, then keeps using them as ongoing governance. Tessl, Kiro, and GitHub Spec Kit stay further left because their public workflows are more technical-spec-centered and less explicitly contract-governed over time.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="comparison-link"><a href="methodology.html#comparison">See the Methodology page for the detailed comparison table.</a></p>
   </div>
 </section>
 
@@ -151,42 +238,42 @@
     <p class="section-desc">VibeLoom generates a tiered stack of specifications. Each tier constrains the next. Upstream specs serve as evaluations for downstream work.</p>
 
     <div class="features-grid">
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon purple">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 4h14M3 8h10M3 12h14M3 16h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <h3>Contract Stack</h3>
         <p>Constitution &rarr; Intent &rarr; PRD &rarr; USM &rarr; Domain Model &rarr; Spec &rarr; Code. Each tier is verified against its upstream contracts.</p>
       </div>
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon green">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16M2 10h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
         </div>
         <h3>Domain Model Anchor</h3>
         <p>DDD-style domain model is the semantic core. It captures user value independently of technical decisions — the most stable layer.</p>
       </div>
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon blue">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 6h4v4H4zM12 6h4v4h-4zM8 12h4v4H8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 10v2h2M14 10v4h-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </div>
         <h3>Multi-Agent Ready</h3>
         <p>Modules derived from bounded contexts. Each fits one context window. Interface contracts prevent incompatible APIs between parallel agents.</p>
       </div>
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon green">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <h3>Specs as Evals</h3>
         <p>Three-tier evaluation: structural checks (blocking), semantic coverage analysis (warnings), and test generation from specs (on-demand).</p>
       </div>
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon purple">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.5 5.5l2.8 2.8M11.7 11.7l2.8 2.8M5.5 14.5l2.8-2.8M11.7 8.3l2.8-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <h3>Bidirectional Consistency</h3>
         <p>Edit any spec — upstream and downstream are checked automatically. Bounded reconciliation: one up-pass, one down-pass, no infinite loops.</p>
       </div>
-      <div class="feature-card">
+      <div class="grid-card">
         <div class="feature-icon blue">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9h6M7 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </div>

@@ -23,8 +23,8 @@
   --gradient-hero: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(232, 64, 87, 0.12), transparent);
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
-  --site-max-width: 1200px;
-  --content-max-width: 860px;
+  --site-max-width: 1280px;
+  --content-max-width: 960px;
   --nav-height: 64px;
 }
 

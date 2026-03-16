@@ -498,17 +498,35 @@ pre .type {
   margin-bottom: 12px;
 }
 
-.toc a {
-  display: block;
+.toc-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: baseline;
   padding: 5px 0;
+}
+
+.toc-item a {
   font-size: 0.85rem;
   color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.15s;
 }
 
-.toc a:hover {
+.toc-item a:hover {
   color: var(--accent);
+}
+
+.toc-desc {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 600px) {
+  .toc-item {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
 }
 
 .reveal {

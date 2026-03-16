@@ -22,11 +22,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 ## Authority Model
 
-The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md). This README keeps only the repo-local summary:
-
-- `references/` are the routine runtime layer loaded first by the skill
-- `templates/` are generation inputs only
-- `site/` is derivative public documentation
+The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md). Runtime command behavior lives in `references/`. This README keeps only the repo-local map.
 
 ## Artifact Roles
 
@@ -44,12 +40,7 @@ The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/
 
 ## Phase Boundary
 
-This repo includes the actual Codex skill plus the methodology artifacts it relies on.
-
-- The skill interface exists in `SKILL.md`.
-- No external parser or runtime binary is implemented here.
-- No generated live `AGENTS.md` instances are checked in here.
-- No automation or runtime code is created here.
+This repo ships the Codex skill plus the methodology artifacts it relies on. It does not ship a separate runtime binary, checked-in generated `AGENTS.md` instances, or automation code.
 
 ## Additional Docs
 

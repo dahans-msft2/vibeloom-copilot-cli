@@ -31,6 +31,38 @@ For `init`, if the input is underspecified:
 
 ## Adaptive Summary Rules
 
+### Intent review
+
+For:
+- `review intent`
+
+Lead with:
+- system purpose
+- primary users
+- core capabilities
+- major constraints or preferences
+- downstream trace readiness when a reconciled capability index is present
+
+ID rules:
+- cite `CAP-*` when relevant capability IDs exist
+- if the draft intentionally remains prose-first, use the intent artifact ID in `Affected IDs` and state that item-level intent IDs are intentionally absent
+
+Example:
+
+```text
+Scope
+Intent review for the governed workspace.
+
+Decision / Findings
+The system purpose and target operator are clear, but the capability list still blends two separate outcomes: governed feature delivery and brownfield import. The draft is still valid as prose-first intent, but downstream product generation will be easier to review if those capabilities are separated before approval.
+
+Affected IDs
+ART-INTENT-CODEX-V4
+
+Next action
+Split the capability wording so governed delivery and import are distinct, then re-run /vibeloom review intent or proceed to /vibeloom eval intent if the current intent is already acceptable.
+```
+
 ### Workflow-facing review
 
 For:

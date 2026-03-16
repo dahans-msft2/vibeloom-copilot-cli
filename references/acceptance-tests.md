@@ -75,6 +75,19 @@ Expected:
 
 ## Routing Tests
 
+### Intent review
+
+Input:
+
+```text
+/vibeloom review intent
+```
+
+Expected:
+- lead with purpose, users, capabilities, and constraints
+- cite `CAP-*` when a reconciled capability index exists
+- if the draft is still prose-first with no `CAP-*`, keep that absence explicit instead of treating it as a review failure
+
 ### Workflow-oriented review
 
 Input:

@@ -132,6 +132,14 @@ Present:
 
 In `code-first`, lead with `spec.md`, module, interface, and ownership state; still mention blocking product artifacts explicitly.
 
+### `review intent`
+
+Load:
+- `references/interaction-contract.md`
+- the target `intent.md`
+- reconciled `CAP-*` capability index entries when present
+- linked downstream `prd` items only when the repo already claims item-level intent trace or the operator asks whether the current intent is ready for downstream generation
+
 ### `review prd|usm`
 
 Load:

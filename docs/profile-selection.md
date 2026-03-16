@@ -2,8 +2,8 @@
 
 This guide explains how to think about `lite` versus `full`.
 
-Routine profile behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
-Use this file for explanation and selection heuristics rather than as a second runtime decision engine.
+The canonical layer contract lives in [vibeloom-methodology.md](vibeloom-methodology.md).
+Use this file for explanation and selection heuristics; routine runtime behavior is owned by the runtime layer, not by this guide.
 
 VibeLoom has two profiles, but both preserve the same canonical stack:
 - `constitution.md`

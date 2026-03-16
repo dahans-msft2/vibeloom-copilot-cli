@@ -2,12 +2,18 @@
 
 This file defines the runtime command grammar consumed by the skill.
 
-- `docs/vibeloom-methodology.md` owns the canonical prose methodology statement; the root artifact stack remains the structured normative representation.
+- Canonical methodology meaning lives in the docs layer; the root artifact stack remains the structured normative representation.
 - This file owns parsing, normalization, and examples for the runtime interface.
 
 ## Grammar
 
-Canonical commands follow the conceptual shape:
+Canonical commands follow the abstract shape:
+
+```text
+<action> <target> <context>
+```
+
+In this Codex skill, explicit commands use:
 
 ```text
 /vibeloom <action> <target> <context>

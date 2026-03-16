@@ -2,9 +2,9 @@
 
 This file is the runtime summary loaded during routine skill work.
 
-Use `../docs/vibeloom-methodology.md` for the canonical prose layer contract. This file keeps only the runtime implications:
+Use `help methodology` for the canonical prose layer contract. This file keeps only the runtime implications:
 - `references/` owns routine execution guidance
-- load `docs/` only when the user asks for deeper explanation, uses `help`, or another runtime reference points there
+- load explanatory material outside `references/` only when the user explicitly invokes `help`
 - do not treat `templates/` or `site/` as runtime authority
 
 ## Authority
@@ -55,9 +55,10 @@ If classification is uncertain, escalate upward.
 - Drift produces proposals, not silent upstream rewrites.
 - Bounded reconcile stays limited to one up-pass, one down-pass, and one final validation.
 
-## Deep Docs
+## Deep Help Topics
 
-- `../docs/vibeloom-methodology.md`
-- `../docs/profile-selection.md`
-- `../docs/artifact-protocol.md`
-- `../docs/context-loading.md`
+Use the routed help topics when deeper explanation is requested:
+- `help methodology`
+- `help profiles`
+- `help surfaces`
+- `help evals`

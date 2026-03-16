@@ -6,7 +6,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 | Path | Purpose |
 | --- | --- |
-| `SKILL.md` | Codex skill entrypoint for the canonical `/vibeloom <action> <target> <context>` command model |
+| `SKILL.md` | Codex skill entrypoint for the `/vibeloom` surface over the canonical `<action> <target> <context>` command model |
 | `agents/` | UI metadata and explicit invocation policy |
 | `references/` | Runtime-efficient operational references loaded by the skill during routine command execution |
 | `constitution.md` | Foundational rules that keep downstream specs concise and mechanically checkable |

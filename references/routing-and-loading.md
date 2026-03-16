@@ -3,7 +3,7 @@
 This file defines what to load for each command and how to choose the next valid action.
 
 - Treat `references/` as the default runtime layer.
-- Do not load `docs/` during routine commands unless the user asked for deeper explanation, used `help`, or a runtime rule here explicitly escalates.
+- Do not load explanatory material outside `references/` during routine commands unless the user explicitly invoked `help`.
 - Use canonical command forms in suggested next actions.
 
 ## Load Ownership
@@ -104,7 +104,7 @@ If the freeform seed is missing, short, or obviously incomplete, enter a brief i
 - likely bounded contexts if the workflows already imply them
 
 Draft `intent.md` first. Do not infer downstream approvals or a profile automatically.
-If the operator asks for methodology background before answering, escalate to `../docs/vibeloom-methodology.md`.
+If the operator asks for methodology background before answering, suggest `help methodology`.
 If a provisional profile recommendation is useful, explain it as session-local guidance only and wait for product approval before treating it as selected.
 
 ### `import`
@@ -234,15 +234,16 @@ Load `references/methodology.md`. Return the selected surface, remind the user i
 
 ### `help`
 
-Load only the relevant reference set:
-- `methodology` -> `../docs/vibeloom-methodology.md`
-- `profiles` -> `../docs/profile-selection.md`
-- `surfaces` -> `../docs/surface-modes.md`
-- `evals` -> `../docs/evals-structural.md`, `../docs/evals-semantic.md`
-- `templates` -> `../templates/`
-- `commands` -> `references/command-surface.md`
+Load only the requested routed help topic:
+- `methodology`
+- `profiles`
+- `surfaces`
+- `evals`
+- `templates`
+- `commands`
 
-Treat `help` as the primary path for direct `docs/` loading.
+Exact topic-to-file routing is owned by `SKILL.md`.
+Treat `help` as the only routine path to explanation material outside `references/`.
 
 ## Selector Resolution
 

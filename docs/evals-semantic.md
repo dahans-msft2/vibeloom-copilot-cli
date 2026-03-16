@@ -4,7 +4,7 @@ These checks are warnings. They do not self-resolve and they do not grant approv
 
 ## Report Format
 
-When these checks are surfaced through runtime commands such as `eval` or `approve`, use the mandatory 4-section response contract from `references/interaction-contract.md`:
+When these checks are surfaced through runtime commands such as `eval` or `approve`, use the mandatory 4-section response contract:
 
 1. `Scope`
 2. `Decision / Findings`

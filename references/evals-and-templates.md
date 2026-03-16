@@ -6,7 +6,7 @@ Use this file when a command requires generation, approval, or validation.
 - Routine `generate`, `approve`, `eval`, `develop`, and `fix` commands use this file directly.
 - Current runtime evals are `structural` and `semantic` only.
 - Broader methodology framing may mention behavioral or test-generation ideas, but those are not part of the current command surface unless `references/command-surface.md` says so.
-- Load the detailed eval docs only for `help evals` or when the user explicitly asks for the full check definitions.
+- Use `help evals` when the user asks for the full structural and semantic check definitions.
 
 ## Runtime Eval Families
 
@@ -108,8 +108,6 @@ See `references/routing-and-loading.md` § "Post-Intent Approval: Sequential Pro
 | `develop ...` | Run targeted structural and semantic checks on the touched slice after proposed changes |
 | `fix ...` | Run targeted structural and semantic checks on the affected slice after regression framing |
 
-## Detailed Eval Docs
+## Detailed Eval Help
 
-Use these only for `help evals` or explicit deep inspection:
-- `../docs/evals-structural.md`
-- `../docs/evals-semantic.md`
+Use `help evals` for the full structural and semantic check definitions.

@@ -51,6 +51,10 @@ Rules:
 - Use `help <topic>` as the canonical explanation entrypoint.
 - Routine execution stays in `references/` plus required canonical artifacts and templates unless `help` is invoked.
 
+Additional docs:
+- `docs/artifact-protocol.md` and `docs/context-loading.md` are maintainer-facing supporting docs.
+- They are not routed `help` topics and should not be loaded by routine runtime references.
+
 ## Skill-Specific Behavior
 
 - The skill is explicit-invocation only.

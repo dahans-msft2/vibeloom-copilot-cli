@@ -2,8 +2,8 @@
 
 This guide explains how the two VibeLoom surfaces feel in practice.
 
-Routine surface behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
-Use this file for explanation, examples, and operator judgment rather than as a second runtime rulebook.
+The canonical layer contract lives in [vibeloom-methodology.md](vibeloom-methodology.md).
+Use this file for explanation, examples, and operator judgment; routine runtime behavior is owned by the runtime layer, not by this guide.
 
 VibeLoom has one canonical methodology and two user-facing surfaces:
 

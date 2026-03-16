@@ -2,8 +2,8 @@
 
 This guide explains the reasoning behind VibeLoom's context-scoping model.
 
-Routine runtime loading behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
-Use this file for deeper explanation, examples, and judgment calls rather than as a second operational rulebook.
+The canonical layer contract lives in [vibeloom-methodology.md](vibeloom-methodology.md).
+Use this file for maintainer-facing deeper explanation, examples, and judgment calls rather than as a routed `help` topic or routine runtime rulebook.
 
 ## Objectives
 

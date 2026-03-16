@@ -28,10 +28,10 @@ depends_on: []
 ## Layer Contract
 
 <!-- Point repo-level layering back to the canonical methodology prose.
-     Keep detailed runtime-operational rules in `references/`, not here. -->
+     Keep detailed runtime-operational rules out of this file. -->
 
 - The root artifact stack is the normative package representation aligned to the methodology prose.
-- `references/` is the routine runtime operational layer for exact command behavior and load selection.
+- Environment-specific runtime guidance owns exact command behavior and load selection.
 - `templates/` are generation-only and must not introduce independent methodology truth.
 - `site/` is derivative public documentation and marketing material.
 

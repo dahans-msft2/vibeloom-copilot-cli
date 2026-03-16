@@ -3,6 +3,7 @@
 This document defines the exact normative shape of the VibeLoom artifacts used by the Codex package.
 
 It assumes the canonical layer contract from [vibeloom-methodology.md](vibeloom-methodology.md); refer there for repo-layer authority and loading boundaries.
+It is maintainer-facing supporting canon, not a routed `help` topic.
 
 This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering or restating every methodology-wide policy.
 

@@ -238,10 +238,10 @@ Routine commands such as:
 
 Expected:
 - load `references/` first
-- do not pull `docs/` unless a deeper explanation is requested or a runtime reference explicitly escalates
-- for routine `approve` and `eval`, use `references/evals-and-templates.md` instead of the detailed eval docs
-- for `surface`, use runtime surface rules from `references/`, not `docs/surface-modes.md`
-- keep `help` as the primary direct path to `docs/`
+- do not pull explanation material outside `references/` unless `help <topic>` is invoked
+- for routine `approve` and `eval`, use `references/evals-and-templates.md` instead of help-topic eval explanations
+- for `surface`, use runtime surface rules from `references/`, not help-topic explanation material
+- keep `help` as the only direct path to explanation material outside `references/`
 
 ### Adaptive summaries with IDs
 

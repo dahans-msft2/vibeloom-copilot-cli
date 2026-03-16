@@ -190,13 +190,13 @@ flowchart TD
 
 ## The Eval Framework
 
-VibeLoom uses a three-tier evaluation framework. Evals are performed by agents, but results are presented to humans for judgment.
+VibeLoom uses two runtime eval tiers plus one methodology-level tier that is not yet a dedicated runtime command. Evals are performed by agents, but results are presented to humans for judgment.
 
-| Tier | Type | Nature | When run | Blocking? |
-| --- | --- | --- | --- | --- |
-| 1 | Structural | Mechanical verification | Before every approval | Yes |
-| 2 | Semantic | Reasoning-based analysis | Before every approval | No |
-| 3 | Behavioral | Test generation from specs | On demand | No |
+| Tier | Type | Nature | When run | Blocking? | Runtime status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Structural | Mechanical verification | Before every approval | Yes | Shipped |
+| 2 | Semantic | Reasoning-based analysis | Before every approval | No | Shipped |
+| 3 | Behavioral | Test generation from specs | On demand | No | Methodology guidance |
 
 ### Tier 1 — Structural checks
 

@@ -24,9 +24,7 @@ VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe co
 
 The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md).
 
-- The root artifact stack is the structured package representation aligned to that methodology prose.
-- During routine skill execution, load `references/` first. Load `docs/` only for `help`, deeper explanation, or explicit escalation from a runtime reference.
-- `templates/` are generation-only. `site/` is derivative public documentation and must not introduce new semantics.
+During routine skill execution, `references/` are the operational authority. `docs/` are loaded mainly through `help` or explicit deeper-explanation paths. `templates/` are generation-only, and `site/` is derivative public documentation.
 
 ## Artifact Roles
 
@@ -35,7 +33,7 @@ The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/
 - The checked-in `spec.md` is a package-level meta-spec for this methodology repo; generated governed project specs still declare one selected profile.
 - Draft `intent.md` is prose-first and may remain free of stable item IDs. Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs them.
 - `AGENTS.md` and `plan.md` are derived operational artifacts. They guide execution, but they are not source-of-truth contracts.
-- Machine-readable projections are intentionally limited to three conceptual outputs: trace index, dependency/stale graph, and interface/schema manifests.
+- Machine-readable projections stay intentionally limited; see the methodology docs and `spec.md` for the canonical constraint.
 
 ## Operator Quickstart
 

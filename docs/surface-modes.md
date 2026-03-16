@@ -1,5 +1,13 @@
 # Surface Modes Guide
 
+This guide explains how the two VibeLoom surfaces feel in practice.
+
+Exact routine surface behavior belongs in `references/`, especially:
+- `../references/methodology.md`
+- `../references/routing-and-loading.md`
+
+Use this file for explanation, examples, and operator judgment rather than as a second runtime rulebook.
+
 VibeLoom has one canonical methodology and two user-facing surfaces:
 
 - `product-first`
@@ -38,7 +46,7 @@ Use `code-first` when the user wants to lead with:
 
 ## Session Scope
 
-Surface mode is session-scoped only.
+At runtime, surface mode is session-scoped only.
 
 - switch with `/vibeloom surface <product-first|code-first>`
 - do not persist it to repo state
@@ -46,7 +54,7 @@ Surface mode is session-scoped only.
 
 ## Escalation Triggers
 
-When `code-first` is active, automatically surface the relevant `prd/usm/dm` slices if any of these are true:
+In routine runtime behavior, `code-first` escalates to the relevant `prd/usm/dm` slices if any of these are true:
 
 - the change is `boundary-changing`
 - workflows or actors are touched or ambiguous
@@ -56,13 +64,13 @@ When `code-first` is active, automatically surface the relevant `prd/usm/dm` sli
 
 ## Approval And Review
 
-All approvals remain available in both surfaces:
+Both surfaces preserve the same approval model:
 
 - `approve intent`
 - `approve product`
 - `approve spec`
 
-`code-first` may collapse the product/domain layers, but it must never hide that product approval is still required when product artifacts are draft, stale, or blocking.
+`code-first` may collapse the product/domain layers in presentation, but it should never be described as removing product approval or product-layer authority.
 
 ## Recommended Use
 

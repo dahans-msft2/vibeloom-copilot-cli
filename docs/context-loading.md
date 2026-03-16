@@ -1,6 +1,12 @@
-# Context-Loading Protocol
+# Context-Loading Guide
 
-The methodology depends on deterministic context scoping. This document defines what a Codex agent should load for a task and when that scope must expand.
+This guide explains the reasoning behind VibeLoom's context-scoping model.
+
+Routine runtime loading behavior belongs in `references/`, especially:
+- `../references/methodology.md`
+- `../references/routing-and-loading.md`
+
+Use this file for deeper explanation, examples, and judgment calls rather than as a second operational rulebook.
 
 ## Objectives
 
@@ -8,194 +14,151 @@ The methodology depends on deterministic context scoping. This document defines 
 - Avoid flooding the model with unrelated modules or stories.
 - Escalate predictably when scope is uncertain or cross-boundary.
 
-## Inputs
+## What Shapes The Slice
 
-- Requested change description
-- Touched paths, if known
-- Referenced IDs, if known
-- Active profile
-- Active surface
-- Dependency/stale graph
-- Trace index
+Context scoping usually depends on a few recurring inputs:
 
-## Token Budget
+- requested change description
+- touched paths, when known
+- referenced IDs, when known
+- active profile
+- active surface
+- dependency or stale edges
+- trace links for the touched slice
 
-When loading context for a task, use this default allocation:
+The runtime references define how those signals are used during routine commands. This guide explains the intent behind that behavior.
 
-| Slice | Budget |
-| --- | --- |
-| Active code and tests | 60% |
-| Canonical artifacts | 30% |
-| Skill, constitution, and operational references | 10% |
+## Stable Principles
 
-Recommended upper bounds:
+### Start from the nearest owning boundary
 
-| Artifact slice | Max tokens |
-| --- | --- |
-| active module spec | <= 3,000 |
-| one bounded-context DM slice | <= 1,500 |
-| root spec slice | <= 3,000 |
+The first useful slice is usually the local technical boundary:
 
-Overflow strategy:
+- `constitution.md`
+- the relevant root `spec.md`
+- the current module spec when the task is module-scoped
+- the derived `AGENTS.md` for the scope
+- trace entries for directly referenced IDs
 
-1. keep the active code and active module spec verbatim
-2. keep directly touched IDs verbatim
-3. summarize furthest-upstream artifacts before summarizing the active boundary
-4. never paraphrase an owning invariant or interface when the task depends on exact semantics
+That starting point is narrow on purpose. It gives the agent the local contract surface before broader product or domain context is added.
 
-## Base Load Set
+### Escalate upward, not sideways
 
-Always load:
+When a task becomes semantically ambiguous, the safe move is to load the governing upstream slice:
 
-1. `constitution.md`
-2. Root `spec.md`
-3. Current module spec if the task is module-scoped
-4. Derived `AGENTS.md` for the scope
-5. Trace entries for the referenced IDs
+- `prd.md` when goals, requirements, scope, or NFRs are implicated
+- `usm.md` when workflows, acceptance criteria, or user-visible behavior are implicated
+- `dm.md` when concepts, invariants, ownership, or bounded contexts are implicated
 
-If the task is already inside an approved module boundary, prefer the module slice over the full repo.
+Only then should the slice widen sideways into neighboring modules, interfaces, or dependency edges.
 
-Surface overlay:
-- `product-first` loads workflow/domain artifacts sooner.
-- `code-first` keeps the base set technical by default and only expands upward when escalation triggers fire.
+### Keep unrelated material out
 
-## Conditional Loads
+A disciplined slice normally excludes:
 
-Load `prd.md` slices when:
-- the task changes goals, requirements, scope, or NFRs
-- the task introduces new user-visible behavior
+- unrelated module specs without a dependency edge
+- unrelated `USM` epics or `DM` bounded contexts
+- duplicated prose already recoverable from the trace slice
+- historical superseded artifacts unless the task is explicitly historical
 
-Load `usm.md` slices when:
-- the task changes workflows, acceptance criteria, or story ordering
-- the task is user-visible, even if technically small
+The goal is not minimalism for its own sake. The goal is to keep only the truth needed to make the current decision safely.
 
-Load `dm.md` slices when:
-- the task introduces, removes, or changes domain concepts
-- the task touches invariants, ownership, or bounded contexts
-
-Load neighboring module specs and interface manifests when:
-- the task changes a public API, event, schema, or shared type
-- the change may affect another module's write surface
-
-Load import assessments when:
-- the governed repo entered through `import`
-- the touched items still carry unresolved confidence markers
-
-## Change-Class Mapping
+## How Change Class Usually Affects Scope
 
 ### `local`
 
-Load:
-- constitution
+A local change usually stays close to the technical boundary:
+
 - root spec
 - current module spec or relevant technical slice
-- derived operational artifacts for the scope
+- derived operational guidance for the scope
 
-Do not load broader `USM` or `DM` unless the change reveals semantic uncertainty.
-
-When the active surface is `code-first`, this is the default shape.
+Broader `USM` or `DM` material is unnecessary unless the task stops looking purely local.
 
 ### `behavioral-in-module`
 
-Load:
-- everything from `local`
+A behavioral change inside one boundary usually adds the governing product and domain slice:
+
 - relevant `PRD-FR-*`
 - touched `STORY-*` and `AC-*`
 - touched `ENT-*` and `INV-*`
 
-Avoid loading unrelated modules unless a dependency edge demands it.
+This is the point where "small code change" and "small semantic change" stop being the same thing.
 
 ### `boundary-changing`
 
-Load:
-- everything from `behavioral-in-module`
+A boundary-changing task usually needs the full affected chain:
+
 - all affected module specs
 - neighboring interfaces and dependency edges
-- root-level workflow and domain slices for every touched bounded context
+- workflow and domain slices for each touched bounded context
 
-## Escalation Rules
+If the task changes ownership or introduces a new shared boundary, the narrow local slice is no longer enough.
 
-Escalate scope when any of these are true:
+## Surface Effects
 
-- the classifier cannot prove a narrower scope with high confidence
-- multiple bounded contexts are involved
-- interface ownership is ambiguous
-- a task changes NFRs or deployment semantics
-- a bugfix reveals that the approved workflow or invariant is wrong
+Surfaces change what is shown first, not what is true.
 
-When escalation happens, summarize furthest-upstream artifacts first and keep the local technical slice verbatim as long as possible.
+- `product-first` brings workflow and domain context into view sooner.
+- `code-first` starts with the technical slice and escalates upward when the task stops being safely spec-local.
 
-In `code-first`, escalation is mandatory when the agent cannot safely keep the task spec-local.
+That means `code-first` is not permission to omit `prd.md`, `usm.md`, or `dm.md`. It only changes the order in which those layers become visible.
 
-## Exclusion Rules
+## Context Pressure Heuristics
 
-Do not load:
+When the available context gets tight, preserve the most failure-sensitive material first:
 
-- unrelated module specs without a dependency edge
-- unrelated `USM` epics or `DM` bounded contexts
-- large duplicated prose already available through the trace slice
-- historical superseded artifacts unless the task is explicitly historical analysis
+1. active code and active module spec
+2. directly touched IDs
+3. owning invariants, interfaces, and acceptance boundaries when exact wording matters
+4. upstream prose summarized from furthest upstream toward the active boundary
+
+Avoid treating fixed token percentages or hard token caps as durable methodology rules. Those numbers are model- and session-dependent and belong, if anywhere, in runtime tuning rather than canonical prose.
 
 ## Worked Examples
 
 ### Local bugfix in a governed module
 
-Load:
+A local bugfix usually needs:
+
 - `constitution.md`
 - root `spec.md`
-- module spec for the affected module
+- the affected module spec
 - derived `AGENTS.md`
-- repro, failing test, and touched `API-*` or `INV-*`
+- the repro, failing test, and touched `API-*` or `INV-*`
 
-Do not load:
-- unrelated `USM` epics
-- unrelated modules
-- brownfield import guidance
+It usually does not need unrelated `USM` epics, unrelated modules, or brownfield import guidance.
 
 ### Workflow review of `usm.md`
 
-Load:
-- `usm.md`
+A workflow review usually needs:
+
+- the target `usm.md` slice
 - relevant `prd.md` requirements
-- only the implied `dm.md` slice needed to explain missing or inconsistent entities
+- only the `dm.md` slice needed to explain missing or inconsistent entities
 
-Do not load:
-- full module specs
-- interface manifests unless the review is already cross-boundary
+It usually does not need full module specs unless the review has already become cross-boundary or implementation-specific.
 
-### Boundary-changing feature in `full` profile
+### Boundary-changing feature in `full`
 
-Load:
+A boundary-changing feature usually needs:
+
 - `constitution.md`
 - root `spec.md`
 - all affected module specs
 - touched `PRD-FR-*`, `STORY-*`, `ENT-*`, and `INV-*`
 - neighboring interfaces and dependency edges
 
-Escalate if:
-- ownership is ambiguous
-- the change adds a new interface
-- two bounded contexts now share one write surface
+If ownership is ambiguous, a new shared boundary appears, or two bounded contexts start sharing one write surface, the slice should widen before implementation decisions continue.
 
-## Budget Heuristics
+## Communicating The Chosen Slice
 
-Prefer this order when context pressure is high:
+When the operator would benefit from a scope summary, a useful explanation is:
 
-1. keep the active code and active module spec verbatim
-2. keep the directly touched IDs verbatim
-3. summarize upstream intent and product slices before summarizing active technical slices
-4. keep the owning interface or invariant verbatim when the task depends on exact wording
+- chosen change class and confidence
+- active surface
+- artifacts loaded
+- key IDs loaded
+- reason for any escalation
 
-## Output
-
-The agent should produce a context bundle summary with:
-
-| Field | Meaning |
-| --- | --- |
-| `change_class` | Chosen class and confidence |
-| `surface` | `product-first` or `code-first` |
-| `artifact_refs` | Files loaded |
-| `item_refs` | IDs loaded |
-| `escalation_reason` | Why broader scope was needed, if applicable |
-
-This summary becomes input to the derived `plan.md`.
+That summary helps humans audit whether the agent loaded enough truth without turning the summary itself into a new durable authority layer.

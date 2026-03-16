@@ -1,5 +1,13 @@
 # Profile Selection Guide
 
+This guide explains how to think about `lite` versus `full`.
+
+Exact routine profile behavior belongs in `references/`, especially:
+- `../references/methodology.md`
+- `../references/routing-and-loading.md`
+
+Use this file for explanation and selection heuristics rather than as a second runtime decision engine.
+
 VibeLoom has two profiles, but both preserve the same canonical stack:
 - `constitution.md`
 - `intent.md`
@@ -11,6 +19,8 @@ VibeLoom has two profiles, but both preserve the same canonical stack:
 The profile choice changes decomposition depth, interface discipline, and coordination overhead. It does not change whether workflow and domain semantics are recorded.
 
 Profiles are not surfaces. Surface modes change which layer is shown first; profiles change how much decomposition and interface discipline the project needs. See [surface-modes.md](surface-modes.md).
+
+The runtime references decide when a profile recommendation is surfaced during routine commands. This guide explains the reasoning behind that recommendation.
 
 ## Lite Profile
 
@@ -52,14 +62,14 @@ Typical characteristics:
 
 ## Selection Heuristics
 
-Choose `full` when any of these signals appear during `dm.md` or `spec.md` review:
+Common signals for `full` during `dm.md` or `spec.md` review:
 
 1. more than one bounded context is clearly named
 2. one module cannot own the full write surface without ambiguity
 3. interfaces between semantic areas need stable contracts
 4. the team expects meaningful parallel execution
 
-Default to `lite` only when the semantic model is truly cohesive and the write surface can stay single-owner without strain.
+`lite` remains the better fit when the semantic model is truly cohesive and the write surface can stay single-owner without strain.
 
 ## Upgrade Path
 

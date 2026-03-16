@@ -402,7 +402,7 @@ Example:
 
 ## Context Loading
 
-The methodology assumes agents have finite attention and finite context windows. VibeLoom therefore uses deterministic context scoping:
+The exact routine loading behavior belongs in the runtime references. At the methodology level, the rule is simpler: agents have finite attention, so VibeLoom uses deterministic context scoping.
 
 - **Always loaded:** constitution, root spec, current module spec when relevant, derived `AGENTS.md`, and trace entries for referenced IDs
 - **Conditionally loaded:** PRD, USM, or DM slices only when workflows, concepts, or invariants are touched

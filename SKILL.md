@@ -20,11 +20,7 @@ This skill is for governed, contract-driven work over the canonical stack:
 
 ## Entrypoint Role
 
-- `SKILL.md` is the runtime entrypoint and orchestrator.
-- `references/` is the routine runtime authority for command parsing, routing, eval behavior, and response shape.
-- `docs/` owns deeper methodology explanation and help material.
-- `templates/` are generation inputs only.
-- `site/` is derivative public documentation and is never runtime authority.
+`SKILL.md` is the runtime entrypoint and orchestrator. The canonical layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md); routine runtime authority lives in `references/`.
 
 ## Runtime Bootstrap
 

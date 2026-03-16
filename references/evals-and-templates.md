@@ -25,31 +25,7 @@ Runtime rules:
 
 ## Runtime Eval Targets
 
-Approval targets:
-- `intent`
-- `product`
-- `spec`
-- `module`
-- `change`
-
-Eval targets:
-- `intent`
-- `product`
-- `spec`
-- `module`
-- `change`
-- `repo`
-- `artifact`
-
-Target normalization:
-- `product` -> `prd+usm+dm`
-- `spec` -> root spec plus module specs where applicable
-- `artifact` -> one canonical artifact selected by artifact selector
-- `module` -> one named module slice
-
-Target binding rules:
-- `module` target requires the module name in the command context
-- `artifact` target requires the artifact selector in the command context
+Approval targets, eval targets, normalization, and binding rules are defined in `references/command-surface.md` § "Targets And Selectors" and § "Normalization". This file does not restate them.
 
 ## Runtime Eval Output
 
@@ -120,26 +96,7 @@ Template loading rule:
 
 ### Generation Cascade After Approval
 
-When `approve intent` succeeds, the agent generates the product spec batch sequentially:
-
-1. `prd.md` — from approved intent
-2. `usm.md` — from approved intent + generated PRD
-3. `dm.md` — from approved intent + generated PRD + generated USM
-
-Each artifact feeds the next. All three are created as `draft`. No intermediate approval gates exist between them. The batch is approved together via `approve product`.
-
-## Approval Targets
-
-Allowed approval targets:
-- `intent`
-- `product`
-- `spec`
-- `module`
-- `change`
-
-Normalize:
-- `product` -> `prd+usm+dm`
-- `spec` -> root spec plus module specs where applicable
+See `references/routing-and-loading.md` § "Post-Intent Approval: Sequential Product Generation" for the full cascade sequence and batch-approval rules.
 
 ## Eval Rules By Command
 

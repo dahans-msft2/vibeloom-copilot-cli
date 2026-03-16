@@ -1,4 +1,4 @@
----
+	---
 artifact_id: ART-SPEC-CODEX-V4
 artifact_type: spec
 status: draft
@@ -60,7 +60,7 @@ Generated governed project specs select one profile. This package spec documents
 
 ### `lite`
 
-- `USM` and `DM` are still mandatory.
+- `USM` and `DM` remain mandatory.
 - Single bounded context is expected.
 - Module decomposition may collapse into one application module.
 - Derived operational guidance remains scoped, but module DAG and interface registry may be minimal.

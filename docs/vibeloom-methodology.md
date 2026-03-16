@@ -436,26 +436,6 @@ All other analysis outputs should be generated on demand or held in memory durin
 
 ---
 
-## What Codex V4 Adds
-
-Codex V4 keeps the strongest V3 package properties:
-
-- strict, validator-compatible skill packaging
-- explicit invocation and deterministic command grammar
-- mandatory `USM + DM`
-- derived, non-canonical `AGENTS.md` and `plan.md`
-- limited durable projections only
-
-It then selectively adds the strongest ideas recovered from V2 without restoring its semantic regressions:
-
-- clearer eval framing and traceability language
-- stronger onboarding and smart-entry guidance in references
-- more practical `AGENTS` guidance and traceability reminders
-- more explicit spec-template scaffolding for greenfield flow and stale propagation
-- explicit anti-regression checks for rejected behaviors
-
----
-
 ## What VibeLoom Is Not
 
 - It is not a giant prose process manual.

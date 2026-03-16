@@ -243,8 +243,6 @@ footer a:hover {
 }
 
 .content {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
   padding: 0 24px 120px;
 }
 
@@ -728,6 +726,10 @@ section {
 .section-inner {
   max-width: var(--site-max-width);
   margin: 0 auto;
+}
+
+.section-inner--narrow {
+  max-width: var(--content-max-width);
 }
 
 section + section::before {

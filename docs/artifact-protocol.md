@@ -4,7 +4,7 @@ This document defines the exact normative shape of the VibeLoom artifacts used b
 
 It assumes the canonical layer contract from [vibeloom-methodology.md](vibeloom-methodology.md); refer there for repo-layer authority and loading boundaries.
 
-This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering.
+This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering or restating every methodology-wide policy.
 
 ## Common Frontmatter
 
@@ -175,4 +175,4 @@ The methodology allows only:
 - dependency/stale graph
 - interface/schema manifests
 
-Any proposal to add another durable projection is a methodology change and must be reflected in the constitution and spec.
+Any proposal to add another durable projection is a methodology change.

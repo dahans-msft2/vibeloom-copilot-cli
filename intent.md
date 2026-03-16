@@ -14,7 +14,7 @@ depends_on: []
 
 ## What is this package?
 
-This package defines an intent-first methodology for building and evolving production-quality software with coding agents over a long period of time. The methodology turns a loose intent into a durable stack of structured contracts, then uses those contracts as eval surfaces for incremental implementation, refactoring, and bugfix work.
+This package defines a contract-driven methodology for building and evolving production-quality software with coding agents over a long period of time. The methodology turns a loose intent into a durable stack of structured contracts, then uses those contracts as eval surfaces for incremental implementation, refactoring, and bugfix work.
 
 The target use case is not one-shot generation. The target is sustained, high-quality vibe coding in relatively large codebases where multiple agents or humans may work in parallel without losing semantic coherence.
 
@@ -50,7 +50,7 @@ Draft intent may remain prose-first with no stable item IDs. This package artifa
 
 ## Constraints and preferences
 
-- The methodology is intent-first, not design-first.
+- The methodology is contract-driven, not design-first.
 - The initial package targets Codex workflows, but the contract language should remain tool-agnostic.
 - Specs must be highly structured, concise, and stable under long-term iteration.
 - Artifact explosion is explicitly out of scope. Only three durable projections are allowed.

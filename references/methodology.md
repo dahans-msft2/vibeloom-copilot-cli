@@ -17,7 +17,7 @@ Apply the canonical layer contract from `../docs/vibeloom-methodology.md` in run
 
 ## Runtime Invariants
 
-- The governed stack is intent-first: `intent -> prd -> usm -> dm -> spec`
+- The governed stack is contract-driven and flows `intent -> prd -> usm -> dm -> spec`
 - Draft `intent.md` may remain prose-first with no stable item IDs. Reconciliation may add optional `CAP-*` capability IDs when downstream item-level trace needs explicit intent references.
 - `USM` and `DM` are mandatory in every profile.
 - Only `lite` and `full` profiles exist.

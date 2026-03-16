@@ -47,7 +47,7 @@ The product is a methodology package that enables users to build and maintain so
 
 | ID | Requirement | Intent refs | Priority | Users | Acceptance criteria |
 | --- | --- | --- | --- | --- | --- |
-| PRD-FR-001 | The package must define a canonical intent-first contract stack with `intent`, `prd`, `usm`, `dm`, and `spec`. | CAP-001 | P0 | USR-001, USR-002, USR-003 | The methodology names each artifact, its authority, and its downstream role. |
+| PRD-FR-001 | The package must define a canonical contract-driven stack with `intent`, `prd`, `usm`, `dm`, and `spec`. | CAP-001 | P0 | USR-001, USR-002, USR-003 | The methodology names each artifact, its authority, and its downstream role. |
 | PRD-FR-002 | The package must make `USM` mandatory as the workflow and acceptance layer. | CAP-002 | P0 | USR-001, USR-002 | Every governed project template includes `usm.md`; no profile omits it. |
 | PRD-FR-003 | The package must make `DM` mandatory as the semantic layer. | CAP-002 | P0 | USR-002, USR-003 | Every governed project template includes `dm.md`; no profile omits it. |
 | PRD-FR-004 | The package must define deterministic context loading so agents use the smallest safe contract slice. | CAP-004, CAP-005 | P0 | USR-002, USR-003 | The package documents always-load, conditional-load, and escalation rules. |

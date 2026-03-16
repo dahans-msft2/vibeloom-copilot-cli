@@ -86,7 +86,7 @@ depends_on:
 | ID | Criterion |
 | --- | --- |
 | AC-001 | The initialized project contains the canonical contract files required by the selected profile. |
-| AC-002 | The initial stack is created from intent-first inputs rather than technical design alone. |
+| AC-002 | The initial stack is created from contract-driven artifacts rooted in intent rather than technical design alone. |
 | AC-003 | Downstream work does not proceed from an unapproved canonical contract. |
 | AC-004 | Every story has a stable ID, actor, value statement, and acceptance criteria. |
 | AC-005 | Stories are easy for humans to validate against user needs before technical decomposition. |

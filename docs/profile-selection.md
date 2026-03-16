@@ -2,10 +2,7 @@
 
 This guide explains how to think about `lite` versus `full`.
 
-Exact routine profile behavior belongs in `references/`, especially:
-- `../references/methodology.md`
-- `../references/routing-and-loading.md`
-
+Routine profile behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
 Use this file for explanation and selection heuristics rather than as a second runtime decision engine.
 
 VibeLoom has two profiles, but both preserve the same canonical stack:
@@ -19,8 +16,6 @@ VibeLoom has two profiles, but both preserve the same canonical stack:
 The profile choice changes decomposition depth, interface discipline, and coordination overhead. It does not change whether workflow and domain semantics are recorded.
 
 Profiles are not surfaces. Surface modes change which layer is shown first; profiles change how much decomposition and interface discipline the project needs. See [surface-modes.md](surface-modes.md).
-
-The runtime references decide when a profile recommendation is surfaced during routine commands. This guide explains the reasoning behind that recommendation.
 
 ## Lite Profile
 

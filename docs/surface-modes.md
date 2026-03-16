@@ -2,10 +2,7 @@
 
 This guide explains how the two VibeLoom surfaces feel in practice.
 
-Exact routine surface behavior belongs in `references/`, especially:
-- `../references/methodology.md`
-- `../references/routing-and-loading.md`
-
+Routine surface behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
 Use this file for explanation, examples, and operator judgment rather than as a second runtime rulebook.
 
 VibeLoom has one canonical methodology and two user-facing surfaces:

@@ -2,10 +2,7 @@
 
 This guide explains the reasoning behind VibeLoom's context-scoping model.
 
-Routine runtime loading behavior belongs in `references/`, especially:
-- `../references/methodology.md`
-- `../references/routing-and-loading.md`
-
+Routine runtime loading behavior lives in `../references/methodology.md` and `../references/routing-and-loading.md`.
 Use this file for deeper explanation, examples, and judgment calls rather than as a second operational rulebook.
 
 ## Objectives

@@ -47,3 +47,15 @@ This repo ships the Codex skill plus the methodology artifacts it relies on. It 
 - `docs/vibeloom-methodology.md` explains the methodology itself without runtime implementation details.
 - `docs/profile-selection.md` explains Lite vs Full selection.
 - `site/` contains the public website content for `https://vibeloom.ai/`.
+
+## Site Deployment
+
+The public site is configured for Cloudflare Workers Static Assets via `wrangler.jsonc`. Only `site/` is published.
+
+Recommended Cloudflare setup:
+
+1. In Cloudflare Workers, create or import a Worker from the GitHub repo.
+2. Use `main` as the production branch.
+3. Keep the repository root as the root directory so Cloudflare picks up `wrangler.jsonc`.
+4. Do not set a separate build output directory; the Wrangler config already points assets at `site/`.
+5. Attach `vibeloom.ai` and `www.vibeloom.ai` as custom domains after the zone is active in Cloudflare DNS.

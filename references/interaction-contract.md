@@ -80,7 +80,7 @@ Always cite:
 - `ENT-*`
 - `INV-*`
 - `MOD-*`
-- `IFACE-*`
+- `API-*`
 
 ## Bugfix Responses
 
@@ -98,10 +98,10 @@ Bugfix path for invite expiration.
 
 Decision / Findings
 The repro shows invite links expiring at 59 minutes, while the expected behavior is 2 hours.
-The likely mismatch is between IFACE-INV-002 TTL handling and INV-014.
+The likely mismatch is between API-INV-002 TTL handling and INV-014.
 
 Affected IDs
-IFACE-INV-002, INV-014, STORY-031
+API-INV-002, INV-014, STORY-031
 
 Next action
 Add regression coverage for the 2-hour TTL, then reconcile spec and code in the invite module.
@@ -146,10 +146,10 @@ Scope
 Repo status for the governed workspace.
 
 Decision / Findings
-Surface is `code-first`. Profile is `full`. The active risk is technical: `spec.md` is still draft and `MOD-billing` is stale because IFACE-004 changed upstream. The product stack is approved.
+Surface is `code-first`. Profile is `full`. The active risk is technical: `spec.md` is still draft and `MOD-billing` is stale because API-004 changed upstream. The product stack is approved.
 
 Affected IDs
-ART-SPEC-001, MOD-billing, IFACE-004
+ART-SPEC-001, MOD-billing, API-004
 
 Next action
 Inspect the stale billing interface slice, then run /vibeloom reconcile module billing.

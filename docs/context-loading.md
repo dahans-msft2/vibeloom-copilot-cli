@@ -145,7 +145,7 @@ Load:
 - root `spec.md`
 - module spec for the affected module
 - derived `AGENTS.md`
-- repro, failing test, and touched `IFACE-*` or `INV-*`
+- repro, failing test, and touched `API-*` or `INV-*`
 
 Do not load:
 - unrelated `USM` epics

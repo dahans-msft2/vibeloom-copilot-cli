@@ -222,7 +222,7 @@ Example matrix:
 | Surface / Interface | Owner | Status |
 | ------------------- | ----- | ------ |
 | modules/billing/*   | MOD-billing | PASS |
-| IFACE-004           | none        | FAIL |
+| API-004             | none        | FAIL |
 ```
 
 Fail if:

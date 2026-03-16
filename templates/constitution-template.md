@@ -57,7 +57,7 @@ depends_on: []
 | Invariant | `INV-` |
 | Domain event | `EVT-` |
 | Module | `MOD-` |
-| Interface contract | `IFACE-` |
+| Interface contract | `API-` |
 | Flow | `FLOW-` |
 | Risk / open question | `RISK-` |
 | Task | `TASK-` |

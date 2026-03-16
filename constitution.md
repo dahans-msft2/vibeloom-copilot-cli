@@ -90,7 +90,7 @@ Every stable normative item referenced across artifacts must use a stable upperc
 | Invariant | `INV-` |
 | Domain event | `EVT-` |
 | Module | `MOD-` |
-| Interface contract | `IFACE-` |
+| Interface contract | `API-` |
 | Flow | `FLOW-` |
 | Risk / open question | `RISK-` |
 | Task | `TASK-` |

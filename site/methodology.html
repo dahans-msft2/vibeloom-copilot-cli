@@ -239,7 +239,7 @@
           <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>USR-</code>, <code>GOAL-</code>, <code>METRIC-</code>, <code>PRD-FR-</code>, <code>NFR-</code></td></tr>
           <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>EPIC-</code>, <code>STORY-</code>, <code>AC-</code></td></tr>
           <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>BC-</code>, <code>ENT-</code>, <code>INV-</code>, <code>EVT-</code></td></tr>
-          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>IFACE-</code>, <code>FLOW-</code></td></tr>
+          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>API-</code>, <code>FLOW-</code></td></tr>
           <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td><code>TASK-</code>, <code>TEST-</code></td></tr>
         </tbody>
       </table>
@@ -248,7 +248,7 @@
     <details class="expandable">
       <summary class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p>Every traced normative item below draft intent, plus optional reconciled <code>CAP-*</code> intent capabilities when present, gets a rigid, machine-parseable ID using the standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>IFACE-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
+        <p>Every traced normative item below draft intent, plus optional reconciled <code>CAP-*</code> intent capabilities when present, gets a rigid, machine-parseable ID using the standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>API-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
       </div>
     </details>
     <details class="expandable">
@@ -507,15 +507,17 @@
     <details class="expandable" open>
       <summary class="expandable-header"><span>Interface contract example</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-<pre><span class="comment">## Interface: mod-orders</span>
+<pre><span class="comment">## Module: MOD-orders</span>
 
-<span class="keyword">### Exports</span>
-<span class="type">- API-01:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
-<span class="type">- EVT-01:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
+<span class="keyword">### Owned APIs</span>
+<span class="type">- API-001:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
 
-<span class="keyword">### Imports</span>
-<span class="comment">- From mod-inventory:</span> <span class="string">checkAvailability(sku: string) &rarr; AvailabilityResult</span>
-<span class="comment">- From mod-payments:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span></pre>
+<span class="keyword">### Owned Events</span>
+<span class="type">- API-002:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
+
+<span class="keyword">### Imported Interfaces</span>
+<span class="comment">- From MOD-inventory / API-014:</span> <span class="string">checkAvailability(sku: string) &rarr; AvailabilityResult</span>
+<span class="comment">- From MOD-payments / API-021:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span></pre>
       </div>
     </details>
 

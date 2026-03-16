@@ -121,7 +121,7 @@ Allowed references:
 - `ENT-*`
 - `INV-*`
 - `MOD-*`
-- `IFACE-*`
+- `API-*`
 
 Rules:
 - Concrete governed project `spec.md` files must declare one selected `lite` or `full` profile and align their ownership and decomposition rules to it.

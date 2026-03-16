@@ -90,13 +90,13 @@ profile: lite | full
 
 | ID | Method / Event | Path / Topic | Description | Auth | Stories |
 | --- | --- | --- | --- | --- | --- |
-| IFACE-001 | | | | | STORY-001 |
+| API-001 | | | | | STORY-001 |
 
 ### Internal Interfaces
 
 | ID | Owner | Type | Signature / Shape | Consumers |
 | --- | --- | --- | --- | --- |
-| IFACE-002 | MOD-[MODULE] | API / Event / Schema | | MOD-[OTHER] |
+| API-002 | MOD-[MODULE] | API / Event / Schema | | MOD-[OTHER] |
 
 ### Error Handling Strategy
 
@@ -198,7 +198,7 @@ MOD-[MODULE] -> MOD-[OTHER]
 ### Inputs
 
 - touched paths or artifacts, e.g. `spec.md`, `modules/billing/**`
-- referenced IDs, e.g. `STORY-014`, `ENT-009`, `IFACE-004`
+- referenced IDs, e.g. `STORY-014`, `ENT-009`, `API-004`
 - active profile
 - current dependency or stale graph
 - current approved upstream slice
@@ -225,7 +225,7 @@ Approved upstream truth is authoritative. Downstream edits may challenge it, but
 - approved upstream changes stale dependent downstream artifacts through explicit dependency edges
 - stale status propagates only through declared dependencies, not intuition
 - downstream code drift may trigger a proposal, but may not silently rewrite approved upstream truth
-- example: a changed `IFACE-*` may stale the owning module spec, dependent module specs, and any derived contract tests that declare that interface
+- example: a changed `API-*` may stale the owning module spec, dependent module specs, and any derived contract tests that declare that interface
 
 ## Allowed Durable Projections
 
@@ -241,5 +241,5 @@ Approved upstream truth is authoritative. Downstream edits may challenge it, but
 | --- | --- | --- |
 | Structural eval | Metadata, IDs, references, lifecycle | Artifact protocol and templates |
 | Semantic eval | Coverage, contradictions, ownership sanity | Canonical artifacts |
-| Contract tests | Interface and schema compliance | `IFACE-*` |
+| Contract tests | Interface and schema compliance | `API-*` |
 | Regression tests | Bugfix and workflow preservation | `STORY-*`, `INV-*` |

@@ -57,25 +57,25 @@ bounded_context: BC-[XXX]
 
 | ID | Signature | Description | Returns | Errors | Consumers |
 | --- | --- | --- | --- | --- | --- |
-| IFACE-001 | `functionName(param: Type) -> Result` | | | | MOD-[OTHER] |
+| API-001 | `functionName(param: Type) -> Result` | | | | MOD-[OTHER] |
 
 ### Owned Events
 
 | ID | Event | Payload | Description | Consumers |
 | --- | --- | --- | --- | --- |
-| IFACE-002 | EventName | `{ field: Type }` | | MOD-[OTHER] |
+| API-002 | EventName | `{ field: Type }` | | MOD-[OTHER] |
 
 ### Owned Schemas
 
 | ID | Schema | Purpose | Consumers |
 | --- | --- | --- | --- |
-| IFACE-003 | | | |
+| API-003 | | | |
 
 ### Imported Interfaces
 
 | From | Interface ID | Signature / Shape | Usage |
 | --- | --- | --- | --- |
-| MOD-[OTHER] | IFACE-004 | | |
+| MOD-[OTHER] | API-004 | | |
 
 ### Shared Types Used
 

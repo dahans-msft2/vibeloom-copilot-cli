@@ -395,7 +395,7 @@ Example:
 | `PRD` | `PRD-FR-004` workspace sharing must require explicit invite approval |
 | `USM` | `STORY-018` owner approves a workspace invite |
 | `DM` | `ENT-012` Invite, `INV-009` invite must be pending before approval |
-| `spec` | `MOD-workspaces`, `IFACE-006` approve-invite API |
+| `spec` | `MOD-workspaces`, `API-006` approve-invite API |
 | `test` | `TEST-INVITE-003` approval flow regression |
 
 ---

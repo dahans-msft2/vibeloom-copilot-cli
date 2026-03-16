@@ -2,7 +2,7 @@
 
 This file defines the runtime command grammar consumed by the skill.
 
-- `docs/` owns methodology truth.
+- `docs/vibeloom-methodology.md` owns the canonical prose methodology statement; the root artifact stack remains the structured normative representation.
 - This file owns parsing, normalization, and examples for the runtime interface.
 
 ## Grammar

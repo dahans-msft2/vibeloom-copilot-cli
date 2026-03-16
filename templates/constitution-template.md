@@ -23,7 +23,17 @@ depends_on: []
 | Foundational rule set | `constitution.md` | Governing baseline |
 | Canonical project contracts | `intent.md`, `prd.md`, `usm.md`, `dm.md`, `spec.md` | Long-lived semantic truth |
 | Derived operational artifacts | `AGENTS.md`, `plan.md` | Regenerable execution guidance |
-| Durable projections | Trace index, dependency/stale graph, interface/schema manifests | Mechanically checkable support data |
+| Machine-readable projections | Trace index, dependency/stale graph, interface/schema manifests | Derived projections used for evals and scoped execution |
+
+## Layer Contract
+
+<!-- Point repo-level layering back to the canonical methodology prose.
+     Keep detailed runtime-operational rules in `references/`, not here. -->
+
+- The root artifact stack is the normative package representation aligned to the methodology prose.
+- `references/` is the routine runtime operational layer for exact command behavior and load selection.
+- `templates/` are generation-only and must not introduce independent methodology truth.
+- `site/` is derivative public documentation and marketing material.
 
 ## Lifecycle States
 
@@ -89,7 +99,17 @@ depends_on: []
 
 ## Context-Loading Rules
 
-<!-- State what is always loaded, what is conditional, and when escalation happens. -->
+Agents must load the minimum contract slice that can safely govern the change.
+
+<!-- Preserve only universal context-loading constraints here.
+     Do not define a second command-level or "always load" runtime bundle in the constitution. -->
+
+- start from the governing artifact or technical boundary that owns the decision being made
+- include trace links when referenced IDs, downstream impact, or stale implications are part of the task
+- bring workflow and domain slices into view when workflows, concepts, invariants, interfaces, or NFR boundaries are implicated
+- broaden upward before sideways when ambiguity appears
+- keep unrelated modules, bounded contexts, and superseded artifacts out of the default slice unless explicit dependency or historical analysis requires them
+- derived operational guidance may narrow execution focus, but it never replaces canonical authority
 
 ## Universal Quality Defaults
 

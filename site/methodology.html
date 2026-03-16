@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom Methodology — Spec-Driven, Contract-Driven Development</title>
-<meta name="description" content="A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, approval flow, eval framework, and multi-agent module model.">
+<title>VibeLoom Methodology — Intent-First, Contract-Driven Development</title>
+<meta name="description" content="A deep dive into VibeLoom's intent-first, spec-driven, contract-driven methodology, including its contract stack, approval flow, eval framework, and multi-agent module model.">
 <meta name="author" content="VibeLoom">
 <link rel="canonical" href="https://vibeloom.ai/methodology">
 
 <!-- Open Graph -->
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://vibeloom.ai/methodology">
-<meta property="og:title" content="VibeLoom Methodology — Spec-Driven, Contract-Driven Development">
-<meta property="og:description" content="The complete guide to VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, module contracts, and multi-agent coordination.">
+<meta property="og:title" content="VibeLoom Methodology — Intent-First, Contract-Driven Development">
+<meta property="og:description" content="The complete guide to VibeLoom's intent-first, spec-driven, contract-driven methodology, including its contract stack, eval framework, module contracts, and multi-agent coordination.">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VibeLoom Methodology — Spec-Driven, Contract-Driven">
-<meta name="twitter:description" content="A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, and module contracts.">
+<meta name="twitter:title" content="VibeLoom Methodology — Intent-First, Contract-Driven">
+<meta name="twitter:description" content="A deep dive into VibeLoom's intent-first, spec-driven, contract-driven methodology, including its contract stack, eval framework, and module contracts.">
 
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
 <link rel="stylesheet" href="shared.css">
@@ -25,8 +25,8 @@
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "VibeLoom Methodology: Spec-Driven and Contract-Driven Development",
-  "description": "A deep dive into VibeLoom's spec-driven, contract-driven methodology, including its spec-first stack, eval framework, and multi-agent modules.",
+  "headline": "VibeLoom Methodology: Intent-First, Spec-Driven, and Contract-Driven Development",
+  "description": "A deep dive into VibeLoom's intent-first, spec-driven, contract-driven methodology, including its contract stack, eval framework, and multi-agent modules.",
   "url": "https://vibeloom.ai/methodology",
   "mainEntityOfPage": "https://vibeloom.ai/methodology",
   "publisher": {
@@ -45,7 +45,7 @@
     },
     {
       "@type": "Thing",
-      "name": "spec-first development"
+      "name": "intent-first development"
     },
     {
       "@type": "Thing",
@@ -55,7 +55,7 @@
   "keywords": [
     "spec-driven",
     "contract-driven",
-    "spec-first",
+    "intent-first",
     "contract-first",
     "AI development methodology",
     "vibe coding methodology"
@@ -81,7 +81,7 @@
 <!-- HEADER -->
 <div class="page-header reveal">
   <h1>The VibeLoom Methodology</h1>
-  <p>A deep dive into contract-driven vibe coding: how it works, why each layer exists, and how to use it effectively.</p>
+  <p>A deep dive into intent-first, contract-driven vibe coding: how it works, why each layer exists, and how to use it effectively.</p>
 </div>
 
 <!-- CONTENT -->
@@ -106,13 +106,13 @@
   <div class="doc-section reveal" id="positioning">
     <span class="label">Context</span>
     <h2>Why these terms matter</h2>
-    <p class="lead">Spec-first, spec-driven, contract-first, and contract-driven approaches are gaining attention because teams want AI-assisted development to stay reviewable, traceable, and coherent as systems grow.</p>
+    <p class="lead">Intent-first, spec-driven, contract-first, and contract-driven approaches are gaining attention because teams want AI-assisted development to stay reviewable, traceable, and coherent as systems grow.</p>
 
     <details class="expandable">
       <summary class="expandable-header"><span>What do these terms mean in practice?</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
-          <li><strong>Spec-first</strong> means requirements and design artifacts are created before implementation starts.</li>
+          <li><strong>Intent-first</strong> means loose product intent is captured before implementation, then reconciled into structured contracts and technical specs before code is generated.</li>
           <li><strong>Spec-driven</strong> means those specs continue to guide implementation, evaluation, and change management after planning.</li>
           <li><strong>Contract-first</strong> means interfaces, invariants, and acceptance boundaries are defined before code is generated.</li>
           <li><strong>Contract-driven</strong> means those contracts remain active constraints on downstream code, tests, and reconciliation.</li>
@@ -125,7 +125,7 @@
   <div class="doc-section reveal" id="comparison">
     <span class="label">Landscape</span>
     <h2>How VibeLoom compares</h2>
-    <p class="lead">This comparison focuses on public product framing: whether each tool starts from specs and contracts, and whether those specs and contracts continue to govern the downstream workflow.</p>
+    <p class="lead">This comparison focuses on public product framing: whether each tool starts from explicit pre-code artifacts and contracts, and whether those artifacts continue to govern the downstream workflow.</p>
 
     <details class="expandable">
       <summary class="expandable-header"><span>Open the comparison table</span><span class="arrow">&#9654;</span></summary>

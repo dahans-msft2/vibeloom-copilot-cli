@@ -51,7 +51,7 @@ Recommended next commands by state:
 | Product drafts | `review prd`, `review usm`, `approve product` |
 | Spec draft | `review spec`, `eval spec`, `approve spec` |
 | Governed active repo | `status`, `develop ...`, `fix ...` |
-| Drift detected | `reconcile`, `reconcile artifact <name>`, `eval repo` |
+| Drift detected | `reconcile`, `reconcile <selector>`, `eval repo` |
 
 ### Post-Intent Approval: Sequential Product Generation
 

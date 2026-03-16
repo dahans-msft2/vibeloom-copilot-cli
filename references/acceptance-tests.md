@@ -8,6 +8,7 @@ Use these scenarios when validating the skill interface or revising command rout
 
 ```text
 /vibeloom status
+/vibeloom status usm
 /vibeloom review usm
 /vibeloom develop add annual billing
 /vibeloom fix invite links expire too early
@@ -26,6 +27,7 @@ Expected:
 /vibeloom status
 /vibeloom develop add annual billing
 /vibeloom reconcile
+/vibeloom reconcile spec
 /vibeloom generate dm
 /vibeloom review usm
 /vibeloom approve product
@@ -63,12 +65,15 @@ Expected:
 ```text
 /vibeloom help overview
 /vibeloom review profiles
+/vibeloom status artifact usm
+/vibeloom reconcile artifact spec
 /vibeloom status module payments-api
 /vibeloom generate tests
 ```
 
 Expected:
 - accept documented direct topic and artifact targets only when the trailing token is valid
+- reject removed long forms and show the concise canonical replacements
 - reject unsupported command forms such as `/vibeloom generate tests`
 - for `review`, do not guess `module`; non-artifact review still requires `review module <module-name>`
 - if `payments-api` is invalid, return actual module selectors from the repo

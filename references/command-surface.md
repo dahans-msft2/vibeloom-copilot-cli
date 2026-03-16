@@ -30,13 +30,13 @@ Rules:
 | `/vibeloom init [intent seed]` | Initialize a governed project |
 | `/vibeloom import [path-or-current]` | Bootstrap governance for an existing repo |
 | `/vibeloom status` | Report overall governed state |
-| `/vibeloom status artifact <selector>` | Report one canonical artifact |
+| `/vibeloom status <selector>` | Report one canonical artifact |
 | `/vibeloom status module <module-name>` | Report one module |
 | `/vibeloom review <target> [context]` | Review one artifact or module |
 | `/vibeloom develop <request>` | Run feature or enhancement flow |
 | `/vibeloom fix <repro-or-bug>` | Run bugfix flow |
 | `/vibeloom reconcile` | Reconcile repo-wide drift |
-| `/vibeloom reconcile artifact <selector>` | Reconcile one artifact |
+| `/vibeloom reconcile <selector>` | Reconcile one artifact |
 | `/vibeloom reconcile module <module-name>` | Reconcile one module |
 
 ## Expert Commands
@@ -118,7 +118,8 @@ Target and selector expansions:
 Constraints:
 - `approve` supports `intent`, `product`, `spec`, `change`, and `module <module-name>`
 - `eval` supports `intent`, `product`, `spec`, `change`, `repo`, `artifact <artifact-selector>`, and `module <module-name>`
-- `status` supports the repo default plus `status artifact <artifact-selector>` and `status module <module-name>`
+- `status` supports the repo default plus `status <artifact-selector>` and `status module <module-name>`
+- `reconcile` supports the repo default plus `reconcile <artifact-selector>` and `reconcile module <module-name>`
 - `generate` accepts artifact selectors directly
 - `review` accepts canonical artifact targets directly; module review requires `review module <module-name>`
 - `develop` accepts freeform feature or enhancement requests
@@ -147,10 +148,12 @@ Canonical forms:
 
 ```text
 /vibeloom status
+/vibeloom status usm
 /vibeloom review constitution
 /vibeloom review usm
 /vibeloom develop add workspace sharing with invite approval
 /vibeloom fix invite links expire one hour too early
+/vibeloom reconcile spec
 /vibeloom eval module billing
 /vibeloom surface code-first
 /vibeloom generate dm

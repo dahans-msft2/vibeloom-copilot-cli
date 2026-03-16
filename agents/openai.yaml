@@ -3,7 +3,7 @@ interface:
   short_description: "Contract-driven vibe coding workflows"
   icon_small: "./site/vibeloom-logo-loom.svg"
   icon_large: "./site/vibeloom-logo-loom.svg"
-  brand_color: "#7EE0FF"
+  brand_color: "#e84057"
   default_prompt: "Use $vibeloom and run `/vibeloom status` to inspect this governed codebase."
 
 policy:

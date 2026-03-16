@@ -45,5 +45,5 @@ This repo ships the Codex skill plus the methodology artifacts it relies on. It 
 ## Additional Docs
 
 - `docs/vibeloom-methodology.md` explains the methodology itself without runtime implementation details.
-- `docs/profile-selection.md` explains Lite vs Full selection without reintroducing inline-USM Lite behavior.
+- `docs/profile-selection.md` explains Lite vs Full selection.
 - `site/` contains the public website content for `https://vibeloom.ai/`.

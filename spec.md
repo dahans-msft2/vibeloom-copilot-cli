@@ -1,4 +1,4 @@
-	---
+---
 artifact_id: ART-SPEC-CODEX-V4
 artifact_type: spec
 status: draft

@@ -11,7 +11,7 @@ Audit the repository for:
 - redundancy/duplication
 - coherency/correctness
 - verbosity/size/deadweight
-- context window size/load during execution
+- context window size/load (during execution)
 
 Then produce a grouped remediation plan and execute it one approved step at a time.
 
@@ -19,12 +19,18 @@ Then produce a grouped remediation plan and execute it one approved step at a ti
 
 Use these as hard audit constraints:
 - `intent.md` is intentionally loose prose and is exempt from mandatory stable item IDs, though optional structured capability IDs may appear
+- `docs/` are canonical prose methodology / help material, not routine runtime authority
 - only `references/` is routine runtime authority for the skill
 - `templates/` are generation inputs only
-- `docs/` are canonical prose methodology / help material, not routine runtime authority
 - `site/` is public documentation / marketing, not runtime authority, but it must not contradict the canon
 - `SKILL.md` is the runtime entrypoint and orchestrator, but detailed runtime rules should not be duplicated there if they already exist in `references/`
 - the canonical abstract command model is `<action> <target> <context>` wherever the general syntax is described
+- docs in `docs/` can reference each other but not docs in other folders
+- docs in `references/` can reference each other as well as docs in `templates/` but not docs in other folders
+- docs in `templates/` can reference each other but not docs in other folders
+- `references/` run-time instructions and `templates/` spec templates are generated based on `docs/` prose, so duplication across them should be reported but not marked for fixing because in most cases it’s intentional.
+- however, between the documents in the same folder there should be no duplication
+- `site/` will repeat/restate/summarize information from many other source, so don;t consider it a duplication. It just should not contradict the canon.
 
 ## What To Inspect
 
@@ -50,6 +56,10 @@ Use direct repo inspection. Do not rely on memory or assumptions.
 
 3. Verbosity / size
 - identify wording, sections, structures, or entire files that could be shortened, consolidated, moved, or removed without losing necessary meaning
+
+4. Context window size/load (during execution)
+- identify oppporunities to reduce the size/load of the context window in run-time
+
 
 ## Review Standard
 

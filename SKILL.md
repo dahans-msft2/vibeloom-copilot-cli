@@ -34,6 +34,23 @@ On each invocation, start with the smallest correct reference set:
 
 Do not load `docs/` during routine commands unless the user asks for `help`, requests deeper explanation, or a runtime reference explicitly escalates.
 
+## Help Topic Registry
+
+`help` is the only command family allowed to load explanatory material outside `references/`.
+
+Topic routing:
+- `methodology` -> `docs/vibeloom-methodology.md`
+- `profiles` -> `docs/profile-selection.md`
+- `surfaces` -> `docs/surface-modes.md`
+- `evals` -> `docs/evals-structural.md`, `docs/evals-semantic.md`
+- `templates` -> `templates/`
+- `commands` -> `references/command-surface.md`
+
+Rules:
+- `references/` may escalate only by topic name, never by direct `docs/*` path.
+- Use `help <topic>` as the canonical explanation entrypoint.
+- Routine execution stays in `references/` plus required canonical artifacts and templates unless `help` is invoked.
+
 ## Skill-Specific Behavior
 
 - The skill is explicit-invocation only.

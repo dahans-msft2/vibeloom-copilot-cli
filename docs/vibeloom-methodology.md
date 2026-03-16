@@ -16,6 +16,62 @@ This section is the canonical prose statement of repo layering and authority. Ot
 
 ---
 
+## Dependency Contract
+
+### Folder Roles
+
+- `docs/` is the canonical prose methodology layer.
+- `references/` is the distilled runtime execution layer.
+- `templates/` is the artifact-generation input layer.
+- `SKILL.md` is the runtime entrypoint and cross-layer orchestrator.
+
+### Allowed Dependency Edges
+
+Allowed:
+- `docs/ -> docs/`
+- `references/ -> references/`
+- `references/ -> templates/`
+- `templates/ -> templates/`
+- `SKILL.md -> docs/`
+- `SKILL.md -> references/`
+- `SKILL.md -> templates/`
+
+Disallowed:
+- `docs/ -> references/`
+- `docs/ -> templates/`
+- `references/ -> docs/`
+- `templates/ -> docs/`
+- `templates/ -> references/`
+
+### Layer Rules
+
+- `docs/` may mention templates only by semantic name such as `intent template` or `technical spec template`.
+- `references/` may duplicate methodology information from `docs/`, but only in a distilled and structured runtime form.
+- `references/` may refer directly to `templates/` because template loading is part of runtime execution.
+- `templates/` must not define independent methodology truth.
+- `SKILL.md` owns bootstrap order, escalation, and exact cross-folder routing.
+
+### Help Routing
+
+`help` is the only command family allowed to load explanatory material outside `references/`.
+
+Rules:
+- `references/` may escalate only by topic name such as `help methodology` or `help evals`.
+- `references/` must not contain direct `docs/*` paths.
+- `SKILL.md` owns exact `help` topic routing.
+- `commands` help may route to `references/`.
+- `templates` help may route to `templates/`.
+
+### Precedence
+
+When layers overlap:
+1. `docs/` owns methodology meaning
+2. `references/` owns routine runtime behavior
+3. `templates/` own generation shape
+4. `SKILL.md` owns orchestration and topic routing
+
+---
+
 ## The Problem
 
 AI code generation is excellent at producing local momentum. It is weak at preserving long-term meaning.
@@ -191,6 +247,19 @@ flowchart TD
 ## The Eval Framework
 
 VibeLoom uses two runtime eval tiers plus one methodology-level tier that is not yet a dedicated runtime command. Evals are performed by agents, but results are presented to humans for judgment.
+
+### Review vs eval
+
+`review` and `eval` are related, but they are not the same operation.
+
+- `review` is a target-scoped human-facing critique. It inspects one artifact or module in its proper layer and surfaces coherence gaps, unclear assumptions, contradictions, and judgment calls that a human should examine.
+- `eval` is a check-driven validation pass. It runs the current formal checks against the selected scope and reports which checks fail, warn, or pass.
+
+In short:
+- `review` asks, "What should a human pay attention to here?"
+- `eval` asks, "What does the current evaluation stack say about this scope?"
+
+That distinction matters at larger scopes too. A command such as `eval repo` is a systematic repository-wide audit against the current eval stack, not an open-ended architecture critique.
 
 | Tier | Type | Nature | When run | Blocking? | Runtime status |
 | --- | --- | --- | --- | --- | --- |

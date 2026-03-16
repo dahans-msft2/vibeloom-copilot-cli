@@ -89,7 +89,7 @@ VibeLoom addresses all four by treating structured specifications as the durable
 
 ## Core Thesis
 
-Five principles anchor the methodology:
+These principles anchor the methodology:
 
 1. **Intent becomes contracts, not just prompts.**
 2. **Structured contracts are cheaper to review than generated code.**

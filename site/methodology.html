@@ -263,7 +263,7 @@
   <div class="doc-section reveal" id="workflow">
     <span class="label">Workflow</span>
     <h2>How It All Fits Together</h2>
-    <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates at each tier.</p>
+    <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates bracket intent, the product batch, and the spec layer.</p>
 
     <div class="diagram-wrap">
       <svg viewBox="0 0 720 660" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
@@ -438,7 +438,7 @@
   <div class="doc-section reveal" id="evals">
     <span class="label">Quality</span>
     <h2>Eval Framework</h2>
-    <p class="lead">Specifications aren't documentation — they're verification contracts. Three tiers of evaluation keep everything consistent.</p>
+    <p class="lead">Specifications aren't documentation — they're verification contracts. Two runtime eval tiers plus one on-demand behavioral tier keep everything consistent.</p>
 
     <div class="table-wrap">
       <table>
@@ -446,7 +446,7 @@
         <tbody>
           <tr><td><span class="tag tag-block">Tier 1</span></td><td>Structural</td><td>IDs valid, cross-refs resolve, required sections present, module dirs match spec</td><td><strong>Yes</strong></td></tr>
           <tr><td><span class="tag tag-warn">Tier 2</span></td><td>Semantic</td><td>Coverage gaps, contradictions between tiers, orphan entities, NFRs not addressed</td><td>Warnings</td></tr>
-          <tr><td><span class="tag tag-ok">Tier 3</span></td><td>Behavioral</td><td>Test scenarios from stories, invariant tests from dm.md, contract tests</td><td>Separate</td></tr>
+          <tr><td><span class="tag tag-ok">Tier 3</span></td><td>Behavioral</td><td>Test scenarios from stories, invariant tests from dm.md, contract tests</td><td>No (on demand)</td></tr>
         </tbody>
       </table>
     </div>
@@ -486,7 +486,7 @@
       </div>
     </details>
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 3: Behavioral (test generation, separate step)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Tier 3: Behavioral (on demand, separate step)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <p>Behavioral checks are methodology-level guidance and are not part of the current runtime command surface.</p>
         <ul>
@@ -533,17 +533,18 @@
       </div>
     </details>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Each agent task gets a <strong>context envelope</strong>:</p>
-        <ul>
-          <li><strong>Always loaded:</strong> constitution, relevant root spec, current module spec when relevant, AGENTS.md, and trace entries for referenced IDs</li>
-          <li><strong>Loaded conditionally:</strong> relevant PRD, USM, and DM slices when workflows, concepts, invariants, or cross-boundary ownership are touched</li>
-          <li><strong>Not loaded by default:</strong> unrelated modules' code, unrelated product or domain slices, and deeper methodology prose</li>
-        </ul>
-        <p><strong>Guideline:</strong> keep the active technical slice and directly governing contracts in view first, and summarize broader upstream context only when the task needs it.</p>
-      </div>
+	    <details class="expandable">
+	      <summary class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></summary>
+	      <div class="expandable-body">
+	        <p>Each agent task gets a scoped <strong>context envelope</strong>. The skill chooses the exact per-command bundle; the pattern is:</p>
+	        <ul>
+	          <li><strong>Start from the governing boundary:</strong> the target artifact for artifact review, or the relevant spec and module boundary for technical work</li>
+	          <li><strong>Bring extra scope only when it helps:</strong> trace entries when IDs or stale impact matter, and AGENTS.md when it exists and reduces ambiguity</li>
+	          <li><strong>Loaded conditionally:</strong> relevant PRD, USM, and DM slices when workflows, concepts, invariants, interfaces, or cross-boundary ownership are touched</li>
+	          <li><strong>Not loaded by default:</strong> unrelated modules' code, unrelated product or domain slices, and deeper methodology prose</li>
+	        </ul>
+	        <p><strong>Guideline:</strong> keep the active technical slice and directly governing contracts in view first, and summarize broader upstream context only when the task needs it.</p>
+	      </div>
     </details>
   </div>
 
@@ -553,20 +554,21 @@
     <h2>Command Reference</h2>
     <p class="lead"><code>$vibeloom</code> is the state-aware entrypoint. Use <code>/vibeloom &lt;action&gt; &lt;target&gt; &lt;context&gt;</code> for explicit commands.</p>
 
-    <div class="cmd-grid">
-      <div class="cmd-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
-      <div class="cmd-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
-      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a selected artifact</span></div>
-      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve drafts after eval</span></div>
-      <div class="cmd-row"><code>/vibeloom develop</code> <span>Incremental change (specs first)</span></div>
-      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Fix a steady-state defect</span></div>
-      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Run consistency checks</span></div>
-      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Interactive walkthrough</span></div>
-      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Fix after manual edits</span></div>
-      <div class="cmd-row"><code>/vibeloom status</code> <span>Show project state</span></div>
-      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
-      <div class="cmd-row"><code>/vibeloom help ...</code> <span>Guidance for topics or one command</span></div>
-    </div>
+	    <div class="cmd-grid">
+	      <div class="cmd-row"><code>/vibeloom init [intent seed]</code> <span>Initialize a governed project</span></div>
+	      <div class="cmd-row"><code>/vibeloom import [path-or-current]</code> <span>Bootstrap governance for an existing repo</span></div>
+	      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a canonical or derived artifact</span></div>
+	      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve an allowed target</span></div>
+	      <div class="cmd-row"><code>/vibeloom develop &lt;request&gt;</code> <span>Run feature or enhancement flow</span></div>
+	      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Run bugfix flow</span></div>
+	      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Evaluate an allowed target</span></div>
+	      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Review one artifact or module</span></div>
+	      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Reconcile repo-wide drift</span></div>
+	      <div class="cmd-row"><code>/vibeloom status</code> <span>Report overall governed state</span></div>
+	      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
+	      <div class="cmd-row"><code>/vibeloom help &lt;methodology|profiles|surfaces|evals|templates|commands&gt;</code> <span>Load guided help for a documentation topic</span></div>
+	      <div class="cmd-row"><code>/vibeloom help command &lt;action&gt;</code> <span>Explain one command</span></div>
+	    </div>
 
     <details class="expandable" style="margin-top:16px">
       <summary class="expandable-header"><span>Key workflow: /vibeloom develop</span><span class="arrow">&#9654;</span></summary>
@@ -609,7 +611,7 @@
       </li>
       <li>
         <strong>Follow the prompts</strong>
-        <span style="color:var(--text-tertiary)">Approve intent, review specs, generate code. You're in control at every step.</span>
+        <span style="color:var(--text-tertiary)">Approve intent, review and approve the generated product batch, then move into spec and code. You're in control at every step.</span>
       </li>
     </ol>
 

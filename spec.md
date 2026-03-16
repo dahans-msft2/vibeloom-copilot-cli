@@ -146,13 +146,15 @@ Exact greenfield, import, and steady-state command flows belong in `references/`
 
 ## Context-Loading Constraints
 
-Exact load selection belongs in `references/`. This spec preserves the constraints a runtime must honor:
+Exact load selection belongs in `references/`. This spec preserves the constraints a runtime must honor; it does not define a second unconditional load bundle:
 
-- start from the nearest owning technical boundary plus the trace slice for touched IDs
+- routine runtime references own the exact per-command load bundle and escalation path
+- when a task has a technical boundary, start from the nearest owning spec boundary plus the relevant trace slice for touched IDs
 - bring workflow or domain slices into view when workflows, concepts, invariants, interfaces, or NFR boundaries are implicated
 - broaden upward before sideways when semantic ambiguity appears
 - keep unrelated modules, bounded contexts, and superseded artifacts out of the default slice unless dependency edges or explicit historical analysis require them
 - carry uncertainty markers forward when imported or low-confidence artifacts are part of the active slice
+- derived operational guidance may help execution focus when available, but canonical artifacts remain the governing truth
 
 ## Stale Propagation Rules
 

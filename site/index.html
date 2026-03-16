@@ -300,7 +300,7 @@
       <div class="workflow-step">
         <div class="step-num">2</div>
         <h4>Generate Specs</h4>
-        <p>PRD, stories, and domain model generated as a batch for review</p>
+        <p>PRD, USM, and domain model generated as a batch for review</p>
       </div>
       <div class="workflow-step">
         <div class="step-num">3</div>
@@ -357,20 +357,21 @@
     <h2 class="section-title">One command to rule them all</h2>
     <p class="section-desc">Invoke <code style="background:var(--bg-tertiary); color:var(--accent)">$vibeloom</code> for state-aware triage, then use <code style="background:var(--bg-tertiary); color:var(--accent)">/vibeloom &lt;action&gt; &lt;target&gt; &lt;context&gt;</code> when you want an explicit command.</p>
 
-    <div class="cmd-grid">
-      <div class="cmd-row"><code>/vibeloom init</code> <span>Scaffold new project</span></div>
-      <div class="cmd-row"><code>/vibeloom import</code> <span>Spec existing codebase</span></div>
-      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate next artifact</span></div>
-      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve after review</span></div>
-      <div class="cmd-row"><code>/vibeloom develop</code> <span>Incremental changes</span></div>
-      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Fix a steady-state defect</span></div>
-      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Run consistency checks</span></div>
-      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Walk through one artifact or module</span></div>
-      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Fix after manual edits</span></div>
-      <div class="cmd-row"><code>/vibeloom status</code> <span>See project state</span></div>
-      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
-      <div class="cmd-row"><code>/vibeloom help ...</code> <span>Guidance for topics or one command</span></div>
-    </div>
+	    <div class="cmd-grid">
+	      <div class="cmd-row"><code>/vibeloom init [intent seed]</code> <span>Initialize a governed project</span></div>
+	      <div class="cmd-row"><code>/vibeloom import [path-or-current]</code> <span>Bootstrap governance for an existing repo</span></div>
+	      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a canonical or derived artifact</span></div>
+	      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve an allowed target</span></div>
+	      <div class="cmd-row"><code>/vibeloom develop &lt;request&gt;</code> <span>Run feature or enhancement flow</span></div>
+	      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Run bugfix flow</span></div>
+	      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Evaluate an allowed target</span></div>
+	      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Review one artifact or module</span></div>
+	      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Reconcile repo-wide drift</span></div>
+	      <div class="cmd-row"><code>/vibeloom status</code> <span>Report overall governed state</span></div>
+	      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
+	      <div class="cmd-row"><code>/vibeloom help &lt;methodology|profiles|surfaces|evals|templates|commands&gt;</code> <span>Load guided help for a documentation topic</span></div>
+	      <div class="cmd-row"><code>/vibeloom help command &lt;action&gt;</code> <span>Explain one command</span></div>
+	    </div>
   </div>
 </section>
 

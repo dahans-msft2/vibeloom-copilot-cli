@@ -2,9 +2,9 @@
 
 This document defines the exact normative shape of the VibeLoom artifacts used by the Codex package.
 
-It assumes the canonical layer contract from [vibeloom-methodology.md](vibeloom-methodology.md): `docs/` own methodology prose, `references/` own routine runtime behavior, `templates/` are generation-only, and `site/` is derivative.
+It assumes the canonical layer contract from [vibeloom-methodology.md](vibeloom-methodology.md); refer there for repo-layer authority and loading boundaries.
 
-This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering in full.
+This document focuses on artifact shape, metadata, and cross-reference rules rather than re-explaining repo layering.
 
 ## Common Frontmatter
 

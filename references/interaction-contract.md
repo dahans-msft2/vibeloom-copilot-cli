@@ -31,6 +31,37 @@ For `init`, if the input is underspecified:
 
 ## Adaptive Summary Rules
 
+### Foundational-rule review
+
+For:
+- `review constitution`
+
+Lead with:
+- authority boundaries
+- lifecycle or approval rules
+- traceability or projection rules
+- profile or change-class rules when they are the source of the issue
+
+ID rules:
+- use the constitution artifact ID in `Affected IDs`
+- cite downstream artifact IDs only when the finding is about a concrete contradiction with the constitution
+
+Example:
+
+```text
+Scope
+Constitution review for the governed workspace.
+
+Decision / Findings
+The layer contract is clear that canonical artifacts own semantic truth and derived artifacts do not. The main risk is maintainability: the same authority rule is repeated outside the constitution often enough that future drift is likely even though the current wording still agrees.
+
+Affected IDs
+ART-CONSTITUTION-CODEX-V4
+
+Next action
+Trim duplicate authority prose in lower layers or keep those files pointer-oriented so the constitution remains the single governing baseline.
+```
+
 ### Intent review
 
 For:

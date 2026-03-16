@@ -32,13 +32,17 @@ The runtime references define how those signals are used during routine commands
 
 ### Start from the nearest owning boundary
 
-The first useful slice is usually the local technical boundary:
+The runtime references own the exact per-command load bundle. As a general rule:
 
-- `constitution.md`
+- artifact review starts from the target artifact
+- technical change work starts from the nearest owning technical boundary
+
+For technical work, the first useful slice usually includes:
+
 - the relevant root `spec.md`
 - the current module spec when the task is module-scoped
-- the derived `AGENTS.md` for the scope
-- trace entries for directly referenced IDs
+- the derived `AGENTS.md` for the scope when it exists and reduces ambiguity
+- trace entries for directly referenced IDs, stale impact, or downstream trace questions
 
 That starting point is narrow on purpose. It gives the agent the local contract surface before broader product or domain context is added.
 
@@ -119,13 +123,13 @@ Avoid treating fixed token percentages or hard token caps as durable methodology
 
 ### Local bugfix in a governed module
 
-A local bugfix usually needs:
+A local bugfix usually starts from:
 
-- `constitution.md`
 - root `spec.md`
 - the affected module spec
-- derived `AGENTS.md`
+- derived `AGENTS.md` when it exists and clarifies the scoped write surface
 - the repro, failing test, and touched `API-*` or `INV-*`
+- trace links when the violated contract or stale impact is in question
 
 It usually does not need unrelated `USM` epics, unrelated modules, or brownfield import guidance.
 
@@ -141,9 +145,8 @@ It usually does not need full module specs unless the review has already become 
 
 ### Boundary-changing feature in `full`
 
-A boundary-changing feature usually needs:
+A boundary-changing feature usually starts from the owning technical boundaries, then expands:
 
-- `constitution.md`
 - root `spec.md`
 - all affected module specs
 - touched `PRD-FR-*`, `STORY-*`, `ENT-*`, and `INV-*`

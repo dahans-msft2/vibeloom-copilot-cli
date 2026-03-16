@@ -167,13 +167,14 @@ MOD-[MODULE] -> MOD-[OTHER]
 
 ## Context-Loading Notes
 
-### Always Load
+Exact routine loading belongs in the runtime references for the active environment. Use this section to capture the intended starting slice and escalation pattern for this concrete repo rather than a second command-level load catalog.
 
-- `constitution.md`
+### Default Starting Slice
+
 - this `spec.md`
 - the active module spec when a module boundary is touched
-- the derived `AGENTS.md` for the task scope
-- the trace slice for touched IDs
+- the relevant trace slice when touched IDs, stale impact, or downstream coverage are in question
+- the derived `AGENTS.md` for the task scope when it exists and reduces execution ambiguity
 
 ### Load Conditionally
 

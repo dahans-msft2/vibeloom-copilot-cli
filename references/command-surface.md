@@ -147,6 +147,7 @@ Canonical forms:
 
 ```text
 /vibeloom status
+/vibeloom review constitution
 /vibeloom review usm
 /vibeloom develop add workspace sharing with invite approval
 /vibeloom fix invite links expire one hour too early

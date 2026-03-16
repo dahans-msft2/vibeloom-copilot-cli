@@ -159,17 +159,14 @@ All other analysis artifacts are generated on demand or in memory during reconci
 
 Agents must load the minimum contract slice that can safely govern the change.
 
-Always load:
-- this constitution
-- the relevant root `spec.md`
-- the relevant module spec for the touched area
-- the applicable derived `AGENTS.md`
-- the trace slice for referenced IDs
+Exact routine command loading belongs in the runtime operational layer for the active environment. This constitution preserves only the universal constraints that layer must honor:
 
-Load conditionally:
-- touched `usm` stories and linked `prd` requirements for behavior changes
-- touched `dm` bounded contexts and invariants for semantic changes
-- neighboring module specs and interface manifests for cross-boundary changes
+- start from the governing artifact or technical boundary that owns the decision being made
+- include trace links when referenced IDs, downstream impact, or stale implications are part of the task
+- bring workflow and domain slices into view when workflows, concepts, invariants, interfaces, or NFR boundaries are implicated
+- broaden upward before sideways when ambiguity appears
+- keep unrelated modules, bounded contexts, and superseded artifacts out of the default slice unless explicit dependency or historical analysis requires them
+- derived operational guidance may narrow execution focus, but it never replaces canonical authority
 
 ## Universal Quality Defaults
 

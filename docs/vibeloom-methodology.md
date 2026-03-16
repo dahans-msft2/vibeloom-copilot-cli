@@ -404,9 +404,10 @@ Example:
 
 The exact routine loading behavior belongs in the runtime references. At the methodology level, the rule is simpler: agents have finite attention, so VibeLoom uses deterministic context scoping.
 
-- **Always loaded:** constitution, root spec, current module spec when relevant, derived `AGENTS.md`, and trace entries for referenced IDs
-- **Conditionally loaded:** PRD, USM, or DM slices only when workflows, concepts, or invariants are touched
-- **Never loaded by default:** unrelated modules, unrelated epics or bounded contexts, historical superseded artifacts
+- **Start from the governing boundary:** the target artifact for artifact review, or the nearest owning technical boundary for technical change work
+- **Bring trace and scoped execution guidance when they help:** trace entries when referenced IDs or stale impact matter, and derived `AGENTS.md` only when it exists and reduces ambiguity
+- **Escalate product and domain slices when needed:** PRD, USM, or DM slices when workflows, concepts, invariants, interfaces, or NFR boundaries are implicated
+- **Keep unrelated material out by default:** unrelated modules, unrelated epics or bounded contexts, historical superseded artifacts
 
 The goal is not to load less at all costs. The goal is to load enough truth without drowning the task.
 

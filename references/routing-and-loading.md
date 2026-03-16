@@ -6,6 +6,21 @@ This file defines what to load for each command and how to choose the next valid
 - Do not load `docs/` during routine commands unless the user asked for deeper explanation, used `help`, or a runtime rule here explicitly escalates.
 - Use canonical command forms in suggested next actions.
 
+## Load Ownership
+
+This file owns exact routine load selection for the skill.
+
+- `constitution.md` and `spec.md` preserve the constraints this file must honor; they do not create a second unconditional `always load` bundle.
+- command sections below are authoritative for routine loading
+- bootstrap and help commands may skip technical-boundary artifacts when the governed slice does not exist yet or the user asked only for explanation
+
+## Cross-Command Slice Rules
+
+- for artifact review, load the target plus only the linked slice needed to explain findings
+- for governed execution or technical change work, load the nearest owning technical boundary, the relevant trace slice when IDs or stale impact are in play, and scoped derived `AGENTS.md` only when it exists and reduces ambiguity
+- treat derived `AGENTS.md` as optional execution guidance, never as semantic authority
+- do not widen to unrelated modules, bounded contexts, or superseded artifacts unless dependency edges, stale analysis, or explicit historical inspection require it
+
 ## State Detection
 
 Inspect the current repo for:
@@ -117,7 +132,9 @@ Constraints:
 
 Load:
 - current artifact frontmatter
+- the relevant technical boundary only when needed to explain technical blockers, ownership warnings, or module status
 - dependency or stale indicators if present
+- relevant trace or ownership slices only when they explain a reported blocker or stale edge
 - current-session structural and semantic findings when available
 - module selectors if the target is `module`
 
@@ -131,6 +148,13 @@ Present:
 - next 3 valid commands
 
 In `code-first`, lead with `spec.md`, module, interface, and ownership state; still mention blocking product artifacts explicitly.
+
+### `review constitution`
+
+Load:
+- `references/interaction-contract.md`
+- the target `constitution.md`
+- linked package-level artifacts only when needed to explain a concrete layering, lifecycle, traceability, or profile contradiction
 
 ### `review intent`
 
@@ -168,7 +192,7 @@ Load:
 Load:
 - `references/methodology.md`
 - `references/evals-and-templates.md`
-- current governed slice selected from trace and artifact dependencies
+- current governed slice selected from the nearest owning technical boundary, trace links, and artifact dependencies
 
 In `code-first`, start from spec/module/interfaces and escalate to `prd/usm/dm` on workflow, semantic, interface, NFR, or boundary risk.
 
@@ -177,7 +201,7 @@ In `code-first`, start from spec/module/interfaces and escalate to `prd/usm/dm` 
 Load:
 - `references/methodology.md`
 - `references/interaction-contract.md`
-- current governed slice for the bug area
+- the nearest owning technical boundary and current governed slice for the bug area
 - regression-relevant eval guidance
 
 Do not load import bootstrap guidance unless the repo is unmanaged or explicitly requested.
@@ -188,7 +212,7 @@ Load:
 - `references/methodology.md`
 - `references/interaction-contract.md`
 - current artifact statuses
-- the smallest affected slice plus dependency implications
+- the smallest affected slice plus dependency implications and relevant trace edges
 
 Execute conceptually as:
 1. one up-pass against upstream truth

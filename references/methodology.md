@@ -2,12 +2,10 @@
 
 This file is the runtime summary loaded during routine skill work.
 
-Apply the canonical layer contract from `../docs/vibeloom-methodology.md` in runtime form:
-- the root artifact stack is the structured package representation aligned to `docs/`
-- `references/` owns runtime-efficient execution guidance only
-- `templates/` are generation-only
-- `site/` is derivative marketing documentation and is not part of runtime authority
+Use `../docs/vibeloom-methodology.md` for the canonical prose layer contract. This file keeps only the runtime implications:
+- `references/` owns routine execution guidance
 - load `docs/` only when the user asks for deeper explanation, uses `help`, or another runtime reference points there
+- do not treat `templates/` or `site/` as runtime authority
 
 ## Authority
 

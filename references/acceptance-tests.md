@@ -75,6 +75,19 @@ Expected:
 
 ## Routing Tests
 
+### Constitution review
+
+Input:
+
+```text
+/vibeloom review constitution
+```
+
+Expected:
+- lead with authority, lifecycle, traceability, profile, or change-class rules rather than workflow language
+- use the constitution artifact ID when the review is about foundational rules in the file itself
+- cite downstream artifact IDs only when a concrete contradiction with the constitution is being called out
+
 ### Intent review
 
 Input:

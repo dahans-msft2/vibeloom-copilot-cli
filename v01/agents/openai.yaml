@@ -1,8 +1,8 @@
 interface:
   display_name: "VibeLoom"
   short_description: "Contract-driven vibe coding workflows"
-  icon_small: "./site/vibeloom-logo-loom.svg"
-  icon_large: "./site/vibeloom-logo-loom.svg"
+  icon_small: "../../site/public/vibeloom-logo-loom.svg"
+  icon_large: "../../site/public/vibeloom-logo-loom.svg"
   brand_color: "#e84057"
   default_prompt: "Use $vibeloom and run `/vibeloom status` to inspect this governed codebase."
 

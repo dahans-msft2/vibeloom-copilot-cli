@@ -5,7 +5,7 @@ This file is the runtime summary loaded during routine skill work.
 Use `help methodology` for the canonical prose layer contract. This file keeps only the runtime implications:
 - `references/` owns routine execution guidance
 - load explanatory material outside `references/` only when the user explicitly invokes `help`
-- do not treat `templates/` or `site/` as runtime authority
+- do not treat `templates/` or the sibling public site workspace as runtime authority
 
 ## Authority
 

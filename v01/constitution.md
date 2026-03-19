@@ -32,7 +32,7 @@ This package uses the canonical layer contract defined in `docs/vibeloom-methodo
 - The root artifact stack is the normative package representation aligned to that methodology prose.
 - `references/` is the routine runtime operational layer loaded by the skill during routine execution.
 - `templates/` are generation-only and must not introduce independent methodology truth.
-- `site/` is derivative public documentation and marketing material.
+- A sibling `../site/` workspace hosts derivative public documentation and marketing material outside this package authority model.
 
 ## Lifecycle States
 

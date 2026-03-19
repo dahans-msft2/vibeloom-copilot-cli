@@ -12,7 +12,7 @@ This section is the canonical prose statement of repo layering and authority. Ot
 - The root artifact stack is the structured package representation aligned to `docs/`.
 - `references/` is the routine runtime operational layer and should stay narrow, structured, and low-context.
 - `templates/` are generation inputs only and should provide shape rather than methodology prose.
-- `site/` is derivative public documentation and marketing material.
+- A sibling `../site/` workspace may host derivative public documentation and marketing material outside the package authority model.
 
 ---
 

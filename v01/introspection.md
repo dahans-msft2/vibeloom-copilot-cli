@@ -21,14 +21,14 @@ Treat these as authoritative audit inputs:
 - `SKILL.md` owns runtime bootstrap, cross-layer orchestration, and exact `help` topic routing
 - `references/` owns routine runtime authority
 - `templates/` owns generation inputs
-- `site/` is derivative public documentation and marketing
+- the sibling `../site/` workspace is derivative public documentation and marketing
 
 Audit-facing summary of folder roles:
 - `docs/` = canonical prose methodology and help material
 - `references/` = distilled runtime execution layer
 - `templates/` = artifact-generation input layer
 - `SKILL.md` = runtime entrypoint and cross-layer orchestrator
-- `site/` = derivative public-facing layer
+- sibling public site workspace = derivative public-facing layer
 
 Allowed dependency edges:
 - `docs/ -> docs/`
@@ -65,7 +65,7 @@ Duplication rules:
 - duplication across `docs/` and `references/` is allowed when the layering is clear and the runtime form is materially more structured or smaller
 - overlap between `references/` and `templates/` is allowed when generation and runtime loading both require the same concept
 - duplication within the same folder should be treated as a likely drift risk unless the local layering clearly justifies it
-- `site/` repetition is acceptable by default; only contradictions matter
+- public-site repetition is acceptable by default; only contradictions matter
 
 If this audit-facing summary conflicts with the canonical wording in `docs/vibeloom-methodology.md` or the operational routing in `SKILL.md`, the canon wins. Call out the conflict explicitly.
 
@@ -76,7 +76,7 @@ Use these as hard audit constraints:
 - `docs/` are canonical prose methodology and help material, not routine runtime authority
 - only `references/` is routine runtime authority for the skill
 - `templates/` are generation inputs only
-- `site/` is public documentation and marketing, not runtime authority, but it must not contradict the canon
+- the sibling public site workspace is public documentation and marketing, not runtime authority, but it must not contradict the canon
 - `SKILL.md` is the runtime entrypoint and orchestrator, but detailed runtime rules should not be duplicated there if they already exist in `references/`
 - the canonical abstract command model is `<action> <target> <context>` wherever the general syntax is described
 - docs in `docs/` can reference each other but not docs in other folders
@@ -94,7 +94,7 @@ Inspect the actual workspace thoroughly:
 - root canonical artifacts: `constitution.md`, `intent.md`, `prd.md`, `usm.md`, `dm.md`, `spec.md`
 - all files in `templates/`
 - relevant files in `docs/`
-- relevant files in `site/`
+- relevant files in the sibling `../site/` workspace
 - metadata such as `agents/openai.yaml`
 - package and authority docs such as `README.md`
 
@@ -117,7 +117,7 @@ Use direct repo inspection. Do not rely on memory or assumptions.
 ## Review Standard
 
 - if runtime guidance exists outside `references/`, call it out unless it is clearly help-only material or an explicit orchestration rule owned by `SKILL.md`
-- if `site/` says something broader, simpler, or different than the canon, classify it explicitly as either acceptable simplification or an actual contradiction
+- if the public site says something broader, simpler, or different than the canon, classify it explicitly as either acceptable simplification or an actual contradiction
 - if two files define the same normative rule, assume that is a problem unless the layering clearly justifies it
 - if a rule is runtime-operational, prefer it to exist in exactly one authoritative place inside `references/`, with higher-level files only pointing to it
 - if a general syntax definition appears anywhere and does not use `<action> <target> <context>`, call it out
@@ -190,7 +190,7 @@ Examples:
 - changing command surface semantics
 - changing lifecycle rules
 - changing projection rules
-- changing layering between `SKILL.md`, `references/`, `docs/`, `templates/`, and `site/`
+- changing layering between `SKILL.md`, `references/`, `docs/`, `templates/`, and the sibling public site workspace
 
 ### Group D: Public Site / Marketing Alignment
 

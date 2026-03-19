@@ -1,61 +1,27 @@
-# VibeLoom
+# VibeLoom Workspace
 
-VibeLoom is a contract-driven methodology and Codex skill for long-lived vibe coding of production-quality systems.
+This repository is the VibeLoom workspace. It contains the current packaged skill in `v01/`, the next-generation workspace in `v02/`, and the independently deployed public website in `site/`.
 
-## Package Map
+## Workspace Map
 
 | Path | Purpose |
 | --- | --- |
-| `SKILL.md` | Codex skill entrypoint for the `/vibeloom` surface over the canonical `<action> <target> <context>` command model |
-| `agents/` | UI metadata and explicit invocation policy |
-| `references/` | Runtime-efficient operational references loaded by the skill during routine command execution |
-| `constitution.md` | Foundational rules that keep downstream specs concise and mechanically checkable |
-| `intent.md` | Intent for the methodology-as-product |
-| `prd.md` | Product requirements for the methodology package |
-| `usm.md` | Workflow- and user-centered semantic layer |
-| `dm.md` | Domain model for the methodology itself |
-| `spec.md` | Package-level technical meta-spec for the methodology package and future runtime protocol |
-| `templates/` | Canonical templates aligned with the reconciled methodology |
-| `docs/evals-*.md` | Detailed structural and semantic evaluation references |
-| `docs/` | Methodology truth and operator reading material loaded mainly through `help` or explicit deeper-explanation flows |
-| `site/` | Derivative public documentation for `https://vibeloom.ai/` |
-
-## Authority Model
-
-The canonical prose layer contract lives in [docs/vibeloom-methodology.md](docs/vibeloom-methodology.md). Runtime command behavior lives in `references/`. This README keeps only the repo-local map.
-
-## Artifact Roles
-
-- `constitution.md` is the repo-wide governing baseline, not part of the per-project approval stack.
-- `intent.md`, `prd.md`, `usm.md`, `dm.md`, and `spec.md` are the canonical long-lived artifacts for this package representation.
-- The checked-in `spec.md` is a package-level meta-spec for this methodology repo; generated governed project specs still declare one selected profile.
-- `AGENTS.md` and `plan.md` are derived operational artifacts, not source-of-truth contracts.
-
-## Operator Quickstart
-
-1. Invoke bare `$vibeloom` to get the current governed state, blockers, and next safe commands.
-2. If this is your first run, use `/vibeloom help methodology` for the contract model and `/vibeloom help templates` for artifact shapes.
-3. For a new governed project, start with `/vibeloom init [intent seed]`.
-4. For an existing governed repo, use `/vibeloom status` before changing anything.
-
-## Phase Boundary
-
-This repo ships the Codex skill plus the methodology artifacts it relies on. It does not ship a separate runtime binary, checked-in generated `AGENTS.md` instances, or automation code.
-
-## Additional Docs
-
-- `docs/vibeloom-methodology.md` explains the methodology itself without runtime implementation details.
-- `docs/profile-selection.md` explains Lite vs Full selection.
-- `site/` contains the public website content for `https://vibeloom.ai/`.
+| `v01/` | Current VibeLoom skill and methodology package |
+| `v02/` | Next-generation implementation workspace for the Rust-based local engine and updated skill |
+| `site/` | Public website project for `https://vibeloom.ai/` |
+| `.claude/` | Workspace-local Claude metadata |
+| `.github/` | Shared repository automation and CI metadata |
 
 ## Site Deployment
 
-The public site is configured for Cloudflare Workers Static Assets via `wrangler.jsonc`. Only `site/` is published.
+The public site is deployed from `site/`.
 
-Recommended Cloudflare setup:
+- Cloudflare repository root directory should be set to `site`
+- `site/wrangler.jsonc` is the only Wrangler config for the public website
+- static assets live in `site/public/`
+- no separate build output directory is required
 
-1. In Cloudflare Workers, create or import a Worker from the GitHub repo.
-2. Use `main` as the production branch.
-3. Keep the repository root as the root directory so Cloudflare picks up `wrangler.jsonc`.
-4. Do not set a separate build output directory; the Wrangler config already points assets at `site/`.
-5. Attach `vibeloom.ai` and `www.vibeloom.ai` as custom domains after the zone is active in Cloudflare DNS.
+## Versioned Tool Workspaces
+
+- `v01/` is the current archived package layout and remains runnable as the existing skill and methodology version
+- `v02/` is intentionally only a placeholder in this phase and will host the Rust-based local engine and updated skill work next

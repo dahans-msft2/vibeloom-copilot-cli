@@ -39,8 +39,6 @@ Precedence:
 3. `templates/` own generation shape only
 4. `SKILL.md`, if present, owns orchestration entrypoint behavior for a packaged skill
 
-V1 does **not** include a `references/` layer. The runtime loads targeted sections from this implementation document directly.
-
 ---
 
 ## Shared Codex/Claude Skill-Runtime Model

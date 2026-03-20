@@ -29,8 +29,8 @@ It does **not** redefine methodology meaning. It implements it.
 
 The two primary documents have different authority:
 
-- [vibeloom-methodology.md](/Users/ilya.baimetov/Projects/vibeloom/v02/vibeloom-methodology.md) owns conceptual methodology truth
-- [vibeloom-implementation.md](/Users/ilya.baimetov/Projects/vibeloom/v02/vibeloom-implementation.md) owns concrete runtime and skill behavior
+- vibeloom-methodology.md owns conceptual methodology truth
+- vibeloom-implementation.md owns concrete runtime and skill behavior
 
 Precedence:
 

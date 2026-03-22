@@ -9,7 +9,7 @@ This file is the source of truth for the methodology. Implementation details suc
 ## What VibeLoom Is
 
 VibeLoom implements AI-powered SDLC through a stack of canonical contracts and derived execution guidance.
-The contract stack ensures long-term **consistency** and **coherence** of across all tiers from users intent to the code.
+The contract stack preserves long-term **consistency** and **coherence** across all tiers, from user intent to code.
 
 It is designed for projects where:
 
@@ -19,7 +19,7 @@ It is designed for projects where:
 
 VibeLoom optimizes for three things at once:
 
-1. **Human gating** at a tier level - intent, product specs, system specs, context, code
+1. **Human gating** at tier boundaries: intent-specs, product-specs, system-specs, context, and code
 2. **Traceable change propagation** from high-level intent to low-level implementation and back
 3. **Safe swarm execution** through explicit ownership boundaries and deterministic context scoping
 
@@ -36,16 +36,15 @@ Four systemic failure modes appear as projects grow:
 3. **Context fragmentation.** Large codebases exceed what one agent can safely hold in context, so ownership and responsibilities become guesswork.
 4. **Reconciliation failure.** Manual edits, bugfixes, and drift have no principled path back to the specification layer.
 
-All these problems are immanent to software engineering and existed before coding agents, albeit in a different form. Large software project always struggled with maintaining consistency and coherence across intent, specs and code.
+All these problems are immanent to software engineering and existed before coding agents, albeit in different forms. Large software projects have always struggled to maintain consistency and coherence across intent, specs, and code.
 
 ---
 
 ## The Solution
 
-Historically, many great software engineering methodologies were invented to keep products consistent and coherent — User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design mapping, Test-Driven Development, and others. However, since they all introduced additional ceremony, they were rarely practiced.
+Historically, many strong software engineering methodologies were invented to keep products consistent and coherent: User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design mapping, Test-Driven Development, and others. However, because they introduced additional ceremony, they were often underused.
 
-VibeLoom addresses the problems mentioned above by treating structured specifications as a multi-tier eval system and the durable source of truth rather than relying on code, chat history, and agent memory. Using agents allows to turn the tables: delegate to the agents the creation, maintenance, and — most importantly — continuous verification of internal consistency and coherence across the entire spec+code base.
-
+VibeLoom addresses these problems by treating structured specifications as a multi-tier eval system and the durable source of truth rather than relying on code, chat history, and agent memory. Agents turn the tradeoff around: the methodology delegates creation, maintenance, and continuous verification of internal consistency and coherence across the entire spec+code base to the agents, while humans keep the approval authority.
 
 ---
 
@@ -53,16 +52,16 @@ VibeLoom addresses the problems mentioned above by treating structured specifica
 
 These principles anchor the methodology:
 
-1. **System is defined as contract stack, not a set of stale one-off documents.**
-3. **The contract stack is used as the eval stack.**
-4. **Agents are responsible for generation and validation, gated by humans**
-5. **Scoped context enables agent scaling**
+1. **The system is defined as a contract stack, not a set of stale one-off documents.**
+2. **The contract stack is used as the eval stack.**
+3. **Agents are responsible for generation and validation, gated by humans.**
+4. **Scoped context enables agent scaling.**
 
 ---
 
 ## The Contract Stack
 
-VibeLoom governs application development via a compact contract stack. Root artifacts define global truth. Container and component artifacts localize technical truth for implementation and swarm work.
+VibeLoom governs application development through a compact contract stack. Canonical specs define normative truth. Derived guidance distills that truth for execution.
 
 ### Generation Tiers
 
@@ -71,137 +70,240 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | Tier | Role | Artifacts |
 | --- | --- | --- |
 | intent-specs | Capture user intent and normalize repo-wide defaults | `intent`, `defaults` |
-| product-specs | Stabilize requirements, workflows, and domain semantics | `prd`, `usm`, `dm` |
-| system-specs | Turn approved semantics into system, runtime, container, and component design | `system`, `containers`, per-container `container`, per-component `component` |
-| context | scoped execution guidance for teh agents | `AGENTS.md / CLAUDE.md` and similar |
-| code | Produce executable implementation | application code |
+| product-specs | Turn intent into formally traceable product and domain contracts | `prd`, `usm`, `dm` |
+| system-specs | Translate approved product and domain semantics into technical contracts | `system`, `containers`, per-container `container`, per-component `component` |
+| context | Distill scoped execution guidance for agents | `AGENTS.md`, `CLAUDE.md`, and similar |
+| code | Produce executable implementation and verification artifacts | source code, tests, runtime / ops glue |
 
-Tiers are a generation and governance abstraction. Artifacts remain the fine-grained review, traceability, and dependency surfaces inside each tier.
+Tiers are a generation and governance abstraction. Specs remain the fine-grained review, traceability, and dependency surfaces inside each tier.
 
 ---
 
 ### Canonical Specs
 
-At repository, a governed application always owns the following artifacts:
+A governed application owns the following canonical specs:
 
-| Artifact | Tier | Role | Primary audience |
+| Spec | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
-| `vision` | intent | A vision-like prose description of the system - can include both product level details and implementation details | PMs |
-| `defaults` | intent | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults | Tech leads + agents |
+| `intent` | intent-specs | Vision-like prose description of the system; may include both product and implementation wishes | PMs |
+| `defaults` | intent-specs | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults | Tech leads + agents |
 | `prd` | product-specs | Functional requirements and non-functional requirements | PMs + Tech leads |
 | `usm` | product-specs | Epic/story/workflow structure and acceptance framing | PMs + UX designers |
 | `dm` | product-specs | Domain model: bounded contexts, aggregates, invariants, ubiquitous language | PMs + Tech leads |
 | `system` | system-specs | System context, external actors/systems, high-level trust and NFR boundaries | Tech leads |
 | `containers` | system-specs | Global runtime/deployment topology, container inventory, communication paths, hosting/runtime choices | Tech leads |
-| `/<container>/container` | system-specs | Local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | Tech leads |
-| `/<container>/<component>/component` | system-specs | Full contract for one owned technical boundary | Tech leads |
-| `context` | context | Scoped execution guidance derived from canonical truth | Agents |
+| `container` | system-specs | Local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | Tech leads |
+| `component` | system-specs | Full contract for one owned technical boundary | Tech leads |
 
-All normative truth lives in canonical artifacts. `AGENTS.md` files are generated execution briefs and never outrank the contracts that produced them.
+### Derived Guidance
 
-- Containers live at repo root.
-- Every first-class component has its own directory.
-- Bounded context is **not** a path level. It is captured in metadata and container inventory.
-- A first-class component must be listed in its container's `container.md` and map to a directory containing `component.md`.
-- Directories without `component.md` are **not** canonical components by default.
+Derived guidance is generated from canonical specs and never outranks them.
 
-The root stays understandable to humans, while container and component directories give agents small, stable working boundaries.
+| Artifact | Tier | Role | Primary audience |
+| --- | --- | --- | --- |
+| `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from canonical truth | Agents |
 
-Code is not part of the contract stack. It is the downstream implementation governed by the stack. However, validation/evals can run against the code upstream all the way to intent.
+All normative truth lives in canonical specs. Code is downstream implementation rather than a canonical spec, although validation may run upward from code against every upstream tier.
 
 ---
 
 ### `intent-specs` tier
-Specs:
+This tier captures user intent and turns repo-wide defaults into a binding constitution.
+
 | Spec | Structure |
 | --- | --- |
-| `intent` | A vision-like prose description of the system - can include both product level details and implementation details |
-| `defaults` | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults |
+| `intent` | Relatively free-form prose description of the system, including product wishes and implementation preferences |
+| `defaults` | Compact constitutional spec for global rules, defaults, and engineering expectations |
 
 #### `intent` spec
-`intent` is a relatively free form prose description of the required application with two sections
-| section | purpose |
+`intent` is a relatively free-form prose description of the required application with two sections.
+
+| Section | Purpose |
 | --- | --- |
-| functionality | describes in a relatively free form (paragraphs, bullet list, table - whet the application does |
-| miscellania | other “wishes” from the app creator that can literally be anything not related to the functionality | 
+| `functionality` | Describes, in relatively free form, what the application does. |
+| `miscellania` | Captures any other wishes from the creator that do not fit the functional description. |
 
-
-
-
+- `intent` may include both product-level and implementation-level wishes.
+- `intent` stays prose-first rather than fully normalized.
 
 #### `defaults` spec
-— Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults |
+`defaults` is the minimal constitution for repo-wide rules, defaults, and execution expectations.
 
-| section | purpose |
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `repo defaults` | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
+| `foundations` | States the foundational methodologies or conceptual bases the repo follows. |
+| `repo-wide rules` | Records globally binding structural and engineering rules. |
+| `technology baseline` | Captures repo-global technology choices that all downstream tiers should assume. |
+| `agent defaults` | Defines global context-loading and execution rules for agents. |
+| `code generation defaults` | Defines default implementation habits such as test-first work and boundary discipline. |
+| `quality defaults` | Captures universal quality expectations that apply across the repo. |
+| `toolbox note` | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
 
+- Normalized global constraints belong here.
+- Project rationale belongs in `intent`, not in `defaults`.
+- Downstream tiers must treat `defaults` as binding constitution.
 
 ---
 
 ### `product-specs` tier
+This tier turns intent into formally traceable product and domain contracts.
+
+| Spec | Structure |
+| --- | --- |
+| `prd` | Product Requirements Document defining scope, requirements, and constraints |
+| `usm` | User Story Map defining activities, workflows, stories, and release slices |
+| `dm` | Domain Model defining language, boundaries, and invariants |
 
 #### `prd` spec
-`prd` - Product Requirements Document
-| section | purpose |
+`prd` is the formally traceable requirements contract for the product.
+
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `scope` | Defines the product surface being specified. |
+| `functional requirements` | Enumerates required behaviors and capabilities. |
+| `non-functional requirements` | Captures quality attributes and operational expectations. |
+| `constraints and assumptions` | Records known constraints, dependencies, and planning assumptions. |
+| `out of scope` | Prevents accidental expansion of the product surface. |
+
+- Formal traceability begins here.
+- FR and NFR identifiers originate here.
 
 #### `usm` spec
-`usm` - User Story Map
-| section | purpose |
+`usm` is the workflow and delivery map that organizes the product into activities, journeys, stories, and release slices.
+
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `activities / backbone` | Defines the top-level product activities or narrative backbone. |
+| `workflows / journeys` | Groups user flows or end-to-end journeys under the backbone. |
+| `stories` | Breaks workflows into implementable, traceable stories. |
+| `acceptance framing` | States the expected behavior and acceptance intent for each story. |
+| `milestones / release slices` | Organizes stories into slices that can be delivered coherently. |
+
+- `usm` derives from `prd`.
+- Stories trace to PRD requirements.
+- Acceptance framing stays behavior-focused rather than technical.
 
 #### `dm` spec
-`dm` - Domain Model
-| section | purpose |
+`dm` is the semantic model of the domain and the source for technical boundary derivation.
+
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `ubiquitous language` | Defines the shared domain vocabulary. |
+| `bounded contexts` | Identifies semantic boundaries and ownership zones. |
+| `aggregates / entities / value objects` | Defines the core domain structures and their responsibilities. |
+| `invariants / business rules` | Records the rules that must always hold true in the domain. |
+| `relationships / integration touchpoints` | Describes important links between concepts and external touchpoints. |
+
+- `dm` is the semantic source for technical boundary derivation.
+- Components are derived from domain semantics, not folder shape.
 
 ---
 
 ### `system-specs` tier
+This tier translates approved product and domain semantics into technical contracts.
+
+| Spec | Structure |
+| --- | --- |
+| `system` | System-level contract for system purpose, context, and external boundaries |
+| `containers` | Global runtime and deployment topology contract |
+| `container` | Local container contract for one runtime boundary |
+| `component` | Smallest owned technical contract inside a container |
 
 #### `system` spec
-`system` - Product Requirements Document
-| section | purpose |
-| --- | --- |
-|     |     |
+`system` defines the system as a whole and its relationship to the outside world.
 
-#### `usm` spec
-`usm` - User Story Map
-| section | purpose |
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `system purpose and context` | Defines what the system is and where it sits in its broader environment. |
+| `external actors and systems` | Identifies the people, systems, and dependencies around it. |
+| `trust boundaries` | Marks important trust, security, or authority boundaries. |
+| `system-wide NFR boundaries` | Captures system-level NFRs that shape the whole design. |
 
-#### `dm` spec
-`dm` - Domain Model
-| section | purpose |
+- Deployment topology does not live here.
+
+#### `containers` spec
+`containers` defines the global runtime topology of the system.
+
+| Section | Purpose |
 | --- | --- |
-|     |     |
+| `container inventory` | Lists the containers that make up the system. |
+| `responsibilities` | Defines the role of each container in the overall design. |
+| `communication paths` | Describes how containers interact with each other and with external systems. |
+| `deployment / runtime choices` | Captures runtime, hosting, or platform choices at system scope. |
+| `cross-container constraints` | Records constraints that apply across container boundaries. |
 
+- `containers` owns global runtime topology, not local component detail.
+
+#### `container` spec
+`container` defines one local runtime boundary and the technical inventory inside it.
+
+| Section | Purpose |
+| --- | --- |
+| `purpose and runtime boundary` | Defines what the container is for and where its runtime boundary sits. |
+| `resident bounded contexts` | Lists the bounded contexts hosted inside this container. |
+| `component inventory` | Lists the components that belong to this container. |
+| `local interfaces and dependencies` | Summarizes key local interfaces and internal or adjacent dependencies. |
+| `local NFR / operational constraints` | Captures local runtime, operational, and quality constraints. |
+
+- `container` is the authoritative component inventory for one container.
+- Components are discovered here, not inferred from folders.
+
+#### `component` spec
+`component` defines the smallest owned technical boundary inside the governed system.
+
+| Section | Purpose |
+| --- | --- |
+| `responsibility` | States what the component owns and why it exists. |
+| `owned paths` | Declares the code paths or assets the component is responsible for. |
+| `owned interfaces` | Declares the interfaces or APIs the component owns. |
+| `dependencies` | Records direct dependencies on other components, containers, or external systems. |
+| `behavior / contracts` | Defines the local technical contracts and expected behavior of the component. |
+| `local test / runtime notes` | Captures local test expectations and important runtime notes. |
+
+- `component` is the smallest owned technical boundary.
+- Each component belongs to exactly one bounded context.
+- Each component has exactly one container home.
 
 ---
 
 ### `context` tier
+This is a derived-artifacts tier that distills approved truth into scoped execution guidance.
 
+| Artifact | Structure |
+| --- | --- |
+| `AGENTS.md`, `CLAUDE.md`, and similar | Scoped guidance files generated for repo, container, or component work |
+
+#### Derived guidance artifacts
+Derived guidance artifacts summarize how to work safely in a specific scope.
+
+| Section | Purpose |
+| --- | --- |
+| `scope and ownership` | States what the current scope owns. |
+| `load-first context` | Tells the agent which upstream artifacts to load first. |
+| `do-not-touch boundaries` | Marks files, contracts, or areas that are out of scope. |
+| `common commands / checks` | Lists common commands, checks, or workflows for that scope. |
+| `local caveats` | Captures scope-specific warnings, quirks, or operational notes. |
+
+- Derived.
+- Regenerable.
+- Non-canonical.
+- May exist at root, container, and component scopes.
 
 ---
 
 ### `code` tier
+This tier contains downstream implementation artifacts rather than canonical specs.
 
+| Artifact | Purpose |
+| --- | --- |
+| `source code` | Implements approved behavior and technical structure. |
+| `tests` | Provide executable verification of behavior, contracts, and regressions. |
+| `runtime / ops glue` | Handles configuration, packaging, deployment, and operational wiring. |
 
-## Generation
-
-## Validation
-
-## Workflow
-
-
-
-
-
+- Code is downstream from contracts.
+- Tests are executable verification, not semantic source of truth.
+- Validation may run upward from code against all upstream tiers.
 
 ---
 

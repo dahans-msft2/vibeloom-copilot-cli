@@ -70,7 +70,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 
 | Tier | Role | Artifacts |
 | --- | --- | --- |
-| intent-specs | Capture user intent and normalize repo-wide defaults | `intent`, `defaults` |
+| intent | Capture user intent and normalize repo-wide defaults | `intent`, `defaults` |
 | product-specs | Stabilize requirements, workflows, and domain semantics | `prd`, `usm`, `dm` |
 | system-specs | Turn approved semantics into system, runtime, container, and component design | `system`, `containers`, per-container `container`, per-component `component` |
 | context | scoped execution guidance for teh agents | `AGENTS.md / CLAUDE.md` and similar |
@@ -111,76 +111,40 @@ Code is not part of the contract stack. It is the downstream implementation gove
 
 ---
 
-### `intent-specs` tier
+### `intent` tier
 Specs:
 | Spec | Structure |
 | --- | --- |
 | `intent` | A vision-like prose description of the system - can include both product level details and implementation details |
 | `defaults` | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults |
 
-#### `intent` spec
-`intent` is a relatively free form prose description of the required application with two sections
-| section | purpose |
-| --- | --- |
-| functionality | describes in a relatively free form (paragraphs, bullet list, table - whet the application does |
-| miscellania | other “wishes” from the app creator that can literally be anything not related to the functionality | 
-
-
-
-
-
-#### `defaults` spec
+#### `vision`
+`vision` A vision-like prose description of the system - can include both product level details and implementation details. Follows the structure based on "Crossing the Chasm” book by Geoffrey Moore.
+| Section | Description |
+| — | — |
+| Goal | 
+roduct category>
+- Users: user roles
+That \<statement of key benefit—that is, compelling reason to use>
+Unlike \<primary competitive alternative>
+Our product \<statement of primary differentiation>
+  
+#### `defaults`
 — Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults |
 
-| section | purpose |
-| --- | --- |
-|     |     |
 
 
 ---
 
 ### `product-specs` tier
 
-#### `prd` spec
-`prd` - Product Requirements Document
-| section | purpose |
-| --- | --- |
-|     |     |
-
-#### `usm` spec
-`usm` - User Story Map
-| section | purpose |
-| --- | --- |
-|     |     |
-
-#### `dm` spec
-`dm` - Domain Model
-| section | purpose |
-| --- | --- |
-|     |     |
-
 ---
 
 ### `system-specs` tier
 
-#### `system` spec
-`system` - Product Requirements Document
-| section | purpose |
-| --- | --- |
-|     |     |
+---
 
-#### `usm` spec
-`usm` - User Story Map
-| section | purpose |
-| --- | --- |
-|     |     |
-
-#### `dm` spec
-`dm` - Domain Model
-| section | purpose |
-| --- | --- |
-|     |     |
-
+### `context` tier
 
 ---
 
@@ -200,8 +164,11 @@ Specs:
 
 
 
+### 
 
+### intent
 
+#### Foundations
 
 ---
 

@@ -2,13 +2,13 @@
 
 VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence.
 
-This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior are derived from and must conform to this document.
+This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior are specified from and must conform to this document.
 
 ---
 
 ## What VibeLoom Is
 
-VibeLoom implements AI-powered SDLC through a stack of canonical contracts and derived execution guidance.
+VibeLoom implements AI-powered SDLC through a stack of contract specs, context artifacts, and code.
 The contract stack preserves long-term **consistency** and **coherence** across all tiers, from user intent to code.
 
 It is designed for projects where:
@@ -17,7 +17,7 @@ It is designed for projects where:
 - multiple humans and agents may work on the system over time
 - the cost of semantic drift is higher than the cost of maintaining a compact contract layer
 
-VibeLoom optimizes for three things at once:
+The core principles behind VibeLoom are:
 
 1. **Human gating** at tier boundaries: intent-specs, product-specs, system-specs, context, and code
 2. **Traceable change propagation** from high-level intent to low-level implementation and back
@@ -53,7 +53,7 @@ VibeLoom addresses these problems by treating structured specifications as a mul
 These principles anchor the methodology:
 
 1. **The system is defined as a contract stack, not a set of stale one-off documents.**
-2. **The contract stack is used as the eval stack.**
+2. **The contract stack doubles as eval stack.**
 3. **Agents are responsible for generation and validation, gated by humans.**
 4. **Scoped context enables agent scaling.**
 
@@ -61,7 +61,7 @@ These principles anchor the methodology:
 
 ## The Contract Stack
 
-VibeLoom governs application development through a compact contract stack. Canonical specs define normative truth. Derived guidance distills that truth for execution.
+VibeLoom governs application development through a compact contract stack. Contract specs define normative truth. Context artifacts distill that truth for execution. Code implements it.
 
 ### Generation Tiers
 
@@ -79,9 +79,9 @@ Tiers are a generation and governance abstraction. Specs remain the fine-grained
 
 ---
 
-### Canonical Specs
+### Contract Specs
 
-A governed application owns the following canonical specs:
+A governed application owns the following contract specs:
 
 | Spec | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
@@ -95,22 +95,24 @@ A governed application owns the following canonical specs:
 | `container` | system-specs | Local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | Tech leads |
 | `component` | system-specs | Full contract for one owned technical boundary | Tech leads |
 
-### Derived Guidance
+### Context Artifacts
 
-Derived guidance is generated from canonical specs and never outranks them.
+Context artifacts are generated from contract specs and never outrank them.
 
 | Artifact | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
-| `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from canonical truth | Agents |
+| `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from contract specs | Agents |
 
-All normative truth lives in canonical specs. Code is downstream implementation rather than a canonical spec, although validation may run upward from code against every upstream tier.
+All normative truth lives in contract specs. Context artifacts help agents work effectively without becoming truth. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
+
+### tier-spec 
 
 ### `intent-specs` tier
 This tier captures user intent and turns repo-wide defaults into a binding constitution.
 
-| Spec | Structure |
+| Spec | Description |
 | --- | --- |
 | `intent` | Relatively free-form prose description of the system, including product wishes and implementation preferences |
 | `defaults` | Compact constitutional spec for global rules, defaults, and engineering expectations |
@@ -118,10 +120,8 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 #### `intent` spec
 `intent` is a relatively free-form prose description of the required application with two sections.
 
-| Section | Purpose |
-| --- | --- |
-| `functionality` | Describes, in relatively free form, what the application does. |
-| `miscellania` | Captures any other wishes from the creator that do not fit the functional description. |
+- functionality: describes, in relatively free form, what the application does.
+- miscellania: Captures any other wishes from the creator that do not fit the functional description.
 
 - `intent` may include both product-level and implementation-level wishes.
 - `intent` stays prose-first rather than fully normalized.
@@ -129,16 +129,18 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 #### `defaults` spec
 `defaults` is the minimal constitution for repo-wide rules, defaults, and execution expectations.
 
-| Section | Purpose |
-| --- | --- |
-| `repo defaults` | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
-| `foundations` | States the foundational methodologies or conceptual bases the repo follows. |
-| `repo-wide rules` | Records globally binding structural and engineering rules. |
-| `technology baseline` | Captures repo-global technology choices that all downstream tiers should assume. |
-| `agent defaults` | Defines global context-loading and execution rules for agents. |
-| `code generation defaults` | Defines default implementation habits such as test-first work and boundary discipline. |
-| `quality defaults` | Captures universal quality expectations that apply across the repo. |
-| `toolbox note` | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
+The format of the document:
+- section: description
+	— sub-section: description
+
+- foundations | States the foundational methodologies or conceptual bases the repo follows. |
+| repo | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
+| rules | Records globally binding structural and engineering rules. |
+| tech | Captures repo-global technology choices that all downstream tiers should assume. |
+| agents | Defines global context-loading and execution rules for agents. |
+| code | Defines default implementation habits such as test-first work and boundary discipline. |
+| quality | Captures universal quality expectations that apply across the repo. |
+| toolbox | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
 
 - Normalized global constraints belong here.
 - Project rationale belongs in `intent`, not in `defaults`.
@@ -158,16 +160,118 @@ This tier turns intent into formally traceable product and domain contracts.
 #### `prd` spec
 `prd` is the formally traceable requirements contract for the product.
 
+
+
 | Section | Purpose |
 | --- | --- |
-| `scope` | Defines the product surface being specified. |
-| `functional requirements` | Enumerates required behaviors and capabilities. |
-| `non-functional requirements` | Captures quality attributes and operational expectations. |
-| `constraints and assumptions` | Records known constraints, dependencies, and planning assumptions. |
-| `out of scope` | Prevents accidental expansion of the product surface. |
+| scope | Defines the product surface being specified. |
+| req | Enumerates required behaviors and capabilities. |
+| nfr | Captures quality attributes and operational expectations. |
+| constraints | Records known constraints, dependencies, and planning assumptions. |
 
 - Formal traceability begins here.
-- FR and NFR identifiers originate here.
+-  and NFR identifiers originate here.
+
+
+## TL;DR
+
+*Briefly state what this product/feature is and why it's valuable (1–3 sentences).*
+**What we’re building:** <1–2 sentences>
+**For whom:** <primary user / customer>
+**Why now:** <1 sentence — urgency or opportunity>
+**Expected outcome:** <1 sentence — measurable>
+
+---
+
+## Problem Statement (The "Why")
+*Briefly describe the pain point or opportunity. What is broken, missing, or inefficient? Use data to back this up.*
+
+---
+
+## Strategic Value (The "So What")
+*Why do this now? How does this align with company OKRs or long-term strategy?*
+- **Strategic Alignment:** Supports Q3 Goal of increasing retention by X%.
+- **Urgency:** High - Competitor X just released a similar feature.
+
+---
+
+## OKR
+What does success look like? Define a clear, measurable outcome.
+
+**Objective**:
+
+| **Key Results**: |
+| --- |
+| 12% Conversion |
+|  |
+
+---
+
+**Metrics**:
+
+| Metric | Current Baseline | Target (Success) | Data Source |
+| --- | --- | --- | --- |
+| **Northstar Metric** |  |  |  |
+| **Indicative Metric 1** | 12% Conversion | 15% Conversion | Mixpanel |
+| **Indicative Metric N** | 12% Conversion | 15% Conversion | Mixpanel |
+| **Guardrail Metric 1** | < 200ms Latency | < 200ms Latency | Datadog |
+| **Guardrail Metric N** | < 200ms Latency | < 200ms Latency | Datadog |
+
+Two standard metrics for a feature with UX are
+
+| Metric | Current Baseline | Target (Success) | Data Source |
+| --- | --- | --- | --- |
+| **TT - time-in-task** |  |  |  |
+| **AT - actions-in-task** |  |  |  |
+| **ST - %success-in-task** |  |  |  |
+
+**Time-in-Task** - **time** it took the user to complete the task (e.g. schedule an appointment or skip a shipment)
+**Actions-in-Task** - # of **actions** (button clicks, item selections, strings typed, etc.) it took the user to complete the task
+**%Success-in-Task** - # of **percentage** of users who successfully complete the task
+
+---
+
+## The Solution (The "What")
+
+*High-level description of the feature/product. Do not get bogged down in UI details yet.*
+
+**Core Value Proposition:**
+
+[One sentence description of the solution]
+
+**Features:**
+
+| Feature | Description | Priority |
+| --- | --- | --- |
+| [Feature 1] | [Brief description] | P0 / P1 / P2 |
+| [Feature 2] | [Brief description] | P0 / P1 / P2 |
+| [Feature 3] | [Brief description] | P0 / P1 / P2 |
+
+---
+
+## User Experience / Visuals
+
+*Insert a link to Figma, a screenshot, or a Mermaid diagram here to illustrate the flow.*
+
+[](https://www.notion.sourl_to_image)
+
+---
+
+## Timeline & Milestones
+
+| Milestone | Target Date |
+| --- | --- |
+| Design complete | [Date] |
+| Development complete | [Date] |
+| QA & testing | [Date] |
+| Launch | [Date] |
+
+---
+
+## Risks & Open Questions
+
+
+
 
 #### `usm` spec
 `usm` is the workflow and delivery map that organizes the product into activities, journeys, stories, and release slices.
@@ -268,14 +372,14 @@ This tier translates approved product and domain semantics into technical contra
 ---
 
 ### `context` tier
-This is a derived-artifacts tier that distills approved truth into scoped execution guidance.
+This is the context tier. It distills approved contract truth into scoped execution guidance.
 
 | Artifact | Structure |
 | --- | --- |
 | `AGENTS.md`, `CLAUDE.md`, and similar | Scoped guidance files generated for repo, container, or component work |
 
-#### Derived guidance artifacts
-Derived guidance artifacts summarize how to work safely in a specific scope.
+#### Context artifacts
+Context artifacts summarize how to work safely in a specific scope.
 
 | Section | Purpose |
 | --- | --- |
@@ -285,15 +389,15 @@ Derived guidance artifacts summarize how to work safely in a specific scope.
 | `common commands / checks` | Lists common commands, checks, or workflows for that scope. |
 | `local caveats` | Captures scope-specific warnings, quirks, or operational notes. |
 
-- Derived.
+- Generated from contract specs.
 - Regenerable.
-- Non-canonical.
+- Not a primary source of truth.
 - May exist at root, container, and component scopes.
 
 ---
 
 ### `code` tier
-This tier contains downstream implementation artifacts rather than canonical specs.
+This tier contains executable implementation artifacts rather than contract specs.
 
 | Artifact | Purpose |
 | --- | --- |
@@ -301,7 +405,7 @@ This tier contains downstream implementation artifacts rather than canonical spe
 | `tests` | Provide executable verification of behavior, contracts, and regressions. |
 | `runtime / ops glue` | Handles configuration, packaging, deployment, and operational wiring. |
 
-- Code is downstream from contracts.
+- Code is produced from contracts.
 - Tests are executable verification, not semantic source of truth.
 - Validation may run upward from code against all upstream tiers.
 

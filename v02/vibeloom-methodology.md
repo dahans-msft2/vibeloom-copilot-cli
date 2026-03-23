@@ -6,25 +6,6 @@ This file is the source of truth for the methodology. Implementation details suc
 
 ---
 
-## What VibeLoom Is
-
-VibeLoom implements AI-powered SDLC through a stack of contract specs, context artifacts, and code.
-The contract stack preserves long-term **consistency** and **coherence** across all tiers, from user intent to code.
-
-It is designed for projects where:
-
-- the code must survive repeated AI-assisted change
-- multiple humans and agents may work on the system over time
-- the cost of semantic drift is higher than the cost of maintaining a compact contract layer
-
-The core principles behind VibeLoom are:
-
-1. **Human gating** at tier boundaries: intent-specs, product-specs, system-specs, context, and code
-2. **Traceable change propagation** from high-level intent to low-level implementation and back
-3. **Safe swarm execution** through explicit ownership boundaries and deterministic context scoping
-
----
-
 ## The Problem
 
 AI code generation is excellent at producing local momentum. It is weak at preserving clarity and quality long-term.
@@ -42,9 +23,23 @@ All these problems are immanent to software engineering and existed before codin
 
 ## The Solution
 
-Historically, many strong software engineering methodologies were invented to keep products consistent and coherent: User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design mapping, Test-Driven Development, and others. However, because they introduced additional ceremony, they were often underused.
+**Vision**
+- **For** teams and solo builders creating long-lived AI-assisted software systems\
+- **Who** need their systems to survive repeated change, multiple contributors, and architectural revision without semantic drift\
+- **VibeLoom** is **agent skill** for contract-first development\
+- **That** preserves consistency and coherence across intent, specs, context, and code through human-gated contract, agent-facing context, and continuous validation.\
+- **Unlike** prompt-only vibe coding or one-off documentation practices,
+VibeLoom keeps the whole system aligned as humans and agents evolve it over time.
+
+A number of software engineering methodologies have been invented to keep products consistent and coherent: User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design mapping, Test-Driven Development, and others. However, because they introduced extra ceremony and requied extra effort, they were often underused.
 
 VibeLoom addresses these problems by treating structured specifications as a multi-tier eval system and the durable source of truth rather than relying on code, chat history, and agent memory. Agents turn the tradeoff around: the methodology delegates creation, maintenance, and continuous verification of internal consistency and coherence across the entire spec+code base to the agents, while humans keep the approval authority.
+
+
+VibeLoom is designed for projects where:
+- the code must survive repeated AI-assisted change
+- multiple humans and agents may work on the system over time
+- the cost of semantic drift is higher than the cost of maintaining a compact contract layer
 
 ---
 
@@ -56,6 +51,12 @@ These principles anchor the methodology:
 2. **The contract stack doubles as eval stack.**
 3. **Agents are responsible for generation and validation, gated by humans.**
 4. **Scoped context enables agent scaling.**
+
+The core techniques VibeLoom uses:
+
+1. **Human gating** at tier boundaries: intent-specs, product-specs, system-specs, context, and code
+2. **Traceable change propagation** from high-level intent to low-level implementation and back
+3. **Safe swarm execution** through explicit ownership boundaries and deterministic context scoping
 
 ---
 
@@ -72,10 +73,30 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | intent-specs | Capture user intent and normalize repo-wide defaults | `intent`, `defaults` |
 | product-specs | Turn intent into formally traceable product and domain contracts | `prd`, `usm`, `dm` |
 | system-specs | Translate approved product and domain semantics into technical contracts | `system`, `containers`, per-container `container`, per-component `component` |
-| context | Distill scoped execution guidance for agents | `AGENTS.md`, `CLAUDE.md`, and similar |
+| context | Distill scoped execution guidance, decision records, and long-term agent memory | `AGENTS.md`, `CLAUDE.md`, `pdr`, `adr`, and similar |
 | code | Produce executable implementation and verification artifacts | source code, tests, runtime / ops glue |
 
 Tiers are a generation and governance abstraction. Specs remain the fine-grained review, traceability, and dependency surfaces inside each tier.
+
+### Tier Attributes
+
+VibeLoom uses three cross-cutting tier attributes:
+
+| Attribute | Meaning |
+| --- | --- |
+| `human-gated` | The workflow expects explicit human review and approval before the artifact is accepted as current truth. |
+| `normative` | The artifact defines the intended current meaning of the system or product. |
+| `executable` | The artifact runs as implementation, verification, packaging, deployment, or operational logic. |
+
+These attributes apply to the tiers as follows:
+
+| Tier | Human-gated | Normative | Executable | Notes |
+| --- | --- | --- | --- | --- |
+| intent-specs | yes | yes | no | Defines high-level product intent and repo-wide defaults. |
+| product-specs | yes | yes | no | Defines formally traceable requirements, workflows, and domain semantics. |
+| system-specs | yes | yes | no | Defines technical structure and runtime design intent. |
+| context | no | no | no | Serves as the default source of execution truth for agents, but yields to contract specs on semantic conflicts. |
+| code | no | no | yes | Implements and verifies the approved contracts. |
 
 ---
 
@@ -97,17 +118,17 @@ A governed application owns the following contract specs:
 
 ### Context Artifacts
 
-Context artifacts are generated from contract specs and never outrank them.
+Context artifacts are generated from contract specs and are the default execution surface for agents, but they never outrank contract specs semantically.
 
 | Artifact | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
 | `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from contract specs | Agents |
+| `pdr` | context | Product decision record that preserves product-level decision history without becoming contract truth | PMs + agents |
+| `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 
-All normative truth lives in contract specs. Context artifacts help agents work effectively without becoming truth. Code is the executable result, although validation may run upward from code against every upstream tier.
+All normative truth lives in contract specs. Context artifacts may be regenerated or human-edited, and agents should normally load them first for efficient work, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
-
-### tier-spec 
 
 ### `intent-specs` tier
 This tier captures user intent and turns repo-wide defaults into a binding constitution.
@@ -377,9 +398,11 @@ This is the context tier. It distills approved contract truth into scoped execut
 | Artifact | Structure |
 | --- | --- |
 | `AGENTS.md`, `CLAUDE.md`, and similar | Scoped guidance files generated for repo, container, or component work |
+| `pdr` | Product decision record generated as long-term context for product changes |
+| `adr` | Architecture decision record generated as long-term context for technical changes |
 
 #### Context artifacts
-Context artifacts summarize how to work safely in a specific scope.
+Context artifacts summarize how to work safely in a specific scope and how key decisions changed over time.
 
 | Section | Purpose |
 | --- | --- |
@@ -393,6 +416,7 @@ Context artifacts summarize how to work safely in a specific scope.
 - Regenerable.
 - Not a primary source of truth.
 - May exist at root, container, and component scopes.
+- May include long-term agent memory such as decision records or dependency projections.
 
 ---
 

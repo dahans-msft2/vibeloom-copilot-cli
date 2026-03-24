@@ -119,17 +119,17 @@ These attributes apply to the tiers as follows:
 
 A governed application owns the following contract specs:
 
-| Spec | Tier | Role | Primary audience |
-| --- | --- | --- | --- |
-| `intent` | intent-specs | Vision-like prose description of the system; may include both product and implementation wishes | PMs |
-| `defaults` | intent-specs | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults | Tech leads + agents |
-| `prd` | product-specs | Functional requirements and non-functional requirements | PMs + Tech leads |
-| `usm` | product-specs | Epic/story/workflow structure and acceptance framing | PMs + UX designers |
-| `dm` | product-specs | Domain model: bounded contexts, aggregates, invariants, ubiquitous language | PMs + Tech leads |
-| `system` | system-specs | System context, external actors/systems, high-level trust and NFR boundaries | Tech leads |
-| `containers` | system-specs | Global runtime/deployment topology, container inventory, communication paths, hosting/runtime choices | Tech leads |
-| `container` | system-specs | Local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | Tech leads |
-| `component` | system-specs | Full contract for one owned technical boundary | Tech leads |
+| Spec         | Tier          | Role                                                                                                                                      | Primary audience    |
+| ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `intent`     | intent-specs  | Vision-like prose description of the system; may include both product and implementation wishes                                           | PMs                 |
+| `defaults`   | intent-specs  | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults | Tech leads + agents |
+| `prd`        | product-specs | Functional requirements and non-functional requirements                                                                                   | PMs + Tech leads    |
+| `usm`        | product-specs | Epic/story/workflow structure and acceptance framing                                                                                      | PMs + UX designers  |
+| `dm`         | product-specs | Domain model: bounded contexts, aggregates, invariants, ubiquitous language                                                               | PMs + Tech leads    |
+| `system`     | system-specs  | System context, external actors/systems, high-level trust and NFR boundaries                                                              | Tech leads          |
+| `containers` | system-specs  | Global runtime/deployment topology, container inventory, communication paths, hosting/runtime choices                                     | Tech leads          |
+| `container`  | system-specs  | per-container: local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints                    | Tech leads          |
+| `component`  | system-specs  | per-component: full contract for one owned technical boundary                                                                             | Tech leads          |
 
 ### Context Artifacts
 

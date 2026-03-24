@@ -24,10 +24,10 @@ All these problems are immanent to software engineering and existed before codin
 ## The Solution
 
 **Vision**
-- **For** teams and solo builders creating long-lived AI-assisted software systems\
-- **Who** need their systems to survive repeated change, multiple contributors, and architectural revision without semantic drift\
-- **VibeLoom** is **agent skill** for contract-first development\
-- **That** preserves consistency and coherence across intent, specs, context, and code through human-gated contract, agent-facing context, and continuous validation.\
+- **For** teams and solo builders creating long-lived AI-assisted software systems
+- **Who** need their systems to survive repeated change, multiple contributors, and architectural revision without semantic drift
+- **VibeLoom** is a methodology for **contract-driven** development
+- **That** preserves consistency and coherence across intent, specs, context, and code through human-gated contract, agent-facing context, and continuous validation.
 - **Unlike** prompt-only vibe coding or one-off documentation practices,
 VibeLoom keeps the whole system aligned as humans and agents evolve it over time.
 
@@ -45,7 +45,7 @@ VibeLoom is designed for projects where:
 
 ## Principles
 
-These principles anchor the methodology:
+The core principles of VibeLoom methodology are:
 
 1. **The system is defined as a contract stack, not a set of stale one-off documents.**
 2. **The contract stack doubles as eval stack.**
@@ -60,21 +60,36 @@ The core techniques VibeLoom uses:
 
 ---
 
+## Overview
+Here is an overview of developing a system using VibeLoom
+- human defines a **contract** for the system. Contract is interactively (humane edits <-> agent generation) generated with the help of the agent. First, human defines **intent-spec** for the system by iteratively generating a high-level description of the system (**intent**) and **defaults** that will be used throughout the generation process. To make sure all the specs and both consistent and coherent, human needs to validate the specs doing a **review** (a higher-level interactive detect-issue->suggest-fix->implement-fix validation loop) and **eval** (more formal structured and semantics validation). Specs are validated against all other specs in the same tier and the specs in the upstream tiers. When a human is considered the contract validated, they **approve** the tier.
+- After the **intent-specs** are approved, **product-specs** (**prd**, **usm** and **dm**) are generated and validated using the same process
+- After the **product-specs** are approved, **system-specs** (**system**, **containers** and **component) are generated and validated using the same process
+- Generation and validation of the **contract** is done tier-by-tier. Human is not requested to review every spec. Instead, the entire tier (all the specs in a tier) is generated as a batch. Specs can be approved individually or the entire tier. The generation process can proceed to the next tier **only after** all specs in the current tier are approved.
+- **context** (**CLAUDE.md**/**AGENTS.md**, **pdr**, **adr**) is generated partially as a byproduct of ggenearting contract (pdr, adr) and later, after the contract is approved, as a generation context to drive the agents (**CLAUDE.md**/**AGENTS.md** and similar-purpose files)
+- after the **context** is generated, the generation is stopped and the human is given an opportunity to review and validate the context artifacts in the same manner. This is a temporary step and hopefully can be skipped in the future as the quality of the generation improves. Human is not supposed to manually edit **context** artifacts, instead, they are supposed to tweak the **contract**.
+- the swarm of agents can now generate the **code** - meaning the system itself that can be built and executed.
+
 ## The Contract Stack
 
-VibeLoom governs application development through a compact contract stack. Contract specs define normative truth. Context artifacts distill that truth for execution. Code implements it.
+VibeLoom governs application development through a compact contract stack.
+The application artifacts play the following roles:
+- **contract**: human-gated semantic truth. These artifacts - whether human-authored or generated - need to be explicitly approved by a human. Approval happens at the level of semantic tier - intent-specs, product-specs, system-specs because approving each individual spec would be too granular adn require too much time/effort.
+- **context**: agent-facing operational truth. These artifacts are required primarily for code generation agents. A human may edit/tweak them but they will not require human approval.
+- **code**: the executable result. Hhumans are not expected to edit directly.
+Contract defines normative truth. Context distill that truth for agents. Code implements the application based on the above.
 
 ### Generation Tiers
 
 The artifact stack also groups into generation tiers. These tiers are the primary orchestration model for users and agents.
 
-| Tier | Role | Artifacts |
-| --- | --- | --- |
-| intent-specs | Capture user intent and normalize repo-wide defaults | `intent`, `defaults` |
-| product-specs | Turn intent into formally traceable product and domain contracts | `prd`, `usm`, `dm` |
-| system-specs | Translate approved product and domain semantics into technical contracts | `system`, `containers`, per-container `container`, per-component `component` |
-| context | Distill scoped execution guidance, decision records, and long-term agent memory | `AGENTS.md`, `CLAUDE.md`, `pdr`, `adr`, and similar |
-| code | Produce executable implementation and verification artifacts | source code, tests, runtime / ops glue |
+| Tier          | Content                                                                         | Artifacts                                                                    |
+| ------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| intent-specs  | User intent and normalize repo-wide defaults                                    | `intent`, `defaults`                                                         |
+| product-specs | Formally traceable product and domain contracts - derived from approved intent  | `prd`, `usm`, `dm`                                                           |
+| system-specs  | technical contracts derived from approved product and domain semantics          | `system`, `containers`, per-container `container`, per-component `component` |
+| context       | Distill scoped execution guidance, decision records, and long-term agent memory | `AGENTS.md`, `CLAUDE.md`, `pdr`, `adr`, and similar                          |
+| code          | This tier consist of executable implementation and verification artifacts       | source code, tests, runtime / ops glue                                       |
 
 Tiers are a generation and governance abstraction. Specs remain the fine-grained review, traceability, and dependency surfaces inside each tier.
 
@@ -82,21 +97,21 @@ Tiers are a generation and governance abstraction. Specs remain the fine-grained
 
 VibeLoom uses three cross-cutting tier attributes:
 
-| Attribute | Meaning |
-| --- | --- |
+| Attribute     | Meaning                                                                                                   |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
 | `human-gated` | The workflow expects explicit human review and approval before the artifact is accepted as current truth. |
-| `normative` | The artifact defines the intended current meaning of the system or product. |
-| `executable` | The artifact runs as implementation, verification, packaging, deployment, or operational logic. |
+| `normative`   | The artifact defines the intended current meaning of the system or product.                               |
+| `executable`  | The artifact runs as implementation, verification, packaging, deployment, or operational logic.           |
 
 These attributes apply to the tiers as follows:
 
-| Tier | Human-gated | Normative | Executable | Notes |
-| --- | --- | --- | --- | --- |
-| intent-specs | yes | yes | no | Defines high-level product intent and repo-wide defaults. |
-| product-specs | yes | yes | no | Defines formally traceable requirements, workflows, and domain semantics. |
-| system-specs | yes | yes | no | Defines technical structure and runtime design intent. |
-| context | no | no | no | Serves as the default source of execution truth for agents, but yields to contract specs on semantic conflicts. |
-| code | no | no | yes | Implements and verifies the approved contracts. |
+| Tier          | Human-gated | Normative | Executable | Notes                                                                                                           |
+| ------------- | ----------- | --------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
+| intent-specs  | yes         | yes       | no         | Defines high-level product intent and repo-wide defaults.                                                       |
+| product-specs | yes         | yes       | no         | Defines formally traceable requirements, workflows, and domain semantics.                                       |
+| system-specs  | yes         | yes       | no         | Defines technical structure and runtime design intent.                                                          |
+| context       | no          | yes       | no         | Serves as the default source of execution truth for agents, but yields to contract specs on semantic conflicts. |
+| code          | no          | no        | yes        | Implements and verifies the approved contracts.                                                                 |
 
 ---
 
@@ -133,10 +148,10 @@ All normative truth lives in contract specs. Context artifacts may be regenerate
 ### `intent-specs` tier
 This tier captures user intent and turns repo-wide defaults into a binding constitution.
 
-| Spec | Description |
-| --- | --- |
-| `intent` | Relatively free-form prose description of the system, including product wishes and implementation preferences |
-| `defaults` | Compact constitutional spec for global rules, defaults, and engineering expectations |
+| Spec       | Description                                                                                                   |
+| ---------- | ------------------------------------------------------------------------------------------------------------- |
+| `intent`   | Relatively free-form prose description of the system, including product wishes and implementation preferences |
+| `defaults` | Compact constitutional spec for global rules, defaults, and engineering expectations                          |
 
 #### `intent` spec
 `intent` is a relatively free-form prose description of the required application with two sections.
@@ -149,168 +164,130 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 
 #### `defaults` spec
 `defaults` is the minimal constitution for repo-wide rules, defaults, and execution expectations.
-
-The format of the document:
-- section: description
-	— sub-section: description
-
-- foundations | States the foundational methodologies or conceptual bases the repo follows. |
-| repo | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
-| rules | Records globally binding structural and engineering rules. |
-| tech | Captures repo-global technology choices that all downstream tiers should assume. |
-| agents | Defines global context-loading and execution rules for agents. |
-| code | Defines default implementation habits such as test-first work and boundary discipline. |
-| quality | Captures universal quality expectations that apply across the repo. |
-| toolbox | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
-
 - Normalized global constraints belong here.
 - Project rationale belongs in `intent`, not in `defaults`.
 - Downstream tiers must treat `defaults` as binding constitution.
+
+The sections of the documents are:
+##### foundations
+States the foundational methodologies or conceptual bases the repo follows
+##### repo
+Defines repo-scoped workflow defaults, naming conventions, and operating assumptions.
+##### rules
+Records globally binding structural and engineering rules.
+##### tech
+Captures repo-global technology choices that all downstream tiers should assume.
+##### agents
+Defines global context-loading and execution rules for agents.
+##### code
+Defines default implementation habits such as test-first work and boundary discipline.
+##### quality
+Captures universal quality expectations that apply across the repo.
+##### toolbox
+Lists optional tactics or patterns that may be used when they solve a concrete problem. |
+
 
 ---
 
 ### `product-specs` tier
 This tier turns intent into formally traceable product and domain contracts.
 
-| Spec | Structure |
-| --- | --- |
+| Spec  | Structure                                                                   |
+| ----- | --------------------------------------------------------------------------- |
 | `prd` | Product Requirements Document defining scope, requirements, and constraints |
-| `usm` | User Story Map defining activities, workflows, stories, and release slices |
-| `dm` | Domain Model defining language, boundaries, and invariants |
+| `usm` | User Story Map defining activities, workflows, stories, and release slices  |
+| `dm`  | Domain Model defining language, boundaries, and invariants                  |
 
 #### `prd` spec
 `prd` is the formally traceable requirements contract for the product.
 
+##### TL;DR
+Briefly states what this product/feature is and why it's valuable (1–3 sentences)
+- **What we’re building:** <1–2 sentences>
+- **For whom:** <primary user / customer>
+- **Why now:** <1 sentence — urgency or opportunity>
+- **Expected outcome:** <1 sentence — measurable>
 
+##### Problem Statement (The "Why")
+Briefly describes the pain point or opportunity. What is broken, missing, or inefficient? Use data to back this up.
 
-| Section | Purpose |
-| --- | --- |
-| scope | Defines the product surface being specified. |
-| req | Enumerates required behaviors and capabilities. |
-| nfr | Captures quality attributes and operational expectations. |
-| constraints | Records known constraints, dependencies, and planning assumptions. |
+##### Strategic Value (The "So What")
+Why do this now? How does this align with company OKRs or long-term strategy?
+- **Strategic Alignment**:
+- **Urgency**:
 
-- Formal traceability begins here.
--  and NFR identifiers originate here.
+##### The Solution (The "What")
 
-
-## TL;DR
-
-*Briefly state what this product/feature is and why it's valuable (1–3 sentences).*
-**What we’re building:** <1–2 sentences>
-**For whom:** <primary user / customer>
-**Why now:** <1 sentence — urgency or opportunity>
-**Expected outcome:** <1 sentence — measurable>
-
----
-
-## Problem Statement (The "Why")
-*Briefly describe the pain point or opportunity. What is broken, missing, or inefficient? Use data to back this up.*
-
----
-
-## Strategic Value (The "So What")
-*Why do this now? How does this align with company OKRs or long-term strategy?*
-- **Strategic Alignment:** Supports Q3 Goal of increasing retention by X%.
-- **Urgency:** High - Competitor X just released a similar feature.
-
----
-
-## OKR
-What does success look like? Define a clear, measurable outcome.
-
-**Objective**:
-
-| **Key Results**: |
-| --- |
-| 12% Conversion |
-|  |
-
----
-
-**Metrics**:
-
-| Metric | Current Baseline | Target (Success) | Data Source |
-| --- | --- | --- | --- |
-| **Northstar Metric** |  |  |  |
-| **Indicative Metric 1** | 12% Conversion | 15% Conversion | Mixpanel |
-| **Indicative Metric N** | 12% Conversion | 15% Conversion | Mixpanel |
-| **Guardrail Metric 1** | < 200ms Latency | < 200ms Latency | Datadog |
-| **Guardrail Metric N** | < 200ms Latency | < 200ms Latency | Datadog |
-
-Two standard metrics for a feature with UX are
-
-| Metric | Current Baseline | Target (Success) | Data Source |
-| --- | --- | --- | --- |
-| **TT - time-in-task** |  |  |  |
-| **AT - actions-in-task** |  |  |  |
-| **ST - %success-in-task** |  |  |  |
-
-**Time-in-Task** - **time** it took the user to complete the task (e.g. schedule an appointment or skip a shipment)
-**Actions-in-Task** - # of **actions** (button clicks, item selections, strings typed, etc.) it took the user to complete the task
-**%Success-in-Task** - # of **percentage** of users who successfully complete the task
-
----
-
-## The Solution (The "What")
-
-*High-level description of the feature/product. Do not get bogged down in UI details yet.*
-
+High-level description of the feature/product. Do not get bogged down in UI details yet.
 **Core Value Proposition:**
-
-[One sentence description of the solution]
+One sentence description of the solution
 
 **Features:**
-
-| Feature | Description | Priority |
-| --- | --- | --- |
+| Feature     | Description         | Priority     |
+| ----------- | ------------------- | ------------ |
 | [Feature 1] | [Brief description] | P0 / P1 / P2 |
 | [Feature 2] | [Brief description] | P0 / P1 / P2 |
 | [Feature 3] | [Brief description] | P0 / P1 / P2 |
 
+##### OKR
+What does success look like? Define a clear, measurable outcome.
+- **Objective**:
+- **Key Results**:  
+
+##### Metrics
+
+| Metric                  | Current Baseline | Target (Success) | Data Source |
+| ----------------------- | ---------------- | ---------------- | ----------- |
+| **Northstar Metric**    |                  |                  |             |
+| **Indicative Metric 1** | 12% Conversion   | 15% Conversion   | Mixpanel    |
+| **Indicative Metric N** | 12% Conversion   | 15% Conversion   | Mixpanel    |
+| **Guardrail Metric 1**  | < 200ms Latency  | < 200ms Latency  | Datadog     |
+| **Guardrail Metric N**  | < 200ms Latency  | < 200ms Latency  | Datadog     |
+
+Two standard metrics for a feature with UX are
+
+| Metric                    | Current Baseline | Target (Success) | Data Source |
+| ------------------------- | ---------------- | ---------------- | ----------- |
+| **TT - time-in-task**     |                  |                  |             |
+| **AT - actions-in-task**  |                  |                  |             |
+| **ST - %success-in-task** |                  |                  |             |
+
+**Time-on-Task** - **time** it took the user to complete the task (e.g. schedule an appointment or skip a shipment)
+**Actions-on-Task** - # of **actions** (button clicks, item selections, strings typed, etc.) it took the user to complete the task
+**%Success-on-Task** - # of **percentage** of users who successfully complete the task
+
+##### Timeline & Milestones
+
+| Milestone       | Target Date |
+| --------------- | ----------- |
+| Functionality 1 | [Date]      |
+| Functionality 2 | [Date]      |
+| Functionality 2 | [Date]      |
+| Launch          | [Date]      |
+
+##### Risks & Open Questions
+
 ---
-
-## User Experience / Visuals
-
-*Insert a link to Figma, a screenshot, or a Mermaid diagram here to illustrate the flow.*
-
-[](https://www.notion.sourl_to_image)
-
----
-
-## Timeline & Milestones
-
-| Milestone | Target Date |
-| --- | --- |
-| Design complete | [Date] |
-| Development complete | [Date] |
-| QA & testing | [Date] |
-| Launch | [Date] |
-
----
-
-## Risks & Open Questions
-
-
 
 
 #### `usm` spec
-`usm` is the workflow and delivery map that organizes the product into activities, journeys, stories, and release slices.
+`usm` is the User Story Map. It defines flows (workflows and user journeys) and delivery map that organizes the product into epics(use cases), flows(workflows and journeys), stories, and milestones(release slices).
 
-| Section | Purpose |
-| --- | --- |
-| `activities / backbone` | Defines the top-level product activities or narrative backbone. |
-| `workflows / journeys` | Groups user flows or end-to-end journeys under the backbone. |
-| `stories` | Breaks workflows into implementable, traceable stories. |
-| `acceptance framing` | States the expected behavior and acceptance intent for each story. |
-| `milestones / release slices` | Organizes stories into slices that can be delivered coherently. |
+| Section      | Purpose                                                            |
+| ------------ | ------------------------------------------------------------------ |
+| `stories`    | Breaks workflows into implementable, traceable stories.            |
+| `epics`      | Defines the top-level product activities or narrative backbone.    |
+| `flows`      | Groups user flows or end-to-end journeys under the backbone.       |
+| `bdd`        | States the expected behavior and acceptance intent for each story. |
+| `milestones` | Organizes stories into slices that can be delivered coherently.    |
 
 - `usm` derives from `prd`.
 - Stories trace to PRD requirements.
 - Acceptance framing stays behavior-focused rather than technical.
 
 #### `dm` spec
-`dm` is the semantic model of the domain and the source for technical boundary derivation.
+`dm` is the Domain Model as in DDD (Domain Driven Development)
+It’s a semantic model of the domain and the source for technical boundary derivation.
 
 | Section | Purpose |
 | --- | --- |

@@ -31,7 +31,7 @@ All these problems are immanent to software engineering and existed before codin
 - **VibeLoom** is a methodology for **contract-driven** development
 - **That** preserves consistency and coherence across contract (intent-specs, product-specs, system-specs), context, and code through human-gated contract, agent-facing context, and continuous validation.
 - **Unlike** prompt-only or one-spec-fits-all AI-generation practices
-- **VibeLoom** keeps the whole system aligned as humans and agents work on the system over time.
+- **VibeLoom** maintain consistency and coherence of the whole system as humans and agents work on the system over time.
 
 A number of software engineering practices and methodologies have been invented to keep products consistent and coherent: PRD, User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design, Test-Driven Development, and others. However, because they introduced extra ceremony and requied extra effort, they were often underused or not used at all.
 
@@ -39,35 +39,33 @@ VibeLoom addresses these problems by generating a multi-tiered contract of struc
 
 VibeLoom  turns the tables on the extra process/spec ceremony: now it is the agents that do the heavy lifting of generating, reviewing, and validating the entire the entire contract/context/code stack for internal consistency and coherence, while humans keep the approval authority.
 
-VibeLoom is designed for projects where:
-
 ---
 
 ## Principles
 
 The core principles of VibeLoom methodology are:
 
-1. **The system is defined as a contract stack, not a set of stale one-off documents.**
+1. **The system is defined as a contract stack, not a set of stale one-off specs**
 2. **The contract stack doubles as eval stack.**
 3. **Agents are responsible for generation and validation, gated by humans.**
 4. **Scoped context enables agent scaling.**
-
-The core techniques VibeLoom uses:
-
-1. **Human gating** at tier boundaries: intent-specs, product-specs, system-specs, context, and code
-2. **Traceable change propagation** from high-level intent to low-level implementation and back
-3. **Safe swarm execution** through explicit ownership boundaries and deterministic context scoping
 
 ---
 
 ## Overview
 Here is an overview of developing a system using VibeLoom
-- human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop. First, the human defines **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
+- Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
 - to make the contract both consistent and coherent, the human validates specs through **review** (a higher-level detect-issue -> suggest-fix -> implement-fix loop) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
+- First, the human defines **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
 - after the **intent-specs** are approved, **product-specs** (`prd`, `usm`, `dm`) are generated and validated using the same process.
 - after the **product-specs** are approved, **system-specs** (`system`, `containers`, `container`, `component`) are generated and validated using the same process.
-- generation and validation of the **contract** is done tier-by-tier. The entire tier is generated as a batch, and the agent asks for approval only after the whole tier is ready, to reduce generation steps. Humans may approve the entire tier after a cursory review, or approve individual specs if finer control is needed. The process can proceed to the next tier **only after** all specs in the current tier are approved.
-- **context** (`CLAUDE.md` / `AGENTS.md`, `pdr`, `adr`, `gherkin`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr` and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
+- generation and validation of the **contract** is performed at a tier level
+  - The entire tier (however many specs it includes) is generated as a single operation
+  - The agent asks for approval of the entire tier after the tier is generated, to reduce approval steps.
+  - The entire tier is validated and eval-ed as a single operation.
+  - Even if human edited individual specs, the review/eval/approval is performed for the entire tier as a whole - to avoid inconsistence and incoherence across the same-tier specs
+  - Generation process can proceed to the next tier **only after** the entire tier (all specs in the tier) is approved.
+- **context** (`CLAUDE.md` / `AGENTS.md`, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd` and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
 - context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. Because agentic generation is still early, the workflow may pause after generating context so a human can optionally review or eval it against upstream specs.
 - if context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - after the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
@@ -142,7 +140,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from contract specs | Agents |
 | `pdr` | context | Product decision record that preserves product-level decision history without becoming contract truth | PMs + agents |
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
-| `gherkin` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
+| `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
 All semantic normative truth lives in contract specs. Context artifacts are the default execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although implementations may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
 
@@ -408,7 +406,7 @@ This tier contains agent-facing operational truth generated from approved contra
 | `AGENTS.md`, `CLAUDE.md`, and similar | Scoped guidance files generated for repo, container, or component work |
 | `pdr` | Product decision record generated as long-term context for product changes |
 | `adr` | Architecture decision record generated as long-term context for technical changes |
-| `gherkin` | Generated behavioral scenarios for humans and agents to implement later |
+| `bdd` | Generated behavioral scenarios for humans and agents to implement later |
 
 #### `AGENTS.md` / `CLAUDE.md` / similar
 These files summarize how to work safely in a specific scope.
@@ -458,8 +456,8 @@ Notes which system-specs or product-specs changed because of the decision.
 ##### impact
 Summarizes the expected downstream effect on context or code generation.
 
-#### `gherkin` artifact
-`gherkin` contains generated, non-executable behavioral scenarios derived from approved contract.
+#### `bdd` artifact
+`bdd` contains generated, non-executable behavioral scenarios derived from approved contract.
 
 ##### feature / capability
 States which workflow, story, or behavior the scenarios cover.
@@ -496,7 +494,7 @@ This tier contains executable implementation and verification artifacts.
 `tests` provide executable verification of behavior, regressions, and contract compliance.
 
 - unit tests, integration tests, and executable BDD tests belong here
-- if a Gherkin scenario becomes runnable in the test suite, it moves from context to code
+- if a runnable tests are generated from the `bdd` scenario, they become part of the executable test suite (code)
 
 #### `runtime / ops glue`
 `runtime / ops glue` handles configuration, packaging, deployment, migrations, and operational wiring.

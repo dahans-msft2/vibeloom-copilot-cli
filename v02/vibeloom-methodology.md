@@ -53,18 +53,16 @@ The core principles of VibeLoom methodology are:
 ## Overview
 Here is an overview of developing a system using VibeLoom:
 - Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
-- To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current tier against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
-- First, the human defines **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
-- After the **intent-specs** are approved, **product-specs** (`prd`, `usm`, `dm`) are generated and validated using the same process.
-- After the **product-specs** are approved, **system-specs** (`system`, `containers`, `container`, `component`) are generated and validated using the same process.
-- Generation and validation of the **contract** is performed at the tier level
-  - The entire tier (however many specs it includes) is generated as a single operation
-  - The agent asks for approval of the entire tier after the tier is generated, to reduce approval steps.
-  - The entire tier is reviewed, evaled, and approved as a single operation.
-  - Even if a human edited individual specs, the review/eval/approval is performed for the entire tier as a whole to avoid inconsistency and incoherence across specs in the same tier.
-  - Generation process can proceed to the next tier **only after** the entire tier (all specs in the tier) is approved.
+- To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current governance surface against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
+- Every run starts with **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
+- The run then proceeds downward through **product-specs** (`prd`, `usm`, `dm`) and **system-specs** (`system`, `containers`, `container`, `component`) as needed.
+- Generation and validation of the **contract** use one of two governance profiles:
+  - `full` uses **tier-scope approval**
+  - `lite` uses **contract-scope approval** across the affected contract stack for the current run
+- In `full`, each affected contract tier is generated, reviewed, evaled, and approved as one unit before the run proceeds to the next lower contract tier.
+- In `lite`, the affected contract stack is generated first and then reviewed, evaled, and approved as one unit before context and code proceed.
 - **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd`, and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
-- Context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. Because agentic generation is still early, the workflow may pause after generating context so a human can optionally review or eval it against upstream specs.
+- Context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. In `full`, context is still a visible boundary and the workflow pauses before code so a human can review or eval it against upstream specs. In `lite`, context normally flows directly into code.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - After the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
 
@@ -74,7 +72,7 @@ Here is an overview of developing a system using VibeLoom:
 
 VibeLoom governs application development through a compact contract stack.
 The application artifacts play the following roles:
-- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved only at the tier boundary.
+- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved at the current governance boundary (`full`: tier scope, `lite`: contract scope across the affected contract stack for the run).
 - **context**: normative execution truth for agents. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata and do not require human approval, although humans may review or edit them in exceptional cases.
 - **code**: the executable result. Humans are not expected to edit it directly.
 
@@ -95,7 +93,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
-Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
+Tiers are a generation and governance abstraction. In `full`, review, eval, and approval act at tier scope. In `lite`, review, eval, and approval act at contract scope across the affected contract tiers for the current run. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
 Governance binds to the tier semantics, not to a fixed list of specs inside the tier. A tier may gain or lose specs over time without changing the review, eval, and approval model.
 
 ---
@@ -129,7 +127,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
-All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although the workflow may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. In `full`, the workflow pauses at the context boundary before code. In `lite`, context normally flows directly into code. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -515,36 +513,54 @@ VibeLoom workflow governs how change moves from human request to approved contra
 
 At a conceptual level, the workflow is:
 
-1. Identify the highest affected tier.
-2. Generate that tier as a batch from approved upstream truth.
-3. Review, eval, and approve the tier at the tier boundary.
-4. Continue downward until the required contract tiers are settled.
+1. Start from `intent-specs` and identify the affected contract stack for the current run.
+2. Generate the affected contract tiers as batches from approved upstream truth.
+3. In `full`, review, eval, and approve each affected tier at tier scope before moving downward.
+4. In `lite`, review, eval, and approve the affected contract stack as one contract-scope unit.
 5. Generate context from approved contract.
-6. Generate or reconcile code from approved contract and context.
+6. In `full`, pause at the context boundary before code. In `lite`, continue into code by default.
+7. Generate or reconcile code from approved contract and context.
 
-Profiles and modes change workflow defaults, not tier semantics.
+Profiles change governance granularity and pause topology. Modes, applicable only in `full`, change who meaningfully reviews which non-intent contract tier by default. Neither changes artifact semantics or the contract/context/code ontology.
 
 ### Profiles
 
-Profiles control workflow rigor, not artifact scope. Both profiles use the same contract stack.
+Profiles are run-time-switchable governance profiles. Both profiles use the same contract stack.
 
 | Profile | Meaning | Approval behavior | Typical use |
 | --- | --- | --- | --- |
-| `lite` | Lower-ceremony orchestration with hidden internal classification | One approval pause after the contract stack for the current run is generated; code still waits for approved specs | Smaller or lower-risk projects |
-| `full` | Explicit, more ceremonial orchestration with visible tier boundaries | Tier-by-tier approval gates before proceeding downward | Larger, longer-lived, or parallelized systems |
+| `lite` | Lower-ceremony orchestration that treats the affected contract stack for the current run as one governance surface | Contract-scope approval of the affected contract stack, followed by direct context-to-code flow by default | Clearly simple systems with one semantic bounded context and limited business logic |
+| `full` | Explicit orchestration that keeps contract tiers and the context boundary visible | Tier-scope approval of each affected contract tier, plus a mandatory pause after context before code | Larger, longer-lived, parallelized, or semantically richer systems |
 
 `lite` is intentionally less ceremonial, not less safe. `full` is intentionally more explicit, not semantically different.
 
+Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `full` otherwise, especially when multiple bounded contexts are present or likely, workflows are non-trivial, boundaries matter materially, or multiple people or agents may work in parallel.
+
 ### Modes
 
-Modes control working focus, not truth semantics. They are orthogonal to profiles.
+Modes are run-time-switchable review-ownership defaults inside `full`. They do not apply conceptually in `lite`, where the contract is approved as one human-governed unit.
 
-| Mode | Primary focus | Typical emphasis |
-| --- | --- | --- |
-| `pm` | Product and contract shaping | intent, product-specs, acceptance intent, decision framing |
-| `dev` | Technical realization and delivery | system-specs, context, code, bounded technical change |
+Regardless of mode, `intent-specs` stay explicitly human-owned and every run still begins from `intent-specs`. Mode determines which non-intent contract tier the current human is expected to review meaningfully by default.
 
-Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, approval model, or tier semantics.
+| Mode | Meaningful human review | Default delegated approval | Typical emphasis |
+| --- | --- | --- | --- |
+| `pm` | `intent-specs` and `product-specs` | `system-specs` | requirements, workflows, acceptance intent, decision framing |
+| `dev` | `intent-specs` and `system-specs` | `product-specs` | technical boundaries, dependencies, and executable impact |
+
+`pm` is the default mode. Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, the contract/context/code ontology, or the requirement that the contract stack be approved before context and code proceed.
+
+Modes do not eliminate review of the non-owned contract tier. They only make it rarer.
+
+- Delegated review of the other tier is the default only for additive or otherwise non-semantic changes.
+- If generation introduces a **breaking semantic change** in the other tier, explicit review and approval of that tier becomes required before the run can complete.
+- That explicit review may be performed by the current human or delegated onward to the appropriate teammate.
+
+A **breaking semantic change** is a change to existing approved meaning, not simple addition of new material consistent with approved truth.
+
+Examples:
+
+- product-side: changed scope, workflow meaning, acceptance semantics, NFR target, or domain meaning
+- system-side: changed bounded-context placement, ownership, interface semantics, dependency semantics, or other approved technical meaning
 
 ### Lifecycle And Approval
 
@@ -557,13 +573,14 @@ Contract tiers move through these lifecycle states:
 
 Only contract artifacts are approved. Context does not normally carry approval-state metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
-Approval is always tier-level:
+`intent-specs` are always explicitly human-owned.
 
-- the agent generates the whole tier before asking for approval
-- the human reviews and evals the tier as a whole
-- generation proceeds downward only after the tier is approved
+Approval scope depends on profile:
 
-Delegated approval may exist as provenance, but it does not change the lifecycle model.
+- In `full`, the agent generates each affected contract tier before asking for approval, the human reviews and evals that tier as a whole, and generation proceeds downward only after that tier is approved.
+- In `lite`, the agent generates the affected contract stack for the current run before asking for approval, the human reviews and evals that contract stack as a whole, and context and code proceed only after that contract-scope approval is complete.
+
+Delegated approval may exist as provenance for tiers the current mode does not require the current human to review meaningfully by default, but it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
 
 ---
 
@@ -575,6 +592,8 @@ Generation is the contract-driven engine of the methodology. It works in two dim
 - **across** the artifacts inside one affected tier
 
 ### Tier Order
+
+Every run starts from `intent-specs` and then proceeds downward as needed.
 
 The normal top-down order is:
 
@@ -615,6 +634,8 @@ The default within-tier flow is:
 
 This is the core double-pass generation model of VibeLoom.
 
+In `full`, each affected contract tier pauses here for review, eval, and tier-scope approval before the run proceeds downward. In `lite`, the affected contract tiers for the current run may all be produced this way first and then reviewed, evaled, and approved together at contract scope.
+
 This chapter describes generation at tier and artifact level. Finer-grained section and entity derivation belongs to the context graph.
 
 ### Intent As Persistent Context
@@ -633,21 +654,21 @@ When approved upstream truth changes, dependent downstream artifacts become `sta
 
 These are three distinct conceptual activities:
 
-- `review` critiques and frames the current tier against approved upstream truth
+- `review` critiques and frames the current governance surface against approved upstream truth
 - `eval` checks structure and semantics
 - `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
 
-Review and eval use tier boundaries as governance surfaces, even though the underlying graph remains fine-grained. Reconciliation uses the same tier model to propagate approved truth downward.
+Review and eval use the current governance surface, even though the underlying graph remains fine-grained: tier scope in `full`, contract scope across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
 
 ### Review
 
-Review is the human-facing critique loop for the current tier against approved upstream truth and same-tier coherence.
+Review is the human-facing critique loop for the current governance surface against approved upstream truth and same-tier coherence.
 
 It may:
 
 - surface contradictions, ambiguity, and missing links
 - propose upstream or same-tier corrections
-- apply bounded fixes within the currently reviewed tier
+- apply bounded fixes within the currently reviewed governance surface
 
 Review does not propagate approved changes downward; that belongs to reconciliation.
 Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
@@ -662,7 +683,7 @@ VibeLoom uses three named eval types:
 | `semantic eval` | Analyze coverage, contradiction with upstream truth, componentization fit, and context sufficiency | No |
 | `behavioral eval` | Produce on-demand Gherkin acceptance scenarios from approved contract for later implementation | No |
 
-Structural eval and semantic eval normally run against the tier currently under review or approval. Behavioral eval produces context artifacts rather than new contract truth.
+Structural eval and semantic eval normally run against the governance surface currently under review or approval. Behavioral eval produces context artifacts rather than new contract truth.
 
 ### Reconciliation
 

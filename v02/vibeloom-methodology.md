@@ -109,7 +109,7 @@ The tier descriptions below define artifact structure and intent. Concrete docum
 | Spec         | Tier          | Role                                                                                                                                      | Primary audience    |
 | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
 | `intent`     | intent-specs  | Vision-like prose description of the system; may include both product and implementation wishes                                           | PMs                 |
-| `defaults`   | intent-specs  | Minimal constitution: global defaults, foundations, binding repo-wide rules, global technology baseline, agent defaults, quality defaults | Tech leads + agents |
+| `defaults`   | intent-specs  | Minimal repo-wide constitution: binding global rules, technology baseline, and quality guardrails | Tech leads + agents |
 | `prd`        | product-specs | Functional requirements and non-functional requirements                                                                                   | PMs + Tech leads    |
 | `usm`        | product-specs | Epic/story/workflow structure and acceptance framing                                                                                      | PMs + UX designers  |
 | `dm`         | product-specs | Domain model: bounded contexts, aggregates, invariants, ubiquitous language                                                               | PMs + Tech leads    |
@@ -139,7 +139,7 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 | Spec       | Description                                                                                                   |
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
 | `intent`   | Relatively free-form prose description of the system, including product wishes and implementation preferences |
-| `defaults` | Compact constitutional spec for global rules, defaults, and engineering expectations                          |
+| `defaults` | Compact constitutional spec for repo-wide rules, technology baseline, and quality guardrails                  |
 
 #### `intent` spec
 `intent` is a relatively free-form prose description of the required application with two sections.
@@ -149,25 +149,25 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 
 - `intent` may include both product-level and implementation-level wishes.
 - `intent` stays prose-first rather than fully normalized.
+- User-supplied technical preferences and constraints may enter through `intent`. They are promoted into `defaults` only when they become repo-wide and always-on. Otherwise, they are normalized into the narrowest downstream contract that actually owns them.
 
 #### `defaults` spec
-`defaults` is the minimal constitution for repo-wide rules, defaults, and execution expectations.
+`defaults` is the minimal repo-wide constitution. It contains only always-on, globally binding defaults that downstream tiers and code must follow.
+
 - Normalized global constraints belong here.
-- Project rationale belongs in `intent`, not in `defaults`.
+- Product rationale belongs in `intent`, not in `defaults`.
+- Local scope guidance belongs in execution guidance, not in `defaults`.
+- Detailed generation or runtime mechanics belong in implementation, not in `defaults`.
+- Optional tactics and pattern catalogs do not belong in `defaults`.
 - Downstream tiers must treat `defaults` as binding constitution.
 
 The standard sections are:
 
 | Section | Purpose |
 | --- | --- |
-| `foundations` | States the foundational methodologies or conceptual bases the repo follows. |
-| `repo` | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
-| `rules` | Records globally binding structural and engineering rules. |
-| `tech` | Captures repo-global technology choices that all downstream tiers should assume. |
-| `agents` | Defines global context-loading and execution rules for agents. |
-| `code` | Defines default implementation habits such as test-first work and boundary discipline. |
-| `quality` | Captures universal quality expectations that apply across the repo. |
-| `toolbox` | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
+| `repo constitution` | Records globally binding structural, workflow, and engineering rules that apply across the repo. |
+| `technology baseline` | Captures repo-global technical choices that all downstream tiers should assume. |
+| `quality guardrails` | Captures universal quality and correctness expectations that apply across the repo. |
 
 
 ---
@@ -789,8 +789,8 @@ At the conceptual level, these artifacts solve different problems.
 
 So:
 
-- `defaults` says what is globally true or globally preferred
-- `execution guidance` says how to work safely in this scope right now
+- `defaults` says what is globally binding across the repo
+- `execution guidance` says how to work safely and effectively in this scope right now
 
 If execution guidance conflicts with contract, contract wins semantically.
 

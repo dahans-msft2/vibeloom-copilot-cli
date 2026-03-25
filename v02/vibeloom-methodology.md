@@ -72,12 +72,18 @@ Here is an overview of developing a system using VibeLoom:
 
 ## The Contract Stack
 
+### Overview
+
 VibeLoom governs application development through a compact contract stack.
 The application artifacts play the following roles:
 - **contract**: human-gated semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers. They are generated tier-by-tier as batches, and the agent asks for approval only after the whole tier is generated. Approval is performed only at tier level.
 - **context**: agent-facing operational truth. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata, and they do not require human approval. Humans may review or edit them in exceptional cases, but the recommended fix path is to amend upstream contract and regenerate context.
 - **code**: the executable result. Humans are not expected to edit it directly.
-Contract defines normative truth. Context distills that truth for agents. Code implements the application based on the above.
+Contract defines semantic truth. Context defines execution truth for agents. Code implements the application based on the above.
+
+**contracts** artifacts are **human-gated** - the workflow expects explicit human review and approval before the tier is accepted as current truth.
+**contracts** and **context** artifacts are **normative** - an artifact serves as a source of truth that downstream generation, execution, review, or evaluation within its scope must follow.
+**code** artifacts are **executable** - an artifact runs as implementation, verification, packaging, deployment, or operational logic.
 
 ### Generation Tiers
 
@@ -93,26 +99,6 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 
 Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Traceability and dependency remain as fine-grained as possible within and across tiers and should be represented in a context graph.
 Governance binds to the tier semantics, not to a fixed list of specs inside the tier. A tier may gain or lose specs over time without changing the review, eval, and approval model.
-
-### Tier Attributes
-
-VibeLoom uses three cross-cutting tier attributes:
-
-| Attribute     | Meaning                                                                                                   |
-| ------------- | --------------------------------------------------------------------------------------------------------- |
-| `human-gated` | The workflow expects explicit human review and approval before the tier is accepted as current truth. |
-| `normative`   | The artifact defines the intended current meaning of the system or product.                               |
-| `executable`  | The artifact runs as implementation, verification, packaging, deployment, or operational logic.           |
-
-These attributes apply to the tiers as follows:
-
-| Tier          | Human-gated | Normative | Executable | Notes                                                                                                           |
-| ------------- | ----------- | --------- | ---------- | --------------------------------------------------------------------------------------------------------------- |
-| intent-specs  | yes         | yes       | no         | Defines high-level product intent and repo-wide defaults.                                                       |
-| product-specs | yes         | yes       | no         | Defines formally traceable requirements, workflows, and domain semantics.                                       |
-| system-specs  | yes         | yes       | no         | Defines technical structure and runtime design intent.                                                          |
-| context       | no          | no        | no         | Serves as the default source of execution truth for agents, but yields to contract specs on semantic conflicts and normally has no explicit approval-state metadata. |
-| code          | no          | no        | yes        | Implements and verifies the approved contracts.                                                                 |
 
 ---
 
@@ -143,7 +129,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
-All semantic normative truth lives in contract specs. Context artifacts are the default execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although implementations may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although implementations may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -588,7 +574,7 @@ Delegated approval may exist as provenance, but it does not change the lifecycle
 
 ## Generation
 
-Generation is the contract-producing engine of the methodology. It works in two dimensions:
+Generation is the contract-driven engine of the methodology. It works in two dimensions:
 
 - **down** through the tiers
 - **across** the artifacts inside one affected tier

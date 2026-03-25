@@ -97,7 +97,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts (for example `AGENTS.md`, `CLAUDE.md`), `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
-Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Traceability and dependency remain as fine-grained as possible within and across tiers and should be represented in a context graph.
+Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
 Governance binds to the tier semantics, not to a fixed list of specs inside the tier. A tier may gain or lose specs over time without changing the review, eval, and approval model.
 
 ---
@@ -474,8 +474,8 @@ States which epic, workflow, story, or behavior the scenarios cover.
 ##### scenarios
 Describes the generated scenarios in Gherkin form for humans or agents to implement later.
 
-##### traceability
-Links scenarios back to the relevant requirements, stories, or technical contracts.
+##### derivation
+Lists the relevant upstream requirements, stories, domain concepts, or technical contracts the scenarios are produced from.
 
 - Context artifacts are generated from contract specs.
 - Context artifacts are not human-gated and normally do not have approval-state metadata.
@@ -715,33 +715,47 @@ Exact parameters, flags, file formats, and CLI surfaces belong to implementation
 
 VibeLoom relies on an explicit context graph rather than on implicit chat memory.
 
-The graph connects contract, context, and code artifacts, sections, and entities through typed edges so humans and agents can answer:
+The graph connects addressable items defined inside contract, context, and code artifacts so humans and agents can answer:
 
-- what depends on what
-- what owns what
+- what is produced from what
 - what becomes stale if something changes
 - what must be loaded for a given task
-- what traces to what
+- how downstream work can be traced back to upstream truth
 
-### Edge Types
+The only item-to-item relationship in the graph is the primary relation `derivation`.
 
-The graph should capture at least these relationships:
+### Derivation
 
-- **derivation edges:** which upstream inputs a downstream artifact, section, or entity is produced from
-- **traceability edges:** which upstream requirement, workflow, domain concept, technical boundary, or behavior a downstream item refines, realizes, or verifies
-- **dependency edges:** one artifact or item depends on another for correctness
-- **ownership edges:** which container, component, or scope owns which interfaces or code paths
-- **generation edges:** which downstream artifacts are generated from which approved upstream truth
-- **staleness edges:** which downstream items become stale when an upstream item changes
-- **loading edges:** which artifacts or scopes should be loaded together for safe execution
-
-Derivation edges are also set-based:
+Each downstream item records the set of upstream inputs it is produced from:
 
 ```text
 downstream_item <- [input1, input2, ... inputn]
 ```
 
 This allows one downstream section or entity to depend on multiple semantic inputs without forcing the methodology into artificial `1:n` or `n:n` terminology.
+
+For root intent capture, `n` may be `0`. For downstream items, `n` is usually one or more.
+
+### Containment And Ownership
+
+Items are owned by the artifact in which they are defined.
+
+Conceptually:
+
+```text
+item -> section -> artifact -> tier
+```
+
+Ownership therefore comes from containment, not from a separate item-to-item graph relation.
+
+### Derived Views
+
+Several useful views are inferred from derivation plus containment:
+
+- **traceability:** walk derivation upward or downward to explain where an item came from and what it influences
+- **staleness:** if an upstream item changes, mark all reachable downstream items and their containing artifacts as stale
+- **loading:** load the smallest artifact or scope that contains the required downstream item and its upstream inputs
+- **artifact impact:** summarize item-level derivations upward into affected sections, artifacts, and tiers
 
 ### Context Loading
 
@@ -765,7 +779,7 @@ It supports:
 - impact analysis
 - stale detection
 - eval grounding
-- ownership clarity
+- ownership clarity through containment
 - parallel work allocation
 
 ---

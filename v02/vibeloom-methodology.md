@@ -2,7 +2,7 @@
 
 VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence. It uses a **contract** - a tiered set of specifications validated for consistent and coherence - to code-generate an application.
 
-This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior are specified from and must conform to this document.
+This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior should be derived from and must conform to this document.
 
 ---
 
@@ -397,6 +397,28 @@ Captures local test expectations and important runtime notes.
 - Each component belongs to exactly one bounded context.
 - Each component has exactly one container home.
 
+#### technical boundary rules
+`system-specs` define the semantic-to-runtime mapping that makes technical ownership explicit.
+
+- bounded context defines semantic home
+- component defines owned technical change boundary
+- container defines runtime and deployment home
+- a bounded context must not span multiple containers
+- components from the same bounded context must be co-located in the same container
+
+#### component derivation
+Components are derived from domain semantics first, then checked for implementation safety.
+
+The default derivation process is:
+
+1. Start from a bounded context in `dm`.
+2. Identify aggregate candidates and their invariants.
+3. Treat aggregate cores as the default first pass for component candidates.
+4. Add process or workflow components when important behavior is not a natural responsibility of one aggregate.
+5. Add adapter components where external systems, protocols, or translations must be isolated.
+6. Add query or read components only when read complexity, ownership, or performance justifies them.
+7. Merge or split candidates until each component owns a coherent write surface, clear interfaces, and a safe independent work scope.
+
 ---
 
 ### `context` tier
@@ -506,499 +528,269 @@ This tier contains executable implementation and verification artifacts.
 
 ---
 
-## Technical Structure Model
+## Workflow
 
-VibeLoom uses three technical description levels:
+VibeLoom workflow governs how change moves from human request to approved contract, generated context, and executable code.
 
-| Artifact | Answers | Does not own |
-| --- | --- | --- |
-| `system.md` | What system exists, who or what surrounds it, and which high-level boundaries matter | Detailed deployment topology or component inventory |
-| `containers.md` | Which deployable/runtime boundaries exist, how they communicate, and where they run | Local component contracts |
-| `container.md` | Which bounded contexts and components live in this container, and what local runtime constraints apply | Cross-system topology |
-| `component.md` | What one owned technical boundary is responsible for, which interfaces it owns, and which code paths it governs | Whole-container or whole-system maps |
+At a conceptual level, the workflow is:
 
-### product-specs
+1. Identify the highest affected tier.
+2. Generate that tier as a batch from approved upstream truth.
+3. Review, eval, and approve the tier at the tier boundary.
+4. Continue downward until the required contract tiers are settled.
+5. Generate context from approved contract.
+6. Generate or reconcile code from approved contract and context.
 
-VibeLoom relies on the following best practices and methodologies:
-- **Product Requirements Document** - for `prd`
-- **User Story Mapping**. for `usm`
-- **Domain Driven Design** for `dm` - semantic modeling: bounded contexts, aggregates, invariants, and ubiquitous language
-- **C4** for system and container description
-
-Everything else is produced from or subordinate to explicit VibeLoom rules.
-
-### system-specs
-
-These relationships are normative:
-
-1. **The component is the primary unit of ownership, safe change, and agent work allocation.**
-2. **Every component belongs to exactly one bounded context.**
-3. **Every component has exactly one container home.**
-4. **A bounded context must not span multiple containers.**
-5. **Components from the same bounded context must be co-located in the same container.**
-6. **A container may host multiple bounded contexts.**
-
-This gives VibeLoom a clear semantic-to-runtime mapping:
-
-- bounded context defines semantic home
-- component defines owned technical change boundary
-- container defines runtime and deployment home
-
-### Component Derivation
-
-VibeLoom does not derive components from filesystem shape or deployment shape. It derives them from semantics first, then validates them against implementation safety.
-
-The default derivation process is:
-
-1. Start from a bounded context in `dm.md`.
-2. Identify aggregate candidates and their invariants.
-3. Treat aggregate cores as the default first pass for component candidates.
-4. Add **process/workflow components** when important behavior is not a natural responsibility of one aggregate.
-5. Add **adapter components** where external systems, protocols, or translations must be isolated.
-6. Add **query/read components** only when read complexity, ownership, or performance justifies them.
-7. Merge or split candidates until each component owns a coherent write surface, clear interfaces, and a safe independent work scope.
-
-This archetype set is a VibeLoom heuristic informed by DDD aggregates and services, plus boundary patterns such as adapters. It is **not** presented as an Evans taxonomy.
-
-### Container Inventory and Component Discovery
-
-Agents do not discover components by guessing from folder names.
-
-`container.md` is the authoritative component inventory for one container. At minimum, it lists for each component:
-
-- component ID or official name
-- folder path
-- bounded context
-- one-line responsibility
-
-It may also summarize owned interfaces or direct local dependencies when that improves navigation.
-
-Agents discover components by reading `container.md` first, then loading the matching `component.md`. The filesystem convention is a consistency check and navigation aid, not the source of truth.
-
-### Component Metadata
-
-`component.md` frontmatter must include at minimum:
-
-- `status`
-- `version`
-- `dependencies`
-- `approval_mode`
-- `bounded_context`
-- `container`
-- `owned_paths`
-- `owned_interfaces`
-- `trace_to`
-
-These fields are the minimum needed to support ownership, stale detection, approval provenance, and traceability.
-
----
-
-## Workflow And Operations
-
-VibeLoom defines methodology-level operations. Implementations may expose them through different commands or interfaces, but the logical operations stay the same.
-
-| Operation | Direction | Meaning |
-| --- | --- | --- |
-| `init` | top-down | Bootstrap a governed repo and produce the first draft contract stack |
-| `vibeloom` | top-down | Primary orchestrator for natural-language change requests; determines affected tiers and cascades through them |
-| `generate` | top-down | Generate one affected tier from upstream truth using a forward-pass, back-pass, and validation flow; narrower artifact regeneration is a bounded optimization |
-| `review` | up + lateral | Critique the current generated tier at its governance boundary and optionally apply bounded fixes within that tier |
-| `eval` | up | Run formal structural and semantic checks for the current tier; tier-boundary evaluation is the normal and only governance surface |
-| `fix` | top-down | Propagate approved upstream changes down to stale downstream artifacts and tiers |
-| `approve` | gate | Move a reviewed contract tier from `draft` to `approved`, record provenance, and increment version |
-| `status` | read-only | Show lifecycle state, dependency health, stale propagation, and coverage gaps |
-| `import` | bottom-up | Reconstruct candidate contracts from an unmanaged or drifted codebase |
-
-### Generation Order
-
-Generation, review, and evaluation work in two dimensions:
-
-- **Vertically:** lower tiers are generated from higher-tier truth.
-- **Horizontally:** artifacts inside one tier are generated in dependency order and reconciled back across the tier when later artifacts sharpen earlier ones.
-
-The normal top-down tier order is:
-
-```text
-intent -> product-specs -> system-specs -> context -> code
-```
-
-Within that flow, the normal artifact order is:
-
-1. `intent.md`
-2. `defaults.md`
-3. `prd.md`
-4. `usm.md`
-5. `dm.md`
-6. `system.md`
-7. `containers.md`
-8. affected `container.md` files
-9. affected `component.md` files
-10. generated `AGENTS.md` files
-11. code
-
-`defaults.md` becomes the authoritative home for normalized global constraints after intent capture. `intent.md` remains authoritative for product purpose, rationale, and non-normalized nuance.
-
-### Tier Generation Semantics
-
-Specs are generated down and across:
-
-- **down** through the named tiers
-- **across** the artifacts inside each affected tier
-
-Within one affected tier, artifacts are generated and governed as a batch rather than as individually approved fragments.
-
-The default flow is:
-
-1. Generate the affected tier in dependency order.
-2. Run a **forward pass** across the tier.
-3. Run a **back pass** across the same tier if later artifacts require coherent updates to earlier artifacts.
-4. Run structural and semantic validation for the generated tier.
-5. If validation surfaces issues, one additional forward-back round is permitted before presenting results.
-6. Mark all resulting artifacts in that tier as `draft`.
-7. Review, evaluate, and approve the tier before relying on it as approved contract truth.
-
-Approval is performed only at tier level. Individual artifacts may still be edited while shaping a tier, but the methodology-level approval surface is always the generated tier.
-
-### Intent As Persistent Context
-
-`intent.md` is loaded as generation context at every tier, not only when generating product-specs.
-
-This is deliberate: intent may contain user constraints that must survive all the way into system design and code. Intent is prose-first rather than ID-traced, so its authority is enforced through persistent loading plus review and semantic evaluation.
-
-### Bottom-Up Evaluation
-
-Consistency and coherence checks run upward.
-
-Every downstream artifact is evaluated against its immediate upstream contracts, but the human-facing governance surface is the current generated tier. This is why `review`, `eval`, and `approve` happen at tier boundaries even though traceability and dependency edges remain fine-grained and should be captured in a context graph.
-
-### Change Propagation
-
-When an upstream contract changes, dependent downstream artifacts become `stale` through explicit declared dependency edges. The system does not rely on intuition or chat memory to decide what must be revisited.
-
-The approval boundary depends on profile:
-
-- In `full`, the next tier does not begin until the current tier is approved.
-- In `lite`, the orchestrator may generate the spec tiers in one run from drafts created earlier in that run, then pause once before code generation.
+Profiles and modes do not change tier semantics. A tier may gain or lose specs over time without changing the governance model.
 
 ### Profiles
 
 Profiles control workflow rigor, not artifact scope. Both profiles use the same contract stack.
 
-| Profile | Classification | Approval behavior | Typical use |
+| Profile | Meaning | Approval behavior | Typical use |
 | --- | --- | --- | --- |
-| `lite` | Hidden internal classifier for safe scoping and escalation | One approval pause after the contract stack for the current run is generated; code still waits for approved specs | Smaller or lower-risk projects |
-| `full` | Explicit visible classifier | Tiered approval gates before proceeding downward | Larger, longer-lived, or parallelized systems |
+| `lite` | Lower-ceremony orchestration with hidden internal classification | One approval pause after the contract stack for the current run is generated; code still waits for approved specs | Smaller or lower-risk projects |
+| `full` | Explicit, more ceremonial orchestration with visible tier boundaries | Tier-by-tier approval gates before proceeding downward | Larger, longer-lived, or parallelized systems |
 
-`lite` is intentionally less ceremonial, not less safe. It may generate multiple spec tiers in one orchestrated run from upstream drafts created earlier in that same run.
+`lite` is intentionally less ceremonial, not less safe. `full` is intentionally more explicit, not semantically different.
 
-### Lifecycle and Approval Provenance
+### Modes
 
-Lifecycle states are limited to:
+Modes control working focus, not truth semantics. They are orthogonal to profiles.
+
+| Mode | Primary focus | Typical emphasis |
+| --- | --- | --- |
+| `pm` | Product and contract shaping | intent, product-specs, acceptance intent, decision framing |
+| `dev` | Technical realization and delivery | system-specs, context, code, bounded technical change |
+
+Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, approval model, or tier semantics.
+
+### Lifecycle And Approval
+
+Contract tiers move through these lifecycle states:
 
 - `draft`
 - `approved`
 - `stale`
 - `superseded`
 
-There is no separate `auto-approved` lifecycle state.
+Only contract artifacts are approved. Context does not normally carry approval-state metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
-Delegated approval is represented through provenance metadata:
+Approval is always tier-level:
+
+- the agent generates the whole tier before asking for approval
+- the human reviews and evals the tier as a whole
+- generation proceeds downward only after the tier is approved
+
+Delegated approval may exist as provenance, but it does not change the lifecycle model.
+
+---
+
+## Generation
+
+Generation is the contract-producing engine of the methodology. It works in two dimensions:
+
+- **down** through the tiers
+- **across** the artifacts inside one affected tier
+
+### Tier Order
+
+The normal top-down order is:
 
 ```text
-approval_mode: human | delegated
+intent-specs -> product-specs -> system-specs -> context -> code
 ```
 
-Delegated approval still results in `approved`. It allows orchestration to proceed while preserving the fact that a human did not directly review that artifact at that moment.
+Each tier is produced from approved upstream truth:
 
-### Approval and Versioning
+| Tier | Primary upstream basis | Output |
+| --- | --- | --- |
+| `intent-specs` | human request, edits, and prior repo intent | `intent`, `defaults` |
+| `product-specs` | approved `intent-specs` | `prd`, `usm`, `dm` |
+| `system-specs` | approved `product-specs` | `system`, `containers`, `container`, `component` |
+| `context` | approved contract stack | `AGENTS`, decision records, behavioral projections, and other execution artifacts |
+| `code` | approved contract plus relevant context | executable implementation and tests |
 
-Only contract artifacts are approved.
+### Within-Tier Generation
 
-On approval:
+An affected tier is generated as a batch rather than as individually governed fragments.
 
-- status becomes `approved`
-- version increments
-- approval provenance is recorded
-- downstream artifacts may become `stale` through declared dependencies
+The default within-tier flow is:
 
-Git history provides the long-term audit trail for approvals and amendments.
+1. Generate the artifacts of the tier in dependency order.
+2. Run a forward pass across the tier.
+3. Run a back pass if later artifacts sharpen or correct earlier artifacts.
+4. Run structural and semantic validation for the tier.
+5. If necessary, run one more bounded forward-back round.
+6. Mark the resulting contract artifacts as `draft`.
+
+This is the core double-pass generation model of VibeLoom.
+
+### Intent As Persistent Context
+
+`intent` persists as generation context across every lower tier, not only when producing `product-specs`.
+
+This is deliberate: user wishes and constraints may survive all the way into system design and code, even when they were not fully normalized into later specs.
+
+### Generation And Staleness
+
+When approved upstream truth changes, dependent downstream artifacts become `stale` through explicit graph edges. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time.
 
 ---
 
 ## Review, Eval, And Reconciliation
 
-`review` and `eval` are related but distinct.
+These are three distinct conceptual activities:
 
-- `review` is human-facing critique plus optional bounded remediation.
-- `eval` is structured validation of the current scope against the current rules.
+- `review` critiques and frames issues
+- `eval` checks structure and semantics
+- `reconciliation` realigns lower layers after approved truth changes or drift is detected
 
-Both operate on the affected tier as the governance surface for spec work.
+Review and eval use tier boundaries as governance surfaces, even though the underlying graph remains fine-grained. Reconciliation uses the same tier model to propagate approved truth downward.
 
 ### Review
 
-VibeLoom keeps a single `review` operation. The interface may expose different options, but the methodology-level behaviors are:
+Review is the human-facing critique loop.
 
-- **Advisory review:** findings and proposed fixes only
-- **Bounded remediation:** apply bounded fixes inside the allowed scope
-- **Custom instructions:** apply explicit user instructions while staying inside review rules
+It may:
 
-Review may:
-
-- surface contradictions, unclear assumptions, and missing links
+- surface contradictions, ambiguity, and missing links
 - propose upstream or lateral corrections
-- apply bounded fixes within scope
+- apply bounded fixes within the currently reviewed tier
 
-In normal top-down operation, review is performed at the generated tier boundary. Traceability and dependency analysis may still drill into individual specs and edges, but human review remains tier-level.
+Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
 
-Review may **not** silently rewrite semantically meaningful upstream truth. When an upstream amendment changes meaning, the human chooses the direction and later approves the updated contract artifact.
+### Eval
 
-### Eval Types
-
-VibeLoom uses three named eval types.
+VibeLoom uses three named eval types:
 
 | Eval Type | Purpose | Blocking |
 | --- | --- | --- |
-| Structural eval | Validate frontmatter, IDs, lifecycle rules, dependency declarations, path/spec consistency, and reference integrity | Yes |
-| Semantic eval | Analyze requirement coverage, boundary sanity, componentization fit, contradiction with upstream truth, and context sufficiency | No |
-| Behavioral eval | Produce on-demand Gherkin scenarios from approved contracts for later implementation | No |
+| `structural eval` | Validate lifecycle rules, references, required fields, declared relationships, and basic stack integrity | Yes |
+| `semantic eval` | Analyze coverage, contradiction with upstream truth, componentization fit, and context sufficiency | No |
+| `behavioral eval` | Produce on-demand Gherkin acceptance scenarios from approved contract for later implementation | No |
 
-Structural eval and semantic eval run against the tier currently under review, fix, or approval. The methodology-level eval surface remains the tier even when the underlying traceability and dependency graph is finer-grained.
+Structural eval and semantic eval normally run against the tier currently under review or approval. Behavioral eval produces context artifacts rather than new contract truth.
 
-Behavioral eval outputs belong to context, not contract. They guide humans or agents who later implement tests or scenarios in code.
+### Reconciliation
 
-### Asymmetric Reconciliation
+Reconciliation is downstream realignment after approved truth changes or drift becomes visible.
 
-Reconciliation is built into `review` and `fix`.
+It is asymmetric:
 
-The rule is asymmetric:
-
-- approved upstream contracts define intended semantics
+- approved upstream contract defines intended meaning
 - downstream artifacts and code may reveal drift
 - drift triggers proposals, not silent rewriting of approved truth
 
-When drift appears, the agent proposes one of two directions:
+When drift appears, the human chooses one of two semantic directions:
 
-1. Amend upstream truth, then stale and fix downstream artifacts
-2. Preserve upstream truth, then correct downstream artifacts or code
+1. Amend upstream truth, then regenerate and reconcile downstream.
+2. Preserve upstream truth, then correct downstream context or code.
 
-Humans choose whenever the resolution changes meaning.
+To prevent loops, reconciliation stays bounded:
 
-### Bounded Reconciliation
+1. Review identifies and frames the drift.
+2. Human chooses semantic direction when needed.
+3. Reconciliation propagates the approved direction downward.
+4. Eval validates the resulting state.
 
-To prevent endless loops:
+---
 
-1. `review` identifies and frames the drift
-2. human chooses the semantic direction when needed
-3. `fix` propagates approved upstream changes downward
-4. `eval` validates the resulting state
+## Operations
+
+VibeLoom defines eight methodology-level operations. Implementations may expose them through different commands or interfaces, but the logical operations stay the same.
+
+| Operation | Direction | Meaning |
+| --- | --- | --- |
+| `init` | top-down | Bootstrap a governed repo and produce the first draft contract stack |
+| `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
+| `review` | up + lateral | Critique the current generated tier and optionally apply bounded fixes within that tier |
+| `eval` | up | Run structural, semantic, or behavioral evaluation for the current tier |
+| `reconcile` | top-down | Propagate approved upstream changes downward into stale downstream tiers, context, or code |
+| `approve` | gate | Move a reviewed contract tier from `draft` to `approved` and record approval provenance |
+| `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
+| `import` | bottom-up | Reconstruct candidate contract from an unmanaged or heavily drifted codebase |
+
+Exact parameters, flags, file formats, and CLI surfaces belong to implementation, not to methodology.
+
+---
+
+## Context Graph
+
+VibeLoom relies on an explicit context graph rather than on implicit chat memory.
+
+The graph connects contract, context, and code items through typed edges so humans and agents can answer:
+
+- what depends on what
+- what owns what
+- what becomes stale if something changes
+- what must be loaded for a given task
+- what traces to what
+
+### Edge Types
+
+The graph should capture at least these relationships:
+
+- **traceability edges:** requirement -> workflow/story -> domain concept -> technical boundary -> scenario or test
+- **dependency edges:** one artifact or item depends on another for correctness
+- **ownership edges:** which container, component, or scope owns which interfaces or code paths
+- **generation edges:** which downstream artifacts are generated from which approved upstream truth
+- **staleness edges:** which downstream items become stale when an upstream item changes
+- **loading edges:** which artifacts or scopes should be loaded together for safe execution
+
+### Context Loading
+
+Context loading is graph traversal, not guesswork.
+
+The conceptual rules are:
+
+- always start from the smallest scope that still preserves the required truth
+- load governing contract before relying on context artifacts
+- use context artifacts to accelerate execution, never to override contract
+- escalate upward when it is unclear whether a change stays within one component, bounded context, or container
+- keep generation and review aware of persistent intent when that intent still constrains the change
+
+### Why The Graph Matters
+
+The context graph is what makes VibeLoom scalable for swarms of agents and long-lived repos.
+
+It supports:
+
+- minimal safe context loading
+- impact analysis
+- stale detection
+- eval grounding
+- ownership clarity
+- parallel work allocation
 
 ---
 
 ## Defaults vs AGENTS
 
-`defaults.md` and `AGENTS.md` solve different problems.
+At the conceptual level, these artifacts solve different problems.
 
-### `defaults.md`
+- `defaults` is contract. It records the always-on constitutional defaults of the repo.
+- `AGENTS` is context. It records scope-specific execution guidance generated from approved truth.
 
-`defaults.md` is a contract artifact: repo-scoped, durable, and always loaded. It is a **minimal constitution**, not a handbook and not a buzzword list.
+So:
 
-It contains these sections:
+- `defaults` says what is globally true or globally preferred
+- `AGENTS` says how to work safely in this scope right now
 
-1. `Repo Defaults`
-2. `Foundations`
-3. `Repo-Wide Rules`
-4. `Technology Baseline`
-5. `Agent Defaults`
-6. `Code Generation Defaults`
-7. `Quality Defaults`
-8. `Toolbox Note`
+If `AGENTS` conflicts with contract, contract wins semantically.
 
-`defaults.md` is also the authoritative home for normalized global constraints after intent capture.
-
-### Foundations
-
-The only named foundations are:
-
-- `DDD`
-- `C4`
-
-They explain where the contract model comes from. They do not replace explicit VibeLoom rules.
-
-### Repo-Wide Rules
-
-The binding structural rules in `defaults.md` are:
-
-1. The component is the primary unit of ownership, safe change, and agent work allocation.
-2. Every component belongs to exactly one bounded context.
-3. A bounded context must not span multiple containers.
-4. Components from the same bounded context must be co-located in the same container.
-5. A container may host multiple bounded contexts, but each component has exactly one container home.
-6. Cross-component interaction must occur through explicit owned interfaces.
-7. External systems and infrastructure must be isolated behind adapter boundaries rather than leaking into core component logic.
-8. Component naming and contracts must follow the bounded context's ubiquitous language.
-9. Contract-based technical work must be scoped through `container.md` and `component.md`, not inferred from code alone.
-10. Dependency and trace metadata must be explicit enough to support stale detection and impact analysis.
-
-### Technology Baseline
-
-Repo-global technology choices belong in `defaults.md` only when they truly apply across the whole governed application.
-
-Examples:
-
-- language and runtime baseline
-- primary framework choices
-- datastore baseline
-- cloud or hosting default
-- repo-wide testing or tooling defaults
-
-Local exceptions belong in `container.md` or `component.md`, not in the constitution.
-
-### Agent Defaults
-
-`defaults.md` records the repo-wide rules that agents must always respect:
-
-- what is always loaded
-- how context escalation works
-- which ownership rules are non-negotiable
-- how approval provenance is interpreted
-
-### Code Generation Defaults
-
-This subsection translates approved contracts into executable implementation behavior.
-
-It should stay compact and operational:
-
-1. For behavior changes, prefer test-first delivery: write or update unit, component, contract, or scenario tests before implementation when practical.
-2. Use the smallest test scope that can prove the behavior: unit tests inside one component first, broader workflow tests only when the change crosses explicit boundaries.
-3. Implement from the owned component boundary inward. Do not widen scope unless an explicit interface or contract change requires it.
-4. Keep domain logic inside the owning component and keep infrastructure-specific logic behind adapters.
-5. If behavior is semantically unclear, generate or refine scenarios first rather than inventing behavior in code.
-
-### Quality Defaults
-
-Only truly universal quality defaults belong here:
-
-1. Changes to a component should include or update test or scenario coverage appropriate to that component's risk.
-2. Retryable handlers, jobs, and integrations should be idempotent by default.
-3. Mutating component boundaries should emit sufficient logging or audit signals when the domain requires accountability.
-4. Security, authorization, and NFR constraints captured upstream are binding on downstream design and code.
-
-### Toolbox Note
-
-Optional tactics such as adapters, selective CQRS, SOLID heuristics, and familiar design-pattern catalogs may be used when they solve a concrete problem. They do **not** have equal normative status to `DDD`, `C4`, or explicit VibeLoom rules.
-
-### `AGENTS.md`
-
-`AGENTS.md` is regenerable context execution guidance.
-
-Generated governed applications may produce it at:
-
-- repo root
-- container level
-- component level
-
-Its job is to answer:
-
-- what this scope owns
-- what to load first
-- what not to touch
-- which checks or commands are common here
-- which local caveats matter during execution
-
-`defaults.md` says what is globally true or globally preferred. `AGENTS.md` says how to work safely in this scope right now.
-
----
-
-## Context Loading
-
-Agents have finite attention. VibeLoom therefore uses deterministic context scoping.
-
-### Always Loaded
-
-`defaults.md` is always loaded.
-
-### Usually Loaded
-
-`intent.md` is loaded for:
-
-- generation
-- review
-- repo-wide architectural decisions
-
-It does not have to be loaded for every purely local execution step once approved downstream contracts already capture the necessary constraints.
-
-### Scope-First Loading
-
-For technical work:
-
-1. Start from the target `component.md` if one component is being changed.
-2. Start from `container.md` if container-local structure or inventory is the question.
-3. Use `container.md` to discover components. Do not infer contract components from arbitrary folders.
-4. Load only the relevant `dm.md`, `usm.md`, or `prd.md` slices needed to understand the touched semantics.
-5. Load `containers.md` or `system.md` slices when container boundaries, deployment constraints, external interfaces, or NFR boundaries matter.
-
-### Context Guidance
-
-Load `AGENTS.md` only when it exists and reduces ambiguity. It helps execution, but it never substitutes for contract truth.
-
-### Escalation Rule
-
-If an agent is unsure whether a change stays within one component, one bounded context, or one container, it must escalate scope upward rather than under-scope the context.
-
----
-
-## Traceability
-
-Formal traceability starts at the PRD. `intent.md` remains prose-first and authoritative, but it is not ID-traced.
-
-The core chain is:
-
-```text
-PRD requirement -> USM story/workflow -> DM bounded context / aggregate / invariant -> system/container/component -> Gherkin scenario / code test
-```
-
-This chain enables:
-
-- impact analysis
-- coverage verification
-- stale detection
-- eval grounding
-
-### Dependency Metadata
-
-Every traced contract item below intent carries stable IDs or references appropriate to its layer.
-
-Artifacts declare enough dependency metadata to answer:
-
-- which upstream truth they depend on
-- which downstream artifacts become stale if they change
-- which code paths and interfaces they own
-
-When an approved upstream artifact changes version, dependent downstream artifacts become `stale` through explicit declared edges.
-
-### Example
-
-| Layer | Example |
-| --- | --- |
-| `PRD` | `PRD-FR-004` workspace sharing requires explicit invite approval |
-| `USM` | `STORY-018` owner approves a workspace invite |
-| `DM` | `BC-collaboration`, `AGG-invite`, `INV-009` invite must be pending before approval |
-| `containers` | `CONT-app` collaboration container |
-| `component` | `CMP-invite-lifecycle` in `app/invite-lifecycle/` |
-| `behavioral` | `SCN-INVITE-003` invite approval scenario |
-
-This is why the stack is more than documentation. The contracts are the eval surfaces.
+Exact file layouts, metadata formats, and generation mechanics belong to implementation.
 
 ---
 
 ## Brownfield Import vs. Steady-State Bugfix
 
-VibeLoom treats these as different paths.
+VibeLoom treats these as different conceptual paths.
 
-- **Import** is a bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contracts from code and marks uncertainty explicitly for human review.
-- **Bugfix** is the steady-state path for governed repos. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
+- **Brownfield import** is the bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contract from existing code and marks uncertainty explicitly for human review.
+- **Steady-state bugfix** is the governed path for repos already under VibeLoom. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
 
-Once a repo is governed, routine defects should be resolved against the approved stack rather than by re-inferring semantics from code on every fix.
+Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix.
 
 ---
 
@@ -1009,9 +801,9 @@ VibeLoom is strongest where prompt-only generation stops being reliable.
 It works by:
 
 - turning intent into a durable contract stack
-- making containers and components explicit enough for humans and agents to share
-- keeping `defaults.md` small but binding
-- deriving `AGENTS.md` as scoped execution guidance rather than treating it as truth
-- allowing agents to move fast without losing semantic ownership and traceability
+- generating that stack tier-by-tier with human gating at tier boundaries
+- using context as agent-facing execution truth without letting it outrank contract
+- reconciling downstream artifacts when approved truth changes
+- relying on an explicit context graph instead of chat-memory guesswork
 
-The methodology is intentionally stricter than ad hoc AI coding because safe speed requires explicit boundaries, explicit authority, and explicit context rules.
+The methodology is intentionally stricter than ad hoc AI coding because safe speed requires explicit boundaries, explicit authority, explicit generation flow, and explicit context management.

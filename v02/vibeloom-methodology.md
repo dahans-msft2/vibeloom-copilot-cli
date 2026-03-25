@@ -611,6 +611,14 @@ Each tier is produced from approved upstream truth:
 | `context` | approved contract stack | execution guidance artifacts, decision records, behavioral projections, and other execution artifacts |
 | `code` | approved contract plus relevant context | executable implementation and tests |
 
+Generation dependencies are set-based rather than chain-based. A downstream artifact may be produced from a set of upstream inputs:
+
+```text
+X <- [y1, y2, ... yn]
+```
+
+For root intent capture, `n` may be `0`. For downstream artifacts, sections, or entities, `n` is usually one or more.
+
 ### Within-Tier Generation
 
 An affected tier is generated as a batch rather than as individually governed fragments.
@@ -625,6 +633,8 @@ The default within-tier flow is:
 6. Mark the resulting contract artifacts as `draft`.
 
 This is the core double-pass generation model of VibeLoom.
+
+This chapter describes generation at tier and artifact level. Finer-grained section and entity derivation belongs to the context graph.
 
 ### Intent As Persistent Context
 
@@ -719,7 +729,7 @@ Exact parameters, flags, file formats, and CLI surfaces belong to implementation
 
 VibeLoom relies on an explicit context graph rather than on implicit chat memory.
 
-The graph connects contract, context, and code items through typed edges so humans and agents can answer:
+The graph connects contract, context, and code artifacts, sections, and entities through typed edges so humans and agents can answer:
 
 - what depends on what
 - what owns what
@@ -731,12 +741,21 @@ The graph connects contract, context, and code items through typed edges so huma
 
 The graph should capture at least these relationships:
 
-- **traceability edges:** requirement -> workflow/story -> domain concept -> technical boundary -> scenario or test
+- **derivation edges:** which upstream inputs a downstream artifact, section, or entity is produced from
+- **traceability edges:** which upstream requirement, workflow, domain concept, technical boundary, or behavior a downstream item refines, realizes, or verifies
 - **dependency edges:** one artifact or item depends on another for correctness
 - **ownership edges:** which container, component, or scope owns which interfaces or code paths
 - **generation edges:** which downstream artifacts are generated from which approved upstream truth
 - **staleness edges:** which downstream items become stale when an upstream item changes
 - **loading edges:** which artifacts or scopes should be loaded together for safe execution
+
+Derivation edges are also set-based:
+
+```text
+downstream_item <- [input1, input2, ... inputn]
+```
+
+This allows one downstream section or entity to depend on multiple semantic inputs without forcing the methodology into artificial `1:n` or `n:n` terminology.
 
 ### Context Loading
 

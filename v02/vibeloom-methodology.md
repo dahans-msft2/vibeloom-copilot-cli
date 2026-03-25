@@ -1,6 +1,6 @@
 # VibeLoom Methodology
 
-VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence. It uses a **contract** - a tiered set of specifications validated for consistent and coherence - to code-generate an application.
+VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence. It uses a **contract** - a tiered set of specifications validated for consistency and coherence - to code-generate an application.
 
 This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior should be derived from and must conform to this document.
 
@@ -31,13 +31,13 @@ All these problems are immanent to software engineering and existed before codin
 - **VibeLoom** is a methodology for **contract-driven** development
 - **That** preserves consistency and coherence across contract (intent-specs, product-specs, system-specs), context, and code through human-gated contract, agent-facing context, and continuous validation.
 - **Unlike** prompt-only or one-spec-fits-all AI-generation practices
-- **VibeLoom** maintain consistency and coherence of the whole system as humans and agents work on the system over time.
+- **VibeLoom** maintains consistency and coherence of the whole system as humans and agents work on it over time.
 
-A number of software engineering practices and methodologies have been invented to keep products consistent and coherent: PRD, User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design, Test-Driven Development, and others. However, because they introduced extra ceremony and requied extra effort, they were often underused or not used at all.
+A number of software engineering practices and methodologies have been invented to keep products consistent and coherent: PRD, User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design, Test-Driven Development, and others. However, because they introduced extra ceremony and required extra effort, they were often underused or not used at all.
 
 VibeLoom addresses these problems by generating a multi-tiered contract of structured specifications and treating this contract as an eval system and the durable source of truth rather than relying just on code, chat history, and agent memory.
 
-VibeLoom  turns the tables on the extra process/spec ceremony: now it is the agents that do the heavy lifting of generating, reviewing, and validating the entire the entire contract/context/code stack for internal consistency and coherence, while humans keep the approval authority.
+VibeLoom turns the tables on the extra process/spec ceremony: now it is the agents that do the heavy lifting of generating, reviewing, and validating the entire contract/context/code stack for internal consistency and coherence, while humans keep the approval authority.
 
 ---
 
@@ -53,21 +53,21 @@ The core principles of VibeLoom methodology are:
 ---
 
 ## Overview
-Here is an overview of developing a system using VibeLoom
+Here is an overview of developing a system using VibeLoom:
 - Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
-- to make the contract both consistent and coherent, the human validates specs through **review** (a higher-level detect-issue -> suggest-fix -> implement-fix loop) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
+- To make the contract both consistent and coherent, the human validates specs through **review** (a higher-level detect-issue -> suggest-fix -> implement-fix loop) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
 - First, the human defines **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
-- after the **intent-specs** are approved, **product-specs** (`prd`, `usm`, `dm`) are generated and validated using the same process.
-- after the **product-specs** are approved, **system-specs** (`system`, `containers`, `container`, `component`) are generated and validated using the same process.
-- generation and validation of the **contract** is performed at a tier level
+- After the **intent-specs** are approved, **product-specs** (`prd`, `usm`, `dm`) are generated and validated using the same process.
+- After the **product-specs** are approved, **system-specs** (`system`, `containers`, `container`, `component`) are generated and validated using the same process.
+- Generation and validation of the **contract** is performed at the tier level
   - The entire tier (however many specs it includes) is generated as a single operation
   - The agent asks for approval of the entire tier after the tier is generated, to reduce approval steps.
   - The entire tier is validated and eval-ed as a single operation.
-  - Even if human edited individual specs, the review/eval/approval is performed for the entire tier as a whole - to avoid inconsistence and incoherence across the same-tier specs
+  - Even if a human edited individual specs, the review/eval/approval is performed for the entire tier as a whole - to avoid inconsistency and incoherence across same-tier specs
   - Generation process can proceed to the next tier **only after** the entire tier (all specs in the tier) is approved.
-- **context** (`CLAUDE.md` / `AGENTS.md`, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd` and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
+- **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd`, and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
 - context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. Because agentic generation is still early, the workflow may pause after generating context so a human can optionally review or eval it against upstream specs.
-- if context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
+- If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - after the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
 
 ## The Contract Stack
@@ -88,7 +88,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | intent-specs  | Capture user intent and normalize repo-wide defaults                            | `intent`, `defaults`                                                         |
 | product-specs | Formally traceable product and domain contracts produced from approved intent   | `prd`, `usm`, `dm`                                                           |
 | system-specs  | Technical contracts produced from approved product and domain semantics         | `system`, `containers`, per-container `container`, per-component `component` |
-| context       | Distill scoped execution guidance, decision records, and long-term agent memory | `AGENTS.md`, `CLAUDE.md`, `pdr`, `bdd`, `adr`, and similar                   |
+| context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts (for example `AGENTS.md`, `CLAUDE.md`), `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
 Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Traceability and dependency remain as fine-grained as possible within and across tiers and should be represented in a context graph.
@@ -138,7 +138,7 @@ Context artifacts are generated from contract specs and are the default executio
 
 | Artifact | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
-| `AGENTS.md`, `CLAUDE.md`, and similar | context | Scoped execution guidance distilled from contract specs | Agents |
+| execution guidance artifacts | context | Scoped execution guidance distilled from contract specs; implementations may realize this as `AGENTS.md`, `CLAUDE.md`, and similar files | Agents |
 | `pdr` | context | Product decision record that preserves product-level decision history without becoming contract truth | PMs + agents |
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
@@ -426,13 +426,13 @@ This tier contains agent-facing operational truth generated from approved contra
 
 | Artifact | Description |
 | --- | --- |
-| `AGENTS.md`, `CLAUDE.md`, and similar | Scoped guidance files generated for repo, container, or component work |
+| execution guidance artifacts | Scoped guidance generated for repo, container, or component work |
 | `pdr` | Product decision record generated as long-term context for product changes |
 | `adr` | Architecture decision record generated as long-term context for technical changes |
 | `bdd` | Generated behavioral scenarios for humans and agents to implement later |
 
-#### `AGENTS.md` / `CLAUDE.md` / similar
-These files summarize how to work safely in a specific scope.
+#### execution guidance artifact
+These artifacts summarize how to work safely in a specific scope.
 
 ##### scope and ownership
 States what the current scope owns.
@@ -541,7 +541,7 @@ At a conceptual level, the workflow is:
 5. Generate context from approved contract.
 6. Generate or reconcile code from approved contract and context.
 
-Profiles and modes do not change tier semantics. A tier may gain or lose specs over time without changing the governance model.
+Profiles and modes change workflow defaults, not tier semantics.
 
 ### Profiles
 
@@ -608,7 +608,7 @@ Each tier is produced from approved upstream truth:
 | `intent-specs` | human request, edits, and prior repo intent | `intent`, `defaults` |
 | `product-specs` | approved `intent-specs` | `prd`, `usm`, `dm` |
 | `system-specs` | approved `product-specs` | `system`, `containers`, `container`, `component` |
-| `context` | approved contract stack | `AGENTS`, decision records, behavioral projections, and other execution artifacts |
+| `context` | approved contract stack | execution guidance artifacts, decision records, behavioral projections, and other execution artifacts |
 | `code` | approved contract plus relevant context | executable implementation and tests |
 
 ### Within-Tier Generation
@@ -765,19 +765,20 @@ It supports:
 
 ---
 
-## Defaults vs AGENTS
+## Defaults vs Execution Guidance
 
 At the conceptual level, these artifacts solve different problems.
 
 - `defaults` is contract. It records the always-on constitutional defaults of the repo.
-- `AGENTS` is context. It records scope-specific execution guidance generated from approved truth.
+- `execution guidance` is context. It records scope-specific guidance generated from approved truth.
+- implementations may realize execution guidance as `AGENTS.md`, `CLAUDE.md`, or similar files
 
 So:
 
 - `defaults` says what is globally true or globally preferred
-- `AGENTS` says how to work safely in this scope right now
+- `execution guidance` says how to work safely in this scope right now
 
-If `AGENTS` conflicts with contract, contract wins semantically.
+If execution guidance conflicts with contract, contract wins semantically.
 
 Exact file layouts, metadata formats, and generation mechanics belong to implementation.
 

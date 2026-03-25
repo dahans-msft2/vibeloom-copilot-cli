@@ -2,7 +2,7 @@
 
 VibeLoom is a contract-driven methodology for long-lived vibe coding. It is built for codebases that must survive more than one generation step, more than one contributor, and more than one architectural revision without losing semantic coherence. It uses a **contract** - a tiered set of specifications validated for consistency and coherence - to code-generate an application.
 
-This file is the source of truth for the methodology. Implementation details such as CLI surface, template schemas, and runtime behavior should be derived from and must conform to this document.
+This file is the source of truth for the methodology and artifact structure. Concrete templates, exact file names, CLI surface, and runtime behavior belong to implementation and must conform to this document.
 
 ---
 
@@ -25,13 +25,11 @@ All these problems are immanent to software engineering and existed before codin
 
 **Vision**
 - **For** teams and solo builders creating long-lived AI-generated software systems
-- **Who** need
-  - their systems to survive repeated AI-assisted change by multiple contributors, and architectural revision without semantic drift
-  - multiple humans and agents may work on the system over time
+- **Who** need their systems to survive repeated AI-assisted change by multiple contributors and architectural revision without semantic drift, while allowing multiple humans and agents to work on the system over time
 - **VibeLoom** is a methodology for **contract-driven** development
-- **That** preserves consistency and coherence across contract (intent-specs, product-specs, system-specs), context, and code through human-gated contract, agent-facing context, and continuous validation.
+- **That** preserves consistency and coherence across contract (intent-specs, product-specs, system-specs), context, and code through human-gated contract, agent-facing context, and continuous validation
 - **Unlike** prompt-only or one-spec-fits-all AI-generation practices
-- **VibeLoom** maintains consistency and coherence of the whole system as humans and agents work on it over time.
+- **VibeLoom** maintains consistency and coherence of the whole system as humans and agents work on it over time
 
 A number of software engineering practices and methodologies have been invented to keep products consistent and coherent: PRD, User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design, Test-Driven Development, and others. However, because they introduced extra ceremony and required extra effort, they were often underused or not used at all.
 
@@ -55,20 +53,20 @@ The core principles of VibeLoom methodology are:
 ## Overview
 Here is an overview of developing a system using VibeLoom:
 - Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
-- To make the contract both consistent and coherent, the human validates specs through **review** (a higher-level detect-issue -> suggest-fix -> implement-fix loop) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
+- To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current tier against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
 - First, the human defines **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
 - After the **intent-specs** are approved, **product-specs** (`prd`, `usm`, `dm`) are generated and validated using the same process.
 - After the **product-specs** are approved, **system-specs** (`system`, `containers`, `container`, `component`) are generated and validated using the same process.
 - Generation and validation of the **contract** is performed at the tier level
   - The entire tier (however many specs it includes) is generated as a single operation
   - The agent asks for approval of the entire tier after the tier is generated, to reduce approval steps.
-  - The entire tier is validated and eval-ed as a single operation.
-  - Even if a human edited individual specs, the review/eval/approval is performed for the entire tier as a whole - to avoid inconsistency and incoherence across same-tier specs
+  - The entire tier is reviewed, evaled, and approved as a single operation.
+  - Even if a human edited individual specs, the review/eval/approval is performed for the entire tier as a whole to avoid inconsistency and incoherence across specs in the same tier.
   - Generation process can proceed to the next tier **only after** the entire tier (all specs in the tier) is approved.
 - **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd`, and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
-- context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. Because agentic generation is still early, the workflow may pause after generating context so a human can optionally review or eval it against upstream specs.
+- Context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. Because agentic generation is still early, the workflow may pause after generating context so a human can optionally review or eval it against upstream specs.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
-- after the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
+- After the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
 
 ## The Contract Stack
 
@@ -76,14 +74,14 @@ Here is an overview of developing a system using VibeLoom:
 
 VibeLoom governs application development through a compact contract stack.
 The application artifacts play the following roles:
-- **contract**: human-gated semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers. They are generated tier-by-tier as batches, and the agent asks for approval only after the whole tier is generated. Approval is performed only at tier level.
-- **context**: agent-facing operational truth. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata, and they do not require human approval. Humans may review or edit them in exceptional cases, but the recommended fix path is to amend upstream contract and regenerate context.
+- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved only at the tier boundary.
+- **context**: normative execution truth for agents. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata and do not require human approval, although humans may review or edit them in exceptional cases.
 - **code**: the executable result. Humans are not expected to edit it directly.
-Contract defines semantic truth. Context defines execution truth for agents. Code implements the application based on the above.
 
-**contracts** artifacts are **human-gated** - the workflow expects explicit human review and approval before the tier is accepted as current truth.
-**contracts** and **context** artifacts are **normative** - an artifact serves as a source of truth that downstream generation, execution, review, or evaluation within its scope must follow.
-**code** artifacts are **executable** - an artifact runs as implementation, verification, packaging, deployment, or operational logic.
+In this document:
+- **human-gated** means downstream work may not rely on a tier until a human approves it.
+- **normative** means it is a source of truth that downstream generation, execution, review, or eval in its scope must follow.
+- **executable** means it can be run or checked directly.
 
 ### Generation Tiers
 
@@ -94,7 +92,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | intent-specs  | Capture user intent and normalize repo-wide defaults                            | `intent`, `defaults`                                                         |
 | product-specs | Formally traceable product and domain contracts produced from approved intent   | `prd`, `usm`, `dm`                                                           |
 | system-specs  | Technical contracts produced from approved product and domain semantics         | `system`, `containers`, per-container `container`, per-component `component` |
-| context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts (for example `AGENTS.md`, `CLAUDE.md`), `pdr`, `bdd`, `adr`, and similar |
+| context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
 Tiers are a generation and governance abstraction. Review, eval, and approval happen at tier level. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
@@ -105,6 +103,8 @@ Governance binds to the tier semantics, not to a fixed list of specs inside the 
 ### Contract Specs
 
 A governed application owns the following contract specs:
+
+The tier descriptions below define artifact structure and intent. Concrete document templates, field schemas, and formatting conventions belong to implementation.
 
 | Spec         | Tier          | Role                                                                                                                                      | Primary audience    |
 | ------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
@@ -124,12 +124,12 @@ Context artifacts are generated from contract specs and are the default executio
 
 | Artifact | Tier | Role | Primary audience |
 | --- | --- | --- | --- |
-| execution guidance artifacts | context | Scoped execution guidance distilled from contract specs; implementations may realize this as `AGENTS.md`, `CLAUDE.md`, and similar files | Agents |
+| execution guidance artifacts | context | Scoped execution guidance distilled from contract specs | Agents |
 | `pdr` | context | Product decision record that preserves product-level decision history without becoming contract truth | PMs + agents |
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
-All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although implementations may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default, although the workflow may still pause for optional review while generation quality matures. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -156,23 +156,18 @@ This tier captures user intent and turns repo-wide defaults into a binding const
 - Project rationale belongs in `intent`, not in `defaults`.
 - Downstream tiers must treat `defaults` as binding constitution.
 
-The sections of the documents are:
-##### foundations
-States the foundational methodologies or conceptual bases the repo follows
-##### repo
-Defines repo-scoped workflow defaults, naming conventions, and operating assumptions.
-##### rules
-Records globally binding structural and engineering rules.
-##### tech
-Captures repo-global technology choices that all downstream tiers should assume.
-##### agents
-Defines global context-loading and execution rules for agents.
-##### code
-Defines default implementation habits such as test-first work and boundary discipline.
-##### quality
-Captures universal quality expectations that apply across the repo.
-##### toolbox
-Lists optional tactics or patterns that may be used when they solve a concrete problem. |
+The standard sections are:
+
+| Section | Purpose |
+| --- | --- |
+| `foundations` | States the foundational methodologies or conceptual bases the repo follows. |
+| `repo` | Defines repo-scoped workflow defaults, naming conventions, and operating assumptions. |
+| `rules` | Records globally binding structural and engineering rules. |
+| `tech` | Captures repo-global technology choices that all downstream tiers should assume. |
+| `agents` | Defines global context-loading and execution rules for agents. |
+| `code` | Defines default implementation habits such as test-first work and boundary discipline. |
+| `quality` | Captures universal quality expectations that apply across the repo. |
+| `toolbox` | Lists optional tactics or patterns that may be used when they solve a concrete problem. |
 
 
 ---
@@ -259,14 +254,14 @@ Two standard metrics for a feature with UX are
 
 
 #### `usm` spec
-`usm` is the User Story Map. It defines flows (workflows and user journeys) and delivery map that organizes the product into epics(use cases), flows(workflows and journeys), stories, and milestones(release slices).
+`usm` is the User Story Map. It defines the delivery map that organizes the product into epics (use cases), flows (workflows and journeys), stories, and milestones (release slices).
 
 | Section      | Purpose                                                            |
 | ------------ | ------------------------------------------------------------------ |
 | `stories`    | Breaks workflows into implementable, traceable stories.            |
 | `epics`      | Defines the top-level product activities or narrative backbone.    |
 | `flows`      | Groups user flows or end-to-end journeys under the backbone.       |
-| `bdd`        | States the expected behavior and acceptance intent for each story. |
+| `acceptance framing` | States the expected behavior and acceptance intent for each story. |
 | `milestones` | Organizes stories into slices that can be delivered coherently.    |
 
 - `usm` derives from `prd`.
@@ -503,7 +498,7 @@ This tier contains executable implementation and verification artifacts.
 `tests` provide executable verification of behavior, regressions, and contract compliance.
 
 - unit tests, integration tests, and executable BDD tests belong here
-- if a runnable tests are generated from the `bdd` scenario, they become part of the executable test suite (code)
+- if runnable tests are generated from a `bdd` scenario, they become part of the executable test suite
 
 #### `runtime / ops glue`
 `runtime / ops glue` handles configuration, packaging, deployment, migrations, and operational wiring.
@@ -638,22 +633,23 @@ When approved upstream truth changes, dependent downstream artifacts become `sta
 
 These are three distinct conceptual activities:
 
-- `review` critiques and frames issues
+- `review` critiques and frames the current tier against approved upstream truth
 - `eval` checks structure and semantics
-- `reconciliation` realigns lower layers after approved truth changes or drift is detected
+- `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
 
 Review and eval use tier boundaries as governance surfaces, even though the underlying graph remains fine-grained. Reconciliation uses the same tier model to propagate approved truth downward.
 
 ### Review
 
-Review is the human-facing critique loop.
+Review is the human-facing critique loop for the current tier against approved upstream truth and same-tier coherence.
 
 It may:
 
 - surface contradictions, ambiguity, and missing links
-- propose upstream or lateral corrections
+- propose upstream or same-tier corrections
 - apply bounded fixes within the currently reviewed tier
 
+Review does not propagate approved changes downward; that belongs to reconciliation.
 Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
 
 ### Eval
@@ -670,7 +666,7 @@ Structural eval and semantic eval normally run against the tier currently under 
 
 ### Reconciliation
 
-Reconciliation is downstream realignment after approved truth changes or drift becomes visible.
+Reconciliation is downstream realignment after approved truth changes or downstream drift becomes visible.
 
 It is asymmetric:
 
@@ -700,9 +696,9 @@ VibeLoom defines eight methodology-level operations. Implementations may expose 
 | --- | --- | --- |
 | `init` | top-down | Bootstrap a governed repo and produce the first draft contract stack |
 | `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
-| `review` | up + lateral | Critique the current generated tier and optionally apply bounded fixes within that tier |
+| `review` | current + up | Critique the current generated tier against approved upstream truth and optionally apply bounded fixes within that tier |
 | `eval` | up | Run structural, semantic, or behavioral evaluation for the current tier |
-| `reconcile` | top-down | Propagate approved upstream changes downward into stale downstream tiers, context, or code |
+| `reconcile` | down | Propagate approved upstream changes downward into stale downstream tiers, context, or code |
 | `approve` | gate | Move a reviewed contract tier from `draft` to `approved` and record approval provenance |
 | `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
 | `import` | bottom-up | Reconstruct candidate contract from an unmanaged or heavily drifted codebase |
@@ -790,7 +786,6 @@ At the conceptual level, these artifacts solve different problems.
 
 - `defaults` is contract. It records the always-on constitutional defaults of the repo.
 - `execution guidance` is context. It records scope-specific guidance generated from approved truth.
-- implementations may realize execution guidance as `AGENTS.md`, `CLAUDE.md`, or similar files
 
 So:
 

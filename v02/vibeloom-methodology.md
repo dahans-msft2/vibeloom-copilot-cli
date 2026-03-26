@@ -8,34 +8,18 @@ This file is the source of truth for the methodology and artifact structure. Con
 
 ## The Problem
 
-AI code generation is excellent at producing local momentum. It is weak at preserving consistency and coherence long-term.
+AI code generation produces local momentum but fails to preserve consistency and coherence long-term. As a project grows, it suffers from:
 
-As a vibe-coded project grows, it starts suffering from:
-
-1. **Semantic drift.** Concepts, workflows, and invariants shift subtly with every prompt.
-2. **Invisible governance.** If intent lives only in chat history, there is no durable review surface for humans.
-3. **Context fragmentation.** Large codebases exceed what one agent can safely hold in context, so ownership and responsibilities become guesswork.
-4. **Reconciliation failure.** Manual edits, bugfixes, and drift have no principled path back to the specification layer.
-
-All these problems are immanent to software engineering and existed before coding agents, albeit in different forms. Large software projects have always struggled to maintain consistency and coherence across intent, specs, and code.
+- **Semantic drift** — concepts and invariants shift subtly with every prompt
+- **Invisible governance** — intent lives only in chat history with no durable review surface
+- **Context fragmentation** — large codebases exceed one agent's context, making ownership guesswork
+- **Reconciliation failure** — manual edits and drift have no principled path back to specifications
 
 ---
 
 ## The Solution
 
-**Vision**
-- **For** teams and solo builders creating long-lived AI-generated software systems
-- **Who** need their systems to survive repeated AI-assisted change by multiple contributors and architectural revision without semantic drift, while allowing multiple humans and agents to work on the system over time
-- **VibeLoom** is a methodology for **contract-driven** development
-- **That** preserves consistency and coherence across contract (intent-specs, product-specs, system-specs), context, and code through human-gated contract, agent-facing context, and continuous validation
-- **Unlike** prompt-only or one-spec-fits-all AI-generation practices
-- **VibeLoom** maintains consistency and coherence of the whole system as humans and agents work on it over time
-
-A number of software engineering practices and methodologies have been invented to keep products consistent and coherent: PRD, User Story Mapping, Domain-Driven Design, Behavior-Driven Development, C4 system design, Test-Driven Development, and others. However, because they introduced extra ceremony and required extra effort, they were often underused or not used at all.
-
-VibeLoom addresses these problems by generating a multi-tiered contract of structured specifications and treating this contract as an eval system and the durable source of truth rather than relying just on code, chat history, and agent memory.
-
-VibeLoom turns the tables on the extra process/spec ceremony: now it is the agents that do the heavy lifting of generating, reviewing, and validating the entire contract/context/code stack for internal consistency and coherence, while humans keep the approval authority.
+VibeLoom generates a multi-tiered contract of structured specifications and treats it as both the durable source of truth and the eval system. Agents do the heavy lifting of generating, reviewing, and validating the entire contract/context/code stack for internal consistency and coherence. Humans keep approval authority.
 
 ---
 
@@ -80,6 +64,55 @@ In this document:
 - **human-gated** means downstream work may not rely on a tier until a human approves it.
 - **normative** means it is a source of truth that downstream generation, execution, review, or eval in its scope must follow.
 - **executable** means it can be run or checked directly.
+
+The contract stack separates semantic truth, execution truth, and executable result.
+
+```mermaid
+flowchart TD
+    subgraph CONTRACT["CONTRACT<br/>Human-Gated Normative Semantic Truth"]
+        direction TB
+
+        subgraph INTENT["Intent Specs"]
+            direction TB
+            I1["Intent"]
+            I2["Defaults"]
+        end
+
+        subgraph PRODUCT["Product Specs"]
+            direction TB
+            P1["PRD"]
+            P2["USM"]
+            P3["DM"]
+        end
+
+        subgraph SYSTEM["System Specs"]
+            direction TB
+            S1["System"]
+            S2["Containers"]
+            S3["Container"]
+            S4["Component"]
+        end
+
+        INTENT --> PRODUCT --> SYSTEM
+    end
+
+    subgraph CONTEXT["CONTEXT<br/>Normative Execution Truth For Agents"]
+        direction TB
+        C1["Execution Guidance"]
+        C2["PDR"]
+        C3["ADR"]
+        C4["BDD"]
+    end
+
+    subgraph CODE["CODE<br/>Executable Result"]
+        direction TB
+        K1["Source Code"]
+        K2["Tests"]
+        K3["Runtime / Ops Glue"]
+    end
+
+    CONTRACT --> CONTEXT --> CODE
+```
 
 ### Generation Tiers
 
@@ -132,356 +165,64 @@ All semantic truth lives in contract specs. Context artifacts carry execution tr
 ---
 
 ### `intent-specs` tier
-This tier captures user intent and turns repo-wide defaults into a binding constitution.
+Captures user intent and normalizes repo-wide defaults.
 
-| Spec       | Description                                                                                                   |
-| ---------- | ------------------------------------------------------------------------------------------------------------- |
-| `intent`   | Relatively free-form prose description of the system, including product wishes and implementation preferences |
-| `defaults` | Compact constitutional spec for repo-wide rules, technology baseline, and quality guardrails                  |
-
-#### `intent` spec
-`intent` is a relatively free-form prose description of the required application with two sections.
-
-- functionality: describes, in relatively free form, what the application does.
-- miscellania: Captures any other wishes from the creator that do not fit the functional description.
-
-- `intent` may include both product-level and implementation-level wishes.
-- `intent` stays prose-first rather than fully normalized.
-- User-supplied technical preferences and constraints may enter through `intent`. They are promoted into `defaults` only when they become repo-wide and always-on. Otherwise, they are normalized into the narrowest downstream contract that actually owns them.
-
-#### `defaults` spec
-`defaults` is the minimal repo-wide constitution. It contains only always-on, globally binding defaults that downstream tiers and code must follow.
-
-- Normalized global constraints belong here.
-- Product rationale belongs in `intent`, not in `defaults`.
-- Local scope guidance belongs in execution guidance, not in `defaults`.
-- Detailed generation or runtime mechanics belong in implementation, not in `defaults`.
-- Optional tactics and pattern catalogs do not belong in `defaults`.
-- Downstream tiers must treat `defaults` as binding constitution.
-
-The standard sections are:
-
-| Section | Purpose |
-| --- | --- |
-| `repo constitution` | Records globally binding structural, workflow, and engineering rules that apply across the repo. |
-| `technology baseline` | Captures repo-global technical choices that all downstream tiers should assume. |
-| `quality guardrails` | Captures universal quality and correctness expectations that apply across the repo. |
-
+| Spec | Contract entities | Key rules |
+| --- | --- | --- |
+| `intent` | CAP-#### (capabilities), WISH-#### (wishes) | Prose-first; may include both product and implementation wishes. Preferences become `defaults` only when repo-wide and always-on. |
+| `defaults` | CST-#### (constraints) | Minimal repo-wide constitution. Only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding. |
 
 ---
 
 ### `product-specs` tier
-This tier turns intent into formally traceable product and domain contracts.
+Turns approved intent into formally traceable product and domain contracts.
 
-| Spec  | Structure                                                                   |
-| ----- | --------------------------------------------------------------------------- |
-| `prd` | Product Requirements Document defining scope, requirements, and constraints |
-| `usm` | User Story Map defining activities, workflows, stories, and release slices  |
-| `dm`  | Domain Model defining language, boundaries, and invariants                  |
-
-#### `prd` spec
-`prd` is the formally traceable requirements contract for the product.
-
-##### TL;DR
-Briefly states what this product/feature is and why it's valuable (1–3 sentences)
-- **What we’re building:** <1–2 sentences>
-- **For whom:** <primary user / customer>
-- **Why now:** <1 sentence — urgency or opportunity>
-- **Expected outcome:** <1 sentence — measurable>
-
-##### Problem Statement (The "Why")
-Briefly describes the pain point or opportunity. What is broken, missing, or inefficient? Use data to back this up.
-
-##### Strategic Value (The "So What")
-Why do this now? How does this align with company OKRs or long-term strategy?
-- **Strategic Alignment**:
-- **Urgency**:
-
-##### The Solution (The "What")
-
-High-level description of the feature/product. Do not get bogged down in UI details yet.
-**Core Value Proposition:**
-One sentence description of the solution
-
-**Features:**
-| Feature     | Description         | Priority     |
-| ----------- | ------------------- | ------------ |
-| [Feature 1] | [Brief description] | P0 / P1 / P2 |
-| [Feature 2] | [Brief description] | P0 / P1 / P2 |
-| [Feature 3] | [Brief description] | P0 / P1 / P2 |
-
-##### OKR
-What does success look like? Define a clear, measurable outcome.
-- **Objective**:
-- **Key Results**:
-
-##### Metrics
-
-| Metric                  | Current Baseline | Target (Success) | Data Source |
-| ----------------------- | ---------------- | ---------------- | ----------- |
-| **Northstar Metric**    |                  |                  |             |
-| **Indicative Metric 1** | 12% Conversion   | 15% Conversion   | Mixpanel    |
-| **Indicative Metric N** | 12% Conversion   | 15% Conversion   | Mixpanel    |
-| **Guardrail Metric 1**  | < 200ms Latency  | < 200ms Latency  | Datadog     |
-| **Guardrail Metric N**  | < 200ms Latency  | < 200ms Latency  | Datadog     |
-
-Two standard metrics for a feature with UX are
-
-| Metric                    | Current Baseline | Target (Success) | Data Source |
-| ------------------------- | ---------------- | ---------------- | ----------- |
-| **TT - time-in-task**     |                  |                  |             |
-| **AT - actions-in-task**  |                  |                  |             |
-| **ST - %success-in-task** |                  |                  |             |
-
-**Time-on-Task** - **time** it took the user to complete the task (e.g. schedule an appointment or skip a shipment)
-**Actions-on-Task** - # of **actions** (button clicks, item selections, strings typed, etc.) it took the user to complete the task
-**%Success-on-Task** - # of **percentage** of users who successfully complete the task
-
-##### Timeline & Milestones
-
-| Milestone       | Target Date |
-| --------------- | ----------- |
-| Functionality 1 | [Date]      |
-| Functionality 2 | [Date]      |
-| Functionality 2 | [Date]      |
-| Launch          | [Date]      |
-
-##### Risks & Open Questions
-
----
-
-
-#### `usm` spec
-`usm` is the User Story Map. It defines the delivery map that organizes the product into epics (use cases), flows (workflows and journeys), stories, and milestones (release slices).
-
-| Section      | Purpose                                                            |
-| ------------ | ------------------------------------------------------------------ |
-| `stories`    | Breaks workflows into implementable, traceable stories.            |
-| `epics`      | Defines the top-level product activities or narrative backbone.    |
-| `flows`      | Groups user flows or end-to-end journeys under the backbone.       |
-| `acceptance framing` | States the expected behavior and acceptance intent for each story. |
-| `milestones` | Organizes stories into slices that can be delivered coherently.    |
-
-- `usm` derives from `prd`.
-- Stories trace to PRD requirements.
-- Acceptance framing stays behavior-focused rather than technical.
-
-#### `dm` spec
-`dm` is the Domain Model as in DDD (Domain Driven Development)
-It’s a semantic model of the domain and the source for technical boundary derivation.
-
-| Section | Purpose |
-| --- | --- |
-| `ubiquitous language` | Defines the shared domain vocabulary. |
-| `bounded contexts` | Identifies semantic boundaries and ownership zones. |
-| `aggregates / entities / value objects` | Defines the core domain structures and their responsibilities. |
-| `invariants / business rules` | Records the rules that must always hold true in the domain. |
-| `relationships / integration touchpoints` | Describes important links between concepts and external touchpoints. |
-
-- `dm` is the semantic source for technical boundary derivation.
-- Components come from domain semantics, not folder shape.
+| Spec | Contract entities | Derives from | Key rules |
+| --- | --- | --- | --- |
+| `prd` | FR-#### (functional requirements), NFR-#### (non-functional requirements) | CAP-####, WISH-#### | Every FR and NFR traces to at least one capability or wish. |
+| `usm` | EPIC-#### (epics), FLOW-#### (flows), STORY-#### (stories), ACC-#### (acceptance criteria), MS-#### (milestones) | FR-#### | Every STORY traces to at least one FR. Every EPIC has at least one FLOW; every FLOW has at least one STORY. Acceptance framing stays behavior-focused. |
+| `dm` | TERM-#### (ubiquitous language terms), BC-#### (bounded contexts), AGG-#### (aggregates), ENT-#### (entities), VO-#### (value objects), INV-#### (invariants) | FR-####, NFR-#### | `dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape. |
 
 ---
 
 ### `system-specs` tier
-This tier translates approved product and domain semantics into technical contracts.
+Translates approved product and domain semantics into technical contracts.
 
-| Spec | Description |
-| --- | --- |
-| `system` | System-level contract for system purpose, context, and external boundaries |
-| `containers` | Global runtime and deployment topology contract |
-| `container` | Local container contract for one runtime boundary |
-| `component` | Smallest owned technical contract inside a container |
+| Spec | Contract entities | Derives from | Key rules |
+| --- | --- | --- | --- |
+| `system` | SYS-#### (system context items) | BC-####, NFR-#### | Defines system purpose, external actors, trust boundaries, system-wide NFRs. Deployment topology does not live here. |
+| `containers` | CONT-#### (containers), EDGE-#### (communication paths) | BC-####, SYS-#### | Global runtime topology. Every CONT appears in the topology. Communication paths reference valid CONT endpoints. |
+| `container` | (references CONT-####, lists component inventory) | CONT-#### | Authoritative component inventory for one runtime boundary. Components are discovered here, not inferred from folders. |
+| `component` | CMP-#### (components), IF-#### (interfaces), BEH-#### (behaviors), DEP-#### (dependencies) | BC-####, CONT-#### | Smallest owned technical boundary. Each component belongs to exactly one BC and one container. |
 
-#### `system` spec
-`system` defines the system as a whole and its relationship to the outside world.
-
-##### system purpose and context
-Defines what the system is and where it sits in its broader environment.
-
-##### external actors and systems
-Identifies the people, systems, and dependencies around it.
-
-##### trust boundaries
-Marks important trust, security, or authority boundaries.
-
-##### system-wide NFR boundaries
-Captures system-level NFRs that shape the whole design.
-
-- Deployment topology does not live here.
-
-#### `containers` spec
-`containers` defines the global runtime topology of the system.
-
-##### container inventory
-Lists the containers that make up the system.
-
-##### responsibilities
-Defines the role of each container in the overall design.
-
-##### communication paths
-Describes how containers interact with each other and with external systems.
-
-##### deployment / runtime choices
-Captures runtime, hosting, or platform choices at system scope.
-
-##### cross-container constraints
-Records constraints that apply across container boundaries.
-
-- `containers` owns global runtime topology, not local component detail.
-
-#### `container` spec
-`container` defines one local runtime boundary and the technical inventory inside it.
-
-##### purpose and runtime boundary
-Defines what the container is for and where its runtime boundary sits.
-
-##### resident bounded contexts
-Lists the bounded contexts hosted inside this container.
-
-##### component inventory
-Lists the components that belong to this container.
-
-##### local interfaces and dependencies
-Summarizes key local interfaces and internal or adjacent dependencies.
-
-##### local NFR / operational constraints
-Captures local runtime, operational, and quality constraints.
-
-- `container` is the authoritative component inventory for one container.
-- Components are discovered here, not inferred from folders.
-
-#### `component` spec
-`component` defines the smallest owned technical boundary inside the governed system.
-
-##### responsibility
-States what the component owns and why it exists.
-
-##### owned paths
-Declares the code paths or assets the component is responsible for.
-
-##### owned interfaces
-Declares the interfaces or APIs the component owns.
-
-##### dependencies
-Records direct dependencies on other components, containers, or external systems.
-
-##### behavior / contracts
-Defines the local technical contracts and expected behavior of the component.
-
-##### local test / runtime notes
-Captures local test expectations and important runtime notes.
-
-- `component` is the smallest owned technical boundary.
-- Each component belongs to exactly one bounded context.
-- Each component has exactly one container home.
-
-#### technical boundary rules
-`system-specs` define the semantic-to-runtime mapping that makes technical ownership explicit.
-
-- bounded context defines semantic home
-- component defines owned technical change boundary
-- container defines runtime and deployment home
-- a bounded context must not span multiple containers
-- components from the same bounded context must be co-located in the same container
-
-#### component derivation
-Components are derived from domain semantics first, then checked for implementation safety.
-
-The default derivation process is:
-
-1. Start from a bounded context in `dm`.
-2. Identify aggregate candidates and their invariants.
-3. Treat aggregate cores as the default first pass for component candidates.
-4. Add process or workflow components when important behavior is not a natural responsibility of one aggregate.
-5. Add adapter components where external systems, protocols, or translations must be isolated.
-6. Add query or read components only when read complexity, ownership, or performance justifies them.
-7. Merge or split candidates until each component owns a coherent write surface, clear interfaces, and a safe independent work scope.
+**Technical boundary rules:**
+- Bounded context (BC) defines semantic home
+- Component (CMP) defines owned technical change boundary
+- Container (CONT) defines runtime and deployment home
+- A bounded context must not span multiple containers
+- Components from the same bounded context must be co-located in the same container
 
 ---
 
 ### `context` tier
-This tier contains agent-facing operational truth generated from approved contract, plus non-gated decision history and non-executable behavioral projections.
+Agent-facing operational truth generated from approved contract. Context artifacts do not carry lifecycle metadata and are assumed correct by default.
 
-| Artifact | Description |
-| --- | --- |
-| execution guidance artifacts | Scoped guidance generated for repo, container, or component work |
-| `pdr` | Product decision record generated as long-term context for product changes |
-| `adr` | Architecture decision record generated as long-term context for technical changes |
-| `bdd` | Generated behavioral scenarios for humans and agents to implement later |
+| Artifact | Purpose | Key entities |
+| --- | --- | --- |
+| execution guidance | Scoped guidance for repo, container, or component work | (no addressable IDs — prose guidance) |
+| `pdr` | Product decision history | PDR-#### (product decision records) |
+| `adr` | Architecture decision history | ADR-#### (architecture decision records) |
+| `bdd` | Generated non-executable behavioral scenarios | BDD-#### (behavior files), SCN-#### (Gherkin scenarios) |
 
-#### execution guidance artifact
-These artifacts summarize how to work safely in a specific scope.
-
-##### scope and ownership
-States what the current scope owns.
-
-##### load-first context
-Tells the agent which upstream artifacts to load first.
-
-##### do-not-touch boundaries
-Marks files, contracts, or areas that are out of scope.
-
-##### common commands / checks
-Lists common commands, checks, or workflows for that scope.
-
-##### local caveats
-Captures scope-specific warnings, quirks, or operational notes.
-
-#### `pdr` spec
-`pdr` records product-level decisions after they have already been made in contract.
-
-##### decision
-States what product-level decision was made.
-
-##### why
-Records the reason, tradeoff, or trigger for the decision.
-
-##### contract delta
-Notes which contract artifacts or sections changed because of the decision.
-
-##### impact
-Summarizes the expected downstream effect on context or code generation.
-
-#### `adr` spec
-`adr` records architecture and technical decisions after they have already been made in contract.
-
-##### decision
-States what technical decision was made.
-
-##### why
-Records the reason, tradeoff, or trigger for the decision.
-
-##### contract delta
-Notes which system-specs or product-specs changed because of the decision.
-
-##### impact
-Summarizes the expected downstream effect on context or code generation.
-
-#### `bdd` artifact
-`bdd` contains generated, non-executable Gherkin descriptions of acceptance tests for both epics and stories, produced from approved contract.
-
-##### feature / capability
-States which epic, workflow, story, or behavior the scenarios cover.
-
-##### scenarios
-Describes the generated scenarios in Gherkin form for humans or agents to implement later.
-
-##### derivation
-Lists the relevant upstream requirements, stories, domain concepts, or technical contracts the scenarios are produced from.
-
-- Context artifacts are generated from contract specs.
-- Context artifacts are not human-gated and normally do not have approval-state metadata.
-- Humans may review or eval context artifacts against upstream contract.
-- Humans may edit context artifacts when the projection of contract is poor, but the normal fix path is still to amend contract and regenerate context.
-- If a context artifact conflicts with contract, contract wins semantically.
-- Context artifacts may exist at root, container, and component scopes.
+- Context is generated from contract. If context conflicts with contract, contract wins.
+- Humans may review or eval context against upstream contract.
+- The normal fix path for poor context is to amend contract and regenerate.
 - Gherkin belongs to context until it becomes executable test code.
 
 ---
 
 ### `code` tier
-This tier contains executable implementation and verification artifacts.
+Executable implementation and verification artifacts.
 
 | Artifact | Description |
 | --- | --- |
@@ -522,6 +263,48 @@ At a conceptual level, the workflow is:
 7. Generate or reconcile code from approved contract and context.
 
 Profiles change governance granularity and pause topology. Modes, applicable only in `full`, change who meaningfully reviews which non-intent contract tier by default. Neither changes artifact semantics or the contract/context/code ontology.
+
+```mermaid
+flowchart TD
+    H["Human Request / Edits"]
+    I["Start From Intent Specs"]
+    D["Identify Affected Contract Stack"]
+    G["Generate Affected Contract Tiers<br/>Using Double-Pass Model"]
+
+    H --> I --> D --> G
+
+    G --> R
+    G --> E
+
+    subgraph REV["Review"]
+        direction TB
+        R["Critique Governance Surface"]
+        R1["Surface Issues, Propose Fixes"]
+        R2["Apply Bounded Same-Tier Fixes"]
+        R --> R1 --> R2
+    end
+
+    subgraph EVL["Eval"]
+        direction TB
+        E["Structural, Semantic,<br/>Behavioral Checks"]
+    end
+
+    R2 --> A["Approve<br/>At Governance Surface"]
+    E --> A
+
+    A --> C["Generate Context"]
+    C --> B["Context Boundary<br/>Full: Pause, Lite: Continue"]
+    B --> K["Generate Or Reconcile Code"]
+
+    K -.-> Q
+    subgraph REC["Reconciliation"]
+        direction TB
+        Q["Detect Downstream Drift"]
+        Q1["Human Chooses Direction"]
+        Q2["Propagate Downward"]
+        Q --> Q1 --> Q2
+    end
+```
 
 ### Profiles
 
@@ -564,23 +347,16 @@ Examples:
 
 ### Lifecycle And Approval
 
-Contract tiers move through these lifecycle states:
+Contract artifacts have two lifecycle states:
 
-- `draft`
-- `approved`
-- `stale`
-- `superseded`
+- `draft` — generated or regenerated, awaiting review and approval
+- `approved` — human or delegated approval recorded
 
-Only contract artifacts are approved. Context does not normally carry approval-state metadata, and code is judged against approved upstream truth rather than approved in the same way.
+Staleness is not an artifact state. It is a computed property of the context graph, inferred by comparing each downstream artifact's derivation basis against the latest approved upstream versions. The `status` command surfaces staleness; `reconcile` resolves it by regenerating affected artifacts (which return to `draft`). Supersession is implicit in git history and the `version` integer.
 
-`intent-specs` are always explicitly human-owned.
+Only contract artifacts are approved. Context does not carry lifecycle metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
-Approval scope depends on profile:
-
-- In `full`, the agent generates each affected contract tier before asking for approval, the human reviews and evals that tier as a whole, and generation proceeds downward only after that tier is approved.
-- In `lite`, the agent generates the affected contract stack for the current run before asking for approval, the human reviews and evals that contract stack as a whole, and context and code proceed only after that contract-scope approval is complete.
-
-Delegated approval may exist as provenance for tiers the current mode does not require the current human to review meaningfully by default, but it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
+`intent-specs` are always explicitly human-owned. Approval scope follows profile (see Profiles above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
 
 ---
 
@@ -593,15 +369,7 @@ Generation is the contract-driven engine of the methodology. It works in two dim
 
 ### Tier Order
 
-Every run starts from `intent-specs` and then proceeds downward as needed.
-
-The normal top-down order is:
-
-```text
-intent-specs -> product-specs -> system-specs -> context -> code
-```
-
-Each tier is produced from approved upstream truth:
+Every run starts from `intent-specs` and proceeds downward. Each tier is produced from approved upstream truth:
 
 | Tier | Primary upstream basis | Output |
 | --- | --- | --- |
@@ -611,32 +379,22 @@ Each tier is produced from approved upstream truth:
 | `context` | approved contract stack | execution guidance artifacts, decision records, behavioral projections, and other execution artifacts |
 | `code` | approved contract plus relevant context | executable implementation and tests |
 
-Generation dependencies are set-based rather than chain-based. A downstream artifact may be produced from a set of upstream inputs:
-
-```text
-X <- [y1, y2, ... yn]
-```
-
-For root intent capture, `n` may be `0`. For downstream artifacts, sections, or entities, `n` is usually one or more.
-
 ### Within-Tier Generation
 
-An affected tier is generated as a batch rather than as individually governed fragments.
+Each affected tier is generated as a batch using a bounded double-pass cycle. In `full`, each tier pauses after this cycle for review, eval, and approval. In `lite`, the affected contract tiers are all produced first and then reviewed together at contract scope.
 
-The default within-tier flow is:
+```mermaid
+flowchart TD
+    T["Choose Affected Contract Tier"]
+    O["Generate Artifacts In Dependency Order"]
+    F["Run Forward Pass Across The Tier"]
+    B["Run Back Pass If Later Artifacts<br/>Sharpen Earlier Ones"]
+    V["Run Structural And Semantic Validation"]
+    R["Run One More Bounded<br/>Forward-Back Round If Needed"]
+    D["Emit Contract Artifacts As Draft"]
 
-1. Generate the artifacts of the tier in dependency order.
-2. Run a forward pass across the tier.
-3. Run a back pass if later artifacts sharpen or correct earlier artifacts.
-4. Run structural and semantic validation for the tier.
-5. If necessary, run one more bounded forward-back round.
-6. Mark the resulting contract artifacts as `draft`.
-
-This is the core double-pass generation model of VibeLoom.
-
-In `full`, each affected contract tier pauses here for review, eval, and tier-scope approval before the run proceeds downward. In `lite`, the affected contract tiers for the current run may all be produced this way first and then reviewed, evaled, and approved together at contract scope.
-
-This chapter describes generation at tier and artifact level. Finer-grained section and entity derivation belongs to the context graph.
+    T --> O --> F --> B --> V --> R --> D
+```
 
 ### Intent As Persistent Context
 
@@ -646,7 +404,7 @@ This is deliberate: user wishes and constraints may survive all the way into sys
 
 ### Generation And Staleness
 
-When approved upstream truth changes, dependent downstream artifacts become `stale` through explicit graph edges. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time.
+When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced by the `status` command.
 
 ---
 
@@ -659,6 +417,8 @@ These are three distinct conceptual activities:
 - `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
 
 Review and eval use the current governance surface, even though the underlying graph remains fine-grained: tier scope in `full`, contract scope across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
+
+Review, eval, and reconciliation are shown together in the Workflow diagram above.
 
 ### Review
 
@@ -739,6 +499,27 @@ The graph connects addressable items defined inside contract, context, and code 
 - what must be loaded for a given task
 - how downstream work can be traced back to upstream truth
 
+The context graph combines item derivation with containment and derives traceability, staleness, loading, and artifact impact.
+
+```mermaid
+flowchart TD
+    U1["Upstream Item A"]
+    U2["Upstream Item B"]
+    D["Downstream Item"]
+
+    U1 -- "Derivation" --> D
+    U2 -- "Derivation" --> D
+
+    D -- "Contained In" --> S["Section"]
+    S -- "Contained In" --> A["Artifact"]
+    A -- "Contained In" --> T["Tier"]
+
+    D -.-> TV["Traceability"]
+    D -.-> SV["Staleness"]
+    D -.-> LV["Loading"]
+    D -.-> IV["Artifact Impact"]
+```
+
 The only item-to-item relationship in the graph is the primary relation `derivation`.
 
 ### Derivation
@@ -770,7 +551,7 @@ Ownership therefore comes from containment, not from a separate item-to-item gra
 Several useful views are inferred from derivation plus containment:
 
 - **traceability:** walk derivation upward or downward to explain where an item came from and what it influences
-- **staleness:** if an upstream item changes, mark all reachable downstream items and their containing artifacts as stale
+- **staleness:** if an upstream item changes, flag all reachable downstream items and their containing artifacts as stale in the graph (not in artifact frontmatter)
 - **loading:** load the smallest artifact or scope that contains the required downstream item and its upstream inputs
 - **artifact impact:** summarize item-level derivations upward into affected sections, artifacts, and tiers
 
@@ -803,19 +584,10 @@ It supports:
 
 ## Defaults vs Execution Guidance
 
-At the conceptual level, these artifacts solve different problems.
+- `defaults` is **contract** — always-on, globally binding repo-wide constraints
+- `execution guidance` is **context** — scope-specific operational guidance generated from approved truth
 
-- `defaults` is contract. It records the always-on constitutional defaults of the repo.
-- `execution guidance` is context. It records scope-specific guidance generated from approved truth.
-
-So:
-
-- `defaults` says what is globally binding across the repo
-- `execution guidance` says how to work safely and effectively in this scope right now
-
-If execution guidance conflicts with contract, contract wins semantically.
-
-Exact file layouts, metadata formats, and generation mechanics belong to implementation.
+If they conflict, contract wins.
 
 ---
 
@@ -827,6 +599,38 @@ VibeLoom treats these as different conceptual paths.
 - **Steady-state bugfix** is the governed path for repos already under VibeLoom. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
 
 Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix.
+
+Brownfield import reconstructs contract bottom-up; steady-state bugfix updates approved truth top-down.
+
+```mermaid
+flowchart TD
+    S["Change Starting Point"]
+
+    S --> BROWN
+    S --> STEADY
+
+    subgraph BROWNFIELD["Brownfield Import"]
+        direction TB
+        B1["Start From Unmanaged<br/>Or Heavily Drifted Codebase"]
+        B2["Reconstruct Candidate Contract Bottom-Up"]
+        B3["Review / Eval / Approve<br/>Reconstructed Contract"]
+        B4["Generate Context From Approved Contract"]
+        B5["Reconcile Or Regenerate Code<br/>Against Approved Truth"]
+
+        B1 --> B2 --> B3 --> B4 --> B5
+    end
+
+    subgraph BUGFIX["Steady-State Bugfix"]
+        direction TB
+        S1["Start From Existing Approved Contract"]
+        S2["Identify Highest Affected Tier"]
+        S3["Update Affected Contract Truth Top-Down"]
+        S4["Generate Context From Approved Contract"]
+        S5["Reconcile Or Regenerate Code"]
+
+        S1 --> S2 --> S3 --> S4 --> S5
+    end
+```
 
 ---
 

@@ -6,35 +6,9 @@ The current working draft lives at repository root as `vibeloom-implementation.m
 
 ---
 
-## Authority And Package Shape
+## Authority, Package Shape, And Engine Boundary
 
-Authority flows downward:
-
-1. methodology defines conceptual truth
-2. implementation defines concrete artifact and runtime truth
-3. `assets/` define generation inputs derived from implementation
-4. `references/` define distilled runtime-operational guidance derived from methodology and implementation
-5. `SKILL.md` orchestrates runtime loading and command routing without redefining lower-layer truth
-
-The future layered skill package is:
-
-```text
-/
-  SKILL.md
-  docs/
-    vibeloom-methodology.md
-    vibeloom-implementation.md
-  references/
-    ...
-  assets/
-    ...
-```
-
-This phase defines `docs/`, `assets/`, `references/`, and `SKILL.md` conceptually, but only authors the implementation doc and `assets/` templates.
-
----
-
-## Engine And Skill Boundary
+Authority flows downward: methodology → implementation → `assets/` templates → `SKILL.md`. This phase authors implementation and `assets/` only.
 
 VibeLoom has two runtime layers:
 
@@ -80,24 +54,6 @@ The engine may maintain regenerable local state under:
 ```
 
 These files are derived runtime state. They are not contract, context, or code truth.
-
----
-
-## References Layer
-
-`references/` is reserved for distilled runtime-operational authority.
-
-Its role is:
-
-- shrink runtime context compared to loading the full canon docs
-- restate methodology and implementation rules in compact operational form
-- support `SKILL.md` without making `SKILL.md` itself large or duplicative
-
-`references/` is downstream from methodology and implementation:
-
-- it may compress or reorganize concrete rules
-- it may not invent new artifact, lifecycle, ID, or graph semantics
-- it is not authored in this phase unless later work requires it
 
 ---
 
@@ -198,7 +154,7 @@ Every contract artifact must include:
 | `tier` | enum | One of `intent-specs`, `product-specs`, `system-specs` |
 | `scope_kind` | enum | One of `root`, `container`, `component` |
 | `scope_id` | string | `root` or the governing container/component scope slug |
-| `status` | enum | One of `draft`, `approved`, `stale`, `superseded` |
+| `status` | enum | One of `draft`, `approved` |
 | `version` | integer | Latest approved version number; starts at `0` until the first approval |
 | `draft_revision` | integer | Optional; required when `status: draft` and content differs from the last approved version |
 | `approval_mode` | enum | One of `human`, `delegated` |
@@ -243,7 +199,7 @@ Contract versioning uses approved versions plus draft revisions:
 - next unapproved change: `version: 1`, `draft_revision: 2`
 - next approval: `version: 2`, no `draft_revision`
 
-Downstream staleness is computed from the latest approved upstream version, not from unapproved drafts.
+Staleness is never written into artifact frontmatter. It is computed by the context graph by comparing each artifact's derivation basis against the latest approved upstream versions. Unapproved drafts do not trigger staleness.
 
 ---
 
@@ -370,43 +326,26 @@ During brownfield import:
 - never renumber imported items after the initial mapping
 - never recycle deleted IDs
 
+Import always reconstructs the entire contract stack bottom-up from code analysis:
+1. Analyze existing code to infer system-specs (components, containers, interfaces, behaviors)
+2. Infer product-specs (requirements, stories, domain model) from the reconstructed system-specs
+3. Infer intent-specs (capabilities, wishes, constraints) from the reconstructed product-specs
+4. Generate the context tier (execution guidance, decision records, BDD scenarios) from the reconstructed contract
+
+All three contract tiers are marked `draft` after reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for human confirmation at each tier before moving to the next.
+
 ---
 
 ## Item Carriers And Template Rules
 
-Templates are authoritative for body shape. The engine parses addressable items from the carriers standardized below:
+Templates in `assets/` are authoritative for body shape. The engine parses addressable items (short IDs) from tables and structured lists inside each artifact. Each template defines which carriers it uses.
 
-| Artifact | Primary Item Carrier |
-| --- | --- |
-| `intent` | structured bullets or tables with `CAP-####`, `WISH-####`, and `CST-####` only where entries are addressable |
-| `defaults` | compact tables and rule lists; v1 does not require per-rule item IDs |
-| `prd` | tables with short IDs for core requirements and for optional overlays only when they are addressable |
-| `usm` | tables with short IDs for epics, flows, stories, acceptance entries, and milestones |
-| `dm` | tables with short IDs for bounded contexts, aggregates, entities, value objects, invariants, and relationships |
-| `system` | tables with short IDs for actors, external systems, trust boundaries, and system-wide constraints |
-| `containers` | container inventory plus edge and constraint tables with short IDs; descriptive responsibility/runtime notes may remain un-IDed |
-| `container` | component inventory with `CMP-####`; resident bounded contexts are referenced by `BC-####`; local edges and constraints use short IDs |
-| `component` | interface, dependency, behavior, and note tables with short IDs; owned paths may remain un-IDed |
-| execution guidance | bullets and tables keyed by scope; any cited upstream items use short IDs |
-| `pdr` / `adr` | ledger artifacts with repeated `PDR-####` / `ADR-####` record sections; each record carries `recorded_at`, `derives_from`, `contract delta`, and `impact` |
-| `bdd` | artifact ID plus scenario IDs with short `derives_from` references |
+Key exceptions to the standard table-with-IDs pattern:
+- `defaults`: compact rule lists; v1 does not require per-rule item IDs
+- `pdr` / `adr`: ledger artifacts with repeated record sections (`PDR-####` / `ADR-####`), each carrying `recorded_at`, `derives_from`, `contract delta`, `impact`, `decision`, and `why`
+- `bdd`: multi-file (each `BDD-####` is its own context artifact under `/context/bdd/`) for selective loading during implementation
 
-For `pdr` and `adr`, each record section is the addressable unit:
-
-- `id` is `PDR-####` or `ADR-####`
-- `recorded_at` is required per record and must be ISO 8601 UTC
-- `derives_from` records the upstream cause/input items that led to the decision
-- `contract delta` records the directly changed contract item IDs plus a short explanation
-- `impact` records downstream affected item IDs plus the expected effect or required reconciliation
-- `decision` and `why` are required prose sections
-
-`bdd` is intentionally different:
-
-- each `BDD-####` file is its own context artifact
-- BDD remains multi-file because behavioral scenario sets benefit from selective loading during implementation and review
-- BDD files always live under `/context/bdd/`
-
-The templates in `assets/` are intentionally standalone. Small structural duplication between templates is allowed when it reduces context load at generation time.
+Templates are intentionally standalone. Small structural duplication between templates is allowed when it reduces context load at generation time.
 
 ---
 
@@ -429,12 +368,7 @@ The engine stores:
 
 ### Inferred Views
 
-The engine derives:
-
-- **traceability** by walking `derives_from` upward or downward
-- **staleness** by reverse traversal from changed approved items
-- **loading slices** by selecting the smallest artifact scope that contains the target item and its upstream closure
-- **artifact impact** by summarizing affected items upward into sections, artifacts, and tiers
+See methodology for conceptual definitions of traceability, staleness, loading, and artifact impact. The engine computes all four from the stored data above. Staleness is computed in the graph only, never written to artifact frontmatter.
 
 ### Graph Cache
 
@@ -485,45 +419,15 @@ Within a contract tier, artifacts are generated in this order:
 
 ### Double-Pass Generation
 
-For contract tiers:
+See methodology for the conceptual double-pass model. The concrete steps per contract tier are:
 
 1. generate artifacts in dependency order
-2. run a forward pass across the tier
-3. run a back pass if later artifacts sharpen earlier artifacts
-4. run structural eval
-5. run semantic eval
-6. run one additional bounded forward-back round if needed
-7. emit the tier as `draft`
-8. pause for tier-level review, eval, and approval according to profile
-
-### Profiles
-
-`lite`:
-
-- hidden internal classification
-- may generate multiple contract tiers in one run from drafts produced earlier in that run
-- pauses once before code generation
-- may pause after context generation if explicitly requested or if generation quality checks fail
-
-`full`:
-
-- visible tier boundary handling
-- pauses for approval after each contract tier
-- pauses after context generation before code generation
-
-### Modes
-
-`pm` defaults:
-
-- emphasize `intent-specs` and `product-specs`
-- load product-oriented context first
-- bias review toward requirements, workflows, acceptance intent, and decision framing
-
-`dev` defaults:
-
-- emphasize `system-specs`, context, and code
-- load technical scope first
-- bias review toward technical boundaries, dependencies, and executable impact
+2. forward pass across the tier
+3. back pass if later artifacts sharpen earlier artifacts
+4. structural eval + semantic eval
+5. one additional bounded forward-back round if needed
+6. emit as `draft`
+7. pause for review, eval, and approval according to profile
 
 ### Operation Contracts
 
@@ -536,7 +440,7 @@ For contract tiers:
 | `reconcile` | approved upstream change set, downstream floor scope | refreshed stale downstream artifacts |
 | `approve` | current contract tier, approval mode | approved tier and updated versions |
 | `status` | scope | current lifecycle and stale summary |
-| `import` | unmanaged repo scope, target ceiling tier | candidate contract drafts |
+| `import` | unmanaged repo scope | candidate contract drafts for all three contract tiers plus context |
 
 `review` only acts on the current tier and approved upstream truth.
 `reconcile` only acts downward.
@@ -558,6 +462,15 @@ Implementations should standardize these parameter names even if the user-facing
 
 These parameters are the concrete implementation vocabulary behind the methodology-level operations.
 
+### Utility Commands
+
+These are skill-level commands that do not correspond to methodology operations:
+
+| Command | Purpose |
+| --- | --- |
+| `configure` | Change runtime settings: `profile` (`lite` / `full`), `mode` (`pm` / `dev`), and any future skill-level options. Changes take effect on the next operation. |
+| `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. |
+
 ### Context Generation
 
 Context generation happens after the required contract tiers are approved.
@@ -566,7 +479,7 @@ Generation order inside context:
 
 1. execution guidance artifacts for affected scopes
 2. decision records if the change introduced product or architecture decisions
-3. `bdd` scenarios when behavior projections are requested or produced by behavioral eval
+3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand when behavioral eval is explicitly invoked via `eval system-specs behavioral`
 
 Context is assumed correct by default, but implementations may pause after context generation for optional human review.
 
@@ -610,8 +523,6 @@ Template rules:
 - templates do not contain runtime logic
 - templates may duplicate small structural fragments when that materially reduces context load
 - code templates are out of scope in this phase
-
-`references/` is reserved for future runtime-operational authority. This phase defines its role but does not require authoring it.
 
 ---
 

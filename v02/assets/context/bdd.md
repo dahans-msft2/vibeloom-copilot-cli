@@ -4,16 +4,14 @@ artifact_type: bdd
 tier: context
 scope_kind: root
 scope_id: root
-# Replace with the approved upstream item IDs that produced this scenario set.
-# Example:
-# - STORY-0001
-# - ACC-0001
 derives_from: []
 ---
 
 # Behavioral Scenarios
 
 `bdd` contains generated, non-executable Gherkin scenarios derived from approved contract.
+
+Populate `derives_from` in frontmatter with the approved upstream item IDs that produced this scenario set (e.g., STORY-0001, ACC-0001).
 
 This template produces one behavior artifact per file. Keep generated BDD artifacts under `/context/bdd/`, for example `BDD-0001-<behavior-slug>.md`.
 

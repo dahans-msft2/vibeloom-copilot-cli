@@ -15,16 +15,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved upstream item IDs.
-# Example:
-# - CMP-0001
-# - AGG-0001
 derives_from: []
 ---
 
 # Component
 
 `component` is the smallest owned technical boundary.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., CMP-0001, AGG-0001).
 
 ## Responsibility
 

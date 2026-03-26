@@ -39,6 +39,6 @@ Populate `derives_from` in frontmatter with the governing approved contract item
 
 ## Local Caveats
 
-- Review, eval, and approve are tier-level, not spec-level.
+- Approval behavior follows the current mode; do not assume every run stops at each tier.
 - Prefer upstream contract edits over direct context edits when semantics are wrong.
 - Keep root-scope work small and push ownership back down whenever possible.

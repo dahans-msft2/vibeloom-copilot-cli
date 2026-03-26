@@ -25,27 +25,26 @@ Put those in `intent`, execution guidance, or implementation instead.
 
 ## Repo Constitution
 
-| rule | rationale |
-| --- | --- |
-| Approved contract is the semantic source of truth; if context or code conflicts with approved contract, contract wins semantically. | Preserves contract-first governance and prevents downstream artifacts from becoming accidental truth. |
-| Review, eval, and approve operate at the tier level, not at the individual spec level. | Keeps governance stable even if specs are added to or removed from a tier. |
-| Bounded contexts do not span containers. | Keeps semantic boundaries and runtime boundaries aligned. |
-| Each component has exactly one semantic home and one runtime home. | Prevents smeared ownership and ambiguous technical boundaries. |
-| Filesystem layout reflects declared ownership but does not define semantic truth. | Prevents folder shape from silently becoming architecture. |
+| id | rule | rationale |
+| --- | --- | --- |
+| `CST-0001` | Approved contract is the semantic source of truth; if context or code conflicts with approved contract, contract wins semantically. | Preserves contract-first governance and prevents downstream artifacts from becoming accidental truth. |
+| `CST-0002` | Bounded contexts do not span containers. | Keeps semantic boundaries and runtime boundaries aligned. |
+| `CST-0003` | Each component has exactly one semantic home and one runtime home. | Prevents smeared ownership and ambiguous technical boundaries. |
+| `CST-0004` | Filesystem layout reflects declared ownership but does not define semantic truth. | Prevents folder shape from silently becoming architecture. |
 
 ## Technology Baseline
 
-| choice | scope | notes |
-| --- | --- | --- |
-| Standardize one primary implementation stack per repo or governed runtime slice. | `repo` or one governed runtime slice | Introduce another stack only through a narrower downstream contract that explicitly owns it. |
-| Standardize one web UI stack per web-facing surface when the repo includes a UI. | web-facing scope | Record framework, styling system, and component library once and reuse them consistently. |
-| Make persistence, messaging, and external platform baselines explicit when they are globally assumed. | `repo` | Prevent hidden infrastructure assumptions from leaking into downstream generation. |
+| id | choice | scope | notes |
+| --- | --- | --- | --- |
+| `CST-0005` | Standardize one primary implementation stack per repo or governed runtime slice. | `repo` or one governed runtime slice | Introduce another stack only through a narrower downstream contract that explicitly owns it. |
+| `CST-0006` | Standardize one web UI stack per web-facing surface when the repo includes a UI. | web-facing scope | Record framework, styling system, and component library once and reuse them consistently. |
+| `CST-0007` | Make persistence, messaging, and external platform baselines explicit when they are globally assumed. | `repo` | Prevent hidden infrastructure assumptions from leaking into downstream generation. |
 
 ## Quality Guardrails
 
-| guardrail | expectation | notes |
-| --- | --- | --- |
-| Behavior changes include executable verification at the narrowest useful scope. | Tests or checks are added or updated before the change is considered complete. | Broaden scope only when boundaries require it. |
-| Invariants and boundary contracts are enforced explicitly in code. | Preconditions, postconditions, or invariant checks exist where the contract requires them. | Especially at component, container, and external boundaries. |
-| Approved contract changes are reconciled downward before downstream work is treated as current. | Regenerate or realign affected context and code after approved upstream change. | Prevents stale downstream truth from lingering. |
-| Semantic drift is corrected upstream first. | Change contract before patching context or code when the meaning is wrong. | Keeps contract-first governance intact. |
+| id | guardrail | expectation | notes |
+| --- | --- | --- | --- |
+| `CST-0008` | Behavior changes include executable verification at the narrowest useful scope. | Tests or checks are added or updated before the change is considered complete. | Broaden scope only when boundaries require it. |
+| `CST-0009` | Invariants and boundary contracts are enforced explicitly in code. | Preconditions, postconditions, or invariant checks exist where the contract requires them. | Especially at component, container, and external boundaries. |
+| `CST-0010` | Approved contract changes are reconciled downward before downstream work is treated as current. | Regenerate or realign affected context and code after approved upstream change. | Prevents stale downstream truth from lingering. |
+| `CST-0011` | Semantic drift is corrected upstream first. | Change contract before patching context or code when the meaning is wrong. | Keeps contract-first governance intact. |

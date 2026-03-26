@@ -9,16 +9,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved upstream item IDs.
-# Example:
-# - CONT-0001
-# - BC-0001
 derives_from: []
 ---
 
 # Container
 
 `container` is the authoritative local inventory for one runtime boundary.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., CONT-0001, BC-0001).
 
 ## Purpose And Runtime Boundary
 

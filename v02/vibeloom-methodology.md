@@ -50,20 +50,24 @@ VibeLoom adds ceremony. For a weekend prototype, single-file utility, or throwaw
 ## Overview
 Here is an overview of developing a system using VibeLoom:
 - Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
-- To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current governance surface against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
+- To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current candidate approval unit against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other artifacts inside the current approval unit and against approved upstream truth.
 - Every run starts with **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
 - The run then proceeds downward through **product-specs** (`prd`, `usm`, `dm`) and **system-specs** (`system`, `containers`, `container`, `component`) as needed.
-- Generation and validation of the **contract** use one of four governance modes that control approval granularity, review ownership, and context-boundary behavior:
-  - `lite` uses **contract-scope approval** — the affected contract stack is generated, then reviewed, evaled, and approved as one unit
-  - `pm` uses **tier-scope approval** — human meaningfully reviews intent-specs and product-specs; system-specs are delegated unless a breaking semantic change is detected
-  - `dev` uses **tier-scope approval** — human meaningfully reviews intent-specs and system-specs; product-specs are delegated unless a breaking semantic change is detected
-  - `expert` uses **tier-scope approval** — human meaningfully reviews every tier
-- In tier-scope modes (`pm`, `dev`, `expert`), each affected contract tier is generated, reviewed, evaled, and approved as one unit before the run proceeds to the next lower contract tier.
-- In `lite`, the affected contract stack is generated first and then reviewed, evaled, and approved as one unit before context and code proceed.
+- Generation and validation of the **contract** use one of four modes that control approval units, delegated progression, and context-boundary behavior:
+  - `lite` treats the affected contract stack as one approval unit and delegates contract approval by default so the skill can run end-to-end in one go unless a blocking or flagged issue requires a human stop
+  - `pm` treats each affected contract tier as its own approval unit; `product-specs` are the normal human stop and `system-specs` auto-advance by default unless blocked or flagged
+  - `dev` treats each affected contract tier as its own approval unit; `system-specs` are the normal human stop and `product-specs` auto-advance by default unless blocked or flagged
+  - `expert` treats each affected contract tier as its own approval unit and stops for explicit human approval at every contract tier
+- Review and structural/semantic eval may loop inside the current candidate approval unit before approval is recorded.
+- The normal forward command surface is mode-specific:
+  - `lite`: `generate code`
+  - `pm`: `generate product-specs`, `generate code`
+  - `dev`: `generate system-specs`, `generate code`
+  - `expert`: full targeted operation surface
 - **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Context artifacts appear in two ways:
   - **Automatic:** execution guidance is generated for all affected scopes after contract approval. Decision records (`pdr`, `adr`) are generated when contract evolution introduces product or architecture decisions. Behavioral scenarios (`bdd`) are generated when system-specs produce behavior items.
   - **On-demand:** any context artifact can also be explicitly generated or regenerated via the appropriate operation (e.g., behavioral eval produces `bdd` scenarios on request).
-- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. In tier-scope modes (`pm`, `dev`, `expert`), context is still a visible boundary and the workflow pauses before code so a human can review or eval it against upstream specs. In `lite`, context normally flows directly into code.
+- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. `expert` pauses at the context boundary before code. `lite`, `pm`, and `dev` normally continue into code unless a blocking or flagged issue requires a human stop.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - After the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
 
@@ -73,7 +77,7 @@ Here is an overview of developing a system using VibeLoom:
 
 VibeLoom governs application development through a compact contract stack.
 The application artifacts play the following roles:
-- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved at the current governance boundary (tier scope in `pm`/`dev`/`expert`, contract scope in `lite`).
+- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved through the current approval unit defined by mode.
 - **context**: normative execution truth for agents. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata and do not require human approval, although humans may review or edit them in exceptional cases.
 - **code**: the executable result. Humans are not expected to edit it directly.
 
@@ -81,7 +85,7 @@ In this document:
 - **human-gated** means downstream work may not rely on a tier until a human approves it.
 - **normative** means it is a source of truth that downstream generation, execution, review, or eval in its scope must follow.
 - **executable** means it can be run or checked directly.
-- **governance surface** means the set of artifacts currently under review and approval — tier scope in `pm`/`dev`/`expert`, contract scope in `lite`.
+- **approval unit** means the set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint. In `pm`, `dev`, and `expert`, each affected contract tier is its own approval unit. In `lite`, the affected contract stack is one approval unit.
 
 The contract stack separates semantic truth, execution truth, and executable result.
 
@@ -140,7 +144,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
-Tiers are a generation and governance abstraction. In tier-scope modes (`pm`, `dev`, `expert`), review, eval, and approval act at tier scope. In `lite`, review, eval, and approval act at contract scope across the affected contract tiers for the current run. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
+Tiers are a generation abstraction. Modes determine approval units: per affected contract tier in `pm`, `dev`, and `expert`, or across the affected contract stack in `lite`. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
 Governance binds to the tier semantics, not to a fixed list of specs inside the tier. A tier may gain or lose specs over time without changing the review, eval, and approval model.
 
 ---
@@ -174,7 +178,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
-All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. In tier-scope modes (`pm`, `dev`, `expert`), the workflow pauses at the context boundary before code. In `lite`, context normally flows directly into code. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. `expert` pauses at the context boundary before code. `lite`, `pm`, and `dev` normally continue into code unless a blocking or flagged issue requires a human stop. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -270,13 +274,13 @@ At a conceptual level, the workflow is:
 
 1. Start from `intent-specs` and identify the affected contract stack for the current run.
 2. Generate the affected contract tiers as batches from approved upstream truth.
-3. In tier-scope modes (`pm`, `dev`, `expert`), review, eval, and approve each affected tier at tier scope before moving downward. Delegated tiers are auto-approved unless a breaking semantic change is detected.
-4. In `lite`, review, eval, and approve the affected contract stack as one contract-scope unit.
+3. In `pm`, `dev`, and `expert`, each affected contract tier is its own approval unit. `pm` and `dev` auto-advance delegated approval units when safe; `expert` always stops for explicit approval.
+4. In `lite`, the affected contract stack is treated as one approval unit and may proceed end-to-end with delegated contract approval by default.
 5. Generate context from approved contract.
-6. In tier-scope modes, pause at the context boundary before code. In `lite`, continue into code by default.
+6. Only `expert` pauses at the context boundary by default. `lite`, `pm`, and `dev` continue into code unless blocked or flagged.
 7. Generate or reconcile code from approved contract and context.
 
-Modes control governance granularity, review ownership, and pause topology. They do not change artifact semantics or the contract/context/code ontology.
+Modes control approval units, delegated progression, and pause topology. They do not change artifact semantics or the contract/context/code ontology.
 
 ```mermaid
 flowchart TD
@@ -292,9 +296,9 @@ flowchart TD
 
     subgraph REV["Review"]
         direction TB
-        R["Critique Governance Surface"]
+        R["Critique Candidate<br/>Approval Unit"]
         R1["Surface Issues, Propose Fixes"]
-        R2["Apply Bounded Same-Tier Fixes"]
+        R2["Apply Bounded Fixes<br/>Inside Approval Unit"]
         R --> R1 --> R2
     end
 
@@ -303,11 +307,11 @@ flowchart TD
         E["Structural, Semantic,<br/>Behavioral Checks"]
     end
 
-    R2 --> A["Approve<br/>At Governance Surface"]
+    R2 --> A["Approve<br/>Current Approval Unit"]
     E --> A
 
     A --> C["Generate Context"]
-    C --> B["Context Boundary<br/>Tier-Scope Modes: Pause, Lite: Continue"]
+    C --> B["Context Boundary<br/>Expert: Pause, Other Modes: Continue"]
     B --> K["Generate Or Reconcile Code"]
 
     K -.-> Q
@@ -322,30 +326,32 @@ flowchart TD
 
 ### Modes
 
-Modes are run-time-switchable governance settings that control approval granularity, review ownership, and context-boundary behavior. All modes use the same contract stack.
+Modes are run-time-switchable workflow settings that control approval units, delegated progression, and context-boundary behavior. All modes use the same contract stack.
 
-| Mode | Approval granularity | Context pause | Meaningful human review | Delegated tiers | Typical use |
-| --- | --- | --- | --- | --- | --- |
-| `lite` | contract-scope | no | all tiers as one batch | none | Simple systems: one bounded context, limited business logic, modest complexity |
-| `pm` | tier-scope | yes | intent-specs, product-specs | system-specs | PM driving requirements, workflows, acceptance intent |
-| `dev` | tier-scope | yes | intent-specs, system-specs | product-specs | Dev driving technical boundaries, dependencies, executable impact |
-| `expert` | tier-scope | yes | all tiers individually | none | Lead owning the full contract stack end-to-end |
+| Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause | Normal forward surface | Typical use |
+| --- | --- | --- | --- | --- | --- | --- |
+| `lite` | affected contract stack | none before code | affected contract stack | no | `generate code` | Simple systems: one bounded context, limited business logic, modest complexity |
+| `pm` | each affected contract tier | `product-specs` | `system-specs` | no | `generate product-specs`, `generate code` | PM driving requirements, workflows, acceptance intent |
+| `dev` | each affected contract tier | `system-specs` | `product-specs` | no | `generate system-specs`, `generate code` | Dev driving technical boundaries, dependencies, executable impact |
+| `expert` | each affected contract tier | every contract tier | none | yes | full targeted operation surface | Lead owning the full contract stack end-to-end |
 
-`lite` is intentionally less ceremonial, not less safe. Tier-scope modes are intentionally more explicit, not semantically different.
+`lite` is intentionally one-shot and relies most heavily on delegated approval, not a different ontology. `pm`, `dev`, and `expert` are progressively more explicit, not semantically different.
 
 Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` otherwise. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
-Regardless of mode, `intent-specs` stay explicitly human-owned and every run still begins from `intent-specs`.
+Regardless of mode, `intent-specs` stay explicitly human-authored and every run still begins from `intent-specs`.
 
-Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, the contract/context/code ontology, or the requirement that the contract stack be approved before context and code proceed.
+Modes may change default prompts, context emphasis, stop behavior, or suggested operations, but they do not change the contract stack or the contract/context/code ontology.
 
-#### Delegated approval and breaking-change escalation
+#### Delegated auto-advance and breaking-change escalation
 
-In `pm` and `dev`, delegation does not eliminate review of the non-owned contract tier. It only makes it rarer.
+In `lite`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
-- Delegated approval of the other tier is the default only for additive or otherwise non-semantic changes.
-- If generation introduces a **breaking semantic change** in the delegated tier, explicit review and approval of that tier becomes required before the run can complete.
-- That explicit review may be performed by the current human or delegated onward to the appropriate teammate.
+- structural eval passes
+- no **breaking semantic change** is detected against approved truth
+- no flagged issue requires human judgment
+
+If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
 
 A **breaking semantic change** is a change to existing approved meaning, not simple addition of new material consistent with approved truth.
 
@@ -365,7 +371,8 @@ Staleness is not an artifact state. It is a computed property of the context gra
 
 Only contract artifacts are approved. Context does not carry lifecycle metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
-`intent-specs` are always explicitly human-owned. Approval scope follows mode (see Modes above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
+`intent-specs` are always explicitly human-owned. Contract approval units follow mode (see Modes above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
+`pm`, `dev`, and `expert` still use per-tier approval units. `lite` treats the affected contract stack as one delegated approval unit by default.
 
 ---
 
@@ -390,7 +397,7 @@ Every run starts from `intent-specs` and proceeds downward. Each tier is produce
 
 ### Within-Tier Generation
 
-Each affected tier is generated as a batch using a bounded double-pass cycle. In tier-scope modes (`pm`, `dev`, `expert`), each tier pauses after this cycle for review, eval, and approval. In `lite`, the affected contract tiers are all produced first and then reviewed together at contract scope.
+Each affected tier is generated as a batch using a bounded double-pass cycle. `expert` pauses after every affected contract tier. `pm` and `dev` pause at the human-owned approval unit and auto-advance delegated approval units when safe. `lite` may carry the whole affected contract stack through delegated approval in one run when safe.
 
 ```mermaid
 flowchart TD
@@ -413,7 +420,7 @@ This is deliberate: user wishes and constraints may survive all the way into sys
 
 ### Generation And Staleness
 
-When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced by the `status` command.
+When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced through staleness detection.
 
 ---
 
@@ -421,23 +428,23 @@ When approved upstream truth changes, dependent downstream artifacts become stal
 
 These are three distinct conceptual activities:
 
-- `review` critiques and frames the current governance surface against approved upstream truth
+- `review` critiques and frames the current candidate approval unit against approved upstream truth
 - `eval` checks structure and semantics
 - `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
 
-Review and eval use the current governance surface, even though the underlying graph remains fine-grained: tier scope in `pm`/`dev`/`expert`, contract scope across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
+Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in `pm`/`dev`/`expert`, or across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
 
 Review, eval, and reconciliation are shown together in the Workflow diagram above.
 
 ### Review
 
-Review is the human-facing critique loop for the current governance surface against approved upstream truth and same-tier coherence.
+Review is the human-facing critique loop for the current candidate approval unit against approved upstream truth and internal coherence.
 
 It may:
 
 - surface contradictions, ambiguity, and missing links
 - propose upstream or same-tier corrections
-- apply bounded fixes within the currently reviewed governance surface
+- apply bounded fixes within the currently reviewed approval unit
 
 Review does not propagate approved changes downward; that belongs to reconciliation.
 Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
@@ -452,7 +459,7 @@ VibeLoom uses three named eval types:
 | `semantic eval` | Analyze coverage, contradiction with upstream truth, componentization fit, and context sufficiency | No |
 | `behavioral eval` | Produce on-demand Gherkin acceptance scenarios from approved contract for later implementation | No |
 
-Structural eval and semantic eval normally run against the governance surface currently under review or approval. Behavioral eval produces context artifacts rather than new contract truth.
+Structural eval and semantic eval normally run against the approval unit currently under review or approval. Behavioral eval produces context artifacts rather than new contract truth.
 
 ### Reconciliation
 
@@ -486,10 +493,10 @@ VibeLoom defines eight methodology-level operations. Implementations may expose 
 | --- | --- | --- |
 | `init` | top-down | Bootstrap a governed repo and produce the first draft contract stack |
 | `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
-| `review` | current + up | Critique the current generated tier against approved upstream truth and optionally apply bounded fixes within that tier |
-| `eval` | up | Run structural, semantic, or behavioral evaluation for the current tier |
+| `review` | current + up | Critique the current candidate approval unit against approved upstream truth and optionally apply bounded fixes within that approval unit |
+| `eval` | up | Run structural, semantic, or behavioral evaluation for the current approval unit |
 | `reconcile` | down | Propagate approved upstream changes downward into stale downstream tiers, context, or code |
-| `approve` | gate | Move a reviewed contract tier from `draft` to `approved` and record approval provenance |
+| `approve` | gate | Move a reviewed contract approval unit from `draft` to `approved` and record approval provenance |
 | `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
 | `import` | bottom-up | Reconstruct candidate contract from an unmanaged or heavily drifted codebase |
 

@@ -1,6 +1,6 @@
 # VibeLoom Implementation
 
-This document is the concrete implementation companion to [vibeloom-methodology.md](/Users/ilya.baimetov/Projects/vibeloom/v02/vibeloom-methodology.md). The methodology defines conceptual truth. This document defines the concrete artifact layout, metadata shape, ID schema, template inventory, runtime behavior, and engine boundary required to build a working VibeLoom skill package and local engine.
+This document is the concrete implementation companion to [vibeloom-methodology.md](/Users/ilya.baimetov/Projects/vibeloom/v02/vibeloom-methodology.md). The methodology defines conceptual truth. This document defines the concrete artifact layout, metadata shape, ID schema, template inventory for contract and context artifacts, runtime behavior, and engine boundary required to build a working VibeLoom skill package and local engine.
 
 The current working draft lives at repository root as `vibeloom-implementation.md`. Once the layered skill package is scaffolded, this file moves to `docs/vibeloom-implementation.md`.
 
@@ -8,7 +8,7 @@ The current working draft lives at repository root as `vibeloom-implementation.m
 
 ## Authority, Package Shape, And Engine Boundary
 
-Authority flows downward: methodology → implementation → `assets/` templates → `SKILL.md`. This phase authors implementation and `assets/` only.
+Authority flows downward: methodology → implementation → `assets/` templates → `SKILL.md`. This phase fully specifies contract and context artifacts plus code-generation orchestration, but it does not yet define concrete code templates or code-item carriers.
 
 VibeLoom has two runtime layers:
 
@@ -112,7 +112,7 @@ The filesystem is a navigation aid and consistency check. It is not the semantic
 
 ## Artifact Mapping
 
-The concrete output and template mapping is:
+The concrete output and template mapping for contract and context artifacts is:
 
 | Artifact Type | Output Path | Template Path | Scope |
 | --- | --- | --- | --- |
@@ -132,7 +132,7 @@ The concrete output and template mapping is:
 | `adr` ledger | `/context/adr.md` | `assets/context/adr.md` | root |
 | `bdd` | `/context/bdd/BDD-####-<behavior-slug>.md` | `assets/context/bdd.md` | root |
 
-The body shape of each generated artifact is defined by the corresponding template in `assets/`. This document defines the metadata, IDs, path rules, and runtime behavior that the templates must obey.
+The body shape of each generated contract or context artifact is defined by the corresponding template in `assets/`. This document defines the metadata, IDs, path rules, and runtime behavior that the templates must obey.
 
 ---
 
@@ -224,7 +224,7 @@ Core rules:
 | --- | --- |
 | `CAP-####` | intent capability |
 | `WISH-####` | softer intent preference |
-| `CST-####` | hard constraint item in intent, PRD, or system-specs |
+| `CST-####` | hard constraint item in defaults, intent, PRD, or system-specs |
 | `FR-####` | functional requirement |
 | `NFR-####` | non-functional requirement |
 | `ASM-####` | assumption |
@@ -338,7 +338,7 @@ All three contract tiers are marked `draft` after reconstruction. The skill then
 Templates in `assets/` are authoritative for body shape. The engine parses addressable items (short IDs) from tables and structured lists inside each artifact. Each template defines which carriers it uses.
 
 Key exceptions to the standard table-with-IDs pattern:
-- `defaults`: compact rule lists; v1 does not require per-rule item IDs
+- `defaults`: compact rule lists that still use `CST-####` item IDs so downstream derivation can reference individual repo-wide constraints
 - `pdr` / `adr`: ledger artifacts with repeated record sections (`PDR-####` / `ADR-####`), each carrying `recorded_at`, `derives_from`, `contract delta`, `impact`, `decision`, and `why`
 - `bdd`: multi-file (each `BDD-####` is its own context artifact under `/context/bdd/`) for selective loading during implementation
 
@@ -363,14 +363,14 @@ Domain-specific columns (e.g., `kind`, `runtime`, `rule`, `relationship`) are te
 
 ## Context Graph Realization
 
-The context graph is built from explicit derivation plus containment.
+The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Methodology may later extend addressable graph participation into code artifacts once concrete code-item carriers are specified.
 
 ### Explicitly Stored
 
 The engine stores:
 
-- artifact metadata from frontmatter
-- item IDs parsed from templates
+- artifact metadata from contract and context frontmatter
+- item IDs parsed from contract and context templates
 - item-level `derives_from` references
 - an index from short item IDs to owning artifact, section, tier, and scope
 - containment:
@@ -380,7 +380,7 @@ The engine stores:
 
 ### Inferred Views
 
-See methodology for conceptual definitions of traceability, staleness, loading, and artifact impact. The engine computes all four from the stored data above. Staleness is computed in the graph only, never written to artifact frontmatter.
+See methodology for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed in the graph only, never written to artifact frontmatter.
 
 ### Graph Cache
 
@@ -439,7 +439,7 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 4. structural eval + semantic eval
 5. one additional bounded forward-back round if needed
 6. emit as `draft`
-7. pause for review, eval, and approval according to mode
+7. pause or auto-advance for review, eval, and approval according to mode and delegated-approval rules
 
 ### Operation Contracts
 
@@ -447,14 +447,14 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 | --- | --- | --- |
 | `init` | project brief, mode | initial `intent-specs` draft |
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
-| `review` | current tier, scope, review style | findings and optional bounded same-tier fixes |
-| `eval` | current tier, eval type, scope | structural, semantic, or behavioral findings |
+| `review` | current approval unit, scope, review style | findings and optional bounded fixes inside that approval unit |
+| `eval` | current approval unit, eval type, scope | structural, semantic, or behavioral findings |
 | `reconcile` | approved upstream change set, downstream floor scope | refreshed stale downstream artifacts |
-| `approve` | current contract tier, approval mode | approved tier and updated versions |
+| `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
 | `import` | unmanaged repo scope | candidate contract drafts for all three contract tiers plus context |
 
-`review` only acts on the current tier and approved upstream truth.
+`review` only acts on the current approval unit and approved upstream truth.
 `reconcile` only acts downward.
 
 ### Standard Operation Parameters
@@ -466,11 +466,30 @@ Implementations should standardize these parameter names even if the user-facing
 | `target_tier` | One of `intent-specs`, `product-specs`, `system-specs`, `context`, `code` |
 | `scope` | One of `root`, `container:<container-slug>`, `component:<container-slug>/<component-slug>` |
 | `mode` | One of `lite`, `pm`, `dev`, `expert` |
-| `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies same-tier fixes that do not change approved upstream meaning. |
+| `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the current approval unit that do not change approved upstream meaning. |
 | `eval_type` | One of `structural`, `semantic`, `behavioral` |
 | `approval_mode` | One of `human`, `delegated` |
 
 These parameters are the concrete implementation vocabulary behind the methodology-level operations.
+
+### Mode-Driven Approval Behavior
+
+Implementations should enforce the same stop behavior described in methodology:
+
+| Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
+| --- | --- | --- | --- | --- |
+| `lite` | affected contract stack | none before code | affected contract stack | no |
+| `pm` | each affected contract tier | `product-specs` | `system-specs` | no |
+| `dev` | each affected contract tier | `system-specs` | `product-specs` | no |
+| `expert` | each affected contract tier | every contract tier | none | yes |
+
+In `lite`, `pm`, and `dev`, delegated auto-advance is allowed only when:
+
+- structural eval passes
+- no **breaking semantic change** is detected against approved truth
+- no flagged issue requires human judgment
+
+If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
 
 ### Utility Commands
 
@@ -491,7 +510,7 @@ Generation order inside context:
 2. decision records if the change introduced product or architecture decisions
 3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand when behavioral eval is explicitly invoked via `eval system-specs behavioral`
 
-Context is assumed correct by default, but implementations may pause after context generation for optional human review.
+Context is assumed correct by default. `expert` pauses at the context boundary before code. `lite`, `pm`, and `dev` normally continue unless a blocking or flagged issue requires a human stop.
 
 ---
 
@@ -537,7 +556,7 @@ Template rules:
 
 The implementation is valid only if all of the following hold:
 
-- every methodology artifact has a concrete output path and template mapping
+- every contract and context artifact in scope for this phase has a concrete output path and template mapping
 - every templated artifact has a YAML frontmatter shape
 - every visible addressable item uses a short typed `PREFIX-####` ID
 - every visible derivation reference uses short item IDs only
@@ -547,11 +566,11 @@ The implementation is valid only if all of the following hold:
 - every context artifact has stable artifact IDs and short derivation references
 - `bdd` is context, not contract
 - execution guidance is assistant-specific and scope-specific
-- contract approval remains tier-level
-- `review` remains current-tier plus upstream
+- contract approval follows the mode-defined approval unit and delegated-auto-advance rules
+- `review` and structural/semantic `eval` act on the current approval unit plus approved upstream truth
 - `reconcile` remains downstream only
 - the context graph can be rebuilt from artifact metadata and item carriers without hidden prompt-only state
 - brownfield import preserves compatible short IDs and records one-time remaps for incompatible legacy IDs
 - the skill can load one narrow template at a time rather than one large combined template
 
-This document is sufficient to author the future `SKILL.md`, `references/`, and local engine without inventing new artifact rules.
+This document is sufficient to author the future `SKILL.md`, `references/`, and the v1 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.

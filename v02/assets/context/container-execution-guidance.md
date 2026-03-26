@@ -1,19 +1,16 @@
 ---
-artifact_id: guidance.container.<container-slug>.codex
+artifact_id: guidance.container.<container-slug>.<assistant>
 artifact_type: execution-guidance
 tier: context
 scope_kind: container
 scope_id: <container-slug>
-assistant: codex
-# Replace with the governing approved contract item IDs for this scope.
-# Example:
-# - CONT-0001
-# - CMP-0001
-# - EDGE-0001
+assistant: <assistant>
 derives_from: []
 ---
 
-# Container Execution Guidance For Codex
+# Container Execution Guidance
+
+Populate `derives_from` in frontmatter with the governing approved contract item IDs for this scope (e.g., CONT-0001, CMP-0001, EDGE-0001). Replace `<assistant>` with the target assistant slug and `<container-slug>` with the container name.
 
 ## Scope And Ownership
 

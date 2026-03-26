@@ -21,7 +21,7 @@ The skill owns:
 
 - natural-language interface
 - operation selection
-- profile and mode defaults
+- mode defaults
 - approval pauses and user interaction
 - context loading decisions
 - orchestration across tiers and scopes
@@ -125,12 +125,9 @@ The concrete output and template mapping is:
 | `containers` | `/containers.md` | `assets/system-specs/containers.md` | root |
 | `container` | `/<container>/container.md` | `assets/system-specs/container.md` | container |
 | `component` | `/<container>/<component>/component.md` | `assets/system-specs/component.md` | component |
-| root execution guidance for Codex-like agents | `/AGENTS.md` | `assets/context/root-AGENTS.md` | root |
-| root execution guidance for Claude-like agents | `/CLAUDE.md` | `assets/context/root-CLAUDE.md` | root |
-| container execution guidance for Codex-like agents | `/<container>/AGENTS.md` | `assets/context/container-AGENTS.md` | container |
-| container execution guidance for Claude-like agents | `/<container>/CLAUDE.md` | `assets/context/container-CLAUDE.md` | container |
-| component execution guidance for Codex-like agents | `/<container>/<component>/AGENTS.md` | `assets/context/component-AGENTS.md` | component |
-| component execution guidance for Claude-like agents | `/<container>/<component>/CLAUDE.md` | `assets/context/component-CLAUDE.md` | component |
+| root execution guidance | `/AGENTS.md`, `/CLAUDE.md` | `assets/context/root-execution-guidance.md` | root |
+| container execution guidance | `/<container>/AGENTS.md`, `/<container>/CLAUDE.md` | `assets/context/container-execution-guidance.md` | container |
+| component execution guidance | `/<container>/<component>/AGENTS.md`, `/<container>/<component>/CLAUDE.md` | `assets/context/component-execution-guidance.md` | component |
 | `pdr` ledger | `/context/pdr.md` | `assets/context/pdr.md` | root |
 | `adr` ledger | `/context/adr.md` | `assets/context/adr.md` | root |
 | `bdd` | `/context/bdd/BDD-####-<behavior-slug>.md` | `assets/context/bdd.md` | root |
@@ -347,6 +344,21 @@ Key exceptions to the standard table-with-IDs pattern:
 
 Templates are intentionally standalone. Small structural duplication between templates is allowed when it reduces context load at generation time.
 
+### Table Column Conventions
+
+Templates use these canonical column names across tiers:
+
+| Column | Meaning | Used in |
+| --- | --- | --- |
+| `id` | Short typed item ID | all contract and context tables with addressable items |
+| `derives_from` | Upstream short item IDs that constrain this item | all contract tiers, pdr, adr, bdd |
+| `description` | What the item is or does | intent, prd, usm, dm, system, containers, container, component |
+| `notes` | Additional context, rationale, or caveats | any table where supplementary commentary is useful |
+| `priority` | Relative importance or sequencing | prd (FR, features, scope) |
+| `measure` / `target` | Quantitative NFR specification | prd (NFR), system (SNFR) |
+
+Domain-specific columns (e.g., `kind`, `runtime`, `rule`, `relationship`) are template-local and documented within the template that uses them.
+
 ---
 
 ## Context Graph Realization
@@ -405,7 +417,7 @@ This file summarizes:
 
 ### Tier Order
 
-The concrete tier order is:
+See methodology for tier semantics and derivation rules. The concrete tier order is:
 
 ```text
 intent-specs -> product-specs -> system-specs -> context -> code
@@ -427,14 +439,14 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 4. structural eval + semantic eval
 5. one additional bounded forward-back round if needed
 6. emit as `draft`
-7. pause for review, eval, and approval according to profile
+7. pause for review, eval, and approval according to mode
 
 ### Operation Contracts
 
 | Operation | Required Inputs | Output |
 | --- | --- | --- |
-| `init` | project brief, profile, mode | initial `intent-specs` draft |
-| `generate` | target tier, scope, approved upstream basis, profile, mode | regenerated tier artifacts |
+| `init` | project brief, mode | initial `intent-specs` draft |
+| `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
 | `review` | current tier, scope, review style | findings and optional bounded same-tier fixes |
 | `eval` | current tier, eval type, scope | structural, semantic, or behavioral findings |
 | `reconcile` | approved upstream change set, downstream floor scope | refreshed stale downstream artifacts |
@@ -453,12 +465,10 @@ Implementations should standardize these parameter names even if the user-facing
 | --- | --- |
 | `target_tier` | One of `intent-specs`, `product-specs`, `system-specs`, `context`, `code` |
 | `scope` | One of `root`, `container:<container-slug>`, `component:<container-slug>/<component-slug>` |
-| `profile` | One of `lite`, `full` |
-| `mode` | One of `pm`, `dev` |
-| `review_style` | One of `advisory`, `bounded` |
+| `mode` | One of `lite`, `pm`, `dev`, `expert` |
+| `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies same-tier fixes that do not change approved upstream meaning. |
 | `eval_type` | One of `structural`, `semantic`, `behavioral` |
 | `approval_mode` | One of `human`, `delegated` |
-| `pause_after_context` | Boolean override for pausing between context and code |
 
 These parameters are the concrete implementation vocabulary behind the methodology-level operations.
 
@@ -468,7 +478,7 @@ These are skill-level commands that do not correspond to methodology operations:
 
 | Command | Purpose |
 | --- | --- |
-| `configure` | Change runtime settings: `profile` (`lite` / `full`), `mode` (`pm` / `dev`), and any future skill-level options. Changes take effect on the next operation. |
+| `configure` | Change runtime settings: `mode` (`lite` / `pm` / `dev` / `expert`) and any future skill-level options. Changes take effect on the next operation. |
 | `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. |
 
 ### Context Generation
@@ -507,12 +517,9 @@ assets/
     pdr.md
     adr.md
     bdd.md
-    root-AGENTS.md
-    root-CLAUDE.md
-    container-AGENTS.md
-    container-CLAUDE.md
-    component-AGENTS.md
-    component-CLAUDE.md
+    root-execution-guidance.md
+    container-execution-guidance.md
+    component-execution-guidance.md
 ```
 
 Template rules:

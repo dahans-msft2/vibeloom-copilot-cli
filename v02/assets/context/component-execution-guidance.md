@@ -1,19 +1,16 @@
 ---
-artifact_id: guidance.component.<container-slug>.<component-slug>.codex
+artifact_id: guidance.component.<container-slug>.<component-slug>.<assistant>
 artifact_type: execution-guidance
 tier: context
 scope_kind: component
 scope_id: <container-slug>.<component-slug>
-assistant: codex
-# Replace with the governing approved contract item IDs for this scope.
-# Example:
-# - CMP-0001
-# - BEH-0001
-# - DEP-0001
+assistant: <assistant>
 derives_from: []
 ---
 
-# Component Execution Guidance For Codex
+# Component Execution Guidance
+
+Populate `derives_from` in frontmatter with the governing approved contract item IDs for this scope (e.g., CMP-0001, BEH-0001, DEP-0001). Replace `<assistant>` with the target assistant slug and `<container-slug>.<component-slug>` with the component path.
 
 ## Scope And Ownership
 

@@ -8,17 +8,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved intent item IDs.
-# Example:
-# - CAP-0001
-# - WISH-0001
-# - CST-0001
 derives_from: []
 ---
 
 # PRD
 
 `prd` is the normative product contract. Keep it rich enough for downstream generation, but keep implementation structure out of it.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved intent item IDs (e.g., CAP-0001, WISH-0001, CST-0001).
 
 ## TL;DR
 

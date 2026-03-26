@@ -15,6 +15,14 @@ derives_from: []
 
 `intent` stays prose-first. Use coarse IDs only for structured capabilities or constraints that must participate in derivation.
 
+### Guidance
+
+- **Capabilities** (CAP) are user-facing, observable outcomes the system should deliver. Focus on what the user needs and why, not how to build it.
+- **Wishes** (WISH) are softer preferences that clarify priorities but do not block delivery if omitted. They inform downstream trade-offs.
+- **Constraints** (CST) are hard, non-negotiable requirements. Violating a constraint blocks delivery. Constraints may be product-level (e.g., "explicit approval before access") or technical (e.g., "must run on ARM64").
+- Keep items coarse. If a capability naturally subdivides into multiple requirements, that decomposition belongs in `prd`, not here.
+- Items that are repo-wide and always-on belong in `defaults`, not `intent`.
+
 ## Functionality
 
 | id | statement | notes |

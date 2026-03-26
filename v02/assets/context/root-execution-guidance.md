@@ -1,19 +1,16 @@
 ---
-artifact_id: guidance.root.claude
+artifact_id: guidance.root.<assistant>
 artifact_type: execution-guidance
 tier: context
 scope_kind: root
 scope_id: root
-assistant: claude
-# Replace with the governing approved contract item IDs for this scope.
-# Example:
-# - CAP-0001
-# - FR-0001
-# - CONT-0001
+assistant: <assistant>
 derives_from: []
 ---
 
-# Root Execution Guidance For Claude
+# Root Execution Guidance
+
+Populate `derives_from` in frontmatter with the governing approved contract item IDs for this scope (e.g., CAP-0001, FR-0001, CONT-0001). Replace `<assistant>` in frontmatter with the target assistant slug (e.g., `claude`, `codex`).
 
 ## Scope And Ownership
 

@@ -8,17 +8,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved product-contract item IDs.
-# Example:
-# - FR-0001
-# - NFR-0001
-# - Q-0001
 derives_from: []
 ---
 
 # USM
 
 `usm` is the delivery map. It organizes the product into epics, flows, stories, acceptance framing, and milestones.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved product-contract item IDs (e.g., FR-0001, NFR-0001, Q-0001).
 
 ## Epics
 

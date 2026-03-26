@@ -8,17 +8,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved upstream item IDs.
-# Example:
-# - BC-0001
-# - NFR-0001
-# - SNFR-0001
 derives_from: []
 ---
 
 # Containers
 
 `containers` owns the global runtime topology of the system.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., BC-0001, NFR-0001, SNFR-0001).
 
 ## Container Inventory
 

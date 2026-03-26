@@ -8,17 +8,14 @@ status: draft
 version: 0
 draft_revision: 1
 approval_mode: human
-# Replace with the smallest relevant approved product-contract item IDs.
-# Example:
-# - FR-0001
-# - STORY-0001
-# - ACC-0001
 derives_from: []
 ---
 
 # Domain Model
 
 `dm` is the semantic source for technical boundary derivation.
+
+Populate `derives_from` in frontmatter with the smallest relevant approved product-contract item IDs (e.g., FR-0001, STORY-0001, ACC-0001).
 
 ## Ubiquitous Language
 

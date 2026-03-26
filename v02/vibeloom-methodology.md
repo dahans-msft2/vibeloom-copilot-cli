@@ -34,19 +34,36 @@ The core principles of VibeLoom methodology are:
 
 ---
 
+## When To Use VibeLoom
+
+VibeLoom is strongest where prompt-only generation stops being reliable. Use it when:
+
+- The codebase must survive more than one generation step, more than one contributor, or more than one architectural revision
+- Multiple bounded contexts, non-trivial workflows, or meaningful technical boundaries are present
+- Multiple agents or humans may work in parallel and need consistent context
+- Semantic coherence matters more than raw generation speed
+
+VibeLoom adds ceremony. For a weekend prototype, single-file utility, or throwaway script, prompt-only generation is likely faster and sufficient. For anything that will be maintained, extended, or shared, VibeLoom pays for itself through reduced drift and explicit traceability.
+
+---
+
 ## Overview
 Here is an overview of developing a system using VibeLoom:
 - Human defines a **contract** for the system. Contract is generated interactively through a human-edits <-> agent-generation loop.
 - To make the contract both consistent and coherent, the human validates specs through **review** (a critique loop over the current governance surface against approved upstream truth) and **eval** (more formal structural and semantic validation). Specs are checked against other specs in the same tier and against approved upstream tiers.
 - Every run starts with **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
 - The run then proceeds downward through **product-specs** (`prd`, `usm`, `dm`) and **system-specs** (`system`, `containers`, `container`, `component`) as needed.
-- Generation and validation of the **contract** use one of two governance profiles:
-  - `full` uses **tier-scope approval**
-  - `lite` uses **contract-scope approval** across the affected contract stack for the current run
-- In `full`, each affected contract tier is generated, reviewed, evaled, and approved as one unit before the run proceeds to the next lower contract tier.
+- Generation and validation of the **contract** use one of four governance modes that control approval granularity, review ownership, and context-boundary behavior:
+  - `lite` uses **contract-scope approval** — the affected contract stack is generated, then reviewed, evaled, and approved as one unit
+  - `pm` uses **tier-scope approval** — human meaningfully reviews intent-specs and product-specs; system-specs are delegated unless a breaking semantic change is detected
+  - `dev` uses **tier-scope approval** — human meaningfully reviews intent-specs and system-specs; product-specs are delegated unless a breaking semantic change is detected
+  - `expert` uses **tier-scope approval** — human meaningfully reviews every tier
+- In tier-scope modes (`pm`, `dev`, `expert`), each affected contract tier is generated, reviewed, evaled, and approved as one unit before the run proceeds to the next lower contract tier.
 - In `lite`, the affected contract stack is generated first and then reviewed, evaled, and approved as one unit before context and code proceed.
-- **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Some context artifacts, such as `pdr`, `bdd`, and `adr`, may appear as byproducts of contract evolution; others are generated later as explicit execution context.
-- Context artifacts do not carry lifecycle metadata such as `draft` or `approved`; they are assumed correct by default. In `full`, context is still a visible boundary and the workflow pauses before code so a human can review or eval it against upstream specs. In `lite`, context normally flows directly into code.
+- **context** (execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar artifacts) is generated from the approved contract to help agents work effectively. Context artifacts appear in two ways:
+  - **Automatic:** execution guidance is generated for all affected scopes after contract approval. Decision records (`pdr`, `adr`) are generated when contract evolution introduces product or architecture decisions. Behavioral scenarios (`bdd`) are generated when system-specs produce behavior items.
+  - **On-demand:** any context artifact can also be explicitly generated or regenerated via the appropriate operation (e.g., behavioral eval produces `bdd` scenarios on request).
+- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. In tier-scope modes (`pm`, `dev`, `expert`), context is still a visible boundary and the workflow pauses before code so a human can review or eval it against upstream specs. In `lite`, context normally flows directly into code.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - After the **context** is ready, the swarm of agents can generate the **code** - meaning the system itself that can be built and executed.
 
@@ -56,7 +73,7 @@ Here is an overview of developing a system using VibeLoom:
 
 VibeLoom governs application development through a compact contract stack.
 The application artifacts play the following roles:
-- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved at the current governance boundary (`full`: tier scope, `lite`: contract scope across the affected contract stack for the run).
+- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved at the current governance boundary (tier scope in `pm`/`dev`/`expert`, contract scope in `lite`).
 - **context**: normative execution truth for agents. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata and do not require human approval, although humans may review or edit them in exceptional cases.
 - **code**: the executable result. Humans are not expected to edit it directly.
 
@@ -64,6 +81,7 @@ In this document:
 - **human-gated** means downstream work may not rely on a tier until a human approves it.
 - **normative** means it is a source of truth that downstream generation, execution, review, or eval in its scope must follow.
 - **executable** means it can be run or checked directly.
+- **governance surface** means the set of artifacts currently under review and approval — tier scope in `pm`/`dev`/`expert`, contract scope in `lite`.
 
 The contract stack separates semantic truth, execution truth, and executable result.
 
@@ -122,7 +140,7 @@ The artifact stack also groups into generation tiers. These tiers are the primar
 | context       | Distill execution guidance, decision records, and long-term agent memory        | execution guidance artifacts, `pdr`, `bdd`, `adr`, and similar |
 | code          | This tier consists of executable implementation and verification artifacts      | source code, tests, runtime / ops glue                                       |
 
-Tiers are a generation and governance abstraction. In `full`, review, eval, and approval act at tier scope. In `lite`, review, eval, and approval act at contract scope across the affected contract tiers for the current run. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
+Tiers are a generation and governance abstraction. In tier-scope modes (`pm`, `dev`, `expert`), review, eval, and approval act at tier scope. In `lite`, review, eval, and approval act at contract scope across the affected contract tiers for the current run. Fine-grained derivation should be represented in a context graph, and traceability, staleness, and loading should be inferred from that graph.
 Governance binds to the tier semantics, not to a fixed list of specs inside the tier. A tier may gain or lose specs over time without changing the review, eval, and approval model.
 
 ---
@@ -156,7 +174,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents |
 
-All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. In `full`, the workflow pauses at the context boundary before code. In `lite`, context normally flows directly into code. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. In tier-scope modes (`pm`, `dev`, `expert`), the workflow pauses at the context boundary before code. In `lite`, context normally flows directly into code. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -165,8 +183,8 @@ Captures user intent and normalizes repo-wide defaults.
 
 | Spec | Contract entities | Key rules |
 | --- | --- | --- |
-| `intent` | CAP-#### (capabilities), WISH-#### (wishes) | Prose-first; may include both product and implementation wishes. Preferences become `defaults` only when repo-wide and always-on. |
-| `defaults` | CST-#### (constraints) | Minimal repo-wide constitution. Only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding. |
+| `intent` | capabilities, wishes | Prose-first; may include both product and implementation wishes. Preferences become `defaults` only when repo-wide and always-on. |
+| `defaults` | constraints | Minimal repo-wide constitution. Only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding. |
 
 ---
 
@@ -175,9 +193,9 @@ Turns approved intent into formally traceable product and domain contracts.
 
 | Spec | Contract entities | Derives from | Key rules |
 | --- | --- | --- | --- |
-| `prd` | FR-#### (functional requirements), NFR-#### (non-functional requirements) | CAP-####, WISH-#### | Every FR and NFR traces to at least one capability or wish. |
-| `usm` | EPIC-#### (epics), FLOW-#### (flows), STORY-#### (stories), ACC-#### (acceptance criteria), MS-#### (milestones) | FR-#### | Every STORY traces to at least one FR. Every EPIC has at least one FLOW; every FLOW has at least one STORY. Acceptance framing stays behavior-focused. |
-| `dm` | TERM-#### (ubiquitous language terms), BC-#### (bounded contexts), AGG-#### (aggregates), ENT-#### (entities), VO-#### (value objects), INV-#### (invariants) | FR-####, NFR-#### | `dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape. |
+| `prd` | functional requirements, non-functional requirements | capabilities, wishes | Every functional requirement and NFR traces to at least one capability or wish. |
+| `usm` | epics, flows, stories, acceptance criteria, milestones | functional requirements | Every story traces to at least one functional requirement. Every epic has at least one flow; every flow has at least one story. Acceptance framing stays behavior-focused. |
+| `dm` | ubiquitous language terms, bounded contexts, aggregates, entities, value objects, invariants | functional requirements, non-functional requirements | `dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape. |
 
 ---
 
@@ -186,15 +204,15 @@ Translates approved product and domain semantics into technical contracts.
 
 | Spec | Contract entities | Derives from | Key rules |
 | --- | --- | --- | --- |
-| `system` | SYS-#### (system context items) | BC-####, NFR-#### | Defines system purpose, external actors, trust boundaries, system-wide NFRs. Deployment topology does not live here. |
-| `containers` | CONT-#### (containers), EDGE-#### (communication paths) | BC-####, SYS-#### | Global runtime topology. Every CONT appears in the topology. Communication paths reference valid CONT endpoints. |
-| `container` | (references CONT-####, lists component inventory) | CONT-#### | Authoritative component inventory for one runtime boundary. Components are discovered here, not inferred from folders. |
-| `component` | CMP-#### (components), IF-#### (interfaces), BEH-#### (behaviors), DEP-#### (dependencies) | BC-####, CONT-#### | Smallest owned technical boundary. Each component belongs to exactly one BC and one container. |
+| `system` | external actors, trust boundaries, system-wide NFR boundaries | bounded contexts, non-functional requirements | Defines system purpose, external actors, trust boundaries, system-wide NFRs. Deployment topology does not live here. |
+| `containers` | containers, communication paths | bounded contexts, system context | Global runtime topology. Every container appears in the topology. Communication paths reference valid container endpoints. |
+| `container` | (references parent container, lists component inventory) | containers | Authoritative component inventory for one runtime boundary. Components are discovered here, not inferred from folders. |
+| `component` | components, interfaces, behaviors, dependencies | bounded contexts, containers | Smallest owned technical boundary. Each component belongs to exactly one bounded context and one container. |
 
 **Technical boundary rules:**
-- Bounded context (BC) defines semantic home
-- Component (CMP) defines owned technical change boundary
-- Container (CONT) defines runtime and deployment home
+- Bounded context defines semantic home
+- Component defines owned technical change boundary
+- Container defines runtime and deployment home
 - A bounded context must not span multiple containers
 - Components from the same bounded context must be co-located in the same container
 
@@ -205,10 +223,10 @@ Agent-facing operational truth generated from approved contract. Context artifac
 
 | Artifact | Purpose | Key entities |
 | --- | --- | --- |
-| execution guidance | Scoped guidance for repo, container, or component work | (no addressable IDs — prose guidance) |
-| `pdr` | Product decision history | PDR-#### (product decision records) |
-| `adr` | Architecture decision history | ADR-#### (architecture decision records) |
-| `bdd` | Generated non-executable behavioral scenarios | BDD-#### (behavior files), SCN-#### (Gherkin scenarios) |
+| execution guidance | Scoped guidance for repo, container, or component work | (prose guidance, no addressable items) |
+| `pdr` | Product decision history | product decision records |
+| `adr` | Architecture decision history | architecture decision records |
+| `bdd` | Generated non-executable behavioral scenarios | behavior files, Gherkin scenarios |
 
 - Context is generated from contract. If context conflicts with contract, contract wins.
 - Humans may review or eval context against upstream contract.
@@ -252,13 +270,13 @@ At a conceptual level, the workflow is:
 
 1. Start from `intent-specs` and identify the affected contract stack for the current run.
 2. Generate the affected contract tiers as batches from approved upstream truth.
-3. In `full`, review, eval, and approve each affected tier at tier scope before moving downward.
+3. In tier-scope modes (`pm`, `dev`, `expert`), review, eval, and approve each affected tier at tier scope before moving downward. Delegated tiers are auto-approved unless a breaking semantic change is detected.
 4. In `lite`, review, eval, and approve the affected contract stack as one contract-scope unit.
 5. Generate context from approved contract.
-6. In `full`, pause at the context boundary before code. In `lite`, continue into code by default.
+6. In tier-scope modes, pause at the context boundary before code. In `lite`, continue into code by default.
 7. Generate or reconcile code from approved contract and context.
 
-Profiles change governance granularity and pause topology. Modes, applicable only in `full`, change who meaningfully reviews which non-intent contract tier by default. Neither changes artifact semantics or the contract/context/code ontology.
+Modes control governance granularity, review ownership, and pause topology. They do not change artifact semantics or the contract/context/code ontology.
 
 ```mermaid
 flowchart TD
@@ -289,7 +307,7 @@ flowchart TD
     E --> A
 
     A --> C["Generate Context"]
-    C --> B["Context Boundary<br/>Full: Pause, Lite: Continue"]
+    C --> B["Context Boundary<br/>Tier-Scope Modes: Pause, Lite: Continue"]
     B --> K["Generate Or Reconcile Code"]
 
     K -.-> Q
@@ -302,36 +320,31 @@ flowchart TD
     end
 ```
 
-### Profiles
-
-Profiles are run-time-switchable governance profiles. Both profiles use the same contract stack.
-
-| Profile | Meaning | Approval behavior | Typical use |
-| --- | --- | --- | --- |
-| `lite` | Lower-ceremony orchestration that treats the affected contract stack for the current run as one governance surface | Contract-scope approval of the affected contract stack, followed by direct context-to-code flow by default | Clearly simple systems with one semantic bounded context and limited business logic |
-| `full` | Explicit orchestration that keeps contract tiers and the context boundary visible | Tier-scope approval of each affected contract tier, plus a mandatory pause after context before code | Larger, longer-lived, parallelized, or semantically richer systems |
-
-`lite` is intentionally less ceremonial, not less safe. `full` is intentionally more explicit, not semantically different.
-
-Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `full` otherwise, especially when multiple bounded contexts are present or likely, workflows are non-trivial, boundaries matter materially, or multiple people or agents may work in parallel.
-
 ### Modes
 
-Modes are run-time-switchable review-ownership defaults inside `full`. They do not apply conceptually in `lite`, where the contract is approved as one human-governed unit.
+Modes are run-time-switchable governance settings that control approval granularity, review ownership, and context-boundary behavior. All modes use the same contract stack.
 
-Regardless of mode, `intent-specs` stay explicitly human-owned and every run still begins from `intent-specs`. Mode determines which non-intent contract tier the current human is expected to review meaningfully by default.
+| Mode | Approval granularity | Context pause | Meaningful human review | Delegated tiers | Typical use |
+| --- | --- | --- | --- | --- | --- |
+| `lite` | contract-scope | no | all tiers as one batch | none | Simple systems: one bounded context, limited business logic, modest complexity |
+| `pm` | tier-scope | yes | intent-specs, product-specs | system-specs | PM driving requirements, workflows, acceptance intent |
+| `dev` | tier-scope | yes | intent-specs, system-specs | product-specs | Dev driving technical boundaries, dependencies, executable impact |
+| `expert` | tier-scope | yes | all tiers individually | none | Lead owning the full contract stack end-to-end |
 
-| Mode | Meaningful human review | Default delegated approval | Typical emphasis |
-| --- | --- | --- | --- |
-| `pm` | `intent-specs` and `product-specs` | `system-specs` | requirements, workflows, acceptance intent, decision framing |
-| `dev` | `intent-specs` and `system-specs` | `product-specs` | technical boundaries, dependencies, and executable impact |
+`lite` is intentionally less ceremonial, not less safe. Tier-scope modes are intentionally more explicit, not semantically different.
 
-`pm` is the default mode. Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, the contract/context/code ontology, or the requirement that the contract stack be approved before context and code proceed.
+Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` otherwise. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
-Modes do not eliminate review of the non-owned contract tier. They only make it rarer.
+Regardless of mode, `intent-specs` stay explicitly human-owned and every run still begins from `intent-specs`.
 
-- Delegated review of the other tier is the default only for additive or otherwise non-semantic changes.
-- If generation introduces a **breaking semantic change** in the other tier, explicit review and approval of that tier becomes required before the run can complete.
+Modes may change default prompts, context emphasis, or suggested operations, but they do not change the contract stack, the contract/context/code ontology, or the requirement that the contract stack be approved before context and code proceed.
+
+#### Delegated approval and breaking-change escalation
+
+In `pm` and `dev`, delegation does not eliminate review of the non-owned contract tier. It only makes it rarer.
+
+- Delegated approval of the other tier is the default only for additive or otherwise non-semantic changes.
+- If generation introduces a **breaking semantic change** in the delegated tier, explicit review and approval of that tier becomes required before the run can complete.
 - That explicit review may be performed by the current human or delegated onward to the appropriate teammate.
 
 A **breaking semantic change** is a change to existing approved meaning, not simple addition of new material consistent with approved truth.
@@ -348,11 +361,11 @@ Contract artifacts have two lifecycle states:
 - `draft` — generated or regenerated, awaiting review and approval
 - `approved` — human or delegated approval recorded
 
-Staleness is not an artifact state. It is a computed property of the context graph, inferred by comparing each downstream artifact's derivation basis against the latest approved upstream versions. The `status` command surfaces staleness; `reconcile` resolves it by regenerating affected artifacts (which return to `draft`). Supersession is implicit in git history and the `version` integer.
+Staleness is not an artifact state. It is a computed property of the context graph, inferred by comparing each downstream artifact's derivation basis against the latest approved upstream versions. Staleness detection surfaces stale artifacts; reconciliation resolves it by regenerating affected artifacts (which return to `draft`). Supersession is implicit in version history.
 
 Only contract artifacts are approved. Context does not carry lifecycle metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
-`intent-specs` are always explicitly human-owned. Approval scope follows profile (see Profiles above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
+`intent-specs` are always explicitly human-owned. Approval scope follows mode (see Modes above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
 
 ---
 
@@ -377,7 +390,7 @@ Every run starts from `intent-specs` and proceeds downward. Each tier is produce
 
 ### Within-Tier Generation
 
-Each affected tier is generated as a batch using a bounded double-pass cycle. In `full`, each tier pauses after this cycle for review, eval, and approval. In `lite`, the affected contract tiers are all produced first and then reviewed together at contract scope.
+Each affected tier is generated as a batch using a bounded double-pass cycle. In tier-scope modes (`pm`, `dev`, `expert`), each tier pauses after this cycle for review, eval, and approval. In `lite`, the affected contract tiers are all produced first and then reviewed together at contract scope.
 
 ```mermaid
 flowchart TD
@@ -412,7 +425,7 @@ These are three distinct conceptual activities:
 - `eval` checks structure and semantics
 - `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
 
-Review and eval use the current governance surface, even though the underlying graph remains fine-grained: tier scope in `full`, contract scope across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
+Review and eval use the current governance surface, even though the underlying graph remains fine-grained: tier scope in `pm`/`dev`/`expert`, contract scope across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
 
 Review, eval, and reconciliation are shown together in the Workflow diagram above.
 

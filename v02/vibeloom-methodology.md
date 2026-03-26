@@ -68,50 +68,46 @@ In this document:
 The contract stack separates semantic truth, execution truth, and executable result.
 
 ```mermaid
-flowchart TD
-    subgraph CONTRACT["CONTRACT<br/>Human-Gated Normative Semantic Truth"]
-        direction TB
+graph TD
+    H[Human Request] --> T1
 
-        subgraph INTENT["Intent Specs"]
-            direction TB
-            I1["Intent"]
-            I2["Defaults"]
-        end
+    subgraph T1 [intent-specs]
+        direction LR
+        intent[intent] --> defaults[defaults]
+    end
+    T1 --- A1([approved])
 
-        subgraph PRODUCT["Product Specs"]
-            direction TB
-            P1["PRD"]
-            P2["USM"]
-            P3["DM"]
-        end
+    A1 --> T2
+    subgraph T2 [product-specs]
+        direction LR
+        prd[prd] --> usm[usm] --> dm[dm]
+    end
+    T2 --- A2([approved])
 
-        subgraph SYSTEM["System Specs"]
-            direction TB
-            S1["System"]
-            S2["Containers"]
-            S3["Container"]
-            S4["Component"]
-        end
+    A2 --> T3
+    subgraph T3 [system-specs]
+        direction LR
+        system[system] --> containers[containers] --> container[container] --> component[component]
+    end
+    T3 --- A3([approved])
 
-        INTENT --> PRODUCT --> SYSTEM
+    A3 --> T4
+    subgraph T4 [context]
+        direction LR
+        exec_guidance[execution guidance] ~~~ pdr[pdr] ~~~ adr[adr] ~~~ bdd[bdd]
     end
 
-    subgraph CONTEXT["CONTEXT<br/>Normative Execution Truth For Agents"]
-        direction TB
-        C1["Execution Guidance"]
-        C2["PDR"]
-        C3["ADR"]
-        C4["BDD"]
+    T4 --> T5
+    subgraph T5 [code]
+        direction LR
+        source[source code] ~~~ tests[tests] ~~~ ops[runtime / ops glue]
     end
 
-    subgraph CODE["CODE<br/>Executable Result"]
-        direction TB
-        K1["Source Code"]
-        K2["Tests"]
-        K3["Runtime / Ops Glue"]
-    end
-
-    CONTRACT --> CONTEXT --> CODE
+    style T1 fill:#e8f4fd,stroke:#1a73e8
+    style T2 fill:#e8f4fd,stroke:#1a73e8
+    style T3 fill:#e8f4fd,stroke:#1a73e8
+    style T4 fill:#fff3e0,stroke:#e65100
+    style T5 fill:#e8f5e9,stroke:#2e7d32
 ```
 
 ### Generation Tiers

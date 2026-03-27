@@ -18,12 +18,13 @@ Populate `derives_from` in frontmatter with the governing approved contract item
 - Stay inside this container unless the change crosses declared container or bounded-context boundaries.
 - Treat `container.md` as the authoritative local inventory for component ownership.
 
-## Load-First Context
+## Your Context
 
-1. Load the relevant root contract plus this `container` contract.
-2. Load only the resident bounded contexts, component inventory entries, and local edges touched by the change.
-3. Load component guidance only after the governing component is identified.
-4. Escalate to root when the change affects multiple containers or cross-container constraints.
+Your context includes this execution guidance and the governing contract artifacts for this scope (`container` spec, `system`/`containers` spec, `defaults`). Use contract as authoritative reference; use this guidance for orientation and operational rules.
+
+1. Start from the contract artifacts provided — they are the source of truth.
+2. If a change requires artifacts outside your load set (e.g., other containers), escalate to the orchestrator.
+3. Do not redistribute responsibilities between components without updating contract first.
 
 ## Do-Not-Touch Boundaries
 

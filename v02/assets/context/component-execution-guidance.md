@@ -18,12 +18,13 @@ Populate `derives_from` in frontmatter with the governing approved contract item
 - Prefer changes that stay entirely inside owned paths and owned interfaces.
 - If work requires behavior owned by another component, escalate rather than smearing responsibilities.
 
-## Load-First Context
+## Your Context
 
-1. Load the governing component contract plus its owning container contract.
-2. Load only the upstream stories, invariants, relationships, or system constraints that materially govern this component.
-3. Load local execution guidance after contract if implementation detail is needed.
-4. Escalate if the change crosses component, container, or bounded-context boundaries.
+Your context includes this execution guidance and the governing contract artifacts for this scope (`component` spec, `container` spec, `defaults`). Use contract as authoritative reference; use this guidance for orientation and operational rules.
+
+1. Start from the contract artifacts provided — they are the source of truth.
+2. If a change requires artifacts outside your load set (e.g., other components or containers), escalate to the orchestrator.
+3. Do not edit paths or interfaces not owned by this component without explicit contract changes.
 
 ## Do-Not-Touch Boundaries
 

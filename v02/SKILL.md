@@ -8,9 +8,18 @@ Methodology (`vibeloom-methodology.md`) → Implementation (`vibeloom-implementa
 
 When in doubt, defer upward. This skill file defines orchestration behavior; it does not invent artifact rules.
 
+## Orchestration Model
+
+The skill runs as the **orchestrator agent**. For code generation, it spawns **scoped worker agents** — one per affected scope. Each worker receives:
+
+1. **Execution guidance** for its scope (navigation, boundaries, test commands)
+2. **Contract slice** for its scope (component spec, container spec, `defaults`)
+
+The context graph determines the load set per scope. Workers operate independently within their scope boundaries and never load the skill or methodology. The orchestrator assembles results and validates cross-scope consistency. See implementation for the concrete load-set table per scope level.
+
 ## Core Concepts (Quick Reference)
 
-- **Contract stack:** `intent-specs` → `product-specs` → `system-specs` → `context` → `code`. Contract tiers are human-gated; context is agent-facing execution truth; code is executable.
+- **Contract stack:** In `vibe`: `intent-specs` → `system-specs` → `context` → `code` (compact). In `pm`/`dev`/`expert`: `intent-specs` → `product-specs` → `system-specs` → `context` → `code` (full). Contract tiers are human-gated; context is agent-facing execution truth; code is executable.
 - **Approval unit:** The set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint.
 - **Derivation:** Every downstream item records its upstream inputs via `derives_from`. This is the sole inter-item relationship.
 - **Staleness:** Computed from the context graph, never stored in frontmatter. When approved upstream truth changes, dependent downstream artifacts become stale.
@@ -30,10 +39,10 @@ Bootstrap a governed repo. Produces the first `intent-specs` draft.
 
 1. Ask the user about their project: purpose, users, workflows, technology preferences, NFR expectations. Shape the conversation to extract capabilities, wishes, and constraints.
 2. Determine mode. If `--mode` is provided, use it. Otherwise, assess complexity:
-   - `lite` if clearly simple: one bounded context, limited business logic, modest complexity.
+   - `vibe` if clearly simple or still exploratory: one bounded context, limited business logic, modest complexity.
    - `pm` otherwise (default).
    - Confirm the mode choice with the user.
-3. Generate `intent.md` and `defaults.md` using the templates in `assets/intent-specs/`. Use the double-pass model: forward pass → back pass → structural eval → emit as draft.
+3. Generate `intent.md` and `defaults.md` using the mode-appropriate templates in `assets/intent-specs/` (`vibe-intent.md` for vibe, `intent.md` for full modes). Use the double-pass model: forward pass → back pass → structural eval → emit as draft.
 4. Show summary: number of capabilities, wishes, constraints. Show any eval findings.
 5. Suggest: "Review the files, then `/vibeloom approve`"
 6. **Always stop here.** Intent-specs always require explicit human approval.
@@ -72,7 +81,7 @@ Generate one or more tiers from approved upstream truth using smart orchestratio
 
 **Syntax:** `/vibeloom generate <target> [--scope <scope>]`
 
-**Valid targets:** `intent-specs`, `product-specs`, `system-specs`, `context`, `code`
+**Valid targets:** `intent-specs`, `product-specs` (full modes only), `system-specs`, `context`, `code`
 
 **Smart orchestration rules:**
 
@@ -99,13 +108,13 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 
 **Smart orchestration per mode:**
 
-| Target | `lite` | `pm` | `dev` | `expert` |
+| Target | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
-| `intent-specs` | regen intent+defaults, stop | same | same | same |
-| `product-specs` | auto-advance (delegated) | generate, stop (human) | auto-advance (delegated) | generate, stop (human) |
-| `system-specs` | auto-advance all (delegated) | auto-advance system (delegated) | auto-advance product if needed, generate system, stop (human) | generate, stop (human) |
-| `context` | auto-advance all, gen context, continue | auto-advance downstream, gen context, continue | auto-advance downstream, gen context, continue | gen context, stop (context pause) |
-| `code` | auto-advance product+system+context (delegated), generate code | auto-advance system, context, code | context + code | error if upstream unapproved |
+| `intent-specs` | reshape intent, regen defaults, stop | same | same | same |
+| `product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance (delegated) | generate, stop (human) |
+| `system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed, generate system, stop (human) | generate, stop (human) |
+| `context` | auto-advance system, gen execution guidance, continue | auto-advance downstream, gen context, continue | auto-advance downstream, gen context, continue | gen context, stop (context pause) |
+| `code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system, context, code | context + code | error if upstream unapproved |
 
 **`generate intent-specs`** specifically: Uses the user's current `intent.md` content as authoritative semantic input. Reshapes it for structural consistency (IDs, table formatting) and regenerates `defaults.md` to stay aligned with the updated intent. The user's semantic intent is never overridden by generation. Always stops for explicit human approval.
 
@@ -117,15 +126,20 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 5. One additional bounded forward-back round if needed.
 6. Emit as `draft`.
 
-**Within-tier artifact order:**
+**Within-tier artifact order (full modes):**
 - `intent-specs`: `intent` → `defaults`
 - `product-specs`: `prd` → `usm` → `dm`
 - `system-specs`: `system` → `containers` → per-container `container` → per-component `component`
 - `context`: execution guidance → decision records → bdd scenarios
 
+**Within-tier artifact order (vibe):**
+- `intent-specs`: `intent` (with product summary) → `defaults`
+- `system-specs`: `system` (flat, single artifact)
+- `context`: root-level execution guidance only
+
 **After every stop, always suggest the next forward command.** Use the next-command table:
 
-| After | lite | pm | dev | expert |
+| After | vibe | pm | dev | expert |
 | --- | --- | --- | --- | --- |
 | approve intent | `generate code` | `generate product-specs` | `generate system-specs` | `generate product-specs` |
 | approve product | — | `generate code` | — | `generate system-specs` |
@@ -152,33 +166,24 @@ Review runs automatically during `generate`. Explicit invocation is for re-criti
 
 ### `eval`
 
-Run structural, semantic, or behavioral evaluation.
+Run structural and semantic evaluation against the current approval unit.
 
-**Syntax:** `/vibeloom eval [<type>] [<scope>]`
+**Syntax:** `/vibeloom eval [<scope>]`
 
-**Valid types:** `structural`, `semantic`, `behavioral`
-
-**Default:** runs both `structural` and `semantic`.
-
-**Structural eval** (blocking):
+**Structural checks** (blocking):
 - Validate lifecycle rules (draft/approved states consistent)
 - Validate references (all `derives_from` point to existing items)
 - Validate required fields per template
 - Validate declared relationships (items owned by correct artifacts)
 - Validate stack integrity (tiers in correct dependency order)
 
-**Semantic eval** (non-blocking):
+**Semantic checks** (non-blocking):
 - Analyze coverage (every upstream item has downstream representation)
 - Check for contradiction with approved upstream truth
 - Assess componentization fit (BC/container/component boundaries)
 - Assess context sufficiency
 
-**Behavioral eval** (non-blocking):
-- Produce Gherkin BDD scenarios from approved contract
-- Output to `context/bdd/BDD-####-<behavior-slug>.md`
-- Uses the `assets/context/bdd.md` template
-
-Eval runs automatically during `generate`. Explicit invocation is for targeted checks.
+Eval runs automatically during `generate` and `approve`. Explicit invocation is for targeted checks outside the normal flow.
 
 ### `reconcile`
 
@@ -260,7 +265,21 @@ Change runtime settings.
 **Syntax:** `/vibeloom configure <setting> <value>`
 
 **Settings:**
-- `mode`: One of `lite`, `pm`, `dev`, `expert`. Changes take effect on the next operation.
+- `mode`: One of `vibe`, `pm`, `dev`, `expert`.
+
+**Upgrade from vibe (one-way):**
+When current mode is `vibe` and target is `pm`, `dev`, or `expert`:
+1. Warn the user: "Upgrading from vibe is a one-way operation. The skill will snapshot your current artifacts, generate the full contract stack, and rearrange source code to match the new directory structure. This may take a while. Proceed?"
+2. On confirmation:
+   - Snapshot vibe artifacts (`intent.md`, `defaults.md`, `system.md`) to `.vibeloom/vibe-snapshot/`.
+   - Generate full contract stack from compact artifacts (all as draft).
+   - Rearrange source code into container/component directory structure.
+   - Generate full context (execution guidance at all scopes, decision records, BDD scenarios).
+3. Report what was generated and suggest the next command for the target mode.
+
+**Switching back to vibe is not allowed.** If the user attempts `configure mode vibe` from pm/dev/expert, reject with: "Vibe mode uses a compact contract stack. Once upgraded to pm/dev/expert, the full contract stack is active and cannot be compacted back to vibe."
+
+Other mode changes (between pm, dev, expert) take effect on the next operation.
 
 ### `help`
 
@@ -279,7 +298,7 @@ Explain any VibeLoom concept, operation, or workflow.
 | `modes` | All four modes, when to use each, the mode × command matrix |
 | `generate` | Smart orchestration, double-pass model, target behavior per mode |
 | `review` | Advisory vs bounded review, when to use explicit review |
-| `eval` | Three eval types, blocking vs non-blocking, when to invoke |
+| `eval` | Structural and semantic checks, blocking vs non-blocking, when to invoke |
 | `reconcile` | Staleness, drift, reconciliation workflow |
 | `approve` | Approval mechanics, delegated vs human, escalation |
 | `status` | What status shows, how to interpret staleness |
@@ -294,7 +313,7 @@ Explain any VibeLoom concept, operation, or workflow.
 | `defaults` | Defaults vs execution guidance, repo constitution |
 | `init` | How to bootstrap a new governed repo |
 | `workflow` | End-to-end workflow from intent to code |
-| `lite` | Lite mode detailed workflow trace |
+| `vibe` | Vibe mode detailed workflow trace, compact contract stack, upgrade path |
 | `pm` | PM mode detailed workflow trace |
 | `dev` | Dev mode detailed workflow trace |
 | `expert` | Expert mode detailed workflow trace |
@@ -305,12 +324,12 @@ Explain any VibeLoom concept, operation, or workflow.
 
 ### Mode Table
 
-| Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
-| --- | --- | --- | --- | --- |
-| `lite` | affected contract stack | intent-specs only | affected contract stack | no |
-| `pm` | each affected contract tier | `product-specs` | `system-specs` | no |
-| `dev` | each affected contract tier | `system-specs` | `product-specs` | no |
-| `expert` | each affected contract tier | every contract tier | none | yes |
+| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
+| --- | --- | --- | --- | --- | --- |
+| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | no |
+| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | no |
+| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | no |
+| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | yes |
 
 ### Intent Is Always Human-Gated
 
@@ -338,6 +357,8 @@ When a delegated tier triggers a breaking semantic change, escalate to human rev
 
 When generating an artifact, load its template from `assets/`:
 
+#### Full Modes (`pm`, `dev`, `expert`)
+
 | Artifact | Template |
 | --- | --- |
 | `intent` | `assets/intent-specs/intent.md` |
@@ -355,6 +376,15 @@ When generating an artifact, load its template from `assets/`:
 | `pdr` | `assets/context/pdr.md` |
 | `adr` | `assets/context/adr.md` |
 | `bdd` | `assets/context/bdd.md` |
+
+#### Vibe Mode
+
+| Artifact | Template |
+| --- | --- |
+| `intent` | `assets/intent-specs/vibe-intent.md` |
+| `defaults` | `assets/intent-specs/defaults.md` |
+| `system` | `assets/system-specs/vibe-system.md` |
+| root execution guidance | `assets/context/root-execution-guidance.md` |
 
 Load **only the template you need** for the current generation step. Do not load all templates at once.
 
@@ -436,11 +466,13 @@ Context is generated after required contract tiers are approved.
 **Order:**
 1. Execution guidance for all affected scopes (root, container, component).
 2. Decision records (`pdr`, `adr`) if the change introduced product or architecture decisions.
-3. BDD scenarios — automatically when `generate system-specs` produces `BEH-####` items, and on-demand via `eval behavioral`.
+3. BDD scenarios — automatically when `generate system-specs` produces `BEH-####` items, and on-demand via `generate context`.
 
 **Pause behavior:**
 - `expert`: pause at context boundary before code. Show files for user review.
-- `lite`, `pm`, `dev`: continue into code unless a blocking or flagged issue requires a stop.
+- `vibe`, `pm`, `dev`: continue into code unless a blocking or flagged issue requires a stop.
+
+Generated execution guidance should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope.
 
 **If context is poor:** The recommended fix is to edit upstream contract and regenerate context. Direct human edits to context are an exceptional fallback.
 
@@ -492,7 +524,7 @@ When `status` is invoked, compute and report:
 3. Generate `intent.md` + `defaults.md` as draft.
 4. Stop for human review and approval.
 5. User reviews in editor, comes back to approve.
-6. User invokes the mode's forward command (e.g., `generate code` in lite).
+6. User invokes the mode's forward command (e.g., `generate code` in vibe).
 
 ### Subsequent Change
 

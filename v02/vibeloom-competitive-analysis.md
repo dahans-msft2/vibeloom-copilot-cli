@@ -1,217 +1,291 @@
 # VibeLoom Competitive Analysis
 
-A detailed comparison of VibeLoom against five spec-driven development tools: Traycer, Deep Trilogy, Tessl Framework, Kiro, and GitHub Spec Kit.
+A comparison of VibeLoom against five spec-driven development tools — Traycer, Deep Trilogy, Tessl Framework, Kiro, and GitHub Spec Kit — focused on what actually happens to your project over time with each approach.
+
+> **Data sources note**: This analysis draws on official documentation, creator blog posts, independent community reports (GitHub issues, Reddit, Hacker News, DEV Community), and published case studies. Claims about competitors are grounded in public user feedback. Claims about VibeLoom are based on methodology design — real-world case studies are not yet public as of March 2026. Where a claim is aspirational rather than evidenced, it is marked as such.
 
 ---
 
-## Executive Summary
+## The Question That Matters
 
-The spec-driven development (SDD) landscape is young and semantically diffuse. As Birgitta Böckeler [observed in her Thoughtworks analysis](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html), "the term 'spec-driven development' isn't very well defined yet, and it's already semantically diffused." Tools range from lightweight planning pipelines to full contract-stack methodologies, and they differ fundamentally in what they consider a "spec," how long specs live, and whether specs actively govern downstream work.
+Every spec-driven tool promises better AI-generated code. The real question is: **what does your project look like when it outgrows the person who started it?**
 
-VibeLoom occupies a unique position: it is the only tool in this comparison that combines a multi-tier contract stack (intent → product-specs → system-specs → context → code) with formal eval tiers, asymmetric reconciliation, a context graph for traceability and staleness, and mode-based human governance. Every other tool in this analysis is either spec-first without long-term governance, or spec-anchored without formal verification.
+The tools in this comparison all start from a similar premise — write specs before code — but diverge dramatically in what happens as the project evolves. A prototype built by one dev over a weekend faces different problems than a product with a PM driving requirements, which faces different problems than a two-pizza team with parallel workstreams and architectural decisions that predate half the team.
+
+This analysis follows a single product through three phases of growth, tracking what each tool delivers — and where it hits its ceiling.
 
 ---
 
-## Comparison Dimensions
+## The Trajectory: What Happens As Your Project Grows
 
-### 1. Spec Maturity Level
+### Phase 1: The Prototype — 1 Dev, 1 Bounded Context, Getting to "Does This Work?"
 
-Böckeler's framework from the Thoughtworks analysis defines three SDD maturity levels. VibeLoom extends this with a fourth:
+The codebase is small (dozens of files), fits in one agent's context window, and the developer holds the entire system model in their head. Requirements are informal. Speed to first working demo matters more than architectural purity. Think: a weekend project, a hackathon, a simple internal tool, an SMB website.
 
-| Level | Definition | Tools at this level |
-|---|---|---|
-| **Spec-first** | A spec is written before code, then used for the task at hand | Kiro, Deep Trilogy |
-| **Spec-anchored** | The spec persists after the task, used for evolution and maintenance | Tessl Framework (aspiring) |
-| **Spec-as-source** | The spec is the primary artifact; humans never touch generated code | Tessl Framework (exploring) |
-| **Contract-driven** | Specs are organized into a tiered stack that actively governs generation, evaluation, reconciliation, and traceability across the full lifecycle | VibeLoom |
+**Every tool works here. The question is overhead vs. value.**
 
-GitHub Spec Kit falls between spec-first and spec-anchored — it aspires to living specs but creates branches per spec, suggesting task-scoped rather than feature-scoped persistence.
-
-Traycer is spec-first with verification — specs guide planning and are checked against implementation, but they don't persist as long-term governance artifacts.
-
-### 2. Spec Structure and Depth
-
-| Tool | Spec artifacts | Artifact count | Abstraction levels | Domain modeling |
-|---|---|---|---|---|
-| **VibeLoom** | intent, defaults, prd, usm, dm, system, containers, container (per-instance), component (per-instance) + context artifacts (execution guidance, pdr, adr, bdd) | 9+ contract specs + multiple context artifacts | 4 contract tiers + context + code | Full DDD: bounded contexts, aggregates, entities, invariants, ubiquitous language |
-| **Traycer** | PRD (optional) → Phases → Plans (file-level) | 3-4 per task | 2 levels (phases → file-level plans) | None |
-| **Deep Trilogy** | requirements.md → spec.md → plan.md → sections/*.md | 5-10+ per component | 3 levels (project → component → section) | None |
-| **Tessl** | Per-file spec with description, capabilities, API, linked tests | 1 spec per code file | 1 level (component/file) | None |
-| **Kiro** | requirements.md → design.md → tasks.md | 3 per feature | 2 levels (requirements → design/tasks) | None |
-| **Spec Kit** | constitution + spec.md → plan.md → tasks/ (many files) | 10+ per feature (verbose) | 3 levels (constitution → spec → plan/tasks) | None — but constitution acts as global constraints |
-
-VibeLoom is the only tool that separates product semantics (what the system does) from domain semantics (what concepts mean) from system design (how it's built). Every other tool conflates these into a single "spec" or "plan" document.
-
-### 3. Lifecycle and Governance
-
-| Tool | Lifecycle states | Human approval gates | Spec persistence | Approval model |
-|---|---|---|---|---|
-| **VibeLoom** | draft, approved (computed staleness, implicit supersession) | Per-tier gates controlled by mode (lite/pm/dev/expert) | Permanent — specs are the source of truth | 4 modes: lite (delegated), pm (product-gated), dev (system-gated), expert (all-gated) |
-| **Traycer** | Plan → Handoff → Verification | Before handoff to coding agent | Task-scoped — plans exist for the duration of implementation | Single mode, human approves plan before handoff |
-| **Deep Trilogy** | Research → Interview → Plan → Review → Sections → Implement | Multiple interview checkpoints; code review triage | Task-scoped — artifacts persist on filesystem but not governed | Single mode, human-in-the-loop at interviews and code review |
-| **Tessl** | Spec → Build → Test | Human edits spec; generated code marked DO NOT EDIT | Aspires to permanent (spec-as-source) | Human edits spec only; code is derived |
-| **Kiro** | Requirements → Design → Tasks → Implement | Between each phase | Feature-scoped — no documented long-term maintenance model | Single workflow, human reviews each phase |
-| **Spec Kit** | Constitution → Specify → Plan → Tasks → Implement | Between each phase (checklist-driven) | Branch-scoped — new branch per spec, suggesting task lifetime | Single workflow, constitution constrains all phases |
-
-VibeLoom's mode system is unique — no other tool offers configurable approval granularity based on user role or project complexity.
-
-### 4. Evaluation and Verification
-
-| Tool | Structural checks | Semantic checks | Behavioral checks | Blocking evals | Verification against spec |
-|---|---|---|---|---|---|
-| **VibeLoom** | Yes — ID grammar, cross-refs, required fields, dependency integrity | Yes — coverage gaps, contradictions, orphan entities, context sufficiency | Yes (on-demand) — scenario generation from stories, invariant tests from DM | Structural checks block approval | Continuous — evals run at every approval gate |
-| **Traycer** | No formal structural checks | No formal semantic checks | No | No | Yes — post-implementation verification compares code against plan. Categorizes issues as Critical/Major/Minor. Auto-rejects and re-plans on critical failures. |
-| **Deep Trilogy** | No | No | No | No | Multi-LLM review (Gemini/ChatGPT review Claude's plan). Code review via adversarial subagent. But no formal eval framework. |
-| **Tessl** | No formal structural checks | No formal semantic checks | Yes — linked tests in spec run on build | Tests block build | tessl build runs tests if configured |
-| **Kiro** | No | No | Property-based test generation from EARS requirements | No | Agent hooks can auto-update tests on save |
-| **Spec Kit** | Checklist-based (interpreted by AI — no guarantee) | Checklist-based (constitution violations flagged) | No | No | Checklists serve as "definition of done" but AI-interpreted |
-
-VibeLoom is the only tool with a formal, tiered eval framework where structural checks mechanically block approval. Traycer's post-implementation verification is strong but occurs after code generation, not during spec approval. Deep Trilogy's multi-LLM review is creative but ad-hoc rather than systematic.
-
-### 5. Traceability
-
-| Tool | ID system | Trace chain | Staleness detection | Impact analysis |
-|---|---|---|---|---|
-| **VibeLoom** | Rigid prefixed IDs (PRD-FR-, STORY-, ENT-, INV-, MOD-, API-, etc.) | Full chain: PRD requirement → USM story → DM entity/invariant → system-spec module/interface → test | Computed from context graph — version comparison between upstream and downstream derivation basis | Yes — graph traversal identifies all affected downstream items |
-| **Traycer** | None formal | Phase → Plan → Files (implicit) | None | None |
-| **Deep Trilogy** | None formal | Requirements → Spec → Plan → Sections (file-based) | None | None |
-| **Tessl** | None formal | Spec → Code (1:1 file mapping) | None explicit — but spec-as-source means spec IS the code source | Limited to single file scope |
-| **Kiro** | Task numbers trace to requirement numbers | Requirements → Tasks (numbered) | None | None |
-| **Spec Kit** | None formal | Constitution → Spec → Plan → Tasks (checklist-based) | None | None |
-
-VibeLoom's context graph with derivation edges is fundamentally different from every other tool's approach. No other tool provides machine-parseable traceability, staleness detection, or impact analysis.
-
-### 6. Drift and Reconciliation
-
-| Tool | Drift detection | Reconciliation model | Bounded? | Human authority |
-|---|---|---|---|---|
-| **VibeLoom** | Staleness computed from context graph when upstream changes | Asymmetric: upstream truth governs. Human chooses direction (amend upstream or fix downstream). Review identifies drift; reconcile propagates downward. | Yes — bounded to review → direction choice → propagation → eval | Humans always choose semantic direction |
-| **Traycer** | Post-implementation verification catches plan/code divergence | Verification comments fed back to coding agent for correction. Auto-rejects critical issues. | Yes — verification is a single pass | Human reviews verification results |
-| **Deep Trilogy** | None — no long-term spec maintenance | None | N/A | N/A |
-| **Tessl** | Spec-as-source prevents drift by design (spec is always edited first) | Regenerate code from spec | Yes — single generation step | Human edits spec |
-| **Kiro** | None documented | None documented | N/A | N/A |
-| **Spec Kit** | None documented | None documented | N/A | N/A |
-
-VibeLoom and Tessl approach drift from opposite directions: VibeLoom detects and resolves drift across a multi-tier stack; Tessl prevents drift by making the spec the only editable artifact (but at a single-file abstraction level). Traycer verifies after the fact. The rest have no drift model.
-
-### 7. Multi-Agent and Scaling
-
-| Tool | Multi-agent support | Context scoping | Parallel execution | Module boundaries |
-|---|---|---|---|---|
-| **VibeLoom** | Native — modules with interface contracts, explicit imports/exports, single ownership. Context graph enables minimal safe context loading per agent. | Deterministic — graph traversal loads smallest scope preserving required truth | Yes — each module fits in one agent's context window | Formal: bounded context → container → component |
-| **Traycer** | Yes — agent-agnostic orchestration. Hands plans to Cursor, Claude Code, Copilot, Cline, etc. | Plan-scoped — each plan is self-contained for the executing agent | Yes — phases can be executed sequentially or via YOLO mode | None formal — phases are the unit of work |
-| **Deep Trilogy** | Limited — sections are parallelizable. Multiple engineers/sessions can work on different sections. | Section-scoped — each section is self-contained | Yes — sections designed for atomic parallel implementation | None formal — components from /deep-project are the unit |
-| **Tessl** | Via Spec Registry — 10K+ library specs prevent hallucinations. Agent uses registry for dependency understanding. | Per-file spec scoping | Not explicitly designed for parallel agents | None formal — each spec maps to one file |
-| **Kiro** | Single-agent (built into Kiro IDE) | Task-scoped | Agent hooks provide background automation | None |
-| **Spec Kit** | Agent-agnostic (Copilot, Claude, Gemini, etc.) | Task-scoped within the spec's branch | Not explicitly designed for parallel agents | None |
-
-VibeLoom's module interface contracts are designed specifically for safe multi-agent parallelism. Traycer's agent orchestration is strong for delegating to different coding agents but lacks formal interface contracts between work units.
-
-### 8. Brownfield Support
-
-| Tool | Import from existing code | Steady-state maintenance model |
-|---|---|---|
-| **VibeLoom** | `import` operation reconstructs candidate contract bottom-up from code. Marks uncertainty for human review. | Full lifecycle: bugfix starts from repro → violated contract → regression coverage |
-| **Traycer** | Plan mode explores existing codebase for patterns | Verification can re-check existing code against plans |
-| **Deep Trilogy** | /deep-plan research phase analyzes existing codebase | None — task-scoped workflow |
-| **Tessl** | `tessl document --code file.js` reverse-engineers specs from code | Spec-as-source: edit spec, rebuild |
-| **Kiro** | "Steering" documents can describe existing codebase | None documented |
-| **Spec Kit** | Constitution can reference existing patterns | None documented |
-
-Tessl and VibeLoom have the strongest brownfield stories, approaching it from different angles: Tessl reverse-engineers per-file specs; VibeLoom reconstructs the full contract stack.
-
-### 9. Problem Size Fit
-
-Böckeler's Thoughtworks analysis raised a critical question: do these tools fit different problem sizes? Her experience with Kiro on a small bug produced 4 user stories with 16 acceptance criteria — "like using a sledgehammer to crack a nut." Spec Kit created so many markdown files for a 3-5 point story that she "never even finished the full implementation."
-
-| Tool | Best fit | Awkward fit | Size flexibility |
+| Tool | Phase 1 Experience | Overhead | What you get for it |
 |---|---|---|---|
-| **VibeLoom** | Multi-bounded-context systems, long-lived codebases, team projects | Weekend prototypes, single-file utilities | 4 modes (lite → expert) adapt ceremony to project complexity |
-| **Traycer** | Medium features in existing codebases | Very small or very large architectural changes | Plan mode (simple) vs Phase mode (complex) |
-| **Deep Trilogy** | Well-scoped features; multi-component new projects | Bug fixes, tiny changes | 3 entry points (/deep-project, /deep-plan, /deep-implement) |
-| **Tessl** | Component-level code generation, library maintenance | Large multi-service architectures | Single abstraction level (per-file) |
-| **Kiro** | New features with clear requirements | Small bugs, large architectural work | Single workflow, no scaling flexibility |
-| **Spec Kit** | New features, greenfield projects | Brownfield, small changes | Single workflow, verbose for small changes |
+| **Traycer** | Describe task → plan with file-level detail → hand off to Cursor/Claude Code → verify. | Minimal — planning takes minutes | Verified implementation; catches obvious mistakes before commit |
+| **Kiro** | Write requirements → Kiro generates design → generates tasks → agent executes. | Low-moderate — but [4 user stories with 16 acceptance criteria for a small bug fix](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) shows it can over-generate | Structured task list; auditable trail |
+| **Deep Trilogy** | /deep-plan runs 30-min interview → generates sections → manually feed to Claude Code. | Significant — 30 min interview before any code | Thorough thinking about edge cases; multi-LLM review of the plan |
+| **Tessl** | Write per-file spec → generate code marked `GENERATED FROM SPEC - DO NOT EDIT`. | Per-file — scales linearly with codebase | Each file stays in sync with its spec |
+| **Spec Kit** | Set up constitution → specify → plan → tasks → implement. | Heavy — [33 minutes and 2,577 lines of markdown to produce 689 lines of code](https://dev.to/casamia918/why-spec-driven-development-fails-and-what-we-can-learn-from-it-2pec) | Constitution enforces global standards; structured thinking |
+| **VibeLoom (vibe)** | Generate intent → auto-advance system-specs → generate code. Compact contract stack (intent + flat system doc). One approval checkpoint at intent. | Low — compact stack in 10-20 min, auto-advance keeps flow moving | Governed from day one; natural upgrade path to full contract stack when the project outgrows vibe |
 
-VibeLoom's mode system directly addresses this problem — lite for simple apps, expert for full-stack governance. No other tool offers this flexibility.
+**Phase 1 verdict**: For a prototype, Traycer and prompt-only generation are fastest. VibeLoom in vibe mode closes the gap — a compact contract stack (intent + flat system doc) takes 10-20 minutes and gives you governed foundations with minimal ceremony. If the prototype dies, the overhead was negligible. If it survives, you upgrade to the full contract stack instead of reverse-engineering chat history.
+
+The honest question a developer should ask: *"Is this going to survive past this weekend?"* If no, don't use VibeLoom. If maybe, vibe mode hedges the bet with minimal overhead. If yes, every minute invested in the contract stack pays compound interest.
+
+---
+
+### Phase 2: The Real App — 1 PM + 1-2 Devs, Multiple Features, Users Giving Feedback
+
+The product has users. Requirements are coming from a PM who thinks in user stories and acceptance criteria, not in code. The codebase has grown to hundreds of files across multiple features. Edge cases discovered in production have forced design revisions. A second developer has joined and needs to understand the system. The PM asks: *"What does the system actually do right now?"*
+
+**This is where spec-first tools start to crack.**
+
+**Traycer**: Each feature was planned and verified individually. The plans were useful when written, but they're task-scoped — they exist for one implementation cycle, then become historical artifacts. The PM asks "what does the system do?" and nobody can point to a single artifact that answers it. The codebase has evolved through dozens of plan-execute-verify cycles, but there is no durable artifact that captures what the system *is*. When a new requirement touches three existing features, the dev must re-describe the relevant context in each new plan. Traycer's verification catches code-vs-plan divergence within a cycle, but cannot detect that plan #31 contradicts a decision baked into plan #7.
+
+Community signal: developers report Traycer delivers [2-3 day tasks in 4 hours](https://dev.to/filiksyos/two-ways-of-building-with-ai-with-and-without-traycer-2lin) — but that's per-task productivity. Nobody reports on what the aggregate codebase looks like after 50 such tasks.
+
+**Deep Trilogy**: The planning interviews were thorough, but each session started fresh. The section files from Feature 1 are on the filesystem but nothing connects them to the code that evolved since. The developer has been manually managing context between sections — running `/compact`, losing details each time. One developer [lost 3 hours of refactoring decisions when auto-compaction fired](https://pierce-lamb.medium.com/what-i-learned-while-building-a-trilogy-of-claude-code-plugins-72121823172b), retaining only 20-30% of the nuance. The new dev joining asks "why was this designed this way?" and the answer is buried in a Medium article about context window limits, not in an artifact.
+
+**Kiro**: The requirements and design docs are feature-scoped, which helps. But they are [relatively static — the tool doesn't yet automate keeping spec and code in sync](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html). When Feature B modifies a component designed for Feature A, Feature A's design.md is not updated. The PM can read the requirements docs, which is genuinely useful for regulated environments. But task execution has become unreliable — [tasks frequently fail and retry from scratch, destroying context](https://github.com/kirodotdev/Kiro/issues/1284). One intensive user documented [310+ hours and $620 in credits on a project estimated at 20-30 hours](https://kearai.com/agents/kiro-ai-review-aws-agentic-ide-guide), largely due to task failures and retries.
+
+**Tessl**: Per-file specs are still in sync with code — the spec-as-source guarantee holds. But the system has grown to 80+ files, and there is no artifact describing how they relate. The PM asks "what bounded contexts do we have?" and the answer is: look at the folder structure and hope someone named things well. Tessl's evaluation framework shows [~35% improvement on individual API usage accuracy](https://tessl.io/blog/proposed-evaluation-framework-for-coding-agents/), which is real — but it cannot detect that component A's new behavior violates an invariant that component B depends on.
+
+**Spec Kit**: The constitution is a quiet win — global constraints are consistently enforced. But per-feature specs have accumulated into a sea of markdown. Developers report they are [extremely detailed, increasing review burden — you may need AI to navigate your own specs](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677). Token cost is real: developers on Claude Pro [$20/month hit the 5-hour rate limit just finishing a couple of tasks](https://github.com/github/spec-kit/issues/1492). Each feature was spec'd in its own branch, so post-merge there is no unified view of how features interact.
+
+**VibeLoom (pm mode) — designed behavior, not yet field-validated at this scale:**
+
+This is where the methodology is designed to shift gears. The PM now owns the product-specs approval gate (prd, usm, dm). The dev owns intent and system-specs. When Feature B touches components from Feature A, the context graph should flag the affected downstream artifacts as stale. Reconciliation surfaces the conflict: the team chooses whether to amend the upstream contract or fix downstream. The PM can answer "what does the system do?" by reading prd + usm. The new dev reads dm + system-specs and gets the architecture without chat archaeology.
+
+The overhead is real: every change starts from intent-specs and flows downward. The bet is that each change *updates the truth*, so the next change starts from accurate context instead of reconstructed guesswork. The context graph is designed to make truth-maintenance cheaper than truth-reconstruction.
+
+What could go wrong: the contract stack becomes the bottleneck. If review and approval cycles slow iteration, the team bypasses the methodology — editing code directly, skipping reconciliation — and the contract drifts like any other spec. VibeLoom's 4-mode system (vibe for low-ceremony, pm for product-gated flow) is the mitigation, but the risk is inherent to governance. Additionally, VibeLoom requires familiarity with DDD concepts (bounded contexts, aggregates, invariants) — teams without this background face a steeper curve than with any other tool here.
+
+---
+
+### Phase 3: The Two-Pizza Team — 2-3 PMs + 5-6 Devs, Parallel Workstreams, Architectural Evolution
+
+The product has matured. Multiple PMs own different product areas. Five or six developers work in parallel, sometimes on the same components. The architecture has been revised at least once — the original monolith is being decomposed, or a new bounded context has been carved out. Not everyone on the team was there at the beginning. The new architect asks: *"What are the system's invariants, and how do I know if my change breaks one?"*
+
+**This is where the structural gaps become load-bearing.**
+
+**Traycer**: Per-task productivity is still strong — reports of [a 5-month task done in 6 days using Epic Mode](https://traycer.ai/blog/epic-mode-turning-intent-to-code). But with 5-6 devs working in parallel, each creating their own plans, there is no mechanism to detect that Developer A's plan contradicts Developer B's plan. The team has likely built informal governance around Traycer — architecture docs in a wiki, an architect who reviews plans before handoff. Traycer is functioning as the execution layer in a manually-maintained governance stack. For teams with a strong architect, this works. The question: can you hire and retain that architect, and what happens when they leave?
+
+**Deep Trilogy**: Not designed for this scale. The solo-developer workflow of interview → plan → section → implement doesn't extend to parallel teams. Multiple devs would each run independent planning sessions with no shared context. The "trilogy" is a personal productivity tool, not a team coordination layer.
+
+**Kiro**: Five devs in Kiro means five independent feature-scoped spec trails. Context summarization [triggers at 33% of the window](https://github.com/kirodotdev/Kiro/issues/4758) (not the documented 80%). For monorepos exceeding 500 files, reviewers observe [increasing context drift](https://caylent.com/blog/kiro-first-impressions). Martin Fowler observed that agents [frequently don't follow instructions](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) even with extensive steering files. The feature-scoped requirements trail has compliance value — but the team still needs an external system (wiki, Confluence, architecture diagrams) to maintain system-level coherence.
+
+**Tessl**: Per-file specs are still accurate — the spec-as-source guarantee scales linearly with files. For teams maintaining component libraries or API packages, this may be sufficient even at this scale. But for systems with cross-cutting invariants (e.g., "all price calculations must use the same rounding policy"), there is no artifact that captures or enforces this. The system's architectural coherence depends on tribal knowledge — exactly what breaks when the team turns over.
+
+**Spec Kit**: The constitution continues to enforce global standards — and at this team size, that's genuinely valuable. Consistent security policies, coding standards, and testing requirements across 5-6 developers prevent a class of problems that other tools ignore entirely. The open-source ecosystem (83,000+ stars, 40+ community extensions) means community support and extensions cover edge cases. But per-feature specs remain branch-scoped with no post-merge unification, and the spec maintenance strategy [remains vague](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677). At this scale, the constitution is the tool's value; the spec workflow is overhead that teams likely skip for small changes.
+
+**VibeLoom (pm/dev/expert modes) — designed behavior, not yet field-validated at this scale:**
+
+This is the scale the methodology is built for. Each PM owns a product area's prd + usm. The domain model (dm) is shared. The system-specs define containers and per-instance component contracts with explicit ownership. The context graph should enable:
+
+- **Safe parallelism**: each dev loads only the contract subgraph relevant to their component, with minimal context. Module interface contracts define what crosses boundaries.
+- **Cross-team coherence**: when PM A changes a requirement that affects a bounded context PM B owns, staleness propagates through the graph and surfaces the conflict before code is written.
+- **Architectural evolution**: decomposing a monolith means updating the containers spec and re-deriving affected component specs. The graph shows exactly what's impacted.
+- **Onboarding**: a new dev reads intent → prd → dm → system → the specific container and component specs they'll work on. Total reading: 8-10 focused documents, not a git history spanning 6 months.
+
+The risks scale too. At this team size, governance overhead is felt by everyone. If the contract review process takes a day, 5-6 developers are blocked for a day. Mode selection becomes critical: `expert` (all-gated) for architectural changes, `pm` or `dev` for routine feature work, with delegated auto-advance handling the 80% case. The DDD prerequisite is no longer "nice to have" — the team needs shared vocabulary (bounded contexts, aggregates, ubiquitous language) or the domain model becomes a battleground.
+
+Where VibeLoom's design structurally differs from competitors: the context graph makes drift *detectable* even when reconciliation is delayed. In every other tool at this scale, drift is invisible until it causes a production bug or a cross-team conflict. The contract stack doesn't prevent architectural disagreements — but it makes them explicit before they reach code.
+
+---
+
+## The Failure Modes: Where Each Tool Breaks
+
+### Traycer: "The Plan Worked, But the Plans Don't Compound"
+
+**The promise**: AI plans your work, you execute with your preferred agent, verification catches mistakes.
+
+**The failure mode**: Each plan is an island. By the time you've executed 30 plans, the codebase has 30 plans' worth of architectural decisions embedded in code — but no artifact that unifies them. When plan #31 contradicts a constraint from plan #7, nothing detects it. Verification catches code-vs-plan divergence but not plan-vs-plan incoherence.
+
+**Real-world signal**: Users praise individual-task productivity — reports of [2-3 day tasks completed in 4 hours](https://dev.to/filiksyos/two-ways-of-building-with-ai-with-and-without-traycer-2lin) and [one case of a 5-month task done in 6 days using Epic Mode](https://traycer.ai/blog/epic-mode-turning-intent-to-code). Operational complaints center on [planning latency](https://community.traycer.ai/), [plans exceeding downstream context windows](https://community.traycer.ai/) (e.g., Augment's 20k character limit), and [git worktree issues on re-verification](https://community.traycer.ai/). The tool delivers genuine value within a sprint; the structural question is whether 50 sprint-scoped plans compose into a coherent system — and it's fair to note that teams with a strong human architect may maintain that coherence informally.
+
+**Who it works for**: Teams doing medium-sized features in existing, well-understood codebases where a human architect maintains the conceptual model in their head. Not suited for projects where the architecture itself is evolving.
+
+Sources: [Traycer docs](https://docs.traycer.ai/), [DEV community analysis](https://dev.to/filiksyos/two-ways-of-building-with-ai-with-and-without-traycer-2lin), [Traycer community feedback](https://community.traycer.ai/)
+
+---
+
+### Deep Trilogy: "The Interview Was Great, But the Glue Is You"
+
+**The promise**: Automate tedious orchestration while preserving human judgment at key decisions.
+
+**The failure mode**: The orchestration between the three plugins is manual. /deep-plan produces sections; the developer manually feeds each section to Claude Code, runs /compact between them, and shepherds implementation through. The "trilogy" vision is a pipeline; the reality is three independent tools with the developer as the integration layer.
+
+**Real-world signal**: The planning interviews genuinely surface hidden requirements — developers report thinking more deeply about edge cases. But the token overhead is significant (research + multi-turn interview + external LLM review), and context window limits mean [Claude's output degrades at 20-40% of the window before hitting hard limits](https://pierce-lamb.medium.com/what-i-learned-while-building-a-trilogy-of-claude-code-plugins-72121823172b). Auto-compaction is lossy. There is no lifecycle beyond the current planning session — no drift detection, no reconciliation, no formal connection between last month's plan and this month's code.
+
+**Who it works for**: Individual developers on Claude Code who want rigorous upfront planning for complex features and don't mind the token cost. Best when features are self-contained enough that cross-session context loss doesn't matter.
+
+Sources: [Deep Trilogy Medium article](https://pierce-lamb.medium.com/the-deep-trilogy-claude-code-plugins-for-writing-good-software-fast-33b76f2a022d), [Lessons learned building plugins](https://pierce-lamb.medium.com/what-i-learned-while-building-a-trilogy-of-claude-code-plugins-72121823172b), [GitHub](https://github.com/piercelamb/deep-plan)
+
+---
+
+### Tessl: "Each File Is Perfect, But the System Isn't"
+
+**The promise**: Spec-as-source eliminates drift by making specs the only editable artifact. Code is always derived.
+
+**What works — and this is genuinely clever**: The spec-as-source principle solves the spec-drift problem within its scope by construction, not by discipline. You can't have code drift from a spec if the spec *is* the source. Code marked `GENERATED FROM SPEC - DO NOT EDIT` stays in sync because it's regenerated, not maintained. For individual files and components, this is the strongest anti-drift guarantee in the entire landscape — stronger than VibeLoom's reconciliation, which depends on the team actually running it.
+
+**The structural limitation**: The abstraction level is one-spec-per-file. This eliminates drift within a file but provides no mechanism for cross-file contracts, bounded-context invariants, or system-level architectural coherence. When the system grows to 80+ files, the developer needs to understand how files relate — and that understanding lives nowhere in the spec layer.
+
+**Real-world signal**: ElevenLabs [doubled their agent success rate using Tessl tiles for API usage](https://www.producthunt.com/products/tessl). Individual-file accuracy genuinely improves. But multiple sources raise the [waterfall concern](https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html): detailed upfront specs delay the only thing that matters — user feedback. And [one analysis](https://hyperdev.matsuoka.com/p/is-ai-a-bubble-i-didnt-think-so-until) draws the TDD parallel: despite proven benefits, TDD adoption remains under 20% after 20 years, suggesting SDD may face a similar ceiling. Tessl is still in beta; the evaluation framework is promising but [questions remain about whether it captures real-world effectiveness](https://www.producthunt.com/products/tessl).
+
+**Who it works for**: Teams maintaining component libraries, API packages, or SDK code where per-file accuracy matters most. Not suited for systems where the hard problems are cross-cutting concerns, invariants that span multiple components, or architectural coherence.
+
+Sources: [Tessl docs](https://tessl.io), [Fowler/Böckeler SDD analysis](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html), [Tessl evaluation framework](https://tessl.io/blog/proposed-evaluation-framework-for-coding-agents/), [Marmelab waterfall critique](https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html)
+
+---
+
+### Kiro: "Structured Start, Unstructured Continuation"
+
+**The promise**: An IDE that enforces requirements → design → tasks before implementation, producing auditable, traceable development.
+
+**The failure mode**: The three-doc workflow (requirements.md, design.md, tasks.md) is feature-scoped and forward-only. Requirements are generated, design is generated, tasks are executed — then the docs become static. When a later feature modifies the same components, the original design.md is not updated. Over time, the collection of feature-scoped design docs becomes unreliable as a description of the system.
+
+Task execution reliability is the acute pain point. Developers report [tasks frequently failing with "unexpected error, please retry"](https://github.com/kirodotdev/Kiro/issues/3042), and retries [lose all context and restart from scratch](https://github.com/kirodotdev/Kiro/issues/1284) — meaning you pay the compute cost again without the benefit of prior work. Context summarization triggers [much earlier than documented](https://github.com/kirodotdev/Kiro/issues/4758). For larger monorepos (500+ files), reviewers observe [increasing context drift](https://caylent.com/blog/kiro-first-impressions).
+
+Martin Fowler observed that agents in Kiro [frequently don't follow all the instructions](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) even with extensive steering files — a structural problem that spec-generation cannot solve if the executing agent doesn't honor the spec.
+
+**Who it works for**: Teams building well-scoped features in regulated environments where the audit trail matters (the spec trail from requirements to tasks is genuinely valuable for compliance). Also teams already in the AWS ecosystem. Not suited for projects where requirements evolve continuously or where the architecture itself is the hard problem.
+
+Sources: [Kiro docs](https://kiro.dev/docs/), [Fowler/Böckeler analysis](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html), [Kiro GitHub issues](https://github.com/kirodotdev/Kiro/issues), [KEAR month-long test](https://kearai.com/agents/kiro-ai-review-aws-agentic-ide-guide), [Caylent first impressions](https://caylent.com/blog/kiro-first-impressions)
+
+---
+
+### GitHub Spec Kit: "Good Thinking, Expensive Maintenance"
+
+**The promise**: An open-source, agent-agnostic framework that makes specs executable — constitution + specify + plan + tasks + implement.
+
+**The failure mode**: The constitution is a quiet success — immutable global constraints consistently enforced. The per-feature spec workflow is the problem. It generates verbose, highly detailed specifications that are [tedious to review](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677) and [expensive to process](https://github.com/github/spec-kit/issues/1492). One detailed experiment found [a sea of markdown documents, long agent run-times, and unexpected friction](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677). Another measured [96 tasks generated for a simple Chrome extension](https://www.uncommonengineer.com/blog/2025/09/16/lessons-learned-the-complexity-wall/) — a plan that "completely missed the point."
+
+Each feature gets its own spec branch, which means post-merge there is no unified spec that describes the system. The spec maintenance strategy is [left vague or totally open](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677). Brownfield support requires [manual setup of a separate extension](https://github.com/wcpaxx/spec-kit-brownfield-extensions) that doesn't reflect actual architecture.
+
+**The saving grace**: It's free, open-source, MIT-licensed, agent-agnostic, and community-driven (83,000+ GitHub stars). The constitution concept is genuinely valuable and worth borrowing regardless of whether you use the rest of the workflow.
+
+**Who it works for**: Developers wanting a free, structured starting point for greenfield projects with well-defined scope. Good for learning spec-driven thinking. Not suited for long-lived projects where spec maintenance becomes the bottleneck, or for brownfield codebases.
+
+Sources: [GitHub Spec Kit repo](https://github.com/github/spec-kit), [Scott Logic analysis](https://blog.scottlogic.com/2025/11/26/putting-spec-kit-through-its-paces-radical-idea-or-reinvented-waterfall.html), [Medium practical experience](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677), [Token usage issue](https://github.com/github/spec-kit/issues/1492), [Visual Studio Magazine experiment](https://visualstudiomagazine.com/articles/2025/09/16/github-spec-kit-experiment-a-lot-of-questions.aspx)
+
+---
+
+## The Structural Comparison
+
+For readers who want the feature matrix alongside the narrative, here is the capability comparison across the dimensions that drive long-term outcomes:
+
+### What stays true over time?
+
+| Dimension | VibeLoom | Traycer | Deep Trilogy | Tessl | Kiro | Spec Kit |
+|---|---|---|---|---|---|---|
+| **Spec persistence** | Permanent — contract stack is the system's living model | Task-scoped — plans are useful during implementation | Session-scoped — artifacts on filesystem, not governed | Permanent per-file — spec-as-source by design | Feature-scoped — static after creation | Branch-scoped — no unified post-merge view |
+| **Cross-feature coherence** | Context graph detects stale downstream when upstream changes | None — each plan is independent | None — each session starts fresh | None — per-file scope, no cross-file contracts | None — feature docs are independent | Constitution enforces global rules; per-feature specs are independent |
+| **Drift detection** | Computed staleness from derivation graph | Post-implementation verification (code vs current plan only) | None | Prevented within files by design; not detectable across files | None documented | None |
+| **Reconciliation** | Asymmetric: upstream truth governs; human chooses direction; bounded loop | Verification flags issues; agent re-implements | None | Regenerate code from edited spec | None | None |
+| **Traceability** | Full chain: requirement → story → domain entity → component → test | Implicit: phase → plan → files | Implicit: requirement → spec → section | 1:1 spec-to-file | Numbered tasks trace to numbered requirements | Checklist-based, AI-interpreted |
+
+### What scales with team and codebase size?
+
+| Dimension | VibeLoom | Traycer | Deep Trilogy | Tessl | Kiro | Spec Kit |
+|---|---|---|---|---|---|---|
+| **Multi-agent** | Native — module contracts with explicit ownership, graph-based context loading | Agent-agnostic orchestration — delegates to any coding agent | Sections parallelizable in theory; manual in practice | Registry provides shared context; no multi-agent coordination | Single-agent IDE | Agent-agnostic but no parallel coordination |
+| **Context management** | Graph traversal loads minimal required scope | Plan-scoped — agent receives the plan | Per-section — manual context management between sections | Per-file spec scoping | Task-scoped; [context summarization triggers early](https://github.com/kirodotdev/Kiro/issues/4758) | Task-scoped within spec branch |
+| **New contributor onboarding** | Read intent → prd → dm → system to understand the system | Re-create plans for relevant areas | No persistent knowledge base | Read per-file specs (good for components; no system overview) | Read feature requirements (no system-level view) | Read constitution (good for rules; no system-level view) |
+| **Domain modeling** | Full DDD: bounded contexts, aggregates, invariants, ubiquitous language | None | None | None | None | None |
+
+### What controls ceremony and cost?
+
+| Dimension | VibeLoom | Traycer | Deep Trilogy | Tessl | Kiro | Spec Kit |
+|---|---|---|---|---|---|---|
+| **Ceremony scaling** | 4 modes: vibe (compact stack, one approval) → expert (all gates) | Plan mode (simple) vs Epic mode (complex) | 3 entry points; no ceremony control within each | Single workflow | Single workflow; overkill for small changes | Single workflow; overkill for small changes |
+| **Token efficiency** | Contract stack is structured; context graph limits what's loaded | Plans can [exceed downstream context windows](https://community.traycer.ai/) | Token-intensive (research + interview + external review) | Per-file is efficient; registry scales | Credit-metered; [tasks fail and restart from scratch](https://github.com/kirodotdev/Kiro/issues/1284) | [Hits Claude Pro rate limits in hours](https://github.com/github/spec-kit/issues/1492) |
+| **Approval flexibility** | Mode-driven: delegated auto-advance with breaking-change escalation | Human approves plan before handoff | Interview checkpoints + code review triage | Human edits spec only | Human reviews each phase | Checklist-driven phase gates |
 
 ---
 
 ## Strategic Assessment
 
-### Where VibeLoom leads
+### VibeLoom's core advantage
 
-1. **Contract-driven lifecycle governance** — no other tool treats specs as a formal contract stack with tiered evals, approval gates, and asymmetric reconciliation
-2. **Traceability and staleness** — the context graph with derivation edges is unique in this landscape
-3. **Multi-agent scaling** — module interface contracts with explicit ownership are designed for safe parallel execution
-4. **Flexible ceremony** — 4 modes let users match workflow rigor to project complexity
-5. **Domain modeling** — the only tool that separates workflow semantics (USM) from domain semantics (DM) from technical design
+VibeLoom addresses spec drift through continuous reconciliation driven by a context graph — a mechanism designed so that specs written in week 1 evolve rather than expire. Other tools produce specs that either decay (Traycer, Deep Trilogy, Kiro, Spec Kit) or operate at file scope without cross-component coherence (Tessl). The trade-off is upfront ceremony.
 
-### Where competitors have advantages
+The context graph is the key differentiator. Without staleness detection and impact analysis, maintaining a multi-tier spec stack would be as futile as maintaining a separate requirements document — it would drift within weeks. The graph is designed to turn static specs into a living contract. Whether this works in practice at scale remains to be validated publicly.
 
-1. **Traycer** — strongest post-implementation verification with severity categorization and auto-rejection. Agent-agnostic orchestration lets users choose their preferred coding agent. Lower barrier to entry.
-2. **Deep Trilogy** — multi-LLM review (Gemini + ChatGPT reviewing Claude's work) is a creative cross-validation approach. TDD-first implementation with adversarial code review. Very practical for developers already in Claude Code.
-3. **Tessl** — spec-as-source eliminates drift by design (at the cost of low abstraction level). Spec Registry with 10K+ library specs prevents hallucinations for common dependencies. Most novel long-term vision.
-4. **Kiro** — EARS notation for requirements enables property-based test generation. Built into IDE with agent hooks for background automation. Lowest friction for getting started.
-5. **Spec Kit** — constitution model for immutable global rules. Open source and agent-agnostic. VS Code extension provides visual workflow orchestration.
+### VibeLoom's core risks
 
-### Risks and open questions per tool
+1. **Ceremony**: Vibe mode reduces upfront cost to a compact two-tier stack (intent + flat system doc), but still requires more ceremony than prompt-only tools. The methodology rewards projects that survive long enough to compound the value of maintained specs. The one-way upgrade to the full contract stack is a bet on longevity.
+2. **DDD prerequisite**: The contract stack uses bounded contexts, aggregates, and invariants natively. Teams without DDD experience face a steeper learning curve than with any other tool here. Traycer, Kiro, and Spec Kit require no specific domain modeling methodology.
+3. **Discipline dependency**: The context graph detects drift but doesn't prevent it. If teams bypass reconciliation or edit code directly, the contract becomes stale like any other doc. The methodology's value depends on the team treating it as non-negotiable — which is a cultural bet, not a technical guarantee.
+4. **Availability**: As of March 2026, VibeLoom is a methodology with public documentation but limited tooling availability. Competitors like Spec Kit (open-source, MIT, 83K stars), Traycer (VS Code extension, 100K+ users), and Kiro (publicly available IDE) have broader accessibility.
 
-| Tool | Key risk |
-|---|---|
-| **VibeLoom** | Ceremony overhead — even lite mode requires a full contract stack. The methodology is deep; adoption requires commitment. |
-| **Traycer** | No long-term spec governance — plans are task-scoped. No traceability or staleness. Verification is post-hoc, not preventive. |
-| **Deep Trilogy** | No lifecycle model — artifacts are task-scoped files. No drift detection, no reconciliation, no formal evals. Dependent on Claude Code ecosystem. |
-| **Tessl** | Per-file abstraction level limits architectural reasoning. Non-deterministic code generation from same spec (observed by Böckeler). Closed beta. |
-| **Kiro** | Locked to Kiro IDE (VS Code fork). No documented long-term spec maintenance. Overkill for small problems, insufficient for large architectures. AWS-native. |
-| **Spec Kit** | Verbose — creates many markdown files that are tedious to review. Branch-per-spec suggests task-scoped, not feature-scoped persistence. AI interprets checklists non-deterministically. |
+### What VibeLoom should learn from competitors
+
+1. **From Traycer**: Agent-agnostic execution is valuable. Developers have preferred coding agents; the planning layer shouldn't force a specific one.
+2. **From Spec Kit**: The constitution concept — immutable global constraints — maps cleanly to VibeLoom's `defaults` and is worth studying for patterns that make global rules easy to author and enforce.
+3. **From Tessl**: The evaluation framework with quantitative metrics (35% improvement on API accuracy) provides the kind of concrete evidence that VibeLoom's eval framework should aspire to produce.
+4. **From Kiro**: Agent hooks (automated actions on file events) are a practical integration pattern for connecting spec-driven workflows to CI/CD pipelines.
+5. **From the community**: The [waterfall critique](https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html) is not wrong for tools that front-load massive documentation before any code ships. VibeLoom's vibe mode with a compact contract stack and delegated auto-advance is the right response, but the messaging needs to emphasize that contract-driven ≠ upfront-everything. The contract evolves; it's not a phase gate before coding begins.
 
 ---
 
 ## Landscape Summary
 
-This table follows the framework from [vibeloom.ai/methodology#landscape](https://vibeloom.ai/methodology#landscape), extended with the two additional competitors.
+| Tool | Approach | Spec Lifetime | Governing Artifact | Key Strength | Key Limitation |
+|---|---|---|---|---|---|
+| **VibeLoom** | Contract-driven | Permanent, evolving | Multi-tier contract stack with context graph | Specs stay accurate and governing over months/years | Upfront ceremony investment |
+| **Traycer** | Plan-first, verify-after | Task-scoped | File-level plans | Fast per-task productivity with post-implementation verification | No cross-task coherence; plans don't compound |
+| **Deep Trilogy** | Interview-driven planning | Session-scoped | Section files | Thorough upfront thinking via structured interviews | Manual orchestration; context loss between sessions |
+| **Tessl** | Spec-as-source | Permanent per-file | Per-file spec | Zero drift within files; quantified accuracy improvement | No cross-file contracts or system-level coherence |
+| **Kiro** | Structured IDE workflow | Feature-scoped | Requirements + design + tasks | Auditable spec trail for regulated environments | Static docs; unreliable task execution; context loss |
+| **Spec Kit** | Constitution + phase workflow | Branch-scoped | Constitution + per-feature specs | Free, open-source, agent-agnostic; strong global constraints | Verbose specs; high token cost; no post-merge unified view |
 
-| Tool | Spec-first | Contract-first | Spec-driven | Contract-driven |
+### Who Is Each Tool Built For?
+
+| Tool | Team size | Prerequisite knowledge | Best starting point | Switching cost |
 |---|---|---|---|---|
-| **VibeLoom** | Primary | Primary | Primary | Primary |
-| **Traycer** | Strong | Limited | Explicit | Partial |
-| **Deep Trilogy** | Strong | None | Partial | None |
-| **Tessl** | Strong | Limited | Explicit | Partial |
-| **Kiro** | Variant | Limited | Explicit | Limited |
-| **GitHub Spec Kit** | Strong | Limited | Explicit | Limited |
+| **VibeLoom** | 2-10+ (scales with context graph) | DDD concepts, tiered spec thinking | Greenfield; brownfield via `import` | High — contract stack is deeply integrated |
+| **Traycer** | 1-5 (scales with human architect) | None beyond coding | Any existing codebase | Low — plans are independent of tool |
+| **Deep Trilogy** | 1-2 (solo or pair) | Claude Code familiarity | Well-scoped new features | Low — plugins are optional add-ons |
+| **Tessl** | 1-5 (per-file scope limits coordination) | Basic spec writing | Component libraries, SDK code | Medium — specs replace code as editable artifact |
+| **Kiro** | 1-5 (single-agent IDE) | EARS notation (learnable) | Greenfield features in AWS ecosystem | Medium — IDE lock-in |
+| **Spec Kit** | 1-10+ (constitution scales) | None | Greenfield projects | Low — open-source, agent-agnostic |
 
-### Definitions
+### SDD Maturity Positioning
 
-- **Spec-first**: Requirements and design artifacts are created before implementation starts.
-- **Contract-first**: Interfaces, invariants, and acceptance boundaries are defined before code is generated.
-- **Spec-driven**: Specs continue to guide implementation, evaluation, and change management after planning.
-- **Contract-driven**: Contracts remain active constraints on downstream code, tests, and reconciliation, with formal eval and approval gates.
+Following [Böckeler's SDD maturity framework](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html), extended:
 
-### Per-tool positioning
-
-**VibeLoom** — Intent, product specs, domain model, and architecture are created and approved up front; those same artifacts are then reused as explicit eval inputs and gating checkpoints for downstream code and reconciliation.
-
-**Traycer** — A PRD or intent is captured, then decomposed into phases with file-level plans. Plans are handed to coding agents and verified post-implementation with severity-categorized review comments. Plans guide work but do not serve as formal contract eval gates.
-
-**Deep Trilogy** — Requirements are decomposed into components, each planned through research, interviews, and multi-LLM review. Plans drive TDD implementation with adversarial code review. Strong planning depth but no formal lifecycle, traceability, or long-term governance.
-
-**Tessl** — A per-file spec with capabilities, API, and linked tests is written first, then code is generated from it. Spec-as-source aspiration means the spec stays authoritative, but contract-style eval across multiple abstraction levels is not part of the current model.
-
-**Kiro** — Requirements (EARS notation), design, and tasks are created inside the IDE for a feature. They guide implementation and enable property-based testing, but are not framed as long-term contract gates across tiers.
-
-**GitHub Spec Kit** — A constitution plus spec, plan, and task list are created via CLI-driven workflow. Constitution provides immutable constraints. Artifacts stay relevant during implementation, but are framed more as planning scaffolding than as hard contract eval gates across a lifecycle.
+| Level | Definition | Tools |
+|---|---|---|
+| **Spec-first** | Spec written before code, then potentially discarded | Kiro, Deep Trilogy |
+| **Spec-anchored** | Spec persists after the task for evolution and maintenance | Spec Kit (aspiring), Traycer (partially — verification re-checks plans) |
+| **Spec-as-source** | Spec is primary artifact; humans never touch generated code | Tessl (exploring) |
+| **Contract-driven** | Tiered specs actively govern generation, evaluation, reconciliation, and traceability across the full lifecycle | VibeLoom |
 
 ---
 
-*Analysis based on public documentation and product positioning as of March 2026.*
+*Analysis based on official documentation, GitHub repositories, community feedback (Reddit, Hacker News, X, YouTube, DEV Community, Medium), and published case studies as of March 2026.*
 
-Sources:
-- [VibeLoom Methodology](https://vibeloom.ai/methodology)
-- [Traycer Documentation](https://docs.traycer.ai/)
-- [The Deep Trilogy — Pierce Lamb](https://pierce-lamb.medium.com/the-deep-trilogy-claude-code-plugins-for-writing-good-software-fast-33b76f2a022d)
-- [Understanding SDD: Kiro, spec-kit, and Tessl — Birgitta Böckeler / Thoughtworks](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html)
-- [GitHub Spec Kit](https://github.com/github/spec-kit)
-- [Spec-driven development with AI — GitHub Blog](https://github.blog/ai-and-ml/generative-ai/spec-driven-development-with-ai-get-started-with-a-new-open-source-toolkit/)
-- [Kiro Feature Specs](https://kiro.dev/docs/specs/feature-specs/)
-- [Tessl Spec-Driven Development](https://docs.tessl.io/use/spec-driven-development-with-tessl)
+### Sources
+
+**Cross-cutting analysis:**
+- [Understanding SDD: Kiro, spec-kit, and Tessl — Böckeler/Fowler (ThoughtWorks)](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html)
+- [The Waterfall Strikes Back — Marmelab](https://marmelab.com/blog/2025/11/12/spec-driven-development-waterfall-strikes-back.html)
+- [Is AI A Bubble? — Matsuoka/HyperDev](https://hyperdev.matsuoka.com/p/is-ai-a-bubble-i-didnt-think-so-until)
+- [Why Spec-Driven Development Fails — DEV Community](https://dev.to/casamia918/why-spec-driven-development-fails-and-what-we-can-learn-from-it-2pec)
+- [State of AI vs Human Code Generation — CodeRabbit](https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report)
+
+**Per-tool:**
+- Traycer: [docs](https://docs.traycer.ai/), [community](https://community.traycer.ai/), [DEV analysis](https://dev.to/filiksyos/two-ways-of-building-with-ai-with-and-without-traycer-2lin)
+- Deep Trilogy: [GitHub](https://github.com/piercelamb/deep-plan), [Medium](https://pierce-lamb.medium.com/the-deep-trilogy-claude-code-plugins-for-writing-good-software-fast-33b76f2a022d), [Lessons learned](https://pierce-lamb.medium.com/what-i-learned-while-building-a-trilogy-of-claude-code-plugins-72121823172b)
+- Tessl: [site](https://tessl.io), [eval framework](https://tessl.io/blog/proposed-evaluation-framework-for-coding-agents/), [GitHub](https://github.com/tesslio)
+- Kiro: [docs](https://kiro.dev/docs/), [GitHub issues](https://github.com/kirodotdev/Kiro/issues), [month-long test](https://kearai.com/agents/kiro-ai-review-aws-agentic-ide-guide), [Caylent](https://caylent.com/blog/kiro-first-impressions)
+- Spec Kit: [repo](https://github.com/github/spec-kit), [Scott Logic](https://blog.scottlogic.com/2025/11/26/putting-spec-kit-through-its-paces-radical-idea-or-reinvented-waterfall.html), [VS Magazine](https://visualstudiomagazine.com/articles/2025/09/16/github-spec-kit-experiment-a-lot-of-questions.aspx), [token issue](https://github.com/github/spec-kit/issues/1492), [practical experience](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677)
+
+**VibeLoom:**
+- [Methodology](https://vibeloom.ai/methodology)

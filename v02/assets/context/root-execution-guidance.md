@@ -18,12 +18,13 @@ Populate `derives_from` in frontmatter with the governing approved contract item
 - Prefer the narrowest valid container or component scope whenever the change can stay there.
 - Treat execution guidance as operational help; contract remains semantic truth.
 
-## Load-First Context
+## Your Context
 
-1. Load `defaults` plus the smallest governing contract artifact for the requested change.
-2. Load only the upstream items or artifacts needed to explain the target change.
-3. Load local execution guidance after contract when doing implementation or review work.
-4. Escalate to broader scope when ownership or semantic boundaries are unclear.
+Your context includes this execution guidance and the governing contract artifacts for this scope (`system`, `containers`, `defaults`). Use contract as authoritative reference; use this guidance for orientation and operational rules.
+
+1. Start from the contract artifacts provided — they are the source of truth.
+2. If a change requires artifacts outside your load set, escalate to the orchestrator.
+3. Do not infer product semantics from code when approved contract already exists.
 
 ## Do-Not-Touch Boundaries
 

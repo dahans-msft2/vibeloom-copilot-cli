@@ -7,7 +7,6 @@ scope_id: root
 status: draft
 version: 0
 draft_revision: 1
-approval_mode: human
 derives_from: []
 ---
 
@@ -23,6 +22,14 @@ derives_from: []
 - Keep items coarse. If a capability naturally subdivides into multiple requirements, that decomposition belongs in `prd`, not here.
 - Items that are repo-wide and always-on belong in `defaults`, not `intent`.
 
+## Vision
+
+<Free-form prose description of the system: purpose, users, value proposition, and any high-level context that does not fit into structured tables below.>
+<!--
+Exemplar:
+A lightweight workspace collaboration tool that lets owners invite trusted collaborators into a shared environment. The product emphasizes explicit approval, auditability, and a calm user experience over complex role hierarchies.
+-->
+
 ## Functionality
 
 | id | statement | notes |
@@ -33,7 +40,7 @@ Exemplar rows. Replace with project-specific intent.
 | `CAP-0002` | Invited users can review and act on pending invitations inside the product. | Support accept and decline flows. |
 -->
 
-## Miscellania
+## Miscellaneous
 
 | id | type | statement | notes |
 | --- | --- | --- | --- |

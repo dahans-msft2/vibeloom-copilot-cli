@@ -4,6 +4,7 @@ artifact_type: adr
 tier: context
 scope_kind: root
 scope_id: root
+derives_from: []
 ---
 
 # Architecture Decision Ledger

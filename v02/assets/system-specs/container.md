@@ -8,7 +8,6 @@ container_id: <CONT-####>
 status: draft
 version: 0
 draft_revision: 1
-approval_mode: human
 derives_from: []
 ---
 

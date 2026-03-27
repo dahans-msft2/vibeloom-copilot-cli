@@ -4,6 +4,7 @@ artifact_type: pdr
 tier: context
 scope_kind: root
 scope_id: root
+derives_from: []
 ---
 
 # Product Decision Ledger

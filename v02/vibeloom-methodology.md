@@ -54,7 +54,7 @@ Here is an overview of developing a system using VibeLoom:
 - Every run starts with **intent-specs** by iteratively shaping a high-level description of the system (`intent`) and the repo-wide defaults (`defaults`) that will govern the rest of the generation process.
 - The run then proceeds downward through **product-specs** (`prd`, `usm`, `dm`) and **system-specs** (`system`, `containers`, `container`, `component`) as needed.
 - Generation and validation of the **contract** use one of four modes that control approval units, delegated progression, and context-boundary behavior:
-  - `lite` treats the affected contract stack as one approval unit and delegates contract approval by default so the skill can run end-to-end in one go unless a blocking or flagged issue requires a human stop
+  - `lite` treats the affected contract stack as one approval unit and delegates contract approval by default so the skill can auto-advance product-specs and system-specs in one go unless a blocking or flagged issue requires a human stop
   - `pm` treats each affected contract tier as its own approval unit; `product-specs` are the normal human stop and `system-specs` auto-advance by default unless blocked or flagged
   - `dev` treats each affected contract tier as its own approval unit; `system-specs` are the normal human stop and `product-specs` auto-advance by default unless blocked or flagged
   - `expert` treats each affected contract tier as its own approval unit and stops for explicit human approval at every contract tier
@@ -330,16 +330,18 @@ Modes are run-time-switchable workflow settings that control approval units, del
 
 | Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause | Normal forward surface | Typical use |
 | --- | --- | --- | --- | --- | --- | --- |
-| `lite` | affected contract stack | none before code | affected contract stack | no | `generate code` | Simple systems: one bounded context, limited business logic, modest complexity |
+| `lite` | affected contract stack | intent-specs only | affected contract stack | no | `generate code` | Simple systems: one bounded context, limited business logic, modest complexity |
 | `pm` | each affected contract tier | `product-specs` | `system-specs` | no | `generate product-specs`, `generate code` | PM driving requirements, workflows, acceptance intent |
 | `dev` | each affected contract tier | `system-specs` | `product-specs` | no | `generate system-specs`, `generate code` | Dev driving technical boundaries, dependencies, executable impact |
 | `expert` | each affected contract tier | every contract tier | none | yes | full targeted operation surface | Lead owning the full contract stack end-to-end |
+
+Intent-specs are always human-gated in every mode; the table shows additional human stops beyond intent only for `pm`, `dev`, and `expert`.
 
 `lite` is intentionally one-shot and relies most heavily on delegated approval, not a different ontology. `pm`, `dev`, and `expert` are progressively more explicit, not semantically different.
 
 Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` otherwise. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
-Regardless of mode, `intent-specs` are always human-gated and every run still begins from `intent-specs`. The agent may help draft or reshape intent (including regenerating `defaults` when intent changes), but intent-specs always require explicit human approval — they are never delegated.
+Regardless of mode, `intent-specs` are always human-gated and every run still begins from `intent-specs`. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency, and regenerates `defaults` to stay aligned. The user's semantic intent is never overridden. Intent-specs always require explicit human approval — they are never delegated.
 
 Modes may change default prompts, context emphasis, stop behavior, or suggested operations, but they do not change the contract stack or the contract/context/code ontology.
 
@@ -435,6 +437,10 @@ flowchart TD
 
 This is deliberate: user wishes and constraints may survive all the way into system design and code, even when they were not fully normalized into later specs.
 
+### Scope Of Regeneration
+
+Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. When the double-pass back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set. Artifacts with unchanged upstream bases are not regenerated.
+
 ### Generation And Staleness
 
 When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced through staleness detection.
@@ -443,15 +449,21 @@ When approved upstream truth changes, dependent downstream artifacts become stal
 
 ## Review, Eval, And Reconciliation
 
-These are three distinct conceptual activities:
+These are four distinct conceptual activities that pair symmetrically:
+
+| Interactive (human-guided, iterative) | Formal (automated, deterministic) | Scope |
+| --- | --- | --- |
+| `review` — critique current approval unit, surface issues, propose fixes | `eval` — structural, semantic, and behavioral validation | current approval unit |
+| `reconcile` — detect downstream drift, surface conflicts, propose fix directions | `generate` — produce artifacts via double-pass model | downstream artifacts |
 
 - `review` critiques and frames the current candidate approval unit against approved upstream truth
 - `eval` checks structure and semantics
-- `reconciliation` realigns lower layers after approved truth changes or downstream drift is detected
+- `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the human before invoking generation
+- `generate` produces artifacts from approved upstream truth
 
-Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in `pm`/`dev`/`expert`, or across the affected contract stack in `lite`. Reconciliation uses the same tier model to propagate approved truth downward.
+Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in `pm`/`dev`/`expert`, or across the affected contract stack in `lite`. Reconciliation uses the same tier model to detect and resolve drift, then invokes generation to produce refreshed artifacts.
 
-Review, eval, and reconciliation are shown together in the Workflow diagram above.
+Review, eval, reconciliation, and generation are shown together in the Workflow diagram above.
 
 ### Review
 
@@ -480,25 +492,29 @@ Structural eval and semantic eval normally run against the approval unit current
 
 ### Reconciliation
 
-Reconciliation is downstream realignment after approved truth changes or downstream drift becomes visible.
+Reconciliation is the interactive counterpart to generation, just as review is the interactive counterpart to eval. Where `generate` produces artifacts from approved upstream truth, `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the human before invoking generation on affected artifacts.
 
-It is asymmetric:
+`generate code` is the normal forward command — it handles all upstream generation and delegation needed to produce code. `reconcile` is the interactive path when you want to detect, review, and resolve drift before regenerating. In practice, `generate code` is the 90% path; `reconcile` is the surgical review path.
+
+Reconciliation is asymmetric:
 
 - approved upstream contract defines intended meaning
 - downstream artifacts and code may reveal drift
 - drift triggers proposals, not silent rewriting of approved truth
 
-When drift appears, the human chooses one of two semantic directions:
+When drift appears, `reconcile` surfaces the conflicts and proposes two or three fix directions. The human chooses one:
 
 1. Amend upstream truth, then regenerate and reconcile downstream.
 2. Preserve upstream truth, then correct downstream context or code.
+3. A human-specified alternative direction.
 
 To prevent loops, reconciliation stays bounded:
 
-1. Review identifies and frames the drift.
-2. Human chooses semantic direction when needed.
-3. Reconciliation propagates the approved direction downward.
-4. Eval validates the resulting state.
+1. Detect drift and surface conflicts with specific item references.
+2. Propose fix directions for human selection.
+3. Human chooses semantic direction.
+4. Eval validates the chosen direction.
+5. Generate produces refreshed artifacts for the affected scope.
 
 ---
 
@@ -512,7 +528,7 @@ VibeLoom defines eight methodology-level operations. Implementations may expose 
 | `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
 | `review` | current + up | Critique the current candidate approval unit against approved upstream truth and optionally apply bounded fixes within that approval unit |
 | `eval` | up | Run structural, semantic, or behavioral evaluation for the current approval unit |
-| `reconcile` | down | Propagate approved upstream changes downward into stale downstream tiers, context, or code |
+| `reconcile` | down | Detect downstream drift, surface conflicts, propose fix directions, iterate with human, then invoke generation on affected artifacts |
 | `approve` | gate | Move a reviewed contract approval unit from `draft` to `approved` and record approval provenance |
 | `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
 | `import` | bottom-up | Reconstruct candidate contract from an unmanaged or heavily drifted codebase |
@@ -674,7 +690,7 @@ VibeLoom is strongest where prompt-only generation stops being reliable.
 It works by:
 
 - turning intent into a durable contract stack
-- generating that stack tier-by-tier with human gating at tier boundaries
+- generating that stack tier-by-tier with mode-appropriate human approval
 - using context as agent-facing execution truth without letting it outrank contract
 - reconciling downstream artifacts when approved truth changes
 - relying on an explicit context graph instead of chat-memory guesswork

@@ -154,7 +154,7 @@ Every contract artifact must include:
 | `status` | enum | One of `draft`, `approved` |
 | `version` | integer | Latest approved version number; starts at `0` until the first approval |
 | `draft_revision` | integer | Optional; required when `status: draft` and content differs from the last approved version |
-| `approval_mode` | enum | One of `human`, `delegated` |
+| `approval_mode` | enum | One of `human`, `delegated`. Set at approval time only; absent on drafts. |
 | `derives_from` | string[] | Upstream short item IDs that materially constrain this artifact |
 
 Additional required fields:
@@ -179,6 +179,7 @@ Every context artifact must include:
 | `tier` | enum | Always `context` |
 | `scope_kind` | enum | One of `root`, `container`, `component` |
 | `scope_id` | string | `root` or the governing scope slug |
+| `derives_from` | string[] | Upstream short item IDs that constrain this artifact |
 
 Additional required fields:
 
@@ -195,6 +196,19 @@ Contract versioning uses approved versions plus draft revisions:
 - first approved artifact: `version: 1`, no `draft_revision`
 - next unapproved change: `version: 1`, `draft_revision: 2`
 - next approval: `version: 2`, no `draft_revision`
+
+`approval_mode` is provenance, not a declaration. Drafts do not carry `approval_mode`. At approval time, set `approval_mode: human` for explicit human approval or `approval_mode: delegated` for auto-advanced approval.
+
+### Direct Edit Detection
+
+When a user edits an approved contract artifact outside of skill operations:
+
+1. The user should set `status: draft` and add `draft_revision` in frontmatter to signal the edit.
+2. Alternatively, the skill detects the edit at the start of any operation by comparing artifact content against the approved state.
+3. The skill confirms the transition with the user before proceeding.
+4. Staleness propagation follows the same rules as any other draft transition.
+
+### Staleness
 
 Staleness is never written into artifact frontmatter. It is computed by the context graph by comparing each artifact's derivation basis against the latest approved upstream versions. Unapproved drafts do not trigger staleness.
 
@@ -429,6 +443,10 @@ Within a contract tier, artifacts are generated in this order:
 2. local `container.md` files for affected containers
 3. local `component.md` files for affected components
 
+### Scope Of Regeneration
+
+Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. Artifacts with unchanged upstream bases are not regenerated. When the double-pass back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set.
+
 ### Double-Pass Generation
 
 See methodology for the conceptual double-pass model. The concrete steps per contract tier are:
@@ -449,13 +467,13 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
 | `review` | current approval unit, scope, review style | findings and optional bounded fixes inside that approval unit |
 | `eval` | current approval unit, eval type, scope | structural, semantic, or behavioral findings |
-| `reconcile` | approved upstream change set, downstream floor scope | refreshed stale downstream artifacts |
+| `reconcile` | approved upstream change set, downstream floor scope | drift analysis, proposed fix directions, then refreshed downstream artifacts after human selection |
 | `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
 | `import` | unmanaged repo scope | candidate contract drafts for all three contract tiers plus context |
 
 `review` only acts on the current approval unit and approved upstream truth.
-`reconcile` only acts downward.
+`reconcile` only acts downward. It is the interactive counterpart to `generate`: it detects drift, surfaces conflicts, proposes fix directions, iterates with the human, then invokes generation on affected artifacts. `generate code` is the normal forward path; `reconcile` is the surgical path for reviewing drift before regenerating.
 
 ### Standard Operation Parameters
 
@@ -478,7 +496,7 @@ Implementations should enforce the same stop behavior described in methodology:
 
 | Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
 | --- | --- | --- | --- | --- |
-| `lite` | affected contract stack | none before code | affected contract stack | no |
+| `lite` | affected contract stack | intent-specs only | affected contract stack | no |
 | `pm` | each affected contract tier | `product-specs` | `system-specs` | no |
 | `dev` | each affected contract tier | `system-specs` | `product-specs` | no |
 | `expert` | each affected contract tier | every contract tier | none | yes |
@@ -493,7 +511,7 @@ If a delegated approval unit is blocked or flagged, explicit human review and ap
 
 ### Smart Orchestration
 
-`generate <target>` orchestrates the full path from the current state to the target tier, following mode rules:
+`generate <target>` orchestrates the full path from the current state to the target tier, following mode rules. All `generate <target>` combinations are valid in every mode. The "normal forward surface" (see methodology) lists the commands the skill should suggest to the user after each stop. The smart orchestration table below defines what happens when any target is invoked in any mode.
 
 1. Check all upstream tiers are approved.
 2. For any upstream tier in draft: if it is **delegated** in the current mode → auto-advance (eval, approve, continue).
@@ -506,13 +524,13 @@ Concrete behavior per mode:
 
 | Command | `lite` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
-| `generate intent-specs` | regenerate intent + defaults, stop for approval | same | same | same |
+| `generate intent-specs` | reshape intent, regenerate defaults, stop for approval | same | same | same |
 | `generate product-specs` | auto-advance product (delegated) | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
 | `generate system-specs` | auto-advance all (delegated) | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
 | `generate context` | auto-advance all, generate context, continue | auto-advance downstream, generate context, continue | auto-advance downstream, generate context, continue | generate context, stop (context pause) |
-| `generate code` | full pipeline end-to-end | auto-advance system (delegated), context, code | context + code | error if any upstream unapproved |
+| `generate code` | auto-advance product+system+context (delegated), generate code | auto-advance system (delegated), context, code | context + code | error if any upstream unapproved |
 
-Intent-specs are never delegated. `generate intent-specs` always stops for explicit human approval regardless of mode.
+Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode.
 
 ### Next-Command Suggestions
 

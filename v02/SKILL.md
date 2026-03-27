@@ -50,7 +50,6 @@ scope_id: root
 status: draft
 version: 0
 draft_revision: 1
-approval_mode: human
 derives_from: []
 ```
 
@@ -64,7 +63,6 @@ scope_id: root
 status: draft
 version: 0
 draft_revision: 1
-approval_mode: human
 derives_from: []
 ```
 
@@ -107,9 +105,9 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 | `product-specs` | auto-advance (delegated) | generate, stop (human) | auto-advance (delegated) | generate, stop (human) |
 | `system-specs` | auto-advance all (delegated) | auto-advance system (delegated) | auto-advance product if needed, generate system, stop (human) | generate, stop (human) |
 | `context` | auto-advance all, gen context, continue | auto-advance downstream, gen context, continue | auto-advance downstream, gen context, continue | gen context, stop (context pause) |
-| `code` | full pipeline end-to-end | auto-advance system, context, code | context + code | error if upstream unapproved |
+| `code` | auto-advance product+system+context (delegated), generate code | auto-advance system, context, code | context + code | error if upstream unapproved |
 
-**`generate intent-specs`** specifically: Regenerate the intent-specs tier (both `intent.md` and `defaults.md`) from the user's current edits. The user's edits to `intent.md` are the input basis; `defaults.md` is regenerated to stay consistent. Always stops for explicit human approval.
+**`generate intent-specs`** specifically: Uses the user's current `intent.md` content as authoritative semantic input. Reshapes it for structural consistency (IDs, table formatting) and regenerates `defaults.md` to stay aligned with the updated intent. The user's semantic intent is never overridden by generation. Always stops for explicit human approval.
 
 **Double-pass model** (per tier):
 1. Generate artifacts in dependency order using the tier's template from `assets/`.
@@ -184,17 +182,22 @@ Eval runs automatically during `generate`. Explicit invocation is for targeted c
 
 ### `reconcile`
 
-Propagate approved upstream changes downward into stale downstream tiers, context, or code.
+Detect downstream drift, surface conflicts, propose fix directions, and iterate with the human before regenerating. Reconcile is the interactive counterpart to generate, just as review is the interactive counterpart to eval. `generate code` is the normal forward path; `reconcile` is the surgical path for reviewing drift before regenerating.
 
 **Syntax:** `/vibeloom reconcile [<scope>]`
 
 **Behavior:**
 1. Compute staleness from the context graph.
 2. Identify all stale downstream artifacts.
-3. Regenerate affected artifacts using the double-pass model.
-4. Apply mode rules: delegated tiers auto-advance if safe; human stops require review.
-5. Regenerate affected context.
-6. Reconcile affected code.
+3. Surface drift with specific item references (e.g., "CMP-0003 derives from BC-0001 which changed scope").
+4. Propose 2-3 fix directions for each conflict:
+   - Amend upstream truth, then regenerate downstream.
+   - Preserve upstream truth, correct downstream.
+   - (If applicable) a human-specified alternative.
+5. Human selects direction for each conflict.
+6. Run eval to validate the chosen direction.
+7. Generate refreshed artifacts for affected scope using the double-pass model.
+8. Apply mode rules: delegated tiers auto-advance if safe; human stops require review.
 
 Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth.
 
@@ -304,7 +307,7 @@ Explain any VibeLoom concept, operation, or workflow.
 
 | Mode | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
 | --- | --- | --- | --- | --- |
-| `lite` | affected contract stack | none before code | affected contract stack | no |
+| `lite` | affected contract stack | intent-specs only | affected contract stack | no |
 | `pm` | each affected contract tier | `product-specs` | `system-specs` | no |
 | `dev` | each affected contract tier | `system-specs` | `product-specs` | no |
 | `expert` | each affected contract tier | every contract tier | none | yes |
@@ -398,16 +401,27 @@ Execution guidance is emitted as **two files** per scope — one for `AGENTS.md`
 
 ### Contract Artifacts
 
-Every contract artifact frontmatter must include: `artifact_id`, `artifact_type`, `tier`, `scope_kind`, `scope_id`, `status`, `version`, `draft_revision` (when draft), `approval_mode`, `derives_from`.
+Every contract artifact frontmatter must include: `artifact_id`, `artifact_type`, `tier`, `scope_kind`, `scope_id`, `status`, `version`, `draft_revision` (when draft), `derives_from`.
 
-**On generation:** `status: draft`, `version: <previous approved version or 0>`, `draft_revision: <increment>`.
-**On approval:** `status: approved`, `version: <increment>`, remove `draft_revision`, `approval_mode: human|delegated`.
+**On generation:** `status: draft`, `version: <previous approved version or 0>`, `draft_revision: <increment>`. Do not include `approval_mode` on drafts.
+**On approval:** `status: approved`, `version: <increment>`, remove `draft_revision`, set `approval_mode: human` (explicit approval) or `approval_mode: delegated` (auto-advanced).
 
 ### Context Artifacts
 
 Every context artifact frontmatter must include: `artifact_id`, `artifact_type`, `tier`, `scope_kind`, `scope_id`, `derives_from`.
 
 Context artifacts do **not** have `status`, `version`, or `approval_mode`.
+
+### Direct Edit Detection
+
+When an approved contract artifact's content has changed since its last approved version:
+
+1. At the start of any operation, compare artifact content against approved state.
+2. If a change is detected, ask the user to confirm the transition to `draft`.
+3. On confirmation: set `status: draft`, increment `draft_revision`, remove `approval_mode`.
+4. Proceed with the operation using the updated lifecycle state.
+
+The user may also manually set `status: draft` and `draft_revision` in frontmatter to signal an edit.
 
 ### Staleness
 
@@ -435,6 +449,16 @@ Context is generated after required contract tiers are approved.
 ## Engine Simulation
 
 Since this skill runs inside Claude Code without a separate engine process, simulate engine responsibilities:
+
+### Session Bootstrap
+
+At the start of any operation:
+
+1. Read all contract artifact frontmatter to reconstruct lifecycle state (status, version for each artifact).
+2. Compute staleness by comparing each artifact's `derives_from` items against upstream artifact versions.
+3. Detect direct edits: if an `approved` artifact's content appears modified, flag for user confirmation (see Direct Edit Detection above).
+4. Report any anomalies (approved downstream newer than draft upstream, missing artifacts, broken derivation links) as graph health warnings.
+5. Optionally read `.vibeloom/state/status.json` as a verification cache, but always trust artifact frontmatter as authoritative.
 
 ### Context Graph
 

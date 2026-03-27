@@ -1,5 +1,5 @@
 ---
-artifact_id: BDD-0001
+artifact_id: BDD-<####>
 artifact_type: bdd
 tier: context
 scope_kind: root
@@ -17,18 +17,19 @@ This template produces one behavior artifact per file. Keep generated BDD artifa
 
 ## Feature / Capability
 
-- **id:** `BDD-0001`
+- **id:** `BDD-<####>`
 - **title:** <Feature or capability title>
 - **derives_from:** `[<short-item-id>, <short-item-id>]`
 <!--
 Exemplar:
+- **id:** `BDD-0001`
 - **title:** Invitation approval
 - **derives_from:** `[FR-0001, STORY-0001]`
 -->
 
 ## Scenarios
 
-### `SCN-0001`
+### `SCN-<####>`
 
 - **derives_from:** `[<short-item-id>, <short-item-id>]`
 <!--

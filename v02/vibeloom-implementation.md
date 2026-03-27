@@ -491,6 +491,58 @@ In `lite`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
 If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
 
+### Smart Orchestration
+
+`generate <target>` orchestrates the full path from the current state to the target tier, following mode rules:
+
+1. Check all upstream tiers are approved.
+2. For any upstream tier in draft: if it is **delegated** in the current mode → auto-advance (eval, approve, continue).
+3. For any upstream tier in draft: if it is a **human stop** in the current mode → stop and ask for review/approval before continuing.
+4. Generate the target tier.
+5. If the target tier is a human stop → stop for review/approval.
+6. If the target tier is delegated → auto-advance and continue toward the original target.
+
+Concrete behavior per mode:
+
+| Command | `lite` | `pm` | `dev` | `expert` |
+| --- | --- | --- | --- | --- |
+| `generate intent-specs` | regenerate intent + defaults, stop for approval | same | same | same |
+| `generate product-specs` | auto-advance product (delegated) | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
+| `generate system-specs` | auto-advance all (delegated) | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
+| `generate context` | auto-advance all, generate context, continue | auto-advance downstream, generate context, continue | auto-advance downstream, generate context, continue | generate context, stop (context pause) |
+| `generate code` | full pipeline end-to-end | auto-advance system (delegated), context, code | context + code | error if any upstream unapproved |
+
+Intent-specs are never delegated. `generate intent-specs` always stops for explicit human approval regardless of mode.
+
+### Next-Command Suggestions
+
+After every stop (approval, escalation, context pause), the skill suggests the next forward command:
+
+| After | Suggested next |
+| --- | --- |
+| approve intent-specs | `generate <mode-forward-target>` (e.g., `generate code` in lite, `generate product-specs` in pm) |
+| approve product-specs | `generate code` (pm), `generate system-specs` (expert) |
+| approve system-specs | `generate code` (dev, expert) |
+| escalation approval | resume toward original target |
+| context pause (expert) | `generate code` |
+
+### Mode × Command Matrix (Normal Flow)
+
+| Step | `lite` | `pm` | `dev` | `expert` |
+| --- | --- | --- | --- | --- |
+| Bootstrap | `init` | `init` | `init` | `init` |
+| Shape intent | `generate intent-specs` (if defaults need regen) | same | same | same |
+| Approve intent | `approve` | `approve` | `approve` | `approve` |
+| Forward to product | (automatic) | `generate product-specs` | (automatic) | `generate product-specs` |
+| Approve product | (automatic) | `approve` | (auto or escalated) | `approve` |
+| Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
+| Approve system | (automatic) | (auto or escalated) | `approve` | `approve` |
+| Forward to context | (automatic) | (automatic) | (automatic) | `generate context` |
+| Review context | — | — | — | (editor review) |
+| Forward to code | `generate code` | `generate code` | `generate code` | `generate code` |
+
+`(automatic)` = handled by the forward `generate` command via smart orchestration / delegation. `(auto or escalated)` = normally delegated, but escalates to explicit approval if breaking change detected.
+
 ### Utility Commands
 
 These are skill-level commands that do not correspond to methodology operations:
@@ -498,7 +550,7 @@ These are skill-level commands that do not correspond to methodology operations:
 | Command | Purpose |
 | --- | --- |
 | `configure` | Change runtime settings: `mode` (`lite` / `pm` / `dev` / `expert`) and any future skill-level options. Changes take effect on the next operation. |
-| `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. |
+| `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. Use `help --explain <topic>` for detailed explanations (e.g., `help --explain generate`, `help --explain modes`). |
 
 ### Context Generation
 

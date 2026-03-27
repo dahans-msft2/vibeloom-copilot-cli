@@ -339,9 +339,26 @@ Modes are run-time-switchable workflow settings that control approval units, del
 
 Default to `lite` only when the system is clearly simple: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` otherwise. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
-Regardless of mode, `intent-specs` stay explicitly human-authored and every run still begins from `intent-specs`.
+Regardless of mode, `intent-specs` are always human-gated and every run still begins from `intent-specs`. The agent may help draft or reshape intent (including regenerating `defaults` when intent changes), but intent-specs always require explicit human approval — they are never delegated.
 
 Modes may change default prompts, context emphasis, stop behavior, or suggested operations, but they do not change the contract stack or the contract/context/code ontology.
+
+#### Mode × Command Matrix (Normal Flow)
+
+| Step | `lite` | `pm` | `dev` | `expert` |
+| --- | --- | --- | --- | --- |
+| Bootstrap | `init` | `init` | `init` | `init` |
+| Shape intent | `generate intent-specs` (if defaults need regen) | same | same | same |
+| Approve intent | `approve` | `approve` | `approve` | `approve` |
+| Forward to product | (automatic) | `generate product-specs` | (automatic) | `generate product-specs` |
+| Approve product | (automatic) | `approve` | (auto or escalated) | `approve` |
+| Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
+| Approve system | (automatic) | (auto or escalated) | `approve` | `approve` |
+| Forward to context | (automatic) | (automatic) | (automatic) | `generate context` |
+| Review context | — | — | — | (editor review) |
+| Forward to code | `generate code` | `generate code` | `generate code` | `generate code` |
+
+`(automatic)` = handled by the forward `generate` command via smart orchestration / delegation. `(auto or escalated)` = normally delegated, but escalates to explicit approval if breaking change detected.
 
 #### Delegated auto-advance and breaking-change escalation
 

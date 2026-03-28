@@ -14,7 +14,7 @@ derives_from: []
 
 `usm` is the delivery map. It organizes the product into epics, flows, stories, acceptance framing, and milestones.
 
-Populate `derives_from` in frontmatter with the smallest relevant approved product-contract item IDs (e.g., FR-0001, NFR-0001, Q-0001).
+Populate `derives_from` in frontmatter with the smallest relevant approved `prd` item IDs (e.g., FR-0001, NFR-0001, Q-0001).
 
 ## Epics
 

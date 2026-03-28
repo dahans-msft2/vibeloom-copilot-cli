@@ -521,15 +521,14 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 | --- | --- | --- |
 | `init` | project brief, mode | initial `intent-specs` draft |
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
-| `review` | current approval unit, scope, review style | findings and optional bounded fixes inside that approval unit |
+| `review` | current approval unit, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
 | `eval` | current approval unit, scope | structural and semantic findings |
-| `reconcile` | approved upstream change set, downstream floor scope | drift analysis, proposed fix directions, then refreshed downstream artifacts after human selection |
+| `reconcile` | approved upstream change set, downstream floor scope | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
 | `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
 | `import` | unmanaged repo scope | candidate contract drafts for all three contract tiers plus context |
 
-`review` only acts on the current approval unit and approved upstream truth.
-`reconcile` only acts downward. It is the interactive counterpart to `generate`: it detects drift, surfaces conflicts, proposes fix directions, iterates with the human, then invokes generation on affected artifacts. `generate code` is the normal forward path; `reconcile` is the surgical path for reviewing drift before regenerating.
+`review` only acts on the current approval unit, checking upward against approved upstream truth. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
 
 ### Standard Operation Parameters
 
@@ -543,6 +542,7 @@ Implementations should standardize these parameter names even if the user-facing
 | `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the current approval unit that do not change approved upstream meaning. |
 
 | `approval_mode` | One of `human`, `delegated` |
+| `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges downward from every changed item in the context graph |
 
 These parameters are the concrete implementation vocabulary behind the methodology-level operations.
 
@@ -580,11 +580,11 @@ Concrete behavior per mode:
 
 | Command | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
-| `generate intent-specs` | reshape intent, regenerate defaults, stop for approval | same | same | same |
+| `generate intent-specs` | reshape intent (preserving user's semantic intent), regenerate defaults, stop for approval | same | same | same |
 | `generate product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
 | `generate system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
 | `generate context` | auto-advance system, generate execution guidance, continue | auto-advance downstream, generate context, continue | auto-advance downstream, generate context, continue | generate context, stop (context pause) |
-| `generate code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), context, code | context + code | error if any upstream unapproved |
+| `generate code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), context, code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | error if any upstream unapproved |
 
 Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode.
 

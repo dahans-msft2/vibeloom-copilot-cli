@@ -23,7 +23,7 @@ The context graph determines the load set per scope. Workers operate independent
 - **Approval unit:** The set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint.
 - **Derivation:** Every downstream item records its upstream inputs via `derives_from`. This is the sole inter-item relationship.
 - **Staleness:** Computed from the context graph, never stored in frontmatter. When approved upstream truth changes, dependent downstream artifacts become stale.
-- **Breaking semantic change:** A change to existing approved meaning, not addition of new material consistent with approved truth.
+- **Breaking semantic change:** Any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking. See methodology for full signal table.
 
 ---
 
@@ -110,11 +110,11 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 
 | Target | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
-| `intent-specs` | reshape intent, regen defaults, stop | same | same | same |
+| `intent-specs` | reshape intent (preserving user's semantic intent), regen defaults, stop | same | same | same |
 | `product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance (delegated) | generate, stop (human) |
 | `system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed, generate system, stop (human) | generate, stop (human) |
 | `context` | auto-advance system, gen execution guidance, continue | auto-advance downstream, gen context, continue | auto-advance downstream, gen context, continue | gen context, stop (context pause) |
-| `code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system, context, code | context + code | error if upstream unapproved |
+| `code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system, context, code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | error if upstream unapproved |
 
 **`generate intent-specs`** specifically: Uses the user's current `intent.md` content as authoritative semantic input. Reshapes it for structural consistency (IDs, table formatting) and regenerates `defaults.md` to stay aligned with the updated intent. The user's semantic intent is never overridden by generation. Always stops for explicit human approval.
 
@@ -148,61 +148,75 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 
 ### `review`
 
-Critique the current candidate approval unit against approved upstream truth.
+Interactive loop for the current candidate approval unit, checking upward against approved upstream truth.
 
 **Syntax:** `/vibeloom review [<scope>] [--style advisory|bounded]`
 
 **Default style:** `bounded`
 
-**Behavior:**
-1. Identify the current candidate approval unit (pending draft tier or contract stack).
-2. Load approved upstream truth.
-3. Critique for: contradictions, ambiguity, missing derivation links, semantic gaps.
+**Each cycle:**
+1. Run eval (forward + back pass) on the current approval unit against approved upstream truth.
+2. Surface findings — structural (blocking) and semantic (non-blocking) — with specific item references (e.g., "FR-0005 contradicts CAP-0002").
+3. Propose fixes for each finding.
 4. **Advisory style:** Surface findings only. Do not modify artifacts.
 5. **Bounded style:** Surface findings AND apply fixes within the current approval unit that do not change approved upstream meaning.
-6. Show findings with specific item references (e.g., "FR-0005 contradicts CAP-0002").
+
+**At the end of each cycle, offer three options:**
+- **Loop** — run another detect → propose → fix → eval cycle.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution.
+- **Approve** — user judges remaining findings acceptable, approve and proceed.
 
 Review runs automatically during `generate`. Explicit invocation is for re-critique after user edits or for targeted analysis.
 
 ### `eval`
 
-Run structural and semantic evaluation against the current approval unit.
+Run structural and semantic evaluation against the current approval unit. Eval always runs a forward pass then a back pass — the back pass checks whether later artifacts in the tier constrain earlier ones.
 
 **Syntax:** `/vibeloom eval [<scope>]`
 
-**Structural checks** (blocking):
-- Validate lifecycle rules (draft/approved states consistent)
-- Validate references (all `derives_from` point to existing items)
-- Validate required fields per template
-- Validate declared relationships (items owned by correct artifacts)
-- Validate stack integrity (tiers in correct dependency order)
+**Structural checks** (blocking) — see methodology for full pass/fail criteria:
 
-**Semantic checks** (non-blocking):
-- Analyze coverage (every upstream item has downstream representation)
-- Check for contradiction with approved upstream truth
-- Assess componentization fit (BC/container/component boundaries)
-- Assess context sufficiency
+| Check | Pass criterion |
+| --- | --- |
+| Lifecycle consistency | Draft/approved states consistent across approval unit |
+| Reference integrity | All `derives_from` point to existing items |
+| Required fields | Every artifact has all required frontmatter per template |
+| Declared relationships | Items owned by correct artifacts, scopes, tiers |
+| Stack integrity | Tiers in correct dependency order |
+| Coverage | Every upstream item has ≥1 downstream item deriving from it |
+| Contradiction | No downstream item conflicts with its `derives_from` basis |
+| Componentization fit | Component→1 BC; BC→1 container |
+| Context sufficiency | Every code-owning component + populated container has execution guidance |
+
+**Semantic checks** (non-blocking) — require agent judgment:
+
+- Does downstream faithfully represent the *intent* of its upstream basis?
+- Are naming conventions consistent with the ubiquitous language?
+- Are there implicit dependencies not captured in `derives_from`?
+- Are there capability gaps the intent describes but no downstream artifact addresses?
 
 Eval runs automatically during `generate` and `approve`. Explicit invocation is for targeted checks outside the normal flow.
 
 ### `reconcile`
 
-Detect downstream drift, surface conflicts, propose fix directions, and iterate with the human before regenerating. Reconcile is the interactive counterpart to generate, just as review is the interactive counterpart to eval. `generate code` is the normal forward path; `reconcile` is the surgical path for reviewing drift before regenerating.
+Interactive loop for downstream artifacts, checking downward from approved upstream changes. Reconcile is the interactive counterpart to generate, just as review is the interactive counterpart to eval. `generate code` is the normal forward path; `reconcile` is the surgical path for reviewing drift before regenerating.
 
 **Syntax:** `/vibeloom reconcile [<scope>]`
 
-**Behavior:**
-1. Compute staleness from the context graph.
-2. Identify all stale downstream artifacts.
-3. Surface drift with specific item references (e.g., "CMP-0003 derives from BC-0001 which changed scope").
-4. Propose 2-3 fix directions for each conflict:
+**Each cycle:**
+1. Compute staleness from the context graph. Identify all stale downstream artifacts.
+2. Surface drift with specific item references (e.g., "CMP-0003 derives from BC-0001 which changed scope").
+3. Propose fix directions for each conflict:
    - Amend upstream truth, then regenerate downstream.
    - Preserve upstream truth, correct downstream.
-   - (If applicable) a human-specified alternative.
-5. Human selects direction for each conflict.
-6. Run eval to validate the chosen direction.
-7. Generate refreshed artifacts for affected scope using the double-pass model.
-8. Apply mode rules: delegated tiers auto-advance if safe; human stops require review.
+   - A human-specified alternative direction.
+4. Human selects direction for each conflict.
+5. Apply fixes and run eval to validate.
+
+**At the end of each cycle, offer three options:**
+- **Loop** — run another detect → propose → fix → eval cycle on remaining drift.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution.
+- **Approve** — user judges remaining drift acceptable, approve and proceed.
 
 Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth.
 
@@ -245,18 +259,28 @@ Reconstruct candidate contract from an unmanaged or heavily drifted codebase.
 **Syntax:** `/vibeloom import`
 
 **Behavior:**
-1. Analyze existing code bottom-up:
-   - Infer components, containers, interfaces, behaviors → draft system-specs
-   - Infer requirements, stories, domain model → draft product-specs
-   - Infer capabilities, wishes, constraints → draft intent-specs
-2. Generate context from reconstructed contract.
-3. All three contract tiers are marked `draft`.
-4. Show confidence notes (uncertain boundaries, unclear mappings).
-5. Start review from system-specs upward:
-   - Show system-specs findings → user reviews/edits → `approve`
-   - Show product-specs findings → user reviews/edits → `approve`
-   - Show intent-specs findings → user reviews/edits → `approve`
-6. Regenerate context from approved contract.
+
+**Step 1 — Reconstruct** (7-step bottom-up heuristics):
+1. Scan directory structure + config → candidate containers, components, defaults seeds
+2. Package boundaries → bounded contexts
+3. Public APIs → interfaces
+4. Test files → behaviors
+5. Infer product-specs from system-specs (requirements, stories, domain model)
+6. Infer intent-specs from product-specs (capabilities, wishes, constraints)
+7. Emit all artifacts as `draft` with confidence annotations (high / medium / low)
+
+**Step 2 — Bottom-up review** (import is the only workflow with this order):
+1. Review system-specs against actual code (closest to source of truth) → approve
+2. Review product-specs against approved system-specs → approve
+3. Review intent-specs against approved product-specs → approve
+
+Each review step uses the standard interactive loop (detect → propose → fix → eval → loop / eval-only / approve).
+
+**Step 3 — Generate + reconcile:**
+1. Generate context from the fully approved contract stack
+2. Reconcile downward — check contract against code for remaining drift
+
+Once all tiers are approved and reconciliation is resolved, normal top-down governance takes over for all future changes.
 
 ### `configure`
 
@@ -341,15 +365,14 @@ In every mode:
 
 ### Breaking-Change Escalation
 
-When a delegated tier triggers a breaking semantic change, escalate to human review:
+**Rule: any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking.** See methodology for the full signal table with detection methods.
+
+When a delegated tier triggers a breaking change, escalate to human review:
 
 1. Show what changed and why it's breaking.
 2. Show the specific items affected (e.g., "BC-0001 split into BC-0001 + BC-0003").
 3. Stop for human review and approval.
 4. After approval, resume toward the original target.
-
-**Product-side breaking changes:** changed scope, workflow meaning, acceptance semantics, NFR target, domain meaning.
-**System-side breaking changes:** changed bounded-context placement, ownership, interface semantics, dependency semantics.
 
 ---
 
@@ -435,6 +458,10 @@ Every contract artifact frontmatter must include: `artifact_id`, `artifact_type`
 
 **On generation:** `status: draft`, `version: <previous approved version or 0>`, `draft_revision: <increment>`. Do not include `approval_mode` on drafts.
 **On approval:** `status: approved`, `version: <increment>`, remove `draft_revision`, set `approval_mode: human` (explicit approval) or `approval_mode: delegated` (auto-advanced).
+
+**Additional frontmatter for system-specs artifacts:**
+- `component.md` requires: `container_id` (CONT-####), `component_id` (CMP-####), `bounded_context` (BC-####), `owned_paths` (string[]), `owned_interfaces` (string[]).
+- `container.md` requires: `container_id` (CONT-####).
 
 ### Context Artifacts
 

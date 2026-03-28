@@ -14,7 +14,7 @@ derives_from: []
 
 `dm` is the semantic source for technical boundary derivation.
 
-Populate `derives_from` in frontmatter with the smallest relevant approved product-contract item IDs (e.g., FR-0001, STORY-0001, ACC-0001).
+Populate `derives_from` in frontmatter with the smallest relevant approved `prd` and `usm` item IDs (e.g., FR-0001, STORY-0001, ACC-0001).
 
 ## Ubiquitous Language
 

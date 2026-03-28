@@ -461,12 +461,18 @@ In `vibe`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
 If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
 
-A **breaking semantic change** is a change to existing approved meaning, not simple addition of new material consistent with approved truth.
+**Rule: any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking.**
 
-Examples:
-
-- product-side: changed scope, workflow meaning, acceptance semantics, NFR target, or domain meaning
-- system-side: changed bounded-context placement, ownership, interface semantics, dependency semantics, or other approved technical meaning
+| Signal | Classification | Detection |
+| --- | --- | --- |
+| Any field changed on an existing approved item | Breaking | Structural: diff against last approved version |
+| Item deleted | Breaking | Structural: item ID absent in draft |
+| `derives_from` edges changed (added or removed) | Breaking | Structural: diff on `derives_from` array |
+| Item moved to different scope/container/component | Breaking | Structural: scope fields changed |
+| Bounded context split or merged | Breaking | Structural: BC count changed or component BC fields reassigned |
+| Interface semantics changed | Breaking | Semantic: agent compares IF description against approved version |
+| Invariant weakened or strengthened | Breaking | Semantic: agent compares INV rule text against approved version |
+| **New item added** consistent with approved truth | Non-breaking | Semantic: agent confirms no conflict with any approved item |
 
 ### Lifecycle And Approval
 
@@ -567,51 +573,73 @@ Review, eval, reconciliation, and generation are shown together in the Workflow 
 
 ### Review
 
-Review is the human-facing critique loop for the current candidate approval unit against approved upstream truth and internal coherence.
+Review is an interactive loop for the current candidate approval unit, checking upward against approved upstream truth. It works like planning mode in familiar coding agents — iterative, human-guided, with explicit exit points.
 
-It may:
+Each review cycle:
 
-- surface contradictions, ambiguity, and missing links
-- propose upstream or same-tier corrections
-- apply bounded fixes within the currently reviewed approval unit
+1. Run eval (forward + back pass) on the current approval unit against approved upstream truth.
+2. Surface findings — structural (blocking) and semantic (non-blocking) — with specific item references.
+3. Propose fixes for each finding.
+4. Apply fixes within the approval unit (bounded style) or surface findings only (advisory style).
 
-Review does not propagate approved changes downward; that belongs to reconciliation.
-Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
+At the end of each cycle, the user chooses one of three options:
+
+- **Loop** — run another detect → propose → fix → eval cycle.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution without proposing new fixes.
+- **Approve** — user judges remaining findings acceptable, approve and proceed.
+
+Review does not propagate changes downward; that belongs to reconciliation. Review may not silently change semantically meaningful upstream truth. When meaning changes, the human chooses the direction and later approves the updated tier.
 
 ### Eval
 
-Eval runs structural and semantic checks as a single operation against the current approval unit:
+Eval always runs a forward pass then a back pass across the current approval unit. The back pass checks whether later artifacts in the tier constrain earlier ones — for example, when `dm` produces a bounded context that should constrain how `usm` stories are grouped, or when a `component` produces a behavior that refines the container's component inventory. If the back pass surfaces findings, they are reported alongside the forward-pass findings.
 
-- **Structural checks** validate lifecycle rules, references, required fields, declared relationships, and basic stack integrity. Structural failures are blocking — the approval unit cannot advance until they pass.
-- **Semantic checks** analyze coverage, contradiction with upstream truth, componentization fit, and context sufficiency. Semantic findings are non-blocking but inform review decisions.
+**Structural checks** (blocking) — the approval unit cannot advance until all pass:
+
+| Check | Pass criterion | Fail criterion |
+| --- | --- | --- |
+| Lifecycle consistency | Draft/approved states consistent across the approval unit | Mismatched states |
+| Reference integrity | All `derives_from` point to existing items | Dangling references |
+| Required fields | Every artifact has all required frontmatter fields per template | Missing fields |
+| Declared relationships | Items owned by correct artifacts, scopes, tiers | Misplaced items |
+| Stack integrity | Tiers in correct dependency order | Out-of-order dependencies |
+| Coverage | Every upstream item in the derivation basis has at least one downstream item whose `derives_from` includes it | Orphaned upstream IDs — report them |
+| Contradiction | No downstream item asserts a constraint, behavior, or boundary that conflicts with any item in its `derives_from` set | Downstream narrows, widens, or reverses upstream meaning — report both IDs and conflicting statements |
+| Componentization fit | Every component maps to exactly one bounded context; every bounded context is fully contained in exactly one container | Component references multiple BCs, or BC's items appear in components belonging to different containers — report misplaced items |
+| Context sufficiency | Every component with non-empty `owned_paths` has execution guidance; every container with at least one component has container-level guidance | Code-owning component or populated container lacks execution guidance — report the scope |
+
+**Semantic checks** (non-blocking) — require agent judgment, inform review decisions:
+
+- Does the downstream artifact faithfully represent the *intent* of its upstream basis, not just reference it?
+- Are naming conventions consistent with the ubiquitous language in the domain model?
+- Are there implicit dependencies not captured in `derives_from`?
+- Are there capability gaps — things the intent describes that no downstream artifact addresses, even though no formal derivation edge is missing?
 
 Eval runs automatically as part of `generate` and `approve`. Explicit invocation (`eval`) is for targeted checks outside the normal flow.
 
 ### Reconciliation
 
-Reconciliation is the interactive counterpart to generation, just as review is the interactive counterpart to eval. Where `generate` produces artifacts from approved upstream truth, `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the human before invoking generation on affected artifacts.
+Reconciliation is the interactive counterpart to generation, just as review is the interactive counterpart to eval. It follows the same interactive loop pattern as review but in the opposite direction — checking downward from approved upstream changes.
 
 `generate code` is the normal forward command — it handles all upstream generation and delegation needed to produce code. `reconcile` is the interactive path when you want to detect, review, and resolve drift before regenerating. In practice, `generate code` is the 90% path; `reconcile` is the surgical review path.
 
-Reconciliation is asymmetric:
+Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth.
 
-- approved upstream contract defines intended meaning
-- downstream artifacts and code may reveal drift
-- drift triggers proposals, not silent rewriting of approved truth
+Each reconciliation cycle:
 
-When drift appears, `reconcile` surfaces the conflicts and proposes two or three fix directions. The human chooses one:
+1. Detect downstream drift from approved upstream changes. Surface conflicts with specific item references.
+2. Propose fix directions for each conflict:
+   - Amend upstream truth, then regenerate and reconcile downstream.
+   - Preserve upstream truth, then correct downstream context or code.
+   - A human-specified alternative direction.
+3. Human selects direction for each conflict.
+4. Apply fixes and run eval to validate.
 
-1. Amend upstream truth, then regenerate and reconcile downstream.
-2. Preserve upstream truth, then correct downstream context or code.
-3. A human-specified alternative direction.
+At the end of each cycle, the user chooses one of three options:
 
-To prevent loops, reconciliation stays bounded:
-
-1. Detect drift and surface conflicts with specific item references.
-2. Propose fix directions for human selection.
-3. Human chooses semantic direction.
-4. Eval validates the chosen direction.
-5. Generate produces refreshed artifacts for the affected scope.
+- **Loop** — run another detect → propose → fix → eval cycle on remaining drift.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution.
+- **Approve** — user judges remaining drift acceptable, approve and proceed.
 
 ---
 
@@ -701,6 +729,12 @@ Several useful views are inferred from derivation plus containment:
 - **loading:** load the smallest artifact or scope that contains the required downstream item and its upstream inputs
 - **artifact impact:** summarize item-level derivations upward into affected sections, artifacts, and tiers
 
+### Affected Set
+
+The **affected set** for a change is computed by walking derivation edges downward from every changed item in the context graph and collecting all reachable items plus their containing sections, artifacts, and tiers. An artifact is "affected" if it contains at least one reachable item. A tier is "affected" if it contains at least one affected artifact. A scope is "affected" if it contains at least one affected artifact.
+
+This graph walk is the sole definition of "affected contract stack," "affected tiers," and "affected scopes" used throughout the methodology.
+
 ### Context Loading
 
 Context loading is graph traversal, not guesswork.
@@ -763,6 +797,30 @@ Once a repo is governed, routine defects should be resolved against approved con
 
 Brownfield import reconstructs contract bottom-up; steady-state bugfix updates approved truth top-down.
 
+### Import Reconstruction Heuristics
+
+Import infers contract artifacts bottom-up from code using these heuristics:
+
+1. **Directory structure + config** → candidate containers, components, defaults seeds.
+2. **Package boundaries** → bounded contexts.
+3. **Public APIs** → interfaces.
+4. **Test files** → behaviors.
+5. **Infer product-specs from system-specs** — requirements, stories, domain model derived from the reconstructed system layer.
+6. **Infer intent-specs from product-specs** — capabilities, wishes, constraints derived from the reconstructed product layer.
+7. **Emit all artifacts as draft** with confidence annotations (high / medium / low) on each reconstructed item.
+
+### Import Review Flow (Bottom-Up)
+
+Import is the only workflow where review proceeds bottom-up. Code is the source of truth during import, so the tier closest to code is reviewed first:
+
+1. Review system-specs against actual code (closest to source of truth). Approve.
+2. Review product-specs against approved system-specs. Approve.
+3. Review intent-specs against approved product-specs. Approve.
+4. Generate context from the fully approved contract stack.
+5. Reconcile downward — check contract against code for remaining drift.
+
+Once all tiers are approved and reconciliation is resolved, normal top-down governance takes over for all future changes.
+
 ```mermaid
 flowchart TD
     S["Change Starting Point"]
@@ -773,12 +831,13 @@ flowchart TD
     subgraph BROWNFIELD["Brownfield Import"]
         direction TB
         B1["Start From Unmanaged<br/>Or Heavily Drifted Codebase"]
-        B2["Reconstruct Candidate Contract Bottom-Up"]
-        B3["Review / Eval / Approve<br/>Reconstructed Contract"]
+        B2["Reconstruct Candidate Contract Bottom-Up<br/>(7-step heuristics)"]
+        B3["Review Bottom-Up:<br/>system-specs → product-specs → intent-specs"]
         B4["Generate Context From Approved Contract"]
-        B5["Reconcile Or Regenerate Code<br/>Against Approved Truth"]
+        B5["Reconcile Downward Against Code"]
+        B6["Normal Top-Down Governance<br/>Takes Over"]
 
-        B1 --> B2 --> B3 --> B4 --> B5
+        B1 --> B2 --> B3 --> B4 --> B5 --> B6
     end
 
     subgraph BUGFIX["Steady-State Bugfix"]

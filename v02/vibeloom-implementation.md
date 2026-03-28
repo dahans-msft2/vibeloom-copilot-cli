@@ -21,7 +21,7 @@ The skill owns:
 
 - natural-language interface
 - operation selection
-- mode defaults
+- mode selection and validation
 - approval pauses and user interaction
 - context loading decisions
 - orchestration across tiers and scopes
@@ -364,7 +364,7 @@ Bootstrap commands are uniform across all modes:
 
 - `init --mode <mode>` and `import --mode <mode>` are valid only before the repo becomes governed
 - once bootstrap succeeds, later `init` or `import` calls are errors with guidance
-- the initial mode defaults to `pm` if omitted
+- `--mode` is required on both bootstrap commands
 - `init` always creates governed scaffolding, mode state, and draft `intent-specs` only
 - `import` reconstructs candidate contract according to the chosen initial mode
 
@@ -421,7 +421,7 @@ Domain-specific columns (e.g., `kind`, `runtime`, `rule`, `relationship`) are te
 
 ## Context Graph Realization
 
-The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Methodology may later extend addressable graph participation into code artifacts once concrete code-item carriers are specified.
+The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, code drift is analyzed heuristically by the skill rather than through graph-backed code-item validation.
 
 ### Explicitly Stored
 
@@ -535,14 +535,14 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 | --- | --- | --- |
 | `init` | project brief, initial mode | governed scaffolding, mode state, and initial `intent-specs` draft |
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
-| `review` | current approval unit or vibe compact review surface, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
-| `eval` | current approval unit or vibe compact eval surface, scope | structural and semantic findings |
+| `review` | current approval unit, or `intent-specs` in public `vibe` mode, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
+| `eval` | current approval unit, or `intent-specs` in public `vibe` mode, scope | structural and semantic findings |
 | `reconcile` | approved upstream change set, downstream floor scope | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
 | `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
 | `import` | unmanaged repo scope, initial mode | candidate contract drafts and context appropriate to the chosen initial mode |
 
-`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, `review` is exposed as a zero-argument compact governance check over the compact contract and current code drift. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
+`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, this narrows to `review intent-specs` and `eval intent-specs`: heuristic, read-only checks of compact intent/defaults against downstream compact system and current code drift. These checks are outside graph-backed code-item analysis and rely on agent reasoning over repo files under a small-codebase assumption. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
 
 ### Standard Operation Parameters
 
@@ -594,16 +594,16 @@ Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 
 `vibe` exposes a simplified public surface:
 
-- `approve`
+- `approve intent-specs`
 - `generate code`
 - `reconcile code`
-- `review`
-- `eval`
+- `review intent-specs`
+- `eval intent-specs`
 - `status`
 - `configure`
 - `help`
 
-In `vibe`, `review` and `eval` are zero-argument compact governance checks over the compact contract and current code. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion.
+In `vibe`, `review intent-specs` and `eval intent-specs` are heuristic compact governance checks over compact intent/defaults, downstream compact system, and current code. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion. Bare `review` / `eval` aliases may be added later, but they are not part of the current public spec.
 
 ### Smart Orchestration
 
@@ -632,10 +632,10 @@ Intent-specs are never delegated. `generate intent-specs` uses the user's curren
 
 | Command | Behavior |
 | --- | --- |
-| `generate code` | if `intent-specs` is still draft, stop for explicit approval; otherwise generate delegated compact `system-specs`, root execution guidance, and code |
-| `reconcile code` | interactive downward drift review between the approved compact contract and current code, then regenerate code as directed |
-| `review` | zero-argument compact governance review over the compact contract and current code drift; surfaces likely divergence with emphasis on defaults and compact system truth |
-| `eval` | zero-argument compact governance eval over the compact contract and current code drift; runs structural checks on the compact contract and lightweight code-drift checks |
+| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root execution guidance, and code |
+| `reconcile code` | interactive downward drift review between approved compact intent/defaults and current downstream state; if `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before reconciling compact `system-specs` and code |
+| `review intent-specs` | heuristic read-only review of compact intent/defaults against downstream compact system and current code drift; uses agent reasoning over filesystem layout, exported interfaces, routes or commands, tests, key strings, and owned-path comparisons |
+| `eval intent-specs` | heuristic read-only eval of compact intent/defaults against downstream compact system and current code drift; runs structural checks on the compact contract plus lightweight non-graph code-drift checks |
 
 ### Next-Command Suggestions
 
@@ -652,9 +652,9 @@ After every stop (approval, escalation, explicit `generate context` in full mode
 
 | Step | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
-| Bootstrap | `init` | `init` | `init` | `init` |
+| Bootstrap | `init --mode vibe` | `init --mode pm` | `init --mode dev` | `init --mode expert` |
 | Shape intent | edit `intent.md` directly; normalization runs during bootstrap/approval | `generate intent-specs` (if defaults need regen) | same | same |
-| Approve intent | `approve` | `approve` | `approve` | `approve` |
+| Approve intent | `approve intent-specs` | `approve` | `approve` | `approve` |
 | Forward to product | — | `generate product-specs` | (automatic) | `generate product-specs` |
 | Approve product | — | `approve` | (auto or escalated) | `approve` |
 | Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
@@ -675,7 +675,7 @@ These are skill-level commands that do not correspond to methodology operations:
 Bootstrap-specific command rules:
 
 - `init --mode <mode>` and `import --mode <mode>` are the only valid bootstrap entrypoints
-- both default to `--mode pm` if omitted
+- both require explicit `--mode`
 - both are valid only before the repo becomes governed
 - after bootstrap succeeds, later `init` or `import` calls return an error with guidance
 

@@ -40,7 +40,7 @@ The engine owns:
 - computing status snapshots
 - handling deterministic generation bookkeeping
 
-The engine does **not** decide product meaning, semantic intent, or approval outcomes. Semantic judgment remains with the agent and the human-gated workflow.
+The engine does **not** decide product meaning, semantic intent, or approval outcomes. Semantic judgment remains with the agent and the approval-gated workflow.
 
 ### Engine State
 
@@ -360,6 +360,14 @@ Rules:
 
 ### Brownfield Import And ID Lifecycle
 
+Bootstrap commands are uniform across all modes:
+
+- `init --mode <mode>` and `import --mode <mode>` are valid only before the repo becomes governed
+- once bootstrap succeeds, later `init` or `import` calls are errors with guidance
+- the initial mode defaults to `pm` if omitted
+- `init` always creates governed scaffolding, mode state, and draft `intent-specs` only
+- `import` reconstructs candidate contract according to the chosen initial mode
+
 During brownfield import:
 
 - preserve an existing ID if it already matches the short typed family rules
@@ -367,13 +375,19 @@ During brownfield import:
 - never renumber imported items after the initial mapping
 - never recycle deleted IDs
 
-Import always reconstructs the entire contract stack bottom-up from code analysis:
+`import --mode vibe` reconstructs the compact stack bottom-up from code analysis:
+1. Analyze existing code to infer compact system-specs (flat system context, components, interfaces, behaviors)
+2. Infer compact intent-specs (capabilities, wishes, constraints, product-summary prose) from the reconstructed flat system
+
+`system-specs` and `intent-specs` are marked `draft` after compact reconstruction. The skill then runs bottom-up review starting at compact system-specs and proceeding upward through intent-specs before generating final root guidance and reconciling against code.
+
+`import --mode pm|dev|expert` reconstructs the full contract stack bottom-up from code analysis:
 1. Analyze existing code to infer system-specs (components, containers, interfaces, behaviors)
 2. Infer product-specs (requirements, stories, domain model) from the reconstructed system-specs
 3. Infer intent-specs (capabilities, wishes, constraints) from the reconstructed product-specs
 4. Generate the context tier (execution guidance, decision records, BDD scenarios) from the reconstructed contract
 
-All three contract tiers are marked `draft` after reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for human confirmation at each tier before moving to the next.
+All three contract tiers are marked `draft` after full reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for human confirmation at each tier before moving to the next.
 
 ---
 
@@ -519,16 +533,16 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 
 | Operation | Required Inputs | Output |
 | --- | --- | --- |
-| `init` | project brief, mode | initial `intent-specs` draft |
+| `init` | project brief, initial mode | governed scaffolding, mode state, and initial `intent-specs` draft |
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
-| `review` | current approval unit, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
-| `eval` | current approval unit, scope | structural and semantic findings |
+| `review` | current approval unit or vibe compact review surface, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
+| `eval` | current approval unit or vibe compact eval surface, scope | structural and semantic findings |
 | `reconcile` | approved upstream change set, downstream floor scope | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
 | `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
-| `import` | unmanaged repo scope | candidate contract drafts for all three contract tiers plus context |
+| `import` | unmanaged repo scope, initial mode | candidate contract drafts and context appropriate to the chosen initial mode |
 
-`review` only acts on the current approval unit, checking upward against approved upstream truth. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
+`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, `review` is exposed as a zero-argument compact governance check over the compact contract and current code drift. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
 
 ### Standard Operation Parameters
 
@@ -544,7 +558,7 @@ Implementations should standardize these parameter names even if the user-facing
 | `approval_mode` | One of `human`, `delegated` |
 | `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges downward from every changed item in the context graph |
 
-These parameters are the concrete implementation vocabulary behind the methodology-level operations.
+These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
 
 ### Mode-Driven Approval Behavior
 
@@ -555,7 +569,7 @@ Implementations should enforce the same stop behavior described in methodology:
 | `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` |
 | `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` |
 | `expert` | full (3 tiers) | each affected contract tier | every contract tier | none |
-| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs |
+| `vibe` | compact (2 tiers) | each affected contract tier | intent-specs only | system-specs |
 
 In `vibe`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
@@ -565,9 +579,35 @@ In `vibe`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
 If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
 
+### Public Skill Surfaces
+
+Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
+
+- `generate <target>`
+- `review`
+- `eval`
+- `reconcile`
+- `approve`
+- `status`
+- `configure`
+- `help`
+
+`vibe` exposes a simplified public surface:
+
+- `approve`
+- `generate code`
+- `reconcile code`
+- `review`
+- `eval`
+- `status`
+- `configure`
+- `help`
+
+In `vibe`, `review` and `eval` are zero-argument compact governance checks over the compact contract and current code. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion.
+
 ### Smart Orchestration
 
-`generate <target>` orchestrates the full path from the current state to the target tier, following mode rules. All `generate <target>` combinations are valid in every mode. The "normal forward surface" (see methodology) lists the commands the skill should suggest to the user after each stop. The smart orchestration table below defines what happens when any target is invoked in any mode.
+In full modes, `generate <target>` orchestrates the full path from the current state to the target tier, following mode rules. The "normal forward surface" (see methodology) lists the commands the skill should suggest to the user after each stop.
 
 1. Check all upstream tiers are approved.
 2. For any upstream tier in draft: if it is **delegated** in the current mode → auto-advance (eval, approve, continue).
@@ -576,21 +616,30 @@ If a delegated approval unit is blocked or flagged, explicit human review and ap
 5. If the target tier is a human stop → stop for review/approval.
 6. If the target tier is delegated → auto-advance and continue toward the original target.
 
-Concrete behavior per mode:
+Concrete behavior for full-mode public targets:
 
-| Command | `vibe` | `pm` | `dev` | `expert` |
-| --- | --- | --- | --- | --- |
-| `generate intent-specs` | reshape intent (preserving user's semantic intent), regenerate defaults, stop for approval | same | same | same |
-| `generate product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
-| `generate system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
-| `generate context` | auto-advance system, generate execution guidance, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | generate context, stop (explicit target) |
-| `generate code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | generate context + code (all upstream must be approved) |
+| Command | `pm` | `dev` | `expert` |
+| --- | --- | --- | --- |
+| `generate intent-specs` | reshape intent (preserving user's semantic intent), regenerate defaults, stop for approval | same | same |
+| `generate product-specs` | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
+| `generate system-specs` | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
+| `generate context` | auto-advance downstream, generate context, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | generate context, stop (explicit target) |
+| `generate code` | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | generate context + code (all upstream must be approved) |
 
-Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode.
+Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode. In `vibe`, the public skill does not expose `generate intent-specs`; the same normalization step runs implicitly during bootstrap and before approving draft intent.
+
+`vibe` public command behavior:
+
+| Command | Behavior |
+| --- | --- |
+| `generate code` | if `intent-specs` is still draft, stop for explicit approval; otherwise generate delegated compact `system-specs`, root execution guidance, and code |
+| `reconcile code` | interactive downward drift review between the approved compact contract and current code, then regenerate code as directed |
+| `review` | zero-argument compact governance review over the compact contract and current code drift; surfaces likely divergence with emphasis on defaults and compact system truth |
+| `eval` | zero-argument compact governance eval over the compact contract and current code drift; runs structural checks on the compact contract and lightweight code-drift checks |
 
 ### Next-Command Suggestions
 
-After every stop (approval, escalation, explicit `generate context`), the skill suggests the next forward command:
+After every stop (approval, escalation, explicit `generate context` in full modes), the skill suggests the next forward command:
 
 | After | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
@@ -604,7 +653,7 @@ After every stop (approval, escalation, explicit `generate context`), the skill 
 | Step | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
 | Bootstrap | `init` | `init` | `init` | `init` |
-| Shape intent | `generate intent-specs` (if defaults need regen) | same | same | same |
+| Shape intent | edit `intent.md` directly; normalization runs during bootstrap/approval | `generate intent-specs` (if defaults need regen) | same | same |
 | Approve intent | `approve` | `approve` | `approve` | `approve` |
 | Forward to product | — | `generate product-specs` | (automatic) | `generate product-specs` |
 | Approve product | — | `approve` | (auto or escalated) | `approve` |
@@ -623,6 +672,13 @@ These are skill-level commands that do not correspond to methodology operations:
 | `configure` | Change runtime settings: `mode` (`vibe` / `pm` / `dev` / `expert`) and any future skill-level options. Switching from `vibe` to any other mode triggers a one-way upgrade (see Upgrade Mechanics below). Switching back to `vibe` is not allowed. Other mode changes take effect on the next operation. |
 | `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. Use `help --explain <topic>` for detailed explanations (e.g., `help --explain generate`, `help --explain modes`). |
 
+Bootstrap-specific command rules:
+
+- `init --mode <mode>` and `import --mode <mode>` are the only valid bootstrap entrypoints
+- both default to `--mode pm` if omitted
+- both are valid only before the repo becomes governed
+- after bootstrap succeeds, later `init` or `import` calls return an error with guidance
+
 ### Context Generation
 
 Context generation happens after the required contract tiers are approved.
@@ -633,7 +689,7 @@ Generation order inside context:
 
 1. execution guidance artifacts for affected scopes (root, container, component)
 2. decision records if the change introduced product or architecture decisions
-3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand via `generate context`
+3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand in full modes via `generate context`
 
 Generated execution guidance should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope without loading the full context graph.
 
@@ -641,7 +697,7 @@ Generated execution guidance should include concrete project-specific pointers �
 
 In `vibe`, context generation produces only root-level execution guidance (`AGENTS.md`, `CLAUDE.md`). No decision records or BDD scenarios are generated. These become available after upgrade to pm/dev/expert.
 
-Context is assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code.
+Context is assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code. In `vibe`, context is generated only implicitly during `generate code` or during compact import.
 
 ### Upgrade Mechanics
 
@@ -720,6 +776,8 @@ The implementation is valid only if all of the following hold:
 - `reconcile` remains downstream only
 - the context graph can be rebuilt from artifact metadata and item carriers without hidden prompt-only state
 - brownfield import preserves compatible short IDs and records one-time remaps for incompatible legacy IDs
+- bootstrap commands require an initial mode and are rejected once the repo is already governed
+- full modes expose one uniform public command surface while `vibe` exposes the restricted compact surface
 - the skill can load one narrow template at a time rather than one large combined template
 
 This document is sufficient to author the future `SKILL.md`, `references/`, and the v1 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.

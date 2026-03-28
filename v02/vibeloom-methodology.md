@@ -59,16 +59,14 @@ Here is an overview of developing a system using VibeLoom:
   - `dev` uses the full contract stack and treats each affected contract tier as its own approval unit; `system-specs` are the normal human stop and `product-specs` auto-advance by default unless blocked or flagged
   - `expert` uses the full contract stack and treats each affected contract tier as its own approval unit and stops for explicit human approval at every contract tier
 - Review and structural/semantic eval may loop inside the current candidate approval unit before approval is recorded.
-- The normal forward command surface is mode-specific:
-  - `vibe`: `generate code`
-  - `pm`: `generate product-specs`, `generate code`
-  - `dev`: `generate system-specs`, `generate code`
-  - `expert`: full targeted operation surface
-- All `generate <target>` combinations are valid in every mode. The normal forward surface lists the commands the skill should suggest after each stop, not the only valid commands.
+- The public skill command surface is mode-specific:
+  - full modes (`pm`, `dev`, `expert`) expose one uniform public surface: `generate <target>`, `review`, `eval`, `reconcile`, `approve`, `status`, `configure`, `help`
+  - `vibe` exposes a simplified public surface by design: `approve`, `generate code`, `reconcile code`, `review`, `eval`, `status`, `configure`, `help`
+  - in `vibe`, `review` and `eval` are zero-argument compact governance checks over the compact contract and current code; targeted tier commands are not exposed publicly
 - **context** is generated from the approved contract to help agents work effectively. Each worker agent receives execution guidance as its primary operational briefing alongside the governing contract slice as authoritative reference. In `vibe`, context is limited to execution guidance (`CLAUDE.md`, `AGENTS.md`). In `pm`, `dev`, and `expert`, context also includes decision records (`pdr`, `adr`), behavioral scenarios (`bdd`), and similar artifacts. Context artifacts appear in two ways:
   - **Automatic:** execution guidance is generated for all affected scopes after contract approval. In `pm`, `dev`, and `expert`, decision records are generated when contract evolution introduces product or architecture decisions, and behavioral scenarios are generated when system-specs produce behavior items.
-  - **On-demand:** any context artifact can also be explicitly regenerated via `generate context` (e.g., regenerating `bdd` scenarios after upstream contract changes).
-- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code.
+  - **On-demand (full modes):** any context artifact can also be explicitly regenerated via `generate context` (e.g., regenerating `bdd` scenarios after upstream contract changes).
+- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. In full modes, when context is the explicit target (`generate context`), generation stops after context. In `vibe`, context is generated implicitly during `generate code` or compact import.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - After the **context** is ready, the swarm of agents can generate the **code** — meaning the system itself that can be built and executed. The skill acts as the **orchestrator**: it reads the contract and context graph, determines which scopes are affected, and spawns **scoped worker agents** for code generation. Each worker receives its execution guidance plus the governing contract slice for its scope. Workers operate independently within their scope boundaries; the orchestrator assembles results and validates cross-scope consistency. Workers never load the methodology or skill — they work from generated guidance and authoritative contract.
 
@@ -82,15 +80,15 @@ VibeLoom governs application development through a contract stack. The stack com
 - **Full stack** (`pm`, `dev`, `expert`): `intent-specs` → `product-specs` → `system-specs` → `context` → `code`. All tiers present with full artifact granularity.
 
 The application artifacts play the following roles:
-- **contract**: human-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to human-gated tiers, are generated tier-by-tier as batches, and are approved through the current approval unit defined by mode.
+- **contract**: approval-gated, normative semantic truth. These artifacts - whether human-authored or generated - belong to approval-gated tiers, are generated tier-by-tier as batches, and are approved through the current approval unit defined by mode.
 - **context**: normative execution truth for agents. These artifacts are required primarily for code generation agents. They do not carry approval-state metadata and do not require human approval, although humans may review or edit them in exceptional cases.
 - **code**: the executable result. Humans are not expected to edit it directly.
 
 In this document:
-- **human-gated** means downstream work may not rely on a tier until a human approves it.
+- **approval-gated** means downstream work may not rely on a tier until its required approval checkpoint completes, whether by explicit human approval or delegated mode rules.
 - **normative** means it is a source of truth that downstream generation, execution, review, or eval in its scope must follow.
 - **executable** means it can be run or checked directly.
-- **approval unit** means the set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint. In `vibe`, the approval unit is intent-specs + system-specs. In `pm`, `dev`, and `expert`, each affected contract tier is its own approval unit.
+- **approval unit** means the set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint. In all modes, the approval unit is the current affected contract tier. Modes differ in which approval units are explicit human stops versus delegated auto-advance checkpoints.
 
 The contract stack separates semantic truth, execution truth, and executable result.
 
@@ -331,7 +329,7 @@ Executable implementation and verification artifacts.
 #### `runtime / ops glue`
 `runtime / ops glue` handles configuration, packaging, deployment, migrations, and operational wiring.
 
-- Code is executable, not human-gated.
+- Code is executable, not approval-gated.
 - Code is produced from contract, usually through context.
 - Validation may run upward from code against all upstream tiers.
 
@@ -345,8 +343,9 @@ At a conceptual level, the workflow is:
 
 1. Start from `intent-specs` and identify the affected contract stack for the current run.
 2. Generate the affected contract tiers as batches from approved upstream truth.
-3. In `pm`, `dev`, and `expert`, each affected contract tier is its own approval unit. `pm` and `dev` auto-advance delegated approval units when safe; `expert` always stops for explicit approval.
-4. In `vibe`, after intent-specs are human-approved, system-specs are delegated by default and auto-advance unless blocked or flagged.
+3. In all modes, each affected contract tier is its own approval unit.
+4. In `pm` and `dev`, delegated approval units auto-advance when safe; `expert` always stops for explicit approval.
+5. In `vibe`, `intent-specs` is the only explicit human stop. After approved intent, `system-specs` is generated and delegated by default unless blocked or flagged.
 5. Generate context from approved contract.
 6. When the target is `generate code`, context is generated implicitly and the run continues. When the target is `generate context`, generation stops after context.
 7. Generate or reconcile code from approved contract and context.
@@ -404,15 +403,15 @@ Modes are workflow settings that control contract depth, approval units, delegat
 | `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | `generate product-specs`, `generate code` | PM driving requirements, workflows, acceptance intent |
 | `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | `generate system-specs`, `generate code` | Dev driving technical boundaries, dependencies, executable impact |
 | `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | full targeted operation surface | Lead owning the full contract stack end-to-end |
-| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | `generate code` | Early-stage projects, simple systems, rapid prototyping |
+| `vibe` | compact (2 tiers) | each affected contract tier | intent-specs only | system-specs | `generate code` | Early-stage projects, simple systems, rapid prototyping |
 
-Intent-specs are always human-gated in every mode; the table shows additional human stops beyond intent only for `pm`, `dev`, and `expert`.
+Intent-specs are always explicit human approval stops in every mode; the table shows additional human stops beyond intent only for `pm`, `dev`, and `expert`.
 
-`vibe` uses a compact two-tier contract and is the fastest path from intent to code. It is intentionally minimal — no product-specs tier, no per-container or per-component files, context limited to execution guidance. The command surface is restricted: `generate` and `reconcile` only accept `code` as target (all upstream tiers are handled automatically); `review` and `eval` are not available (checks run automatically as part of `generate` and `approve`). The normal vibe workflow is: `init` → approve intent → `generate code`. Use vibe for early-stage projects, simple systems, or rapid prototyping. When the system outgrows vibe, upgrade to `pm`, `dev`, or `expert` (one-way) to generate the full contract stack.
+`vibe` uses a compact two-tier contract and is the fastest path from intent to code. It is intentionally minimal — no product-specs tier, no per-container or per-component files, context limited to execution guidance. The public skill surface is intentionally restricted to `approve`, `generate code`, `reconcile code`, `review`, `eval`, `status`, `configure`, and `help`. In `vibe`, `review` and `eval` are zero-argument compact governance checks over the compact contract and current code; targeted tier commands are not exposed publicly. The normal vibe workflow is: `init --mode vibe` → approve intent → `generate code`. Use vibe for early-stage projects, simple systems, or rapid prototyping. When the system outgrows vibe, upgrade to `pm`, `dev`, or `expert` (one-way) to generate the full contract stack.
 
 Default to `vibe` when the system is clearly simple or still exploratory: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` when the system has multiple bounded contexts, non-trivial workflows, or meaningful technical boundaries. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
-Regardless of mode, `intent-specs` are always human-gated and every run still begins from `intent-specs`. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency, and regenerates `defaults` to stay aligned. The user's semantic intent is never overridden. Intent-specs always require explicit human approval — they are never delegated.
+Regardless of mode, `intent-specs` are always explicitly human-owned and every run still begins from `intent-specs`. In full modes, `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency, and regenerates `defaults` to stay aligned. In `vibe`, the same intent-normalization step runs implicitly during bootstrap and before approving draft intent. The user's semantic intent is never overridden. Intent-specs always require explicit human approval — they are never delegated.
 
 Modes may change default prompts, context emphasis, stop behavior, or suggested operations, but they do not change the contract/context/code ontology. `pm`, `dev`, and `expert` are progressively more explicit, not semantically different from each other. `vibe` uses a different contract depth but the same ontological roles (contract = truth, context = execution aid, code = executable).
 
@@ -439,7 +438,7 @@ The skill should proactively suggest upgrade when it detects signals that the pr
 | Step | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
 | Bootstrap | `init` | `init` | `init` | `init` |
-| Shape intent | `generate intent-specs` (if defaults need regen) | same | same | same |
+| Shape intent | edit `intent.md` directly; normalization runs during bootstrap/approval | `generate intent-specs` (if defaults need regen) | same | same |
 | Approve intent | `approve` | `approve` | `approve` | `approve` |
 | Forward to product | — | `generate product-specs` | (automatic) | `generate product-specs` |
 | Approve product | — | `approve` | (auto or escalated) | `approve` |
@@ -484,7 +483,7 @@ Staleness is not an artifact state. It is a computed property of the context gra
 Only contract artifacts are approved. Context does not carry lifecycle metadata, and code is judged against approved upstream truth rather than approved in the same way.
 
 `intent-specs` are always explicitly human-owned. Contract approval units follow mode (see Modes above). Delegated approval is mode-driven provenance — it does not change the lifecycle model, remove explicit human ownership of `intent-specs`, or override the breaking-change escalation rule.
-`pm`, `dev`, and `expert` use per-tier approval units. `vibe` treats intent-specs + system-specs as one approval unit and delegates system-specs by default.
+All modes use per-tier approval units. `vibe` differs only in public UX: intent is the sole explicit human stop, while `system-specs` auto-advances by default after approved intent.
 
 ---
 
@@ -565,7 +564,7 @@ These are four distinct conceptual activities that pair symmetrically:
 - `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the human before invoking generation
 - `generate` produces artifacts from approved upstream truth
 
-Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in `pm`/`dev`/`expert`, or across intent-specs + system-specs in `vibe`. Reconciliation uses the same tier model to detect and resolve drift, then invokes generation to produce refreshed artifacts.
+Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in every mode. In `vibe`, the public skill surface wraps that tier model in simplified zero-argument review/eval commands that report compact-contract and code-drift findings. Reconciliation uses the same tier model to detect and resolve drift, then invokes generation to produce refreshed artifacts.
 
 Review, eval, reconciliation, and generation are shown together in the Workflow diagram above.
 
@@ -647,16 +646,18 @@ VibeLoom defines eight methodology-level operations. Implementations may expose 
 
 | Operation | Direction | Meaning |
 | --- | --- | --- |
-| `init` | top-down | Bootstrap a governed repo and produce the first draft contract stack |
+| `init` | top-down | Bootstrap an ungoverned repo, set the initial mode, and produce the first draft `intent-specs` |
 | `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
 | `review` | current + up | Critique the current candidate approval unit against approved upstream truth and optionally apply bounded fixes within that approval unit |
 | `eval` | up | Run structural and semantic evaluation for the current approval unit |
 | `reconcile` | down | Detect downstream drift, surface conflicts, propose fix directions, iterate with human, then invoke generation on affected artifacts |
 | `approve` | gate | Move a reviewed contract approval unit from `draft` to `approved` and record approval provenance |
 | `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
-| `import` | bottom-up | Reconstruct candidate contract from an unmanaged or heavily drifted codebase |
+| `import` | bottom-up | Bootstrap an ungoverned repo from existing code, set the initial mode, and reconstruct candidate contract from an unmanaged or heavily drifted codebase |
 
 Exact parameters, flags, file formats, and CLI surfaces belong to implementation, not to methodology.
+
+`init` and `import` are bootstrap-only operations. They are valid only as the first successful command in an ungoverned repo. Both accept an initial mode parameter; if omitted, the default is `pm`.
 
 ---
 
@@ -791,31 +792,44 @@ VibeLoom treats these as different conceptual paths.
 - **Brownfield import** is the bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contract from existing code and marks uncertainty explicitly for human review.
 - **Steady-state bugfix** is the governed path for repos already under VibeLoom. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
 
-Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix.
+Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix. `init` and `import` are not valid again once bootstrap has succeeded.
 
 Brownfield import reconstructs contract bottom-up; steady-state bugfix updates approved truth top-down.
 
 ### Import Reconstruction Heuristics
 
-Import infers contract artifacts bottom-up from code using these heuristics:
+Import infers contract artifacts bottom-up from code using mode-specific heuristics:
 
-1. **Directory structure + config** → candidate containers, components, defaults seeds.
-2. **Package boundaries** → bounded contexts.
-3. **Public APIs** → interfaces.
-4. **Test files** → behaviors.
-5. **Infer product-specs from system-specs** — requirements, stories, domain model derived from the reconstructed system layer.
-6. **Infer intent-specs from product-specs** — capabilities, wishes, constraints derived from the reconstructed product layer.
-7. **Emit all artifacts as draft** with confidence annotations (high / medium / low) on each reconstructed item.
+- `import --mode vibe`
+  1. **Directory structure + config** → candidate compact system, component inventory, and defaults seeds.
+  2. **Package boundaries** → compact semantic groupings inside the flat system doc.
+  3. **Public APIs + tests** → interfaces and behaviors for the flat compact system.
+  4. **Infer compact intent-specs from the reconstructed flat system** — capabilities, wishes, constraints, and product-summary prose.
+  5. **Emit compact artifacts as draft** with confidence annotations (high / medium / low) on each reconstructed item.
+- `import --mode pm|dev|expert`
+  1. **Directory structure + config** → candidate containers, components, defaults seeds.
+  2. **Package boundaries** → bounded contexts.
+  3. **Public APIs** → interfaces.
+  4. **Test files** → behaviors.
+  5. **Infer product-specs from system-specs** — requirements, stories, domain model derived from the reconstructed system layer.
+  6. **Infer intent-specs from product-specs** — capabilities, wishes, constraints derived from the reconstructed product layer.
+  7. **Emit all artifacts as draft** with confidence annotations (high / medium / low) on each reconstructed item.
 
 ### Import Review Flow (Bottom-Up)
 
 Import is the only workflow where review proceeds bottom-up. Code is the source of truth during import, so the tier closest to code is reviewed first:
 
-1. Review system-specs against actual code (closest to source of truth). Approve.
-2. Review product-specs against approved system-specs. Approve.
-3. Review intent-specs against approved product-specs. Approve.
-4. Generate context from the fully approved contract stack.
-5. Reconcile downward — check contract against code for remaining drift.
+- `import --mode vibe`
+  1. Review compact `system-specs` against actual code. Approve or escalate.
+  2. Review `intent-specs` against approved compact system-specs. Approve.
+  3. Generate root execution guidance from the fully approved compact contract.
+  4. Reconcile downward against code for remaining drift.
+- `import --mode pm|dev|expert`
+  1. Review system-specs against actual code (closest to source of truth). Approve.
+  2. Review product-specs against approved system-specs. Approve.
+  3. Review intent-specs against approved product-specs. Approve.
+  4. Generate context from the fully approved contract stack.
+  5. Reconcile downward — check contract against code for remaining drift.
 
 Once all tiers are approved and reconciliation is resolved, normal top-down governance takes over for all future changes.
 
@@ -829,9 +843,9 @@ flowchart TD
     subgraph BROWNFIELD["Brownfield Import"]
         direction TB
         B1["Start From Unmanaged<br/>Or Heavily Drifted Codebase"]
-        B2["Reconstruct Candidate Contract Bottom-Up<br/>(7-step heuristics)"]
-        B3["Review Bottom-Up:<br/>system-specs → product-specs → intent-specs"]
-        B4["Generate Context From Approved Contract"]
+        B2["Reconstruct Candidate Contract Bottom-Up<br/>(mode-specific heuristics)"]
+        B3["Review Bottom-Up<br/>(compact or full stack by mode)"]
+        B4["Generate Mode-Appropriate Context<br/>From Approved Contract"]
         B5["Reconcile Downward Against Code"]
         B6["Normal Top-Down Governance<br/>Takes Over"]
 
@@ -859,7 +873,7 @@ VibeLoom is strongest where prompt-only generation stops being reliable.
 It works by:
 
 - turning intent into a durable contract stack — compact in vibe, full in pm/dev/expert
-- generating that stack tier-by-tier with mode-appropriate human approval
+- generating that stack tier-by-tier with mode-appropriate approval and delegation
 - using context as agent-facing execution truth without letting it outrank contract
 - reconciling downstream artifacts when approved truth changes
 - relying on an explicit context graph instead of chat-memory guesswork

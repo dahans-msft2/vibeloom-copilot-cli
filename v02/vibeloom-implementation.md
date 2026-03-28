@@ -550,12 +550,12 @@ These parameters are the concrete implementation vocabulary behind the methodolo
 
 Implementations should enforce the same stop behavior described in methodology:
 
-| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
-| --- | --- | --- | --- | --- | --- |
-| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | no |
-| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | no |
-| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | no |
-| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | yes |
+| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default |
+| --- | --- | --- | --- | --- |
+| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` |
+| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` |
+| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none |
+| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs |
 
 In `vibe`, `pm`, and `dev`, delegated auto-advance is allowed only when:
 
@@ -583,22 +583,21 @@ Concrete behavior per mode:
 | `generate intent-specs` | reshape intent (preserving user's semantic intent), regenerate defaults, stop for approval | same | same | same |
 | `generate product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
 | `generate system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
-| `generate context` | auto-advance system, generate execution guidance, continue | auto-advance downstream, generate context, continue | auto-advance downstream, generate context, continue | generate context, stop (context pause) |
-| `generate code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), context, code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | error if any upstream unapproved |
+| `generate context` | auto-advance system, generate execution guidance, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | generate context, stop (explicit target) |
+| `generate code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | generate context + code (all upstream must be approved) |
 
 Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode.
 
 ### Next-Command Suggestions
 
-After every stop (approval, escalation, context pause), the skill suggests the next forward command:
+After every stop (approval, escalation, explicit `generate context`), the skill suggests the next forward command:
 
-| After | Suggested next |
-| --- | --- |
-| approve intent-specs | `generate <mode-forward-target>` (e.g., `generate code` in vibe, `generate product-specs` in pm) |
-| approve product-specs | `generate code` (pm), `generate system-specs` (expert) |
-| approve system-specs | `generate code` (dev, expert) |
-| escalation approval | resume toward original target |
-| context pause (expert) | `generate code` |
+| After | `vibe` | `pm` | `dev` | `expert` |
+| --- | --- | --- | --- | --- |
+| approve intent-specs | `generate code` | `generate product-specs` | `generate system-specs` | `generate product-specs` |
+| approve product-specs | — | `generate code` | — | `generate system-specs` |
+| approve system-specs | — | — | `generate code` | `generate code` |
+| explicit `generate context` | — | `generate code` | `generate code` | `generate code` |
 
 ### Mode × Command Matrix (Normal Flow)
 
@@ -611,8 +610,6 @@ After every stop (approval, escalation, context pause), the skill suggests the n
 | Approve product | — | `approve` | (auto or escalated) | `approve` |
 | Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
 | Approve system | (automatic) | (auto or escalated) | `approve` | `approve` |
-| Forward to context | (automatic) | (automatic) | (automatic) | `generate context` |
-| Review context | — | — | — | (editor review) |
 | Forward to code | `generate code` | `generate code` | `generate code` | `generate code` |
 
 `(automatic)` = handled by the forward `generate` command via smart orchestration / delegation. `(auto or escalated)` = normally delegated, but escalates to explicit approval if breaking change detected. `—` = tier does not exist in this mode.
@@ -644,7 +641,7 @@ Generated execution guidance should include concrete project-specific pointers �
 
 In `vibe`, context generation produces only root-level execution guidance (`AGENTS.md`, `CLAUDE.md`). No decision records or BDD scenarios are generated. These become available after upgrade to pm/dev/expert.
 
-Context is assumed correct by default. `expert` pauses at the context boundary before code. `vibe`, `pm`, and `dev` normally continue unless a blocking or flagged issue requires a human stop.
+Context is assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code.
 
 ### Upgrade Mechanics
 

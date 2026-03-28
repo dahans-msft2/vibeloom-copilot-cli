@@ -68,7 +68,7 @@ Here is an overview of developing a system using VibeLoom:
 - **context** is generated from the approved contract to help agents work effectively. Each worker agent receives execution guidance as its primary operational briefing alongside the governing contract slice as authoritative reference. In `vibe`, context is limited to execution guidance (`CLAUDE.md`, `AGENTS.md`). In `pm`, `dev`, and `expert`, context also includes decision records (`pdr`, `adr`), behavioral scenarios (`bdd`), and similar artifacts. Context artifacts appear in two ways:
   - **Automatic:** execution guidance is generated for all affected scopes after contract approval. In `pm`, `dev`, and `expert`, decision records are generated when contract evolution introduces product or architecture decisions, and behavioral scenarios are generated when system-specs produce behavior items.
   - **On-demand:** any context artifact can also be explicitly regenerated via `generate context` (e.g., regenerating `bdd` scenarios after upstream contract changes).
-- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. `expert` pauses at the context boundary before code. `vibe`, `pm`, and `dev` normally continue into code unless a blocking or flagged issue requires a human stop.
+- Context artifacts do not carry lifecycle metadata; they are assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code.
 - If context generation is poor, the recommended fix is to edit upstream **contract** and regenerate context. Direct human edits to **context** are an exceptional fallback, not the primary workflow.
 - After the **context** is ready, the swarm of agents can generate the **code** — meaning the system itself that can be built and executed. The skill acts as the **orchestrator**: it reads the contract and context graph, determines which scopes are affected, and spawns **scoped worker agents** for code generation. Each worker receives its execution guidance plus the governing contract slice for its scope. Workers operate independently within their scope boundaries; the orchestrator assembles results and validates cross-scope consistency. Workers never load the methodology or skill — they work from generated guidance and authoritative contract.
 
@@ -243,7 +243,7 @@ Context artifacts are generated from contract specs and are the default executio
 | `adr` | context | Architecture decision record that preserves technical decision history without becoming contract truth | Tech leads + agents | `pm`, `dev`, `expert` |
 | `bdd` | context | Generated non-executable behavioral scenarios used by humans and agents during implementation | PMs + tech leads + agents | `pm`, `dev`, `expert` |
 
-All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. `expert` pauses at the context boundary before code. `vibe`, `pm`, and `dev` normally continue into code unless a blocking or flagged issue requires a human stop. Code is the executable result, although validation may run upward from code against every upstream tier.
+All semantic truth lives in contract specs. Context artifacts carry execution truth for agents and may be regenerated or, in exceptional cases, human-edited, but if a context artifact conflicts with a contract spec, the contract spec wins semantically. Context artifacts do not normally have approval-state metadata and are assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code. Code is the executable result, although validation may run upward from code against every upstream tier.
 
 ---
 
@@ -348,7 +348,7 @@ At a conceptual level, the workflow is:
 3. In `pm`, `dev`, and `expert`, each affected contract tier is its own approval unit. `pm` and `dev` auto-advance delegated approval units when safe; `expert` always stops for explicit approval.
 4. In `vibe`, after intent-specs are human-approved, system-specs are delegated by default and auto-advance unless blocked or flagged.
 5. Generate context from approved contract.
-6. Only `expert` pauses at the context boundary by default. `vibe`, `pm`, and `dev` continue into code unless blocked or flagged.
+6. When the target is `generate code`, context is generated implicitly and the run continues. When the target is `generate context`, generation stops after context.
 7. Generate or reconcile code from approved contract and context.
 
 Modes control contract depth, approval units, delegated progression, and pause topology. They do not change the contract/context/code ontology.
@@ -375,14 +375,14 @@ flowchart TD
 
     subgraph EVL["Eval"]
         direction TB
-        E["Structural, Semantic,<br/>Behavioral Checks"]
+        E["Eval"]
     end
 
     R2 --> A["Approve<br/>Current Approval Unit"]
     E --> A
 
     A --> C["Generate Context"]
-    C --> B["Context Boundary<br/>Expert: Pause, Other Modes: Continue"]
+    C --> B["Context Boundary<br/>Explicit Target: Stop / Code Target: Continue"]
     B --> K["Generate Or Reconcile Code"]
 
     K -.-> Q
@@ -399,16 +399,16 @@ flowchart TD
 
 Modes are workflow settings that control contract depth, approval units, delegated progression, and context-boundary behavior.
 
-| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause | Normal forward surface | Typical use |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | no | `generate code` | Early-stage projects, simple systems, rapid prototyping |
-| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | no | `generate product-specs`, `generate code` | PM driving requirements, workflows, acceptance intent |
-| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | no | `generate system-specs`, `generate code` | Dev driving technical boundaries, dependencies, executable impact |
-| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | yes | full targeted operation surface | Lead owning the full contract stack end-to-end |
+| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default | Normal forward surface | Typical use |
+| --- | --- | --- | --- | --- | --- | --- |
+| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | `generate product-specs`, `generate code` | PM driving requirements, workflows, acceptance intent |
+| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | `generate system-specs`, `generate code` | Dev driving technical boundaries, dependencies, executable impact |
+| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | full targeted operation surface | Lead owning the full contract stack end-to-end |
+| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | `generate code` | Early-stage projects, simple systems, rapid prototyping |
 
 Intent-specs are always human-gated in every mode; the table shows additional human stops beyond intent only for `pm`, `dev`, and `expert`.
 
-`vibe` uses a compact two-tier contract and is the fastest path from intent to code. It is intentionally minimal — no product-specs tier, no per-container or per-component files, context limited to execution guidance. Use it for early-stage projects, simple systems, or rapid prototyping. When the system outgrows vibe, upgrade to `pm`, `dev`, or `expert` (one-way) to generate the full contract stack.
+`vibe` uses a compact two-tier contract and is the fastest path from intent to code. It is intentionally minimal — no product-specs tier, no per-container or per-component files, context limited to execution guidance. The command surface is restricted: `generate` and `reconcile` only accept `code` as target (all upstream tiers are handled automatically); `review` and `eval` are not available (checks run automatically as part of `generate` and `approve`). The normal vibe workflow is: `init` → approve intent → `generate code`. Use vibe for early-stage projects, simple systems, or rapid prototyping. When the system outgrows vibe, upgrade to `pm`, `dev`, or `expert` (one-way) to generate the full contract stack.
 
 Default to `vibe` when the system is clearly simple or still exploratory: one semantic bounded context, limited business logic, and modest technical complexity. Typical examples include a desktop utility, small internal tool, or simple SMB website. Default to `pm` when the system has multiple bounded contexts, non-trivial workflows, or meaningful technical boundaries. Use `dev` when the current human is driving architecture rather than product. Use `expert` when full human oversight of every tier is needed.
 
@@ -445,8 +445,6 @@ The skill should proactively suggest upgrade when it detects signals that the pr
 | Approve product | — | `approve` | (auto or escalated) | `approve` |
 | Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
 | Approve system | (automatic) | (auto or escalated) | `approve` | `approve` |
-| Forward to context | (automatic) | (automatic) | (automatic) | `generate context` |
-| Review context | — | — | — | (editor review) |
 | Forward to code | `generate code` | `generate code` | `generate code` | `generate code` |
 
 `(automatic)` = handled by the forward `generate` command via smart orchestration / delegation. `(auto or escalated)` = normally delegated, but escalates to explicit approval if breaking change detected. `—` = tier does not exist in this mode.

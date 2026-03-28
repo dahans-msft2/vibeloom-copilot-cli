@@ -15,7 +15,19 @@ The skill runs as the **orchestrator agent**. For code generation, it spawns **s
 1. **Execution guidance** for its scope (navigation, boundaries, test commands)
 2. **Contract slice** for its scope (component spec, container spec, `defaults`)
 
-The context graph determines the load set per scope. Workers operate independently within their scope boundaries and never load the skill or methodology. The orchestrator assembles results and validates cross-scope consistency. See implementation for the concrete load-set table per scope level.
+The context graph determines the load set per scope. Workers operate independently within their scope boundaries and never load the skill or methodology. The orchestrator assembles results and validates cross-scope consistency.
+
+**Full modes (`pm`, `dev`, `expert`):**
+
+| Worker scope | Execution guidance | Contract slice | Always included |
+| --- | --- | --- | --- |
+| component | component guidance + container guidance | component spec, container spec | `defaults` |
+| container | container guidance + root guidance | container spec, system + containers spec | `defaults` |
+| root | root guidance | system, containers | `defaults` |
+
+**Compact mode (`vibe`):** All workers load root guidance + flat `system.md` + `defaults`.
+
+**Overhead budget:** Generated guidance and contract artifacts total approximately 6,000–12,000 tokens per worker (2–5% of a 256K context window). The orchestrator additionally loads the skill, status, and graph.
 
 ## Core Concepts (Quick Reference)
 
@@ -23,7 +35,7 @@ The context graph determines the load set per scope. Workers operate independent
 - **Approval unit:** The set of draft contract artifacts reviewed, evaled, and approved together at one checkpoint.
 - **Derivation:** Every downstream item records its upstream inputs via `derives_from`. This is the sole inter-item relationship.
 - **Staleness:** Computed from the context graph, never stored in frontmatter. When approved upstream truth changes, dependent downstream artifacts become stale.
-- **Breaking semantic change:** Any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking. See methodology for full signal table.
+- **Breaking semantic change:** Any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking.
 
 ---
 
@@ -96,7 +108,7 @@ When the user says `generate <target>`, orchestrate the full path from the curre
 4. **Apply mode stop rules:**
    - If the target tier is a human stop → show summary + eval findings, stop for review.
    - If the target tier is delegated → auto-approve if safe, continue toward the original target.
-5. **After contract tiers are approved, generate context** (automatic unless expert mode, which pauses).
+5. **After contract tiers are approved, generate context** (automatic when target is `code`; stops when target is `context`).
 6. **Generate code** if the original target was `code`.
 
 **Delegated auto-advance conditions** (all must hold):
@@ -113,8 +125,8 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 | `intent-specs` | reshape intent (preserving user's semantic intent), regen defaults, stop | same | same | same |
 | `product-specs` | N/A (no product-specs in vibe) | generate, stop (human) | auto-advance (delegated) | generate, stop (human) |
 | `system-specs` | auto-advance system (delegated) | auto-advance system (delegated) | auto-advance product if needed, generate system, stop (human) | generate, stop (human) |
-| `context` | auto-advance system, gen execution guidance, continue | auto-advance downstream, gen context, continue | auto-advance downstream, gen context, continue | gen context, stop (context pause) |
-| `code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system, context, code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | error if upstream unapproved |
+| `context` | auto-advance system, gen execution guidance, stop (explicit target) | auto-advance downstream, gen context, stop (explicit target) | auto-advance downstream, gen context, stop (explicit target) | gen context, stop (explicit target) |
+| `code` | auto-advance system+execution guidance (delegated), generate code | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | generate context + code (all upstream must be approved) |
 
 **`generate intent-specs`** specifically: Uses the user's current `intent.md` content as authoritative semantic input. Reshapes it for structural consistency (IDs, table formatting) and regenerates `defaults.md` to stay aligned with the updated intent. The user's semantic intent is never overridden by generation. Always stops for explicit human approval.
 
@@ -143,8 +155,8 @@ If any condition fails, **escalate:** stop for explicit human review, show what 
 | --- | --- | --- | --- | --- |
 | approve intent | `generate code` | `generate product-specs` | `generate system-specs` | `generate product-specs` |
 | approve product | — | `generate code` | — | `generate system-specs` |
-| approve system | — | — | `generate code` | `generate context` |
-| context pause | — | — | — | `generate code` |
+| approve system | — | — | `generate code` | `generate code` |
+| explicit `generate context` | — | `generate code` | `generate code` | `generate code` |
 
 ### `review`
 
@@ -174,19 +186,19 @@ Run structural and semantic evaluation against the current approval unit. Eval a
 
 **Syntax:** `/vibeloom eval [<scope>]`
 
-**Structural checks** (blocking) — see methodology for full pass/fail criteria:
+**Structural checks** (blocking):
 
-| Check | Pass criterion |
-| --- | --- |
-| Lifecycle consistency | Draft/approved states consistent across approval unit |
-| Reference integrity | All `derives_from` point to existing items |
-| Required fields | Every artifact has all required frontmatter per template |
-| Declared relationships | Items owned by correct artifacts, scopes, tiers |
-| Stack integrity | Tiers in correct dependency order |
-| Coverage | Every upstream item has ≥1 downstream item deriving from it |
-| Contradiction | No downstream item conflicts with its `derives_from` basis |
-| Componentization fit | Component→1 BC; BC→1 container |
-| Context sufficiency | Every code-owning component + populated container has execution guidance |
+| Check | Pass criterion | Fail criterion |
+| --- | --- | --- |
+| Lifecycle consistency | Draft/approved states consistent across approval unit | Mismatched states |
+| Reference integrity | All `derives_from` point to existing items | Dangling references |
+| Required fields | Every artifact has all required frontmatter per template | Missing fields |
+| Declared relationships | Items owned by correct artifacts, scopes, tiers | Misplaced items |
+| Stack integrity | Tiers in correct dependency order | Out-of-order dependencies |
+| Coverage | Every upstream item has ≥1 downstream item deriving from it | Orphaned upstream IDs — report them |
+| Contradiction | No downstream item conflicts with its `derives_from` basis | Conflicting statements — report both IDs |
+| Componentization fit | Component→1 BC; BC→1 container | BC spans containers or component refs multiple BCs |
+| Context sufficiency | Every code-owning component + populated container has execution guidance | Missing guidance for a populated scope |
 
 **Semantic checks** (non-blocking) — require agent judgment:
 
@@ -348,12 +360,12 @@ Explain any VibeLoom concept, operation, or workflow.
 
 ### Mode Table
 
-| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default | Context pause |
-| --- | --- | --- | --- | --- | --- |
-| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs | no |
-| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` | no |
-| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` | no |
-| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none | yes |
+| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default |
+| --- | --- | --- | --- | --- |
+| `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` |
+| `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` |
+| `expert` | full (3 tiers) | each affected contract tier | every contract tier | none |
+| `vibe` | compact (2 tiers) | intent-specs + system-specs | intent-specs only | system-specs |
 
 ### Intent Is Always Human-Gated
 
@@ -365,7 +377,18 @@ In every mode:
 
 ### Breaking-Change Escalation
 
-**Rule: any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking.** See methodology for the full signal table with detection methods.
+**Rule: any mutation to an existing approved item is breaking. Only adding new items consistent with approved truth is non-breaking.**
+
+| Signal | Classification | Detection |
+| --- | --- | --- |
+| Any field changed on an existing approved item | Breaking | Structural: diff against last approved version |
+| Item deleted | Breaking | Structural: item ID absent in draft |
+| `derives_from` edges changed (added or removed) | Breaking | Structural: diff on `derives_from` array |
+| Item moved to different scope/container/component | Breaking | Structural: scope fields changed |
+| Bounded context split or merged | Breaking | Structural: BC count changed or component BC fields reassigned |
+| Interface semantics changed | Breaking | Semantic: agent compares IF description against approved version |
+| Invariant weakened or strengthened | Breaking | Semantic: agent compares INV rule text against approved version |
+| **New item added** consistent with approved truth | Non-breaking | Semantic: agent confirms no conflict with any approved item |
 
 When a delegated tier triggers a breaking change, escalate to human review:
 
@@ -373,6 +396,17 @@ When a delegated tier triggers a breaking change, escalate to human review:
 2. Show the specific items affected (e.g., "BC-0001 split into BC-0001 + BC-0003").
 3. Stop for human review and approval.
 4. After approval, resume toward the original target.
+
+### Vibe Mode Constraints
+
+Vibe uses a compact two-tier contract and a restricted command surface:
+
+- **`generate`** only accepts `code` as target. All upstream tiers are handled automatically (intent requires approval, system-specs are delegated).
+- **`reconcile`** only accepts `code` as target.
+- **`review`** and **`eval`** are not valid in vibe mode. Structural and semantic checks run automatically as part of `generate` and `approve`.
+- **`import`** produces the full 3-tier contract stack, not a compact stack. After import, the repo is governed in the mode the user selects.
+
+The normal vibe workflow is: `init` → approve intent → `generate code`. All orchestration between intent and code is automatic.
 
 ---
 
@@ -446,7 +480,65 @@ Execution guidance is emitted as **two files** per scope — one for `AGENTS.md`
 - IDs are globally unique by prefix family across the repo.
 - Numbering is append-only within each prefix family. Never reuse deleted IDs.
 - When generating new items, scan existing artifacts for the highest ID in each prefix family and increment from there.
-- See `vibeloom-implementation.md` § "Prefix Families" for the complete prefix table.
+
+**Prefix Families:**
+
+| Family | Meaning |
+| --- | --- |
+| `CAP-####` | intent capability |
+| `WISH-####` | softer intent preference |
+| `CST-####` | hard constraint item in defaults, intent, PRD, or system-specs |
+| `FR-####` | functional requirement |
+| `NFR-####` | non-functional requirement |
+| `ASM-####` | assumption |
+| `IN-####` | in-scope boundary item |
+| `OOS-####` | out-of-scope item |
+| `Q-####` | open question |
+| `EPIC-####` | epic |
+| `FLOW-####` | workflow or journey |
+| `STORY-####` | story |
+| `ACC-####` | acceptance-framing entry |
+| `TERM-####` | ubiquitous-language term |
+| `BC-####` | bounded context |
+| `AGG-####` | aggregate |
+| `ENT-####` | entity |
+| `VO-####` | value object |
+| `INV-####` | invariant or business rule |
+| `REL-####` | domain relationship or integration touchpoint |
+| `EXT-####` | external actor or system |
+| `TB-####` | trust boundary |
+| `SNFR-####` | system-wide NFR boundary |
+| `CONT-####` | container inventory item |
+| `CMP-####` | component inventory item |
+| `EDGE-####` | communication path or local dependency edge |
+| `IF-####` | owned interface |
+| `DEP-####` | component dependency |
+| `BEH-####` | local technical behavior or contract |
+| `NOTE-####` | local test or runtime note |
+| `PDR-####` | product decision record item inside `pdr.md` |
+| `ADR-####` | architecture decision record item inside `adr.md` |
+| `BDD-####` | behavioral-scenario artifact |
+| `SCN-####` | individual Gherkin scenario |
+| `OBJ-####` | objective overlay item when explicitly addressable |
+| `KR-####` | key-result overlay item when explicitly addressable |
+| `MET-####` | metric overlay item when explicitly addressable |
+| `MS-####` | milestone overlay item when explicitly addressable |
+| `RISK-####` | risk overlay item when explicitly addressable |
+
+**Artifact IDs:**
+
+| Artifact | ID Shape |
+| --- | --- |
+| root contract artifacts | fixed name: `intent`, `defaults`, `prd`, `usm`, `dm`, `system`, `containers` |
+| `container.md` | `container.<container-slug>` |
+| `component.md` | `component.<container-slug>.<component-slug>` |
+| root `AGENTS.md` | `guidance.root.codex` |
+| root `CLAUDE.md` | `guidance.root.claude` |
+| container guidance | `guidance.container.<container-slug>.<assistant-slug>` |
+| component guidance | `guidance.component.<container-slug>.<component-slug>.<assistant-slug>` |
+| `pdr` ledger | `pdr` |
+| `adr` ledger | `adr` |
+| `bdd` | `BDD-####` |
 
 ---
 
@@ -496,8 +588,8 @@ Context is generated after required contract tiers are approved.
 3. BDD scenarios — automatically when `generate system-specs` produces `BEH-####` items, and on-demand via `generate context`.
 
 **Pause behavior:**
-- `expert`: pause at context boundary before code. Show files for user review.
-- `vibe`, `pm`, `dev`: continue into code unless a blocking or flagged issue requires a stop.
+- When the target is `generate context` (explicit): stop after context in all full modes.
+- When the target is `generate code`: context is generated implicitly, no stop.
 
 Generated execution guidance should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope.
 

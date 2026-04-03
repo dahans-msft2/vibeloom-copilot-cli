@@ -57,13 +57,15 @@ Community signal: developers report Traycer delivers [2-3 day tasks in 4 hours](
 
 **Spec Kit**: The constitution is a quiet win — global constraints are consistently enforced. But per-feature specs have accumulated into a sea of markdown. Developers report they are [extremely detailed, increasing review burden — you may need AI to navigate your own specs](https://medium.com/@lookoutking/spec-driven-development-in-practice-my-experience-with-spec-kit-8f250b47d677). Token cost is real: developers on Claude Pro [$20/month hit the 5-hour rate limit just finishing a couple of tasks](https://github.com/github/spec-kit/issues/1492). Each feature was spec'd in its own branch, so post-merge there is no unified view of how features interact.
 
-**VibeLoom (pm mode) — designed behavior, not yet field-validated at this scale:**
+**VibeLoom (upgrade from vibe → pm mode) — designed behavior, not yet field-validated at this scale:**
 
-This is where the methodology is designed to shift gears. The PM now owns the product-specs approval gate (prd, usm, dm). The dev owns intent and system-specs. When Feature B touches components from Feature A, the context graph should flag the affected downstream artifacts as stale. Reconciliation surfaces the conflict: the team chooses whether to amend the upstream contract or fix downstream. The PM can answer "what does the system do?" by reading prd + usm. The new dev reads dm + system-specs and gets the architecture without chat archaeology.
+This is where the methodology is designed to shift gears. When the project reaches this complexity — multiple bounded contexts, non-trivial domain logic, a PM who needs structured requirements — the skill proactively suggests upgrading from vibe to pm (or dev/expert). The upgrade is one-way: vibe's compact intent (with product summary) seeds generation of full product-specs (prd, usm, dm), and the flat system doc expands into the full system-specs hierarchy (system, containers, per-container, per-component). Existing code is rearranged to match the new component structure.
+
+After upgrade, the PM owns the product-specs approval gate (prd, usm, dm). The dev owns intent and system-specs. When Feature B touches components from Feature A, the context graph should flag the affected downstream artifacts as stale. Reconciliation surfaces the conflict: the team chooses whether to amend the upstream contract or fix downstream. The PM can answer "what does the system do?" by reading prd + usm. The new dev reads dm + system-specs and gets the architecture without chat archaeology.
 
 The overhead is real: every change starts from intent-specs and flows downward. The bet is that each change *updates the truth*, so the next change starts from accurate context instead of reconstructed guesswork. The context graph is designed to make truth-maintenance cheaper than truth-reconstruction.
 
-What could go wrong: the contract stack becomes the bottleneck. If review and approval cycles slow iteration, the team bypasses the methodology — editing code directly, skipping reconciliation — and the contract drifts like any other spec. VibeLoom's 4-mode system (vibe for low-ceremony, pm for product-gated flow) is the mitigation, but the risk is inherent to governance. Additionally, VibeLoom requires familiarity with DDD concepts (bounded contexts, aggregates, invariants) — teams without this background face a steeper curve than with any other tool here.
+What could go wrong: the upgrade itself is a significant moment — the team must review and approve the generated full contract stack, which surfaces every implicit assumption the compact stack left unspecified. If the team treats this as rubber-stamping, the full stack starts life with inaccurate specs. If they treat it seriously, it's a multi-hour investment that pays off in governance. Post-upgrade, the contract stack can become a bottleneck if review and approval cycles slow iteration. VibeLoom's mode system mitigates this (delegated auto-advance handles the 80% case in pm/dev), but the risk is inherent to governance. Additionally, the full contract stack requires familiarity with DDD concepts (bounded contexts, aggregates, invariants) — teams without this background face a steeper curve than with any other tool here. (Note: vibe mode avoids the DDD prerequisite entirely — it uses a flat system doc with no formal bounded contexts.)
 
 ---
 
@@ -92,7 +94,7 @@ This is the scale the methodology is built for. Each PM owns a product area's pr
 - **Architectural evolution**: decomposing a monolith means updating the containers spec and re-deriving affected component specs. The graph shows exactly what's impacted.
 - **Onboarding**: a new dev reads intent → prd → dm → system → the specific container and component specs they'll work on. Total reading: 8-10 focused documents, not a git history spanning 6 months.
 
-The risks scale too. At this team size, governance overhead is felt by everyone. If the contract review process takes a day, 5-6 developers are blocked for a day. Mode selection becomes critical: `expert` (all-gated) for architectural changes, `pm` or `dev` for routine feature work, with delegated auto-advance handling the 80% case. The DDD prerequisite is no longer "nice to have" — the team needs shared vocabulary (bounded contexts, aggregates, ubiquitous language) or the domain model becomes a battleground.
+The risks scale too. At this team size, governance overhead is felt by everyone. If the contract review process takes a day, 5-6 developers are blocked for a day. Mode selection becomes critical: `expert` (all-gated) for architectural changes, `pm` or `dev` for routine feature work, with delegated auto-advance handling the 80% case. (A project at this scale has long since upgraded from vibe — the compact stack can't represent the multi-container, multi-component architecture this team is building.) The DDD prerequisite is no longer "nice to have" — the team needs shared vocabulary (bounded contexts, aggregates, ubiquitous language) or the domain model becomes a battleground.
 
 Where VibeLoom's design structurally differs from competitors: the context graph makes drift *detectable* even when reconciliation is delayed. In every other tool at this scale, drift is invisible until it causes a production bug or a cross-team conflict. The contract stack doesn't prevent architectural disagreements — but it makes them explicit before they reach code.
 
@@ -219,8 +221,8 @@ The context graph is the key differentiator. Without staleness detection and imp
 
 ### VibeLoom's core risks
 
-1. **Ceremony**: Vibe mode reduces upfront cost to a compact two-tier stack (intent + flat system doc), but still requires more ceremony than prompt-only tools. The methodology rewards projects that survive long enough to compound the value of maintained specs. The one-way upgrade to the full contract stack is a bet on longevity.
-2. **DDD prerequisite**: The contract stack uses bounded contexts, aggregates, and invariants natively. Teams without DDD experience face a steeper learning curve than with any other tool here. Traycer, Kiro, and Spec Kit require no specific domain modeling methodology.
+1. **Ceremony**: Vibe mode significantly reduces upfront cost — a compact two-tier contract (intent with product summary + flat system doc) takes 10-20 minutes, comparable to Traycer's planning overhead. But it's still more ceremony than prompt-only generation. The full contract stack (after upgrade to pm/dev/expert) is a much larger investment. The one-way upgrade is a bet on longevity — you can't go back to vibe once you've expanded.
+2. **DDD prerequisite — but only after upgrade**: Vibe mode avoids DDD entirely — the flat system doc doesn't require bounded contexts, aggregates, or ubiquitous language. But upgrading to pm/dev/expert generates the full DDD-based contract stack (dm with bounded contexts, aggregates, invariants). Teams without DDD experience can start in vibe and learn as they go — but the upgrade moment requires either DDD familiarity or a willingness to let the agent generate the domain model and learn from it.
 3. **Discipline dependency**: The context graph detects drift but doesn't prevent it. If teams bypass reconciliation or edit code directly, the contract becomes stale like any other doc. The methodology's value depends on the team treating it as non-negotiable — which is a cultural bet, not a technical guarantee.
 4. **Availability**: As of March 2026, VibeLoom is a methodology with public documentation but limited tooling availability. Competitors like Spec Kit (open-source, MIT, 83K stars), Traycer (VS Code extension, 100K+ users), and Kiro (publicly available IDE) have broader accessibility.
 
@@ -238,7 +240,7 @@ The context graph is the key differentiator. Without staleness detection and imp
 
 | Tool | Approach | Spec Lifetime | Governing Artifact | Key Strength | Key Limitation |
 |---|---|---|---|---|---|
-| **VibeLoom** | Contract-driven | Permanent, evolving | Multi-tier contract stack with context graph | Specs stay accurate and governing over months/years | Upfront ceremony investment |
+| **VibeLoom** | Contract-driven | Permanent, evolving | Compact stack (vibe) → multi-tier contract stack with context graph (pm/dev/expert) | Lightweight start with governed upgrade path; specs stay accurate over months/years | Full contract stack requires DDD; upgrade is one-way |
 | **Traycer** | Plan-first, verify-after | Task-scoped | File-level plans | Fast per-task productivity with post-implementation verification | No cross-task coherence; plans don't compound |
 | **Deep Trilogy** | Interview-driven planning | Session-scoped | Section files | Thorough upfront thinking via structured interviews | Manual orchestration; context loss between sessions |
 | **Tessl** | Spec-as-source | Permanent per-file | Per-file spec | Zero drift within files; quantified accuracy improvement | No cross-file contracts or system-level coherence |
@@ -249,7 +251,7 @@ The context graph is the key differentiator. Without staleness detection and imp
 
 | Tool | Team size | Prerequisite knowledge | Best starting point | Switching cost |
 |---|---|---|---|---|
-| **VibeLoom** | 2-10+ (scales with context graph) | DDD concepts, tiered spec thinking | Greenfield; brownfield via `import` | High — contract stack is deeply integrated |
+| **VibeLoom** | 1 (vibe) to 10+ (full modes, scales with context graph) | Minimal in vibe; DDD concepts required after upgrade to pm/dev/expert | Greenfield (vibe); brownfield via `import` | Low in vibe (compact stack); high after upgrade (full contract stack is deeply integrated) |
 | **Traycer** | 1-5 (scales with human architect) | None beyond coding | Any existing codebase | Low — plans are independent of tool |
 | **Deep Trilogy** | 1-2 (solo or pair) | Claude Code familiarity | Well-scoped new features | Low — plugins are optional add-ons |
 | **Tessl** | 1-5 (per-file scope limits coordination) | Basic spec writing | Component libraries, SDK code | Medium — specs replace code as editable artifact |

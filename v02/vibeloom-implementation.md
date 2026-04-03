@@ -172,18 +172,18 @@ All generated Markdown artifacts use YAML frontmatter.
 
 Every contract artifact must include:
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `artifact_id` | string | Stable artifact identifier |
-| `artifact_type` | enum | One of `intent`, `defaults`, `prd`, `usm`, `dm`, `system`, `containers`, `container`, `component` |
-| `tier` | enum | One of `intent-specs`, `product-specs`, `system-specs` |
-| `scope_kind` | enum | One of `root`, `container`, `component` |
-| `scope_id` | string | `root` or the governing container/component scope slug |
-| `status` | enum | One of `draft`, `approved` |
-| `version` | integer | Latest approved version number; starts at `0` until the first approval |
-| `draft_revision` | integer | Optional; required when `status: draft` and content differs from the last approved version |
-| `approval_mode` | enum | One of `human`, `delegated`. Set at approval time only; absent on drafts. |
-| `derives_from` | string[] | Upstream short item IDs that materially constrain this artifact |
+| Field            | Type     | Notes                                                                                             |
+| ---------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `artifact_id`    | string   | Stable artifact identifier                                                                        |
+| `artifact_type`  | enum     | One of `intent`, `defaults`, `prd`, `usm`, `dm`, `system`, `containers`, `container`, `component` |
+| `tier`           | enum     | One of `intent-specs`, `product-specs`, `system-specs`                                            |
+| `scope_kind`     | enum     | One of `root`, `container`, `component`                                                           |
+| `scope_id`       | string   | `root` or the governing container/component scope slug                                            |
+| `status`         | enum     | One of `draft`, `approved`                                                                        |
+| `version`        | integer  | Latest approved version number; starts at `0` until the first approval                            |
+| `draft_revision` | integer  | Optional; required when `status: draft` and content differs from the last approved version        |
+| `approval_mode`  | enum     | One of `user`, `delegated`. Set at approval time only; absent on drafts.                          |
+| `derives_from`   | string[] | Upstream short item IDs that materially constrain this artifact                                   |
 
 Additional required fields:
 
@@ -227,7 +227,7 @@ Contract versioning uses approved versions plus draft revisions:
 - next unapproved change: `version: 1`, `draft_revision: 2`
 - next approval: `version: 2`, no `draft_revision`
 
-`approval_mode` is provenance, not a declaration. Drafts do not carry `approval_mode`. At approval time, set `approval_mode: human` for explicit human approval or `approval_mode: delegated` for auto-advanced approval.
+`approval_mode` is provenance, not a declaration. Drafts do not carry `approval_mode`. At approval time, set `approval_mode: user` for explicit user approval or `approval_mode: delegated` for auto-advanced approval.
 
 ### Direct Edit Detection
 
@@ -259,7 +259,7 @@ Core rules:
 - numbering is append-only within each prefix family
 - deleted IDs are never reused
 - visible references use only short IDs; they do not encode artifact identity
-- human meaning lives in adjacent labels, titles, and statements rather than in the ID itself
+- semantic meaning lives in adjacent labels, titles, and statements rather than in the ID itself
 - overlays get IDs only when they are intentionally addressable
 
 ### Prefix Families
@@ -379,15 +379,14 @@ During brownfield import:
 1. Analyze existing code to infer compact system-specs (flat system context, components, interfaces, behaviors)
 2. Infer compact intent-specs (capabilities, wishes, constraints, product-summary prose) from the reconstructed flat system
 
-`system-specs` and `intent-specs` are marked `draft` after compact reconstruction. The skill then runs bottom-up review starting at compact system-specs and proceeding upward through intent-specs before generating final root guidance and reconciling against code.
+`system-specs` and `intent-specs` are marked `draft` after compact reconstruction. The skill keeps the explicit user review surface on `intent-specs`: review/eval/approve intent against the inferred compact system and current code, auto-advance compact system-specs when safe, then generate final root guidance and reconcile against code.
 
 `import --mode pm|dev|expert` reconstructs the full contract stack bottom-up from code analysis:
 1. Analyze existing code to infer system-specs (components, containers, interfaces, behaviors)
 2. Infer product-specs (requirements, stories, domain model) from the reconstructed system-specs
 3. Infer intent-specs (capabilities, wishes, constraints) from the reconstructed product-specs
-4. Generate the context tier (execution guidance, decision records, BDD scenarios) from the reconstructed contract
 
-All three contract tiers are marked `draft` after full reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for human confirmation at each tier before moving to the next.
+All three contract tiers are marked `draft` after full reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for user confirmation at each tier before moving to the next. Context is generated only after the full contract stack is approved.
 
 ---
 
@@ -515,19 +514,18 @@ Within a contract tier, artifacts are generated in this order:
 
 ### Scope Of Regeneration
 
-Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. Artifacts with unchanged upstream bases are not regenerated. When the double-pass back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set.
+Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. Artifacts with unchanged upstream bases are not regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set.
 
-### Double-Pass Generation
+### Forward-Back Pass Generation
 
-See methodology for the conceptual double-pass model. The concrete steps per contract tier are:
+See methodology for the conceptual forward-back pass model. The concrete steps per contract tier are:
 
 1. generate artifacts in dependency order
 2. forward pass across the tier
 3. back pass if later artifacts sharpen earlier artifacts
 4. structural eval + semantic eval
-5. one additional bounded forward-back round if needed
-6. emit as `draft`
-7. pause or auto-advance for review, eval, and approval according to mode and delegated-approval rules
+5. emit as `draft`, surface any remaining findings
+6. pause or auto-advance for review, eval, and approval according to mode and delegated-approval rules
 
 ### Operation Contracts
 
@@ -537,12 +535,12 @@ See methodology for the conceptual double-pass model. The concrete steps per con
 | `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
 | `review` | current approval unit, or `intent-specs` in public `vibe` mode, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
 | `eval` | current approval unit, or `intent-specs` in public `vibe` mode, scope | structural and semantic findings |
-| `reconcile` | approved upstream change set, downstream floor scope | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
+| `reconcile` | optional target tier (defaults to full downstream stack), approved upstream change set | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
 | `approve` | current approval unit, approval mode | approved approval unit and updated versions |
 | `status` | scope | current lifecycle and stale summary |
-| `import` | unmanaged repo scope, initial mode | candidate contract drafts and context appropriate to the chosen initial mode |
+| `import` | unmanaged repo scope, initial mode | candidate contract drafts appropriate to the chosen initial mode |
 
-`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, this narrows to `review intent-specs` and `eval intent-specs`: heuristic, read-only checks of compact intent/defaults against downstream compact system and current code drift. These checks are outside graph-backed code-item analysis and rely on agent reasoning over repo files under a small-codebase assumption. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
+`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, this narrows to `review intent-specs` and `eval intent-specs`, both using downstream compact system and current code drift as heuristic evidence. `review intent-specs` keeps the normal interactive review loop and may propose or apply bounded fixes within the current draft `intent-specs` approval unit only. `eval intent-specs` remains read-only. These checks are outside graph-backed code-item analysis and never directly edit compact `system-specs` or code. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both `review` and `reconcile` are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
 
 ### Standard Operation Parameters
 
@@ -555,7 +553,7 @@ Implementations should standardize these parameter names even if the user-facing
 | `mode` | One of `vibe`, `pm`, `dev`, `expert` |
 | `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the current approval unit that do not change approved upstream meaning. |
 
-| `approval_mode` | One of `human`, `delegated` |
+| `approval_mode` | One of `user`, `delegated` |
 | `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges downward from every changed item in the context graph |
 
 These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
@@ -564,20 +562,22 @@ These parameters are the internal engine vocabulary behind the methodology-level
 
 Implementations should enforce the same stop behavior described in methodology:
 
-| Mode | Contract depth | Approval unit | Normal human contract stop | Delegated auto-advance by default |
+| Mode | Contract depth | Approval unit | Normal user contract stop | Delegated auto-advance by default |
 | --- | --- | --- | --- | --- |
 | `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` |
 | `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` |
 | `expert` | full (3 tiers) | each affected contract tier | every contract tier | none |
 | `vibe` | compact (2 tiers) | each affected contract tier | intent-specs only | system-specs |
 
-In `vibe`, `pm`, and `dev`, delegated auto-advance is allowed only when:
+In `pm` and `dev`, delegated auto-advance is allowed only when:
 
 - structural eval passes
 - no **breaking semantic change** is detected against approved truth
 - no flagged issue requires human judgment
 
-If a delegated approval unit is blocked or flagged, explicit human review and approval become required before the run can complete.
+If a delegated approval unit is blocked or flagged in `pm` or `dev`, explicit user review and approval of that tier become required before the run can complete.
+
+In `vibe`, compact `system-specs` uses the same safety tests, but blocked or flagged results surface through `review intent-specs` / `eval intent-specs` and may recommend upgrade. Compact `system-specs` never becomes its own public user stop.
 
 ### Public Skill Surfaces
 
@@ -603,7 +603,7 @@ Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 - `configure`
 - `help`
 
-In `vibe`, `review intent-specs` and `eval intent-specs` are heuristic compact governance checks over compact intent/defaults, downstream compact system, and current code. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion. Bare `review` / `eval` aliases may be added later, but they are not part of the current public spec.
+In `vibe`, `review intent-specs` is a heuristic interactive review of compact intent/defaults using downstream compact system and current code as evidence, while `eval intent-specs` is the read-only counterpart. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion. Bare `review` / `eval` aliases may be added later, but they are not part of the current public spec.
 
 ### Smart Orchestration
 
@@ -611,9 +611,9 @@ In full modes, `generate <target>` orchestrates the full path from the current s
 
 1. Check all upstream tiers are approved.
 2. For any upstream tier in draft: if it is **delegated** in the current mode → auto-advance (eval, approve, continue).
-3. For any upstream tier in draft: if it is a **human stop** in the current mode → stop and ask for review/approval before continuing.
+3. For any upstream tier in draft: if it is a **user stop** in the current mode → stop and ask for review/approval before continuing.
 4. Generate the target tier.
-5. If the target tier is a human stop → stop for review/approval.
+5. If the target tier is a user stop → stop for review/approval.
 6. If the target tier is delegated → auto-advance and continue toward the original target.
 
 Concrete behavior for full-mode public targets:
@@ -621,20 +621,22 @@ Concrete behavior for full-mode public targets:
 | Command | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- |
 | `generate intent-specs` | reshape intent (preserving user's semantic intent), regenerate defaults, stop for approval | same | same |
-| `generate product-specs` | generate, stop (human) | auto-advance product (delegated) | generate, stop (human) |
-| `generate system-specs` | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (human) | generate, stop (human) |
+| `generate product-specs` | generate, stop (user) | auto-advance product (delegated) | generate, stop (user) |
+| `generate system-specs` | auto-advance system (delegated) | auto-advance product if needed (delegated), generate system, stop (user) | generate, stop (user) |
 | `generate context` | auto-advance downstream, generate context, stop (explicit target) | auto-advance downstream, generate context, stop (explicit target) | generate context, stop (explicit target) |
-| `generate code` | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, human), after approval generate context + code | generate context + code (all upstream must be approved) |
+| `generate code` | auto-advance system (delegated), generate context + code | auto-advance product if needed (delegated), generate system (stop, user), after approval generate context + code | generate context + code (all upstream must be approved) |
 
-Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit human approval regardless of mode. In `vibe`, the public skill does not expose `generate intent-specs`; the same normalization step runs implicitly during bootstrap and before approving draft intent.
+Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit user approval regardless of mode. In `vibe`, the public skill does not expose `generate intent-specs`; the same normalization step runs implicitly during bootstrap and before approving draft intent.
+
+In `vibe`, compact `system-specs` never becomes a public user stop. If compact system auto-advance fails the delegated safety tests during `generate code` or `reconcile code`, the run continues from best-effort system-specs, surfaces findings prominently, and recommends `review intent-specs` or upgrade.
 
 `vibe` public command behavior:
 
 | Command | Behavior |
 | --- | --- |
-| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root execution guidance, and code |
-| `reconcile code` | interactive downward drift review between approved compact intent/defaults and current downstream state; if `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before reconciling compact `system-specs` and code |
-| `review intent-specs` | heuristic read-only review of compact intent/defaults against downstream compact system and current code drift; uses agent reasoning over filesystem layout, exported interfaces, routes or commands, tests, key strings, and owned-path comparisons |
+| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root execution guidance, and code. If compact system auto-advance fails safety tests, continue generating code from best-effort system-specs, surface findings prominently, and recommend `review intent-specs` or upgrade |
+| `reconcile code` | auto-regenerate compact `system-specs` from approved intent as the first step, then run interactive downward drift review between refreshed system and current code. If `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before proceeding. If system-specs regen produces breaking changes, surface them prominently and recommend `review intent-specs` or upgrade. If compact system cannot safely auto-advance, continue from best-effort system-specs, surface findings, and recommend `review intent-specs` or upgrade |
+| `review intent-specs` | heuristic interactive review of compact intent/defaults against downstream compact system and current code drift; uses agent reasoning over filesystem layout, exported interfaces, routes or commands, tests, key strings, and owned-path comparisons; may propose or apply bounded fixes within draft `intent` / `defaults` only |
 | `eval intent-specs` | heuristic read-only eval of compact intent/defaults against downstream compact system and current code drift; runs structural checks on the compact contract plus lightweight non-graph code-drift checks |
 
 ### Next-Command Suggestions
@@ -709,7 +711,7 @@ When the user runs `configure mode pm|dev|expert` while in `vibe` mode, the skil
    - Vibe `system` (flat) → regular `system` + `containers` + per-container `container` + per-component `component`
    - `defaults` stays as-is.
 3. **Mark all new artifacts as `draft`.** Normal approval flow for the target mode takes over.
-4. **Rearrange source code** into the container/component directory structure defined by the generated system-specs.
+4. **Optionally rearrange source code** into the container/component directory structure defined by the generated system-specs, but only after explicit user confirmation. Rearrangement is heuristic and best-effort; if ambiguous or unsafe, skip code moves and direct the user into `reconcile code` or manual follow-up. If the user declines rearrangement when prompted, skip code moves entirely and suggest `reconcile code` or manual follow-up.
 5. **Generate full context** (execution guidance at all scopes, decision records, BDD scenarios as applicable).
 6. The skill informs the user that the upgrade is complete and suggests the next command for the target mode.
 
@@ -774,6 +776,8 @@ The implementation is valid only if all of the following hold:
 - contract approval follows the mode-defined approval unit and delegated-auto-advance rules
 - `review` and structural/semantic `eval` act on the current approval unit plus approved upstream truth
 - `reconcile` remains downstream only
+- `vibe` remains intent-centric: compact `system-specs` never becomes a public user stop
+- full-mode import generates context only after the contract stack is approved
 - the context graph can be rebuilt from artifact metadata and item carriers without hidden prompt-only state
 - brownfield import preserves compatible short IDs and records one-time remaps for incompatible legacy IDs
 - bootstrap commands require an initial mode and are rejected once the repo is already governed

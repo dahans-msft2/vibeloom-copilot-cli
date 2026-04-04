@@ -388,8 +388,10 @@ Product decision records and architecture decision records are append-only ledge
 ```mermaid
 flowchart TD
     subgraph T1["intent-specs"]
-        cap["capability"]
-        cst_i["constraint"]
+        subgraph INTENT["intent"]
+            cap["capability"]
+            cst_i["constraint"]
+        end
     end
 
     subgraph T2["product-specs"]
@@ -400,6 +402,9 @@ flowchart TD
             fr["functional req"]
             nfr["non-functional req"]
         end
+    end
+
+    subgraph T2b[" "]
         subgraph USM["usm"]
             epic["epic"]
             flow["flow"]
@@ -407,6 +412,9 @@ flowchart TD
             acc["acceptance criterion"]
             ms["milestone"]
         end
+    end
+
+    subgraph T2c[" "]
         subgraph DM["dm"]
             term["term"]
             bc["bounded context"]
@@ -424,11 +432,17 @@ flowchart TD
             tb["trust boundary"]
             snfr["system-wide NFR"]
         end
+    end
+
+    subgraph T3b[" "]
         subgraph CONTS["containers"]
             cont["container"]
             edge_g["comm path"]
             cst_c["constraint"]
         end
+    end
+
+    subgraph T3c[" "]
         subgraph CONTR["container"]
             cmp["component"]
         end
@@ -437,8 +451,6 @@ flowchart TD
     subgraph T4["context"]
         bdd["behavior file"]
         scn["scenario"]
-        pdr["product decision record"]
-        adr["architecture decision record"]
     end
 
     cap --> obj
@@ -501,7 +513,11 @@ flowchart TD
 
     style T1 fill:#e8f4fd,stroke:#1a73e8
     style T2 fill:#e8f4fd,stroke:#1a73e8
+    style T2b fill:#e8f4fd,stroke:#1a73e8
+    style T2c fill:#e8f4fd,stroke:#1a73e8
     style T3 fill:#e8f4fd,stroke:#1a73e8
+    style T3b fill:#e8f4fd,stroke:#1a73e8
+    style T3c fill:#e8f4fd,stroke:#1a73e8
     style T4 fill:#fff3e0,stroke:#e65100
 ```
 

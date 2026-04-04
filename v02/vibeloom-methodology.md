@@ -89,7 +89,7 @@ graph TD
     A3 --> T4
     subgraph T4 [context]
         direction LR
-        exec_guidance[execution guidance] ~~~ pdr[pdr] ~~~ adr[adr] ~~~ bdd[bdd]
+        config[config] ~~~ pdr[pdr] ~~~ adr[adr] ~~~ bdd[bdd]
     end
 
     T4 --> T5
@@ -388,131 +388,32 @@ Product decision records and architecture decision records are append-only ledge
 ```mermaid
 flowchart TD
     subgraph T1["intent-specs"]
-        subgraph INTENT["intent"]
-            cap["capability"]
-            cst_i["constraint"]
-        end
+        INTENT["<b>intent</b><br/>capability, constraint"]
     end
 
     subgraph T2["product-specs"]
         direction TB
-        subgraph PRD["prd"]
-            obj["objective"]
-            kr["key result"]
-            met["metric"]
-            fr["functional req"]
-            nfr["non-functional req"]
-        end
-        subgraph USM["usm"]
-            epic["epic"]
-            flow["flow"]
-            story["story"]
-            acc["acceptance criterion"]
-            ms["milestone"]
-        end
-        subgraph DM["dm"]
-            term["term"]
-            bc["bounded context"]
-            agg["aggregate"]
-            ent["entity"]
-            vo["value object"]
-            inv["invariant"]
-            rel["relationship"]
-        end
+        PRD["<b>prd</b><br/>objective, key result, metric,<br/>functional req, non-functional req,<br/>in-scope, out-of-scope, assumption,<br/>constraint, open question, risk"]
+        USM["<b>usm</b><br/>epic, flow, story,<br/>acceptance criterion, milestone"]
+        DM["<b>dm</b><br/>term, bounded context,<br/>aggregate, entity, value object,<br/>invariant, relationship"]
+        PRD --> USM --> DM
     end
 
     subgraph T3["system-specs"]
         direction TB
-        subgraph SYS["system"]
-            ext["external actor/system"]
-            tb["trust boundary"]
-            snfr["system-wide NFR"]
-        end
-        subgraph CONTS["containers"]
-            cont["container"]
-            edge_g["comm path"]
-            cst_c["constraint"]
-        end
-        subgraph CONTR["container"]
-            cmp["component"]
-        end
+        SYS["<b>system</b><br/>external actor/system,<br/>trust boundary, system-wide NFR"]
+        CONTS["<b>containers</b><br/>container, comm path,<br/>cross-container constraint"]
+        CONTR["<b>container</b><br/>component"]
+        SYS --> CONTS --> CONTR
     end
 
     subgraph T4["context"]
-        bdd["behavior file"]
-        scn["scenario"]
+        CTX["<b>bdd</b><br/>behavior file, scenario"]
     end
 
-    %% force vertical: tier boxes stacked
-    cst_i ~~~ obj
-    rel ~~~ ext
-    cmp ~~~ bdd
-
-    %% force vertical: prd above usm above dm
-    nfr ~~~ epic
-    acc ~~~ term
-
-    %% force vertical: system above containers above container
-    snfr ~~~ cont
-    cst_c ~~~ cmp
-
-    cap --> obj
-    cst_i --> obj
-    obj --> fr
-    obj --> nfr
-    obj --> kr
-    kr --> met
-
-    fr --> epic
-    fr --> flow
-    fr --> story
-    story --> acc
-    nfr --> acc
-    story --> ms
-    epic --> ms
-
-    cap --> term
-    fr --> bc
-    story --> bc
-    fr --> term
-    story --> term
-    story --> agg
-    bc --> agg
-    story --> ent
-    bc --> ent
-    acc --> vo
-    story --> vo
-    fr --> inv
-    acc --> inv
-    bc --> inv
-    agg --> rel
-    ent --> rel
-
-    fr --> ext
-    nfr --> ext
-    cap --> ext
-    nfr --> tb
-    nfr --> snfr
-    bc --> cont
-    nfr --> cont
-    snfr --> cont
-    cont --> edge_g
-    rel --> edge_g
-    nfr --> cst_c
-    snfr --> cst_c
-    inv --> cst_c
-
-    agg --> cmp
-    ent --> cmp
-    bc --> cmp
-    cont --> cmp
-
-    acc --> bdd
-    cmp --> bdd
-    story --> bdd
-    acc --> scn
-    inv --> scn
-    cmp --> scn
+    INTENT --> PRD
+    DM --> SYS
+    CONTR --> CTX
 
     style T1 fill:#e8f4fd,stroke:#1a73e8
     style T2 fill:#e8f4fd,stroke:#1a73e8
@@ -520,7 +421,7 @@ flowchart TD
     style T4 fill:#fff3e0,stroke:#e65100
 ```
 
-The diagram shows the primary backbone edges.
+The diagram shows the spec-level derivation flow.
 The prescriptive edge table above is the source of truth; the diagram is a visual aid.
 
 ### Core Graph Rules

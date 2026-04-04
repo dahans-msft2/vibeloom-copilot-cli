@@ -395,6 +395,7 @@ flowchart TD
     end
 
     subgraph T2["product-specs"]
+        direction TB
         subgraph PRD["prd"]
             obj["objective"]
             kr["key result"]
@@ -402,9 +403,6 @@ flowchart TD
             fr["functional req"]
             nfr["non-functional req"]
         end
-    end
-
-    subgraph T2b[" "]
         subgraph USM["usm"]
             epic["epic"]
             flow["flow"]
@@ -412,9 +410,6 @@ flowchart TD
             acc["acceptance criterion"]
             ms["milestone"]
         end
-    end
-
-    subgraph T2c[" "]
         subgraph DM["dm"]
             term["term"]
             bc["bounded context"]
@@ -427,22 +422,17 @@ flowchart TD
     end
 
     subgraph T3["system-specs"]
+        direction TB
         subgraph SYS["system"]
             ext["external actor/system"]
             tb["trust boundary"]
             snfr["system-wide NFR"]
         end
-    end
-
-    subgraph T3b[" "]
         subgraph CONTS["containers"]
             cont["container"]
             edge_g["comm path"]
             cst_c["constraint"]
         end
-    end
-
-    subgraph T3c[" "]
         subgraph CONTR["container"]
             cmp["component"]
         end
@@ -452,6 +442,14 @@ flowchart TD
         bdd["behavior file"]
         scn["scenario"]
     end
+
+    %% force vertical: prd above usm above dm
+    nfr ~~~ epic
+    acc ~~~ term
+
+    %% force vertical: system above containers above container
+    snfr ~~~ cont
+    cst_c ~~~ cmp
 
     cap --> obj
     cst_i --> obj
@@ -513,11 +511,7 @@ flowchart TD
 
     style T1 fill:#e8f4fd,stroke:#1a73e8
     style T2 fill:#e8f4fd,stroke:#1a73e8
-    style T2b fill:#e8f4fd,stroke:#1a73e8
-    style T2c fill:#e8f4fd,stroke:#1a73e8
     style T3 fill:#e8f4fd,stroke:#1a73e8
-    style T3b fill:#e8f4fd,stroke:#1a73e8
-    style T3c fill:#e8f4fd,stroke:#1a73e8
     style T4 fill:#fff3e0,stroke:#e65100
 ```
 

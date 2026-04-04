@@ -128,30 +128,108 @@ A governed application owns the following tiered contract specs:
 ### `intent-specs` tier
 Captures user intent and normalizes repo-wide defaults.
 
-| Spec | Purpose | Entities | Rules |
-| ---- | ------- | -------- | ----- |
-| `intent` | Mostly prose description of the system; may include both product and implementation constraints | capabilities, constraints | Prose-first description of the application to be generated; may include both product and implementation constraints. Preferences become `defaults` only when repo-wide and always-on. In `vibe`, also includes a product summary section that seeds future product-specs. |
-| `defaults` | Minimal repo-wide constitution: binding global rules, technology baseline, and quality guardrails | constraints | Minimal repo-wide constitution. Only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding. |
+| Spec | Purpose | Derives from | Rules |
+| ---- | ------- | ------------ | ----- |
+| `intent` | Mostly prose description of the system; may include both product and implementation constraints | — | Prose-first description of the application to be generated; may include both product and implementation constraints. Preferences become `defaults` only when repo-wide and always-on. In `vibe`, also includes a product summary section that seeds future product-specs. |
+| `defaults` | Minimal repo-wide constitution: binding global rules, technology baseline, and quality guardrails | — | Minimal repo-wide constitution. Only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding. |
 
+#### `intent` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| capability | Observable user-facing outcome |
+| constraint | Hard requirement or binding preference |
+
+#### `defaults` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| constraint | Always-on globally binding repo-wide rule |
 
 ### `product-specs` tier
 Turns approved intent into formally traceable product and domain contracts. This tier exists only in `pm`, `dev`, and `expert` modes. In `vibe`, product concerns are captured as narrative prose in the intent's product summary section.
 
-| Spec | Purpose | Entities | Derives from | Rules |
-| ---- | ------- | -------- | ------------ | ----- |
-| `prd` | Functional requirements and non-functional requirements | functional requirements, non-functional requirements | `intent` | Every functional requirement and NFR traces to at least one capability or constraint |
-| `usm` | Epic/story/workflow structure and acceptance framing | epics, flows, stories, acceptance criteria, milestones | `intent` + `prd` | Every story traces to at least one functional requirement. Every epic has at least one flow; every flow has at least one story. Acceptance framing stays behavior-focused. |
-| `dm` | Domain model: bounded contexts, aggregates, invariants, ubiquitous language | ubiquitous language terms, bounded contexts, aggregates, entities, value objects, invariants | `intent` + `prd` + `usm` | `dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape. |
+| Spec | Purpose | Derives from | Rules |
+| ---- | ------- | ------------ | ----- |
+| `prd` | Product requirements: objectives, functional and non-functional requirements, scope, risks | `intent` | Every functional requirement traces to at least one objective or capability. Every objective traces to at least one capability or constraint. |
+| `usm` | Epic/story/workflow structure and acceptance framing | `intent` + `prd` | Every story traces to at least one functional requirement. Every epic has at least one flow; every flow has at least one story. Acceptance framing stays behavior-focused. |
+| `dm` | Domain model: bounded contexts, aggregates, invariants, ubiquitous language | `intent` + `prd` + `usm` | `dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape. |
+
+#### `prd` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| objective | Business goal the system serves |
+| key result | Measurable outcome for an objective |
+| metric | Quantitative measure for a key result |
+| functional requirement | Testable behavior the system must exhibit |
+| non-functional requirement | Quality, performance, or security boundary |
+| in-scope item | Explicit scope boundary |
+| out-of-scope item | Explicit exclusion |
+| assumption | Accepted but unverified premise |
+| constraint | Product-level hard constraint |
+| open question | Unresolved product question |
+| risk | Identified risk |
+
+#### `usm` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| epic | Coarse delivery grouping |
+| flow | User journey or workflow |
+| story | Smallest deliverable behavior unit |
+| acceptance criterion | Observable pass/fail condition |
+| milestone | Delivery checkpoint grouping stories |
+
+#### `dm` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| ubiquitous language term | Shared vocabulary entry |
+| bounded context | Semantic boundary for domain logic |
+| aggregate | Invariant-owning state cluster |
+| entity | Identity-bearing domain object |
+| value object | Immutable attribute cluster |
+| invariant | Business rule that must always hold |
+| relationship | Cross-aggregate integration point |
 
 ### `system-specs` tier
 Translates approved product and domain semantics into technical contracts. In `vibe`, `system`
 
-| Spec | Purpose | Entities | Derives from | Rules |
-| ---- | ------- | -------- | ------------ | ----- |
-| `system` | System context, external actors/systems, high-level trust and NFR boundaries | external actors, trust boundaries, system-wide NFR boundaries | `product-specs` | Defines system purpose, external actors, trust boundaries, system-wide NFRs. Deployment topology does not live here. |
-| `containers` | Global runtime/deployment topology, container inventory, communication paths, hosting/runtime choices | containers, communication paths | `product-specs` + `system` | Global runtime topology. Every container appears in the topology. Communication paths reference valid container endpoints. |
-| `container` | per-container: local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | (references parent container, lists component inventory) | `product-specs` + `system` + `containers` | Authoritative component inventory for one runtime boundary. Components are discovered here, not inferred from folders. |
-| `component` | per-component: full contract for one owned technical boundary | components, interfaces, behaviors, dependencies | `product-specs` + `system` + `containers` + `container` | Smallest owned technical boundary. Each component belongs to exactly one bounded context and one container. |
+| Spec | Purpose | Derives from | Rules |
+| ---- | ------- | ------------ | ----- |
+| `system` | System context, external actors/systems, high-level trust and NFR boundaries | `product-specs` | Defines system purpose, external actors, trust boundaries, system-wide NFRs. Deployment topology does not live here. |
+| `containers` | Global runtime/deployment topology, container inventory, communication paths, hosting/runtime choices | `product-specs` + `system` | Global runtime topology. Every container appears in the topology. Communication paths reference valid container endpoints. |
+| `container` | Per-container: local runtime boundary, resident bounded contexts, authoritative component inventory, local constraints | `product-specs` + `system` + `containers` | Authoritative component inventory for one runtime boundary. Components are discovered here, not inferred from folders. |
+| `component` | Per-component: full contract for one owned technical boundary | `product-specs` + `system` + `containers` + `container` | Smallest owned technical boundary. Each component belongs to exactly one bounded context and one container. |
+
+#### `system` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| external actor/system | Outside entity the system interacts with |
+| trust boundary | Security or permission line |
+| system-wide NFR boundary | Global quality constraint |
+
+#### `containers` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| container | Runtime/deployment unit |
+| communication path | Inter-container data flow |
+| cross-container constraint | Multi-container rule |
+
+#### `container` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| component | Smallest owned technical boundary |
+
+Container specs also define local dependency edges and local constraints that describe intra-container structure but are not independent nodes in the derivation graph.
+
+#### `component`
+
+Component is the terminal node in the derivation graph. Component specs define interfaces, dependencies, behaviors, and notes as structured content, but these are not independent nodes in the derivation graph.
 
 ### Metadata
 Each artifact has at least the following metadata (the rest will be detailed in other documents):
@@ -180,12 +258,26 @@ Context artifacts are generated from contract specs and are the default executio
 ### `context` tier
 Agent-facing operational truth generated from approved contract. Context artifacts do not carry lifecycle metadata and are assumed correct by default.
 
-| Artifact | Purpose | Entities |
-| -------- | ------- | -------- |
-| `config` | Scoped configuration for repo, container, or component work | follows the format of CLAUDE.md/AGENTS.md and semantically similar agent configuration instructions |
-| `bdd` | Non-executable behavioral scenarios generated from `contract`. Could be used by users and agents to generate executable behavioral tests | behavior files, Gherkin scenarios |
-| `pdr` | Read-only product decision record that preserves product-level decision history without becoming contract truth | product decision records |
-| `adr` | Read-only architecture decision record that preserves technical decision history without becoming contract truth | architecture decision records |
+| Artifact | Purpose |
+| -------- | ------- |
+| `config` | Scoped configuration for repo, container, or component work. Follows the format of CLAUDE.md/AGENTS.md and semantically similar agent configuration instructions. Carries no addressable entities and does not participate in the derivation graph. |
+| `bdd` | Non-executable behavioral scenarios generated from contract. Could be used by users and agents to generate executable behavioral tests. |
+| `pdr` | Read-only product decision record that preserves product-level decision history without becoming contract truth. |
+| `adr` | Read-only architecture decision record that preserves technical decision history without becoming contract truth. |
+
+#### `bdd` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| behavior file | Scenario collection for one behavior |
+| scenario | Individual Gherkin scenario |
+
+#### `pdr` / `adr` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
+| product decision record | Product-level decision (append-only) |
+| architecture decision record | Technical decision (append-only) |
 
 ### rules
 - Context is generated from contract. If context conflicts with contract, contract wins.
@@ -222,102 +314,201 @@ Executable implementation and verification artifacts.
 
 ## Context Graph
 
-VibeLoom relies on an explicit context graph rather than on implicit chat memory.
-
-In v1, the graph connects addressable items defined inside contract and context artifacts. Code may still be analyzed heuristically by the skill, but it does not yet participate in the explicit graph because concrete code-item carriers are not specified. This lets humans and agents answer:
+VibeLoom relies on an explicit context graph rather than on implicit chat memory. The graph connects addressable entities defined inside contract and context artifacts. Code may still be analyzed heuristically by the skill, but it does not yet participate in the explicit graph because concrete code-level entity carriers are not specified. The graph lets humans and agents answer:
 
 - what is produced from what
 - what becomes stale if something changes
 - what must be loaded for a given task
 - how downstream work can be traced back to upstream truth
 
-The context graph combines item derivation with containment and derives traceability, staleness, loading, and artifact impact.
+The only entity-to-entity relationship in the graph is **derivation**. Each downstream entity records the set of upstream entities it is produced from. For root intent capture, the set may be empty. For downstream entities, it is one or more.
+
+### Derivation DAG
+
+The derivation DAG defines the **complete set of allowed derivation edges** between entity types. A derivation reference that does not follow one of these edges is a structural eval failure.
+
+Each row reads: "an instance of the entity may derive from instances of the listed upstream entity types."
+
+| Entity | Derives from |
+| ------ | ------------ |
+| capability | — |
+| constraint (intent) | — |
+| constraint (defaults) | — |
+| objective | capability, constraint |
+| key result | objective |
+| metric | key result |
+| functional requirement | objective, capability, constraint |
+| non-functional requirement | objective, capability, constraint |
+| in-scope item | capability |
+| out-of-scope item | capability |
+| assumption | capability, constraint |
+| open question | capability, functional requirement |
+| risk | functional requirement, non-functional requirement |
+| constraint (prd) | constraint (intent) |
+| epic | functional requirement |
+| flow | functional requirement |
+| story | functional requirement |
+| acceptance criterion | functional requirement, non-functional requirement, story |
+| milestone | story, epic |
+| ubiquitous language term | capability, functional requirement, story |
+| bounded context | functional requirement, story |
+| aggregate | story, bounded context |
+| entity | story, bounded context |
+| value object | acceptance criterion, story |
+| invariant | functional requirement, acceptance criterion, bounded context |
+| relationship | aggregate, entity |
+| external actor/system | functional requirement, non-functional requirement, capability |
+| trust boundary | non-functional requirement |
+| system-wide NFR boundary | non-functional requirement |
+| container | bounded context, non-functional requirement, system-wide NFR boundary |
+| communication path | container, relationship |
+| cross-container constraint | non-functional requirement, system-wide NFR boundary, invariant |
+| component | aggregate, entity, bounded context, container |
+| behavior file | acceptance criterion, component, story |
+| scenario | acceptance criterion, invariant, component |
+| product decision record | (any changed entity) |
+| architecture decision record | (any changed entity) |
+
+`defaults` constraints are universally binding — any downstream entity may reference them without an explicit edge in the table.
+
+Product decision records and architecture decision records are append-only ledgers. Their per-record derivation references whichever entity triggered the decision. They do not participate in the forward derivation chain.
 
 ```mermaid
 flowchart TD
-    U1["Upstream Item A"]
-    U2["Upstream Item B"]
-    D["Downstream Item"]
+    subgraph T1["intent-specs"]
+        cap["capability"]
+        cst_i["constraint"]
+    end
 
-    U1 -- "Derivation" --> D
-    U2 -- "Derivation" --> D
+    subgraph T2["product-specs"]
+        subgraph PRD["prd"]
+            obj["objective"]
+            kr["key result"]
+            met["metric"]
+            fr["functional req"]
+            nfr["non-functional req"]
+        end
+        subgraph USM["usm"]
+            epic["epic"]
+            flow["flow"]
+            story["story"]
+            acc["acceptance criterion"]
+            ms["milestone"]
+        end
+        subgraph DM["dm"]
+            term["term"]
+            bc["bounded context"]
+            agg["aggregate"]
+            ent["entity"]
+            vo["value object"]
+            inv["invariant"]
+            rel["relationship"]
+        end
+    end
 
-    D -- "Contained In" --> S["Section"]
-    S -- "Contained In" --> A["Artifact"]
-    A -- "Contained In" --> T["Tier"]
+    subgraph T3["system-specs"]
+        subgraph SYS["system"]
+            ext["external actor"]
+            tb["trust boundary"]
+            snfr["system-wide NFR"]
+        end
+        subgraph CONTS["containers"]
+            cont["container"]
+            edge_g["comm path"]
+            cst_c["constraint"]
+        end
+        subgraph CONTR["container"]
+            cmp["component"]
+        end
+    end
 
-    D -.-> TV["Traceability"]
-    D -.-> SV["Staleness"]
-    D -.-> LV["Loading"]
-    D -.-> IV["Artifact Impact"]
+    subgraph T4["context"]
+        bdd["behavior file"]
+        scn["scenario"]
+    end
+
+    cap --> obj
+    cst_i --> obj
+    obj --> fr
+    obj --> nfr
+    obj --> kr
+    kr --> met
+
+    fr --> epic
+    fr --> flow
+    fr --> story
+    story --> acc
+    nfr --> acc
+    story --> ms
+    epic --> ms
+
+    fr --> bc
+    story --> bc
+    fr --> term
+    story --> agg
+    story --> ent
+    acc --> vo
+    fr --> inv
+    acc --> inv
+    agg --> rel
+    ent --> rel
+
+    fr --> ext
+    nfr --> tb
+    nfr --> snfr
+    bc --> cont
+    nfr --> cont
+    cont --> edge_g
+    inv --> cst_c
+
+    agg --> cmp
+    ent --> cmp
+    bc --> cmp
+
+    acc --> bdd
+    cmp --> bdd
+    acc --> scn
+    inv --> scn
+    cmp --> scn
+
+    style T1 fill:#e8f4fd,stroke:#1a73e8
+    style T2 fill:#e8f4fd,stroke:#1a73e8
+    style T3 fill:#e8f4fd,stroke:#1a73e8
+    style T4 fill:#fff3e0,stroke:#e65100
 ```
 
-The only item-to-item relationship in the graph is the primary relation `derivation`.
+The diagram shows the primary backbone edges. The prescriptive edge table above is the source of truth; the diagram is a visual aid.
 
-### Derivation
+### Boundary Principle
 
-Each downstream item records the set of upstream inputs it is produced from:
+The derivation graph stops at **component** — the methodology's stated "smallest owned technical boundary." Entities defined within component and container specs (interfaces, behaviors, dependencies, local edges, local constraints) are part of the spec's structured content but are not independent nodes in the derivation graph. This prevents false-positive staleness churn from implementation-level changes within a boundary.
 
-```text
-downstream_item <- [input1, input2, ... inputn]
-```
+### Code-Level Tracing
 
-This allows one downstream section or entity to depend on multiple semantic inputs without forcing the methodology into artificial `1:n` or `n:n` terminology.
+- In v1, component specs define owned paths — the bridge from the derivation graph to the filesystem. Code is analyzed heuristically but does not carry graph-addressable entities.
+- In v2, code-level entity carriers discovered by static analysis and linked to their owning component may participate in staleness detection and impact analysis. This requires AST parsing and language-specific tooling — tooling work, not methodology work.
 
-For root intent capture, `n` may be `0`. For downstream items, `n` is usually one or more.
+### Vibe Mode
 
-### Containment And Ownership
-
-Items are owned by the artifact in which they are defined.
-
-Conceptually:
-
-```text
-item -> section -> artifact -> tier
-```
-
-Ownership therefore comes from containment, not from a separate item-to-item graph relation.
-
-### Derived Views
-
-Several useful views are inferred from derivation plus containment:
-
-- **traceability:** walk derivation upward or downward to explain where an item came from and what it influences
-- **staleness:** if an upstream item changes, flag all reachable downstream items and their containing artifacts as stale in the graph (not in artifact frontmatter)
-- **loading:** load the smallest artifact or scope that contains the required downstream item and its upstream inputs
-- **artifact impact:** summarize item-level derivations upward into affected sections, artifacts, and tiers
+In vibe mode, product-specs entities don't exist. Intent entities (capability, constraint) derive directly into system-level entities. The product summary section of intent serves as the semantic bridge that full modes formalize through prd/usm/dm. The vibe-mode DAG is a subset of the full DAG with direct intent → system-specs edges replacing the product-specs chain.
 
 ### Affected Set
 
-The **affected set** for a change is computed by walking derivation edges downward from every changed item in the context graph and collecting all reachable items plus their containing sections, artifacts, and tiers. An artifact is "affected" if it contains at least one reachable item. A tier is "affected" if it contains at least one affected artifact. A scope is "affected" if it contains at least one affected artifact.
+The **affected set** for a change is computed by walking derivation edges downward from every changed entity in the context graph and collecting all reachable entities plus their containing sections, artifacts, and tiers. An artifact is "affected" if it contains at least one reachable entity. A tier is "affected" if it contains at least one affected artifact. A scope is "affected" if it contains at least one affected artifact.
 
 This graph walk is the sole definition of "affected contract stack," "affected tiers," and "affected scopes" used throughout the methodology.
 
-### Context Loading
+### Eval Anchor
 
-Context loading is graph traversal, not guesswork.
+The prescriptive edge table and entity definitions together form the formal eval anchor:
 
-The conceptual rules are:
+1. **Structural completeness**: every non-root entity instance must have non-empty derivation references
+2. **Edge validity**: every derivation reference must follow an edge in the prescriptive table
+3. **Coverage**: every upstream entity instance should appear in at least one downstream entity's derivation references
+4. **Staleness**: walk the DAG forward from changed entities to compute the affected set
+5. **Contradiction**: no downstream entity may assert something that conflicts with its upstream basis
 
-- always start from the smallest scope that still preserves the required truth
-- load governing contract before relying on context artifacts
-- use context artifacts to accelerate execution, never to override contract
-- escalate upward when it is unclear whether a change stays within one component, bounded context, or container
-- keep generation and review aware of persistent intent when that intent still constrains the change
-
-### Agent Load Sets
-
-The context graph determines what each worker agent loads. The orchestrator (skill) computes the load set per scope and passes it to the worker. Workers receive both execution guidance (navigation and operational briefing) and the governing contract slice (authoritative reference).
-
-| Worker scope | Execution guidance | Contract slice | Always included |
-| --- | --- | --- | --- |
-| component | component guidance + container guidance | component spec, container spec | `defaults` |
-| container | container guidance + root guidance | container spec, system + containers spec | `defaults` |
-| root | root guidance | system, containers | `defaults` |
-
-In `vibe` mode, all workers load root guidance + flat `system.md` + `defaults`.
-
-The orchestrator loads the skill, status, and context graph. Workers never load the skill or methodology — they work from the artifacts the orchestrator provides. The overhead per worker is approximately 6,000–12,000 tokens of generated guidance and contract, which is 2–5% of a 256K context window.
+Completeness and edge validity are fully deterministic — graph validation, not semantic judgment. Coverage and contradiction involve agent judgment but are anchored to specific graph walks rather than open-ended semantic analysis.
 
 ### Why The Graph Matters
 

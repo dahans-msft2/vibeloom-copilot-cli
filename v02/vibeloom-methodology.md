@@ -443,6 +443,11 @@ flowchart TD
         scn["scenario"]
     end
 
+    %% force vertical: tier boxes stacked
+    cst_i ~~~ obj
+    rel ~~~ ext
+    cmp ~~~ bdd
+
     %% force vertical: prd above usm above dm
     nfr ~~~ epic
     acc ~~~ term

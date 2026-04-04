@@ -194,7 +194,6 @@ Turns approved intent into formally traceable product and domain contracts. This
 | relationship | Cross-aggregate integration point |
 
 ### `system-specs` tier
-Translates approved product and domain semantics into technical contracts. In `vibe`, `system`
 
 | Spec | Purpose | Derives from | Rules |
 | ---- | ------- | ------------ | ----- |
@@ -272,11 +271,16 @@ Agent-facing operational truth generated from approved contract. Context artifac
 | behavior file | Scenario collection for one behavior |
 | scenario | Individual Gherkin scenario |
 
-#### `pdr` / `adr` entities
+#### `pdr` entities
 
 | Entity | Semantic Role |
 | ------ | ------------- |
 | product decision record | Product-level decision (append-only) |
+
+#### `adr` entities
+
+| Entity | Semantic Role |
+| ------ | ------------- |
 | architecture decision record | Technical decision (append-only) |
 
 ### rules
@@ -314,20 +318,28 @@ Executable implementation and verification artifacts.
 
 ## Context Graph
 
-VibeLoom relies on an explicit context graph rather than on implicit chat memory. The graph connects addressable entities defined inside contract and context artifacts. Code may still be analyzed heuristically by the skill, but it does not yet participate in the explicit graph because concrete code-level entity carriers are not specified. The graph lets humans and agents answer:
+VibeLoom relies on an explicit context graph rather than on implicit chat memory. The graph connects addressable entities defined inside contract and context artifacts. Code may still be analyzed heuristically by the skill, but it does not yet participate in the explicit graph because concrete code-level entity carriers are not specified.
+
+The graph exists to answer:
 
 - what is produced from what
 - what becomes stale if something changes
-- what must be loaded for a given task
 - how downstream work can be traced back to upstream truth
 
-The only entity-to-entity relationship in the graph is **derivation**. Each downstream entity records the set of upstream entities it is produced from. For root intent capture, the set may be empty. For downstream entities, it is one or more.
+The only entity-to-entity relationship in the graph is **derivation**.
+
+Each downstream entity records the set of upstream entities it is derived from.
+For root intent capture, that set may be empty.
+For downstream entities, it is one or more.
 
 ### Derivation DAG
 
-The derivation DAG defines the **complete set of allowed derivation edges** between entity types. A derivation reference that does not follow one of these edges is a structural eval failure.
+The derivation DAG defines the complete set of allowed derivation edges between entity types.
 
-Each row reads: "an instance of the entity may derive from instances of the listed upstream entity types."
+A derivation reference that does not follow one of these edges is a structural eval failure.
+
+Each row reads:
+"an instance of the entity may derive from instances of the listed upstream entity types."
 
 | Entity | Derives from |
 | ------ | ------------ |
@@ -366,10 +378,10 @@ Each row reads: "an instance of the entity may derive from instances of the list
 | component | aggregate, entity, bounded context, container |
 | behavior file | acceptance criterion, component, story |
 | scenario | acceptance criterion, invariant, component |
-| product decision record | (any changed entity) |
-| architecture decision record | (any changed entity) |
+| product decision record | any changed product-side entity |
+| architecture decision record | any changed technical-side entity |
 
-`defaults` constraints are universally binding — any downstream entity may reference them without an explicit edge in the table.
+`defaults` constraints are universally binding. Any downstream entity may reference them without requiring an additional edge in the table.
 
 Product decision records and architecture decision records are append-only ledgers. Their per-record derivation references whichever entity triggered the decision. They do not participate in the forward derivation chain.
 
@@ -408,7 +420,7 @@ flowchart TD
 
     subgraph T3["system-specs"]
         subgraph SYS["system"]
-            ext["external actor"]
+            ext["external actor/system"]
             tb["trust boundary"]
             snfr["system-wide NFR"]
         end
@@ -425,6 +437,8 @@ flowchart TD
     subgraph T4["context"]
         bdd["behavior file"]
         scn["scenario"]
+        pdr["product decision record"]
+        adr["architecture decision record"]
     end
 
     cap --> obj
@@ -442,31 +456,45 @@ flowchart TD
     story --> ms
     epic --> ms
 
+    cap --> term
     fr --> bc
     story --> bc
     fr --> term
+    story --> term
     story --> agg
+    bc --> agg
     story --> ent
+    bc --> ent
     acc --> vo
+    story --> vo
     fr --> inv
     acc --> inv
+    bc --> inv
     agg --> rel
     ent --> rel
 
     fr --> ext
+    nfr --> ext
+    cap --> ext
     nfr --> tb
     nfr --> snfr
     bc --> cont
     nfr --> cont
+    snfr --> cont
     cont --> edge_g
+    rel --> edge_g
+    nfr --> cst_c
+    snfr --> cst_c
     inv --> cst_c
 
     agg --> cmp
     ent --> cmp
     bc --> cmp
+    cont --> cmp
 
     acc --> bdd
     cmp --> bdd
+    story --> bdd
     acc --> scn
     inv --> scn
     cmp --> scn
@@ -477,38 +505,76 @@ flowchart TD
     style T4 fill:#fff3e0,stroke:#e65100
 ```
 
-The diagram shows the primary backbone edges. The prescriptive edge table above is the source of truth; the diagram is a visual aid.
+The diagram shows the primary backbone edges.
+The prescriptive edge table above is the source of truth; the diagram is a visual aid.
+
+### Core Graph Rules
+
+- The derivation graph is a DAG.
+- `capability` and root `constraint` are the only root entity types.
+- Every non-root entity instance must derive from one or more upstream entities allowed by the derivation table.
+- Formal semantic traceability stops at `component`.
+- `interface`, `behavior`, `dependency`, and other component-internal structure are not independent derivation-graph nodes.
+- Every `component` belongs to exactly one `container`.
+- Every `component` belongs to exactly one `bounded context`.
+- Every `component` must derive from at least one upstream semantic entity that explains why it exists.
+- `context` is derived from approved contract and never outranks it semantically.
+- `code` is validated against approved contract and derived context, but is not part of the explicit derivation graph.
+
+### Ownership Mapping
+
+Each entity is defined in exactly one artifact.
+Each artifact belongs to exactly one tier and one scope.
+
+Affected artifacts, tiers, and scopes are computed from the affected entity set by ownership lookup.
 
 ### Boundary Principle
 
-The derivation graph stops at **component** — the methodology's stated "smallest owned technical boundary." Entities defined within component and container specs (interfaces, behaviors, dependencies, local edges, local constraints) are part of the spec's structured content but are not independent nodes in the derivation graph. This prevents false-positive staleness churn from implementation-level changes within a boundary.
+The derivation graph stops at `component`, the methodology's smallest owned technical boundary.
+
+Entities defined within component and container specs, such as interfaces, behaviors, dependencies, local edges, and local constraints, are part of structured spec content but are not independent nodes in the derivation graph.
+
+This prevents false-positive staleness churn from implementation-level changes within a boundary.
 
 ### Code-Level Tracing
 
-- In v1, component specs define owned paths — the bridge from the derivation graph to the filesystem. Code is analyzed heuristically but does not carry graph-addressable entities.
-- In v2, code-level entity carriers discovered by static analysis and linked to their owning component may participate in staleness detection and impact analysis. This requires AST parsing and language-specific tooling — tooling work, not methodology work.
+- Component specs define owned paths, which form the bridge from the derivation graph to the filesystem. Code is analyzed heuristically but does not carry graph-addressable entities.
+- In a future version, code-level carriers linked to their owning component may participate in staleness detection and impact analysis. That is tooling work, not methodology work.
 
 ### Vibe Mode
 
-In vibe mode, product-specs entities don't exist. Intent entities (capability, constraint) derive directly into system-level entities. The product summary section of intent serves as the semantic bridge that full modes formalize through prd/usm/dm. The vibe-mode DAG is a subset of the full DAG with direct intent → system-specs edges replacing the product-specs chain.
+In `vibe` mode, product-specs entities do not exist as separate graph nodes.
+
+Intent entities, capability and constraint, derive more directly into system-level entities.
+The product summary section of `intent` serves as the semantic bridge that full modes formalize through `prd`, `usm`, and `dm`.
+
+The `vibe`-mode DAG is therefore a collapsed subset of the full DAG, with direct `intent` -> `system-specs` derivation replacing the product-specs chain.
 
 ### Affected Set
 
-The **affected set** for a change is computed by walking derivation edges downward from every changed entity in the context graph and collecting all reachable entities plus their containing sections, artifacts, and tiers. An artifact is "affected" if it contains at least one reachable entity. A tier is "affected" if it contains at least one affected artifact. A scope is "affected" if it contains at least one affected artifact.
+The affected set for a change is computed by walking derivation edges downward from every changed entity in the graph and collecting all reachable entities.
 
-This graph walk is the sole definition of "affected contract stack," "affected tiers," and "affected scopes" used throughout the methodology.
+Affected artifacts, tiers, and scopes are then computed from that entity set by ownership lookup.
+
+This is the sole definition of:
+- affected entities
+- affected artifacts
+- affected tiers
+- affected scopes
+- affected contract stack
 
 ### Eval Anchor
 
-The prescriptive edge table and entity definitions together form the formal eval anchor:
+The entity definitions and the derivation table together form the formal eval anchor:
 
-1. **Structural completeness**: every non-root entity instance must have non-empty derivation references
-2. **Edge validity**: every derivation reference must follow an edge in the prescriptive table
-3. **Coverage**: every upstream entity instance should appear in at least one downstream entity's derivation references
-4. **Staleness**: walk the DAG forward from changed entities to compute the affected set
-5. **Contradiction**: no downstream entity may assert something that conflicts with its upstream basis
+1. **Structural completeness** — every non-root entity instance must have non-empty derivation references.
+2. **Edge validity** — every derivation reference must follow an allowed edge in the derivation table.
+3. **Coverage** — every upstream entity instance should appear in at least one downstream entity's derivation references unless it is intentionally terminal.
+4. **Staleness** — the graph is walked forward from changed entities to compute the affected set.
+5. **Contradiction** — no downstream entity may assert something that conflicts with its upstream basis.
 
-Completeness and edge validity are fully deterministic — graph validation, not semantic judgment. Coverage and contradiction involve agent judgment but are anchored to specific graph walks rather than open-ended semantic analysis.
+Completeness and edge validity are fully deterministic.
+Coverage and contradiction still require agent judgment, but that judgment is anchored to explicit graph structure rather than open-ended prompting.
 
 ### Why The Graph Matters
 
@@ -521,7 +587,7 @@ It supports:
 - impact analysis
 - stale detection
 - eval grounding
-- ownership clarity through containment
+- ownership clarity
 - parallel work allocation
 
 ---

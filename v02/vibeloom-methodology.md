@@ -55,7 +55,7 @@ VibeLoom has a three-layer architecture: **contract → context → code**
 
 - **`context`** — definitive execution configuration for agents as well as read-only change records. These artifacts do not require user approval, although users may review or edit them in certain cases. From the approved contract, the agent generates operational configuration - for orchestrating the team of worker agents to generate code within their own scopes. Context is derived, not hand-written. If it's wrong, the fix is upstream in the contract.
 
-- **`code`** — the executable result. Users are not expected to edit the `code` directly. The orchestrator agent reads the contract and the context, identifies affected scopes, and dispatches the team/swarm of scoped worker agents. Each worker agent receives only the slice of context (execution guidance) and the slice of the contract pertinent to its scope. Worker agents generate code independently. The orchestrator agent validates cross-scope consistency and coherence.
+- **`code`** — the executable result. Users are not expected to edit the `code` directly. The orchestrator agent reads the contract and the context, identifies affected scopes, and dispatches the team/swarm of scoped worker agents. Each worker agent receives only the slice of context (operational config) and the slice of the contract pertinent to its scope. Worker agents generate code independently. The orchestrator agent validates cross-scope consistency and coherence.
 
 - `contract` is co-authored and approved by a user
 - `context` is generated as an operational config for code generating team/swarm of agents plus a change record
@@ -385,42 +385,6 @@ Each row reads:
 
 Product decision records and architecture decision records are append-only ledgers. Their per-record derivation references whichever entity triggered the decision. They do not participate in the forward derivation chain.
 
-```mermaid
-flowchart TD
-    subgraph T1["intent-specs"]
-        INTENT["<b>intent</b><br/>capability, constraint"]
-    end
-
-    subgraph T2["product-specs"]
-        direction TB
-        PRD["<b>prd</b><br/>objective, key result, metric,<br/>functional req, non-functional req,<br/>in-scope, out-of-scope, assumption,<br/>constraint, open question, risk"]
-        USM["<b>usm</b><br/>epic, flow, story,<br/>acceptance criterion, milestone"]
-        DM["<b>dm</b><br/>term, bounded context,<br/>aggregate, entity, value object,<br/>invariant, relationship"]
-        PRD --> USM --> DM
-    end
-
-    subgraph T3["system-specs"]
-        direction TB
-        SYS["<b>system</b><br/>external actor/system,<br/>trust boundary, system-wide NFR"]
-        CONTS["<b>containers</b><br/>container, comm path,<br/>cross-container constraint"]
-        CONTR["<b>container</b><br/>component"]
-        SYS --> CONTS --> CONTR
-    end
-
-    subgraph T4["context"]
-        CTX["<b>bdd</b><br/>behavior file, scenario"]
-    end
-
-    INTENT --> PRD
-    DM --> SYS
-    CONTR --> CTX
-
-    style T1 fill:#e8f4fd,stroke:#1a73e8
-    style T2 fill:#e8f4fd,stroke:#1a73e8
-    style T3 fill:#e8f4fd,stroke:#1a73e8
-    style T4 fill:#fff3e0,stroke:#e65100
-```
-
 The diagram shows the spec-level derivation flow.
 The prescriptive edge table above is the source of truth; the diagram is a visual aid.
 
@@ -508,7 +472,262 @@ It supports:
 
 ---
 
+## Generation
 
+Generation is the contract-driven engine of the methodology. It works in two dimensions:
+
+- **down** through the tiers
+- **across** the artifacts inside one affected tier
+
+### Tier Order
+
+Every run starts from `intent-specs` and proceeds downward. Each tier is produced from approved upstream truth:
+
+#### Full Tier Order (`pm`, `dev`, `expert`)
+
+| Tier | Primary upstream basis | Output |
+| --- | --- | --- |
+| `intent-specs` | user request, edits, and prior repo intent | `intent`, `defaults` |
+| `product-specs` | approved `intent-specs` | `prd`, `usm`, `dm` |
+| `system-specs` | approved `product-specs` | `system`, `containers`, `container`, `component` |
+| `context` | approved contract stack | operational config artifacts, decision records, BDD scenarios, and other execution artifacts |
+| `code` | approved contract plus relevant context | executable implementation and tests |
+
+#### Compact Tier Order (`vibe`)
+
+| Tier | Primary upstream basis | Output |
+| --- | --- | --- |
+| `intent-specs` | user request, edits, and prior repo intent | `intent` (with product summary), `defaults` |
+| `system-specs` | approved `intent-specs` (including product summary) | `system` (flat) |
+| `context` | approved contract | root-level operational config |
+| `code` | approved contract plus operational config | executable implementation and tests |
+
+### Within-Tier Generation
+
+Each affected tier is generated as a batch using a single forward-back pass. `expert` pauses after every affected contract tier. `pm` and `dev` pause at the user-owned approval unit and auto-advance delegated approval units when safe. `vibe` auto-advances system-specs by default after intent-specs are approved.
+
+### Intent As Persistent Context
+
+`intent` persists as generation context across every lower tier, not only when producing `product-specs`.
+
+This is deliberate: user requirements and constraints may survive all the way into system design and code, even when they were not fully normalized into later specs. In `vibe`, the product summary section of intent is especially important as the primary product-level input for system-specs generation.
+
+### Scope Of Regeneration
+
+Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set. Artifacts with unchanged upstream bases are not regenerated.
+
+### Generation And Staleness
+
+When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced through staleness detection.
+
+---
+
+## Review, Eval, And Reconciliation
+
+These are four distinct conceptual activities that pair symmetrically:
+
+| Interactive (user-guided, iterative) | Formal (automated, deterministic) | Scope |
+| --- | --- | --- |
+| `review` — critique current approval unit, surface issues, propose fixes | `eval` — structural and semantic validation | current approval unit |
+| `reconcile` — detect downstream drift, surface conflicts, propose fix directions | `generate` — produce artifacts via forward-back pass model | downstream artifacts |
+
+- `review` critiques and frames the current candidate approval unit against approved upstream truth
+- `eval` checks structure and semantics
+- `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the user before invoking generation
+- `generate` produces artifacts from approved upstream truth
+
+Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in every mode. In `vibe`, the public skill surface narrows this to `review intent-specs` and `eval intent-specs`, both using downstream compact system and current code as heuristic evidence. `review intent-specs` keeps the normal interactive review loop and may propose or apply bounded fixes within the current draft `intent-specs` approval unit only. `eval intent-specs` is the read-only counterpart. These checks rely on agent reasoning over repo files under a small-codebase assumption, using signals such as filesystem layout, exported interfaces, route or command names, tests, key strings, and owned-path comparisons. They are not graph-backed code-item validation, they never directly edit compact `system-specs` or code, and unresolved findings may lead to further intent revision, reconciliation, or upgrade. Reconciliation uses the same tier model to detect and resolve drift, then invokes generation to produce refreshed artifacts.
+
+Review, eval, reconciliation, and generation are shown together in the Workflow diagram above.
+
+### Review
+
+Review is an interactive loop for the current candidate approval unit, checking upward against approved upstream truth. It works like planning mode in familiar coding agents — iterative, user-guided, with explicit exit points.
+
+Each review cycle:
+
+1. Run eval (forward + back pass) on the current approval unit against approved upstream truth.
+2. Surface findings — structural (blocking) and semantic (non-blocking) — with specific item references.
+3. Propose fixes for each finding.
+4. Apply fixes within the approval unit (bounded style) or surface findings only (advisory style).
+
+At the end of each cycle, the user chooses one of three options:
+
+- **Loop** — run another detect → propose → fix → eval cycle.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution without proposing new fixes.
+- **Approve** — user judges remaining findings acceptable, approve and proceed.
+
+Review does not propagate changes downward; that belongs to reconciliation. Review may not silently change semantically meaningful upstream truth. When meaning changes, the user chooses the direction and later approves the updated tier.
+
+In `vibe`, bounded review fixes are limited to `intent` and `defaults`; downstream compact `system-specs` and code are never edited directly by review.
+
+### Eval
+
+Eval always runs a forward pass then a back pass across the current approval unit. The back pass checks whether later artifacts in the tier constrain earlier ones — for example, when `dm` produces a bounded context that should constrain how `usm` stories are grouped, or when a `component` produces a behavior that refines the container's component inventory. If the back pass surfaces findings, they are reported alongside the forward-pass findings.
+
+**Structural checks** (blocking) — the approval unit cannot advance until all pass:
+
+| Check | Pass criterion | Fail criterion |
+| --- | --- | --- |
+| Lifecycle consistency | Draft/approved states consistent across the approval unit | Mismatched states |
+| Reference integrity | All `derives_from` point to existing items | Dangling references |
+| Required fields | Every artifact has all required frontmatter fields per template | Missing fields |
+| Declared relationships | Items owned by correct artifacts, scopes, tiers | Misplaced items |
+| Stack integrity | Tiers in correct dependency order | Out-of-order dependencies |
+| Coverage | Every upstream item in the derivation basis has at least one downstream item whose `derives_from` includes it | Orphaned upstream IDs — report them |
+| Contradiction | No downstream item asserts a constraint, behavior, or boundary that conflicts with any item in its `derives_from` set | Downstream narrows, widens, or reverses upstream meaning — report both IDs and conflicting statements |
+| Componentization fit *(full modes only)* | Every component maps to exactly one bounded context; every bounded context is fully contained in exactly one container | Component references multiple BCs, or BC's items appear in components belonging to different containers — report misplaced items |
+| Context sufficiency *(full modes only)* | Every component with non-empty `owned_paths` has operational config; every container with at least one component has container-level config | Code-owning component or populated container lacks operational config — report the scope |
+
+**Semantic checks** (non-blocking) — require agent judgment, inform review decisions:
+
+- Does the downstream artifact faithfully represent the *intent* of its upstream basis, not just reference it?
+- Are naming conventions consistent with the ubiquitous language in the domain model?
+- Are there implicit dependencies not captured in `derives_from`?
+- Are there capability gaps — things the intent describes that no downstream artifact addresses, even though no formal derivation edge is missing?
+
+Eval runs automatically as part of `generate` and `approve`. Explicit invocation (`eval`) is for targeted checks outside the normal flow.
+
+### Reconciliation
+
+Reconciliation is the interactive counterpart to generation, just as review is the interactive counterpart to eval. It follows the same interactive loop pattern as review but in the opposite direction — checking downward from approved upstream changes.
+
+`generate code` is the normal forward command — it handles all upstream generation and delegation needed to produce code. `reconcile` is the interactive path when you want to detect, review, and resolve drift before regenerating. In practice, `generate code` is the 90% path; `reconcile` is the surgical review path.
+
+Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth.
+
+In `vibe`, `reconcile code` remains the standard downstream repair path. If `intent-specs` is draft when reconciliation begins, the skill may normalize the draft intent for structural consistency but must stop for `approve intent-specs` before propagating changes into compact system-specs or code. When reconciling in vibe, the skill auto-regenerates compact system-specs from approved intent as the first step, then reconciles code against the refreshed system. If auto-regen produces breaking changes in system-specs, surface them prominently and recommend `review intent-specs`.
+
+Each reconciliation cycle:
+
+1. Detect downstream drift from approved upstream changes. Surface conflicts with specific item references.
+2. Propose fix directions for each conflict:
+   - Amend upstream truth, then regenerate and reconcile downstream.
+   - Preserve upstream truth, then correct downstream context or code.
+   - A user-specified alternative direction.
+3. User selects direction for each conflict.
+4. Apply fixes and run eval to validate.
+
+At the end of each cycle, the user chooses one of three options:
+
+- **Loop** — run another detect → propose → fix → eval cycle on remaining drift.
+- **Eval only** — user made an out-of-band edit, re-run eval to check resolution.
+- **Approve** — user judges remaining drift acceptable, approve and proceed.
+
+---
+
+## Operations
+
+VibeLoom defines eight methodology-level operations. Implementations may expose them through different commands or interfaces, but the logical operations stay the same.
+
+| Operation | Direction | Meaning |
+| --- | --- | --- |
+| `init` | top-down | Bootstrap an ungoverned repo, set the initial mode, and produce the first draft `intent-specs` |
+| `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
+| `review` | current + up | Critique the current candidate approval unit against approved upstream truth and optionally apply bounded fixes within that approval unit |
+| `eval` | up | Run structural and semantic evaluation for the current approval unit |
+| `reconcile` | down | Detect downstream drift, surface conflicts, propose fix directions, iterate with user, then invoke generation on affected artifacts |
+| `approve` | gate | Move a reviewed contract approval unit from `draft` to `approved` and record approval provenance |
+| `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
+| `import` | bottom-up | Bootstrap an ungoverned repo from existing code, set the initial mode, and reconstruct candidate contract from an unmanaged or heavily drifted codebase |
+
+Exact parameters, flags, file formats, and CLI surfaces belong to implementation, not to methodology.
+
+`init` and `import` are bootstrap-only operations. They are valid only as the first successful command in an ungoverned repo. Both require an explicit initial mode parameter.
+
+---
+
+
+## Defaults vs Operational Config
+
+- `defaults` is **contract** — always-on, globally binding repo-wide constraints
+- `config` is **context** — scope-specific operational config generated from approved truth
+
+If they conflict, contract wins.
+
+---
+
+## Brownfield Import vs. Steady-State Bugfix
+
+VibeLoom treats these as different conceptual paths.
+
+- **Brownfield import** is the bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contract from existing code and marks uncertainty explicitly for user review.
+- **Steady-state bugfix** is the governed path for repos already under VibeLoom. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
+
+Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix. `init` and `import` are not valid again once bootstrap has succeeded.
+
+Brownfield import reconstructs contract bottom-up; steady-state bugfix updates approved truth top-down.
+
+### Import Reconstruction Heuristics
+
+Import infers contract artifacts bottom-up from code using mode-specific heuristics:
+
+- `import --mode vibe`
+  1. **Directory structure + config** → candidate compact system, component inventory, and defaults seeds.
+  2. **Package boundaries** → compact semantic groupings inside the flat system doc.
+  3. **Public APIs + tests** → interfaces and behaviors for the flat compact system.
+  4. **Infer compact intent-specs from the reconstructed flat system** — capabilities, requirements, constraints, and product-summary prose.
+  5. **Emit compact artifacts as draft**.
+- `import --mode pm|dev|expert`
+  1. **Directory structure + config** → candidate containers, components, defaults seeds.
+  2. **Package boundaries** → bounded contexts.
+  3. **Public APIs** → interfaces.
+  4. **Test files** → behaviors.
+  5. **Infer product-specs from system-specs** — requirements, stories, domain model derived from the reconstructed system layer.
+  6. **Infer intent-specs from product-specs** — capabilities, requirements, constraints derived from the reconstructed product layer.
+  7. **Emit all artifacts as draft**.
+
+### Import Review Flow (Bottom-Up)
+
+Import is the only workflow where reconstruction proceeds bottom-up. In full modes, user review also proceeds bottom-up because code is the source of truth. In `vibe`, reconstruction is still bottom-up, but the explicit user review surface remains `intent-specs`.
+
+- `import --mode vibe`
+  1. Reconstruct compact `system-specs` from code and infer compact `intent-specs` from that reconstruction.
+  2. Review `intent-specs` against the inferred compact system-specs and actual code. Approve.
+  3. Auto-advance compact `system-specs` if safe; if compact system findings remain unresolved, surface them through `review intent-specs` / `eval intent-specs` and suggest upgrade when appropriate.
+  4. Generate root operational config from the fully approved compact contract.
+  5. Reconcile downward against code for remaining drift.
+- `import --mode pm|dev|expert`
+  1. Review system-specs against actual code (closest to source of truth). Approve.
+  2. Review product-specs against approved system-specs. Approve.
+  3. Review intent-specs against approved product-specs. Approve.
+  4. Generate context from the fully approved contract stack.
+  5. Reconcile downward — check contract against code for remaining drift.
+
+Once all tiers are approved and reconciliation is resolved, normal top-down governance takes over for all future changes.
+
+```mermaid
+flowchart TD
+    S["Change Starting Point"]
+
+    S --> BROWN
+    S --> STEADY
+
+    subgraph BROWNFIELD["Brownfield Import"]
+        direction TB
+        B1["Start From Unmanaged<br/>Or Heavily Drifted Codebase"]
+        B2["Reconstruct Candidate Contract Bottom-Up<br/>(mode-specific heuristics)"]
+        B3["Review Bottom-Up<br/>(compact or full stack by mode)"]
+        B4["Generate Mode-Appropriate Context<br/>From Approved Contract"]
+        B5["Reconcile Downward Against Code"]
+        B6["Normal Top-Down Governance<br/>Takes Over"]
+
+        B1 --> B2 --> B3 --> B4 --> B5 --> B6
+    end
+
+    subgraph BUGFIX["Steady-State Bugfix"]
+        direction TB
+        S1["Start From Existing Approved Contract"]
+        S2["Identify Highest Affected Tier"]
+        S3["Update Affected Contract Truth Top-Down"]
+        S4["Generate Context From Approved Contract"]
+        S5["Reconcile Or Regenerate Code"]
+
+        S1 --> S2 --> S3 --> S4 --> S5
+    end
+```
+
+---
 
 ## Workflow
 
@@ -520,7 +739,7 @@ This is how the VibeLoom-guided agent operates at the conceptual level.
 The "top-down" workflow for a new project is:
 1. The user and the agent **collaborate** on generating the `contract` specs, using `generate`/`reconcile` and `eval`/`review` flows to iteratively bring the `contract` to the consistent and coherent state.
 2. Based on the `contract`, the agent generates `context`. Strictly speaking, parts of `context` may be generated while generating `contract` but ultimately the `context` is generated after the `contract` is complete.
-3. Using `context` as a detailed execution orchestration/guidance, the agent spawns a team/swarm of agents to generate the code. Because of the hierarchical system/container/component structure, each component can be generated/reconciled by its ow agent, thus allowing to run a team/swarm of agents working on an application
+3. Using `context` as a detailed execution orchestration/config, the agent spawns a team/swarm of agents to generate the code. Because of the hierarchical system/container/component structure, each component can be generated/reconciled by its ow agent, thus allowing to run a team/swarm of agents working on an application
 
 The "bottom-up" workflow for importing an existing project is
 1. Based on the source code, the agent reconstructs the `contract`
@@ -584,8 +803,6 @@ Conceptually, the same flow is repeated for `product-specs` and `system-specs` t
 
 ### Importing an existing project
 
-
-
 ```mermaid
 flowchart TD
     H["User Request / Edits"]
@@ -628,6 +845,7 @@ flowchart TD
     end
 ```
 
+### Developing a project
 
 
 #### Mode × Command Matrix (Normal Flow)
@@ -705,274 +923,6 @@ The skill should proactively suggest upgrade when it detects signals that the pr
 
 
 
-## Generation
-
-Generation is the contract-driven engine of the methodology. It works in two dimensions:
-
-- **down** through the tiers
-- **across** the artifacts inside one affected tier
-
-### Tier Order
-
-Every run starts from `intent-specs` and proceeds downward. Each tier is produced from approved upstream truth:
-
-#### Full Tier Order (`pm`, `dev`, `expert`)
-
-| Tier | Primary upstream basis | Output |
-| --- | --- | --- |
-| `intent-specs` | user request, edits, and prior repo intent | `intent`, `defaults` |
-| `product-specs` | approved `intent-specs` | `prd`, `usm`, `dm` |
-| `system-specs` | approved `product-specs` | `system`, `containers`, `container`, `component` |
-| `context` | approved contract stack | execution guidance artifacts, decision records, BDD scenarios, and other execution artifacts |
-| `code` | approved contract plus relevant context | executable implementation and tests |
-
-#### Compact Tier Order (`vibe`)
-
-| Tier | Primary upstream basis | Output |
-| --- | --- | --- |
-| `intent-specs` | user request, edits, and prior repo intent | `intent` (with product summary), `defaults` |
-| `system-specs` | approved `intent-specs` (including product summary) | `system` (flat) |
-| `context` | approved contract | root-level execution guidance |
-| `code` | approved contract plus execution guidance | executable implementation and tests |
-
-### Within-Tier Generation
-
-Each affected tier is generated as a batch using a single forward-back pass. `expert` pauses after every affected contract tier. `pm` and `dev` pause at the user-owned approval unit and auto-advance delegated approval units when safe. `vibe` auto-advances system-specs by default after intent-specs are approved.
-
-```mermaid
-flowchart TD
-    T["Choose Affected Contract Tier"]
-    O["Generate Artifacts In Dependency Order"]
-    F["Run Forward Pass Across The Tier"]
-    B["Run Back Pass If Later Artifacts<br/>Sharpen Earlier Ones"]
-    V["Run Structural And Semantic Validation"]
-    D["Emit Contract Artifacts As Draft"]
-
-    T --> O --> F --> B --> V --> D
-```
-
-### Intent As Persistent Context
-
-`intent` persists as generation context across every lower tier, not only when producing `product-specs`.
-
-This is deliberate: user requirements and constraints may survive all the way into system design and code, even when they were not fully normalized into later specs. In `vibe`, the product summary section of intent is especially important as the primary product-level input for system-specs generation.
-
-### Scope Of Regeneration
-
-Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set. Artifacts with unchanged upstream bases are not regenerated.
-
-### Generation And Staleness
-
-When approved upstream truth changes, dependent downstream artifacts become stale as computed by the context graph. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time. Staleness is never written into artifact frontmatter — it is inferred from version comparisons in the graph and surfaced through staleness detection.
-
----
-
-## Review, Eval, And Reconciliation
-
-These are four distinct conceptual activities that pair symmetrically:
-
-| Interactive (user-guided, iterative) | Formal (automated, deterministic) | Scope |
-| --- | --- | --- |
-| `review` — critique current approval unit, surface issues, propose fixes | `eval` — structural and semantic validation | current approval unit |
-| `reconcile` — detect downstream drift, surface conflicts, propose fix directions | `generate` — produce artifacts via forward-back pass model | downstream artifacts |
-
-- `review` critiques and frames the current candidate approval unit against approved upstream truth
-- `eval` checks structure and semantics
-- `reconcile` detects downstream drift, surfaces conflicts, proposes fix directions, and iterates with the user before invoking generation
-- `generate` produces artifacts from approved upstream truth
-
-Review and structural/semantic eval use the current candidate approval unit, even though the underlying graph remains fine-grained: per affected tier in every mode. In `vibe`, the public skill surface narrows this to `review intent-specs` and `eval intent-specs`, both using downstream compact system and current code as heuristic evidence. `review intent-specs` keeps the normal interactive review loop and may propose or apply bounded fixes within the current draft `intent-specs` approval unit only. `eval intent-specs` is the read-only counterpart. These checks rely on agent reasoning over repo files under a small-codebase assumption, using signals such as filesystem layout, exported interfaces, route or command names, tests, key strings, and owned-path comparisons. They are not graph-backed code-item validation, they never directly edit compact `system-specs` or code, and unresolved findings may lead to further intent revision, reconciliation, or upgrade. Reconciliation uses the same tier model to detect and resolve drift, then invokes generation to produce refreshed artifacts.
-
-Review, eval, reconciliation, and generation are shown together in the Workflow diagram above.
-
-### Review
-
-Review is an interactive loop for the current candidate approval unit, checking upward against approved upstream truth. It works like planning mode in familiar coding agents — iterative, user-guided, with explicit exit points.
-
-Each review cycle:
-
-1. Run eval (forward + back pass) on the current approval unit against approved upstream truth.
-2. Surface findings — structural (blocking) and semantic (non-blocking) — with specific item references.
-3. Propose fixes for each finding.
-4. Apply fixes within the approval unit (bounded style) or surface findings only (advisory style).
-
-At the end of each cycle, the user chooses one of three options:
-
-- **Loop** — run another detect → propose → fix → eval cycle.
-- **Eval only** — user made an out-of-band edit, re-run eval to check resolution without proposing new fixes.
-- **Approve** — user judges remaining findings acceptable, approve and proceed.
-
-Review does not propagate changes downward; that belongs to reconciliation. Review may not silently change semantically meaningful upstream truth. When meaning changes, the user chooses the direction and later approves the updated tier.
-
-In `vibe`, bounded review fixes are limited to `intent` and `defaults`; downstream compact `system-specs` and code are never edited directly by review.
-
-### Eval
-
-Eval always runs a forward pass then a back pass across the current approval unit. The back pass checks whether later artifacts in the tier constrain earlier ones — for example, when `dm` produces a bounded context that should constrain how `usm` stories are grouped, or when a `component` produces a behavior that refines the container's component inventory. If the back pass surfaces findings, they are reported alongside the forward-pass findings.
-
-**Structural checks** (blocking) — the approval unit cannot advance until all pass:
-
-| Check | Pass criterion | Fail criterion |
-| --- | --- | --- |
-| Lifecycle consistency | Draft/approved states consistent across the approval unit | Mismatched states |
-| Reference integrity | All `derives_from` point to existing items | Dangling references |
-| Required fields | Every artifact has all required frontmatter fields per template | Missing fields |
-| Declared relationships | Items owned by correct artifacts, scopes, tiers | Misplaced items |
-| Stack integrity | Tiers in correct dependency order | Out-of-order dependencies |
-| Coverage | Every upstream item in the derivation basis has at least one downstream item whose `derives_from` includes it | Orphaned upstream IDs — report them |
-| Contradiction | No downstream item asserts a constraint, behavior, or boundary that conflicts with any item in its `derives_from` set | Downstream narrows, widens, or reverses upstream meaning — report both IDs and conflicting statements |
-| Componentization fit *(full modes only)* | Every component maps to exactly one bounded context; every bounded context is fully contained in exactly one container | Component references multiple BCs, or BC's items appear in components belonging to different containers — report misplaced items |
-| Context sufficiency *(full modes only)* | Every component with non-empty `owned_paths` has execution guidance; every container with at least one component has container-level guidance | Code-owning component or populated container lacks execution guidance — report the scope |
-
-**Semantic checks** (non-blocking) — require agent judgment, inform review decisions:
-
-- Does the downstream artifact faithfully represent the *intent* of its upstream basis, not just reference it?
-- Are naming conventions consistent with the ubiquitous language in the domain model?
-- Are there implicit dependencies not captured in `derives_from`?
-- Are there capability gaps — things the intent describes that no downstream artifact addresses, even though no formal derivation edge is missing?
-
-Eval runs automatically as part of `generate` and `approve`. Explicit invocation (`eval`) is for targeted checks outside the normal flow.
-
-### Reconciliation
-
-Reconciliation is the interactive counterpart to generation, just as review is the interactive counterpart to eval. It follows the same interactive loop pattern as review but in the opposite direction — checking downward from approved upstream changes.
-
-`generate code` is the normal forward command — it handles all upstream generation and delegation needed to produce code. `reconcile` is the interactive path when you want to detect, review, and resolve drift before regenerating. In practice, `generate code` is the 90% path; `reconcile` is the surgical review path.
-
-Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth.
-
-In `vibe`, `reconcile code` remains the standard downstream repair path. If `intent-specs` is draft when reconciliation begins, the skill may normalize the draft intent for structural consistency but must stop for `approve intent-specs` before propagating changes into compact system-specs or code. When reconciling in vibe, the skill auto-regenerates compact system-specs from approved intent as the first step, then reconciles code against the refreshed system. If auto-regen produces breaking changes in system-specs, surface them prominently and recommend `review intent-specs`.
-
-Each reconciliation cycle:
-
-1. Detect downstream drift from approved upstream changes. Surface conflicts with specific item references.
-2. Propose fix directions for each conflict:
-   - Amend upstream truth, then regenerate and reconcile downstream.
-   - Preserve upstream truth, then correct downstream context or code.
-   - A user-specified alternative direction.
-3. User selects direction for each conflict.
-4. Apply fixes and run eval to validate.
-
-At the end of each cycle, the user chooses one of three options:
-
-- **Loop** — run another detect → propose → fix → eval cycle on remaining drift.
-- **Eval only** — user made an out-of-band edit, re-run eval to check resolution.
-- **Approve** — user judges remaining drift acceptable, approve and proceed.
-
----
-
-## Operations
-
-VibeLoom defines eight methodology-level operations. Implementations may expose them through different commands or interfaces, but the logical operations stay the same.
-
-| Operation | Direction | Meaning |
-| --- | --- | --- |
-| `init` | top-down | Bootstrap an ungoverned repo, set the initial mode, and produce the first draft `intent-specs` |
-| `generate` | top-down | Generate one affected tier from approved upstream truth using the forward-pass / back-pass model |
-| `review` | current + up | Critique the current candidate approval unit against approved upstream truth and optionally apply bounded fixes within that approval unit |
-| `eval` | up | Run structural and semantic evaluation for the current approval unit |
-| `reconcile` | down | Detect downstream drift, surface conflicts, propose fix directions, iterate with user, then invoke generation on affected artifacts |
-| `approve` | gate | Move a reviewed contract approval unit from `draft` to `approved` and record approval provenance |
-| `status` | read-only | Show lifecycle state, graph health, stale propagation, and coverage gaps |
-| `import` | bottom-up | Bootstrap an ungoverned repo from existing code, set the initial mode, and reconstruct candidate contract from an unmanaged or heavily drifted codebase |
-
-Exact parameters, flags, file formats, and CLI surfaces belong to implementation, not to methodology.
-
-`init` and `import` are bootstrap-only operations. They are valid only as the first successful command in an ungoverned repo. Both require an explicit initial mode parameter.
-
----
-
-
-## Defaults vs Execution Guidance
-
-- `defaults` is **contract** — always-on, globally binding repo-wide constraints
-- `execution guidance` is **context** — scope-specific operational guidance generated from approved truth
-
-If they conflict, contract wins.
-
----
-
-## Brownfield Import vs. Steady-State Bugfix
-
-VibeLoom treats these as different conceptual paths.
-
-- **Brownfield import** is the bootstrap path for unmanaged or heavily drifted repos. It reconstructs candidate contract from existing code and marks uncertainty explicitly for user review.
-- **Steady-state bugfix** is the governed path for repos already under VibeLoom. It starts from repro, expected behavior, the violated or missing contract, and regression coverage.
-
-Once a repo is governed, routine defects should be resolved against approved contract truth rather than by re-inferring semantics from code on every fix. `init` and `import` are not valid again once bootstrap has succeeded.
-
-Brownfield import reconstructs contract bottom-up; steady-state bugfix updates approved truth top-down.
-
-### Import Reconstruction Heuristics
-
-Import infers contract artifacts bottom-up from code using mode-specific heuristics:
-
-- `import --mode vibe`
-  1. **Directory structure + config** → candidate compact system, component inventory, and defaults seeds.
-  2. **Package boundaries** → compact semantic groupings inside the flat system doc.
-  3. **Public APIs + tests** → interfaces and behaviors for the flat compact system.
-  4. **Infer compact intent-specs from the reconstructed flat system** — capabilities, requirements, constraints, and product-summary prose.
-  5. **Emit compact artifacts as draft**.
-- `import --mode pm|dev|expert`
-  1. **Directory structure + config** → candidate containers, components, defaults seeds.
-  2. **Package boundaries** → bounded contexts.
-  3. **Public APIs** → interfaces.
-  4. **Test files** → behaviors.
-  5. **Infer product-specs from system-specs** — requirements, stories, domain model derived from the reconstructed system layer.
-  6. **Infer intent-specs from product-specs** — capabilities, requirements, constraints derived from the reconstructed product layer.
-  7. **Emit all artifacts as draft**.
-
-### Import Review Flow (Bottom-Up)
-
-Import is the only workflow where reconstruction proceeds bottom-up. In full modes, user review also proceeds bottom-up because code is the source of truth. In `vibe`, reconstruction is still bottom-up, but the explicit user review surface remains `intent-specs`.
-
-- `import --mode vibe`
-  1. Reconstruct compact `system-specs` from code and infer compact `intent-specs` from that reconstruction.
-  2. Review `intent-specs` against the inferred compact system-specs and actual code. Approve.
-  3. Auto-advance compact `system-specs` if safe; if compact system findings remain unresolved, surface them through `review intent-specs` / `eval intent-specs` and suggest upgrade when appropriate.
-  4. Generate root execution guidance from the fully approved compact contract.
-  5. Reconcile downward against code for remaining drift.
-- `import --mode pm|dev|expert`
-  1. Review system-specs against actual code (closest to source of truth). Approve.
-  2. Review product-specs against approved system-specs. Approve.
-  3. Review intent-specs against approved product-specs. Approve.
-  4. Generate context from the fully approved contract stack.
-  5. Reconcile downward — check contract against code for remaining drift.
-
-Once all tiers are approved and reconciliation is resolved, normal top-down governance takes over for all future changes.
-
-```mermaid
-flowchart TD
-    S["Change Starting Point"]
-
-    S --> BROWN
-    S --> STEADY
-
-    subgraph BROWNFIELD["Brownfield Import"]
-        direction TB
-        B1["Start From Unmanaged<br/>Or Heavily Drifted Codebase"]
-        B2["Reconstruct Candidate Contract Bottom-Up<br/>(mode-specific heuristics)"]
-        B3["Review Bottom-Up<br/>(compact or full stack by mode)"]
-        B4["Generate Mode-Appropriate Context<br/>From Approved Contract"]
-        B5["Reconcile Downward Against Code"]
-        B6["Normal Top-Down Governance<br/>Takes Over"]
-
-        B1 --> B2 --> B3 --> B4 --> B5 --> B6
-    end
-
-    subgraph BUGFIX["Steady-State Bugfix"]
-        direction TB
-        S1["Start From Existing Approved Contract"]
-        S2["Identify Highest Affected Tier"]
-        S3["Update Affected Contract Truth Top-Down"]
-        S4["Generate Context From Approved Contract"]
-        S5["Reconcile Or Regenerate Code"]
-
-        S1 --> S2 --> S3 --> S4 --> S5
-    end
-```
-
----
 
 ## Summary
 

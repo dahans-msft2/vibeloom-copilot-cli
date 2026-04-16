@@ -6,6 +6,35 @@ Every rule here either implements a methodology rule (with cross-reference) or a
 
 ---
 
+## How To Use This Document
+
+A skill builder reading this as execution guidance does not need to load the full document at once. The sections below are grouped by when they matter:
+
+**Essential (must-read for a minimal working skill):**
+
+- `Authority, Package Shape, And Engine Boundary` — the architectural model: skill, engine, subagents, runtime loop
+- `Governed Repo Layout` + `Artifact Mapping` — where artifacts live and which templates produce them
+- `Metadata Format` — frontmatter shapes for contract and context artifacts
+- `Stable ID Schema` — short typed `PREFIX-####` ID families and artifact IDs
+- `Subagent Load Sets` + `Context Loading Protocol` — how to load the minimum sufficient slice per subagent
+- `Generation And Runtime Behavior` — operation commands, smart orchestration, approval behavior, parallel dispatch
+- `Template System` + `Validation Checklist` — the `assets/` tree and acceptance criteria
+
+**Optional depth (read when implementing that piece):**
+
+- `Context Graph Realization` internals — storage layout, dispatch-support indexes, inferred views
+- `Upgrade Mechanics` — only when implementing vibe → full upgrade
+- `Item Carriers And Template Rules` — only when authoring templates
+
+**Skim-only reference:**
+
+- `Mode × Command Matrix (Normal Flow)` — cross-reference when wiring mode-specific behavior
+- `Next-Command Suggestions` — user-experience table, consulted at implementation time
+
+This document does not replace the methodology. Cross-references like "methodology ## Generation ### Forward-Back Pass" point at conceptual truth. Always load the methodology first when a question is about *what* or *why*; load this document when the question is about *how*.
+
+---
+
 ## Authority, Package Shape, And Engine Boundary
 
 Authority flows downward: methodology → implementation → `assets/` templates → `SKILL.md`. This phase fully specifies contract and context artifacts plus code-generation orchestration, but it does not yet define concrete code templates or code-item carriers.
@@ -18,24 +47,27 @@ VibeLoom has two runtime layers:
 ```mermaid
 flowchart TD
     U["User"] <-->|"natural language"| S["Skill<br/>(orchestrator)"]
-    S -->|"deterministic ops"| E["Engine<br/>(parsing, IDs, graph,<br/>staleness, status)"]
+    S -->|"deterministic ops"| E["Engine<br/>(parsing, IDs, graph,<br/>affected sets, staleness)"]
     E <-->|"read/write"| A["Artifacts on Disk<br/>(contract, context, code)"]
     E -->|"build/query"| G["Graph Cache<br/>(.vibeloom/state/)"]
 
     S -->|"query affected set + dispatch support"| E
-    E -->|"iterative dispatch plan<br/>(load sets, prerequisites)"| DP["Wave 1 ready set"]
+    E -->|"iterative dispatch plan<br/>(load sets, prerequisites)"| S
+    S -->|"skill packages plan<br/>into subagent prompt"| DP["Wave 1 ready set"]
     DP -->|"task header + scoped load set"| SA1["subagent<br/>(scope A)"]
     DP -->|"task header + scoped load set"| SA2["subagent<br/>(scope B)"]
 
     SA1 -->|"accepted writes"| A
     SA2 -->|"accepted writes"| A
-    SA1 -->|"ephemeral result summary"| V["Cross-scope validation<br/>(summaries + spot reads)"]
+    SA1 -->|"ephemeral result summary<br/>(may include late-fetch request)"| V["Cross-scope validation<br/>(summaries + spot reads)"]
     SA2 -->|"ephemeral result summary"| V
-    SA1 -->|"late-fetch request"| S
-    S -->|"approved late-fetch slice<br/>(once, same task)"| SA1
+    V -->|"re-invoke task once<br/>with approved late-fetch slice<br/>(post-return only)"| SA1
+
+    V -.->|"for review/reconcile:<br/>user direction between phases"| UD["User decision"]
+    UD -.->|"write-capable fix wave"| DP
+
     V -->|"recompute remaining plan<br/>from accepted state"| DP2["Wave 2 ready set"]
-    DP2 --> SA3["subagent<br/>(scope C)"]
-    DP2 -->|"task header + scoped load set"| SA3
+    DP2 -->|"task header + scoped load set"| SA3["subagent<br/>(scope C)"]
     SA3 -->|"accepted writes"| A
     SA3 -->|"ephemeral result summary"| V2["Cross-scope validation"]
 
@@ -45,9 +77,10 @@ flowchart TD
     style G fill:#fff3e0,stroke:#e65100
     style V fill:#fff3e0,stroke:#e65100
     style V2 fill:#fff3e0,stroke:#e65100
+    style UD fill:#e8f4fd,stroke:#1a73e8
 ```
 
-In v1, the skill runs as a single agent session. Subagents are spawned per task, each with its own context window. The engine shapes each scoped load set and the orchestrator packages it into the subagent prompt together with a task header. Subagents share the filesystem, but they do not communicate with each other directly. They communicate only through accepted artifact writes on disk plus orchestrator-mediated ephemeral result summaries. Late-fetch is task-local: when a subagent discovers one narrow missing dependency, it may request one approved additional slice and be re-invoked once for that same task.
+In v2, the skill runs as a single agent session. Subagents are spawned per task, each with its own context window. The engine shapes each scoped load set and the orchestrator packages it into the subagent prompt together with a task header. Subagents share the filesystem, but they do not communicate with each other directly. They communicate only through accepted artifact writes on disk plus orchestrator-mediated ephemeral result summaries. Late-fetch is task-local: when a subagent discovers one narrow missing dependency, it may request one approved additional slice and be re-invoked once for that same task.
 
 ### Runtime Loop
 
@@ -80,13 +113,10 @@ The engine owns:
 - parsing artifacts and frontmatter
 - assigning and validating stable IDs
 - validating artifact schemas and required fields
-- materializing templates into concrete artifacts
 - building and querying the context graph
 - computing affected sets and staleness
-- computing status snapshots
-- handling deterministic generation bookkeeping
 
-The engine does **not** decide product meaning, semantic intent, or approval outcomes. Semantic judgment remains with the agent and the approval-gated workflow.
+The engine does **not** decide product meaning, semantic intent, or approval outcomes. Template materialization is subagent work invoked by the skill. Status reports are skill-composed views that query the engine. Semantic judgment remains with the agent and the approval-gated workflow.
 
 ### Engine State
 
@@ -116,16 +146,30 @@ Every subagent invocation starts from a fresh prompt built from:
 - the scoped load set for that task
 - only the minimal accepted prior-wave summaries needed for prerequisites, validation context, or unresolved findings
 
-The task header is derived from the dispatch plan and includes:
+**Task header obligations.** A task header must convey enough for a subagent to execute independently. At minimum it must communicate:
 
-- operation and target
-- target scope
-- objective
-- task mode (`read-only` or `write-capable`)
-- allowed writes, if any
-- upstream prerequisites
-- validation expectations
-- required result-summary shape
+- which operation and target the task is part of
+- the task's scope and objective
+- whether the task may write, and if so, where
+- what upstream prerequisites must hold
+- how the subagent's result will be validated
+- what shape the subagent's result summary must take
+
+**Concrete example (v2 default schema):**
+
+```yaml
+operation: generate
+target: code
+scope: component:api/orders
+objective: "Generate source and tests for component orders"
+mode: write-capable
+allowed_writes: ["api/orders/src/**", "api/orders/tests/**"]
+prerequisites: ["component.md approved", "container.md approved"]
+validation: ["interface contracts satisfied", "DEP references resolve"]
+result_shape: code-task-summary
+```
+
+Implementations may adapt the exact field set as agent capabilities evolve, provided all obligations are met.
 
 Subagents may read only:
 
@@ -154,7 +198,7 @@ Component-owned outputs are changed only through subagent rerun/reconcile flow, 
 ### Runtime Vocabulary
 
 - **dispatch plan** — the iterative runtime plan that maps remaining work into scoped tasks, prerequisites, and validation contracts
-- **wave** — the semantic ready set of tasks whose prerequisites are satisfied and whose write scopes are mutually compatible
+- **wave** — the semantic ready set of tasks whose prerequisites are satisfied and whose write scopes are mutually compatible. Numbered references ("Wave 1", "Wave 2") in diagrams or dispatch bookkeeping are orchestration-local identifiers for a given run; they are not artifact metadata and do not persist across operations.
 - **load set** — the scoped input package for a subagent, built from scope base plus operation overlay
 - **late-fetch** — one approved, task-local additional slice supplied to the same subagent after a narrow missing dependency is discovered
 - **spot read** — an orchestrator reread triggered by explicit validation/failure rules, not by broad curiosity
@@ -304,6 +348,8 @@ Additional required fields:
   - `bounded_context` corresponding to the governing `BC-####` item
   - `owned_paths`
   - `owned_interfaces`
+
+`owned_interfaces` and `owned_paths` in frontmatter are **summary indexes** for fast engine lookup. The body's `IF-####` interface table and the body's explicit path declarations are the source of truth; frontmatter is regenerated from body carriers. Interfaces remain structured content within component specs, not independent graph nodes (methodology ## Context Graph ### Boundary Principle).
 
 ### Context Artifact Frontmatter
 
@@ -517,7 +563,7 @@ Domain-specific columns (e.g., `kind`, `runtime`, `rule`) are template-local and
 
 ## Context Graph Realization
 
-The v1 context graph realization stores explicit forward-derivation edges across contract and derived context artifacts. Ownership, scope, and containment metadata are stored alongside the graph as indexes used for affected-set projection, load-set construction, dispatch planning, and status. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, context/code drift is analyzed heuristically by the agent rather than through a fully materialized full-mode graph.
+The v2 context graph realization stores explicit forward-derivation edges across contract and derived context artifacts. Ownership, scope, and containment metadata are stored alongside the graph as indexes used for affected-set projection, load-set construction, dispatch planning, and status. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, context/code drift is analyzed heuristically by the agent rather than through a fully materialized full-mode graph.
 
 ### Explicitly Stored
 
@@ -527,24 +573,28 @@ The engine stores:
 - item IDs parsed from contract and context templates
 - item-level `derives_from` references
 - an index from short item IDs to owning artifact, section, tier, scope, and filesystem path
-- dispatch-support indexes:
+- dispatch-support indexes — the engine maintains indexes so it can answer affected-set, load-set, and validation queries without rescanning artifacts. The default set:
   - interface provider / consumer index for `owned_interfaces`, `IF-####`, and `DEP-####` carriers
   - dependency-target index for referenced components and containers
   - write-scope index derived from `owned_paths`
   - context-relevance index linking `bdd`, `pdr`, and `adr` records to affected scopes
   - scope summary records used to build targeted foreign slices and dispatch plans
 
+Implementations may maintain additional indexes as query needs evolve.
+
 Containment may be stored as parsing and navigation metadata, but it is not a graph-edge class.
 
 ### Inferred Views
 
-See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed from approved-basis mismatch in the graph and is never written to artifact frontmatter. The loading view is used to compute agent load sets. Given a scope, the graph returns four layers: baseline, owned scope, referenced foreign slice, and relevant context slice. In `vibe`, affected-set and status views for `context` and `code` remain heuristic approximations derived from approved `intent`, compact `system`, and current code.
+See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v2, the engine computes all four from contract and context artifacts only. Staleness is computed from approved-basis mismatch in the graph and is never written to artifact frontmatter. The loading view is used to compute agent load sets. Given a scope, the graph returns four layers: baseline, owned scope, referenced foreign slice, and relevant context slice. In `vibe`, affected-set and status views for `context` and `code` remain heuristic approximations derived from approved `intent`, compact `system`, and current code.
 
 ### Subagent Load Sets
 
 The context graph computes a scope base for each subagent. The orchestrator (skill) queries the graph and applies an operation overlay so each subagent receives the minimum sufficient mix of config, contract, code, and relevant context for its scope and operation.
 
 These load-set shapes govern steady-state subagent dispatch. If a subagent runs before a needed config artifact exists in the current run, the orchestrator substitutes the just-generated in-memory slice when available, or omits only the not-yet-generated config layer until context generation reaches that scope.
+
+Intent is not part of subagent load sets. The methodology's "Intent As Persistent Context" is an orchestrator-level concept: intent informs the orchestrator's generation judgments at each tier. Once each tier is approved, it captures everything downstream needs. Subagents work from the approved contract slice, which already reflects intent through the approval chain. If a subagent would need intent directly to complete its task, that signals insufficient upstream capture — the fix is in the contract, not in the load set.
 
 #### Full Modes (`pm`, `dev`, `expert`)
 
@@ -590,30 +640,49 @@ Prior-wave summaries are orchestration metadata only. Later-wave subagents load 
 
 #### Subagent Result Summaries
 
-Every subagent returns a compact structured summary. The payload is artifact-class-specific:
+**Result summary obligations.** Every subagent must return a compact structured summary that communicates enough for the orchestrator to validate the task, accept or reject its output, and plan subsequent waves. At minimum every summary conveys:
 
-- **contract task summary** — artifacts written (if any), item IDs created/updated, referenced upstream basis, notable findings, unresolved assumptions
-- **context task summary** — artifacts written (if any), derived IDs emitted, referenced upstream basis, notable findings, unresolved assumptions
-- **code task summary** — files written (if any), provided interfaces, consumed dependencies, notable findings, unresolved assumptions
-- **read-only analysis summary** — findings, evidence, referenced artifacts/files, unresolved ambiguity, and any candidate IDs or inferred structure when relevant to import analysis
-
-All summaries also include:
-
-- target scope
-- task mode (`read-only` or `write-capable`)
-- requested late-fetch slices (if any) and whether they were resolved
+- target scope and task mode (`read-only` or `write-capable`)
+- what the subagent read from its load set (for traceability)
+- what the subagent wrote, if anything (for write-capable tasks)
+- what findings or unresolved assumptions remain
+- whether any late-fetch was requested and whether it resolved
 - validation notes relevant to merge or cross-scope checks
+
+The specific shape also depends on the task class:
+
+- **contract task** — additionally: item IDs created/updated, referenced upstream basis
+- **context task** — additionally: derived IDs emitted, referenced upstream basis
+- **code task** — additionally: provided interfaces, consumed dependencies
+- **read-only analysis task** — additionally: findings, evidence, referenced artifacts/files, candidate IDs or inferred structure (when relevant to import analysis)
+
+**Concrete example (v2 default schema for a code task):**
+
+```yaml
+target_scope: component:api/orders
+task_mode: write-capable
+read_from: ["api/orders/component.md", "api/containers.md", "defaults.md", ...]
+files_written: ["api/orders/src/order.ts", "api/orders/tests/order.test.ts"]
+provided_interfaces: ["IF-0042", "IF-0043"]
+consumed_dependencies: ["IF-0007", "IF-0019"]
+findings: []
+unresolved_assumptions: []
+late_fetch: null
+validation_notes: "DEP-0003 resolved against provider in wave 1"
+```
+
+Implementations may adapt the exact field set as agent capabilities evolve, provided all obligations are met.
 
 The orchestrator uses these summaries plus targeted spot reads for cross-scope validation and merge planning.
 
-Allowed spot-read triggers are limited to:
+Spot reads are targeted rereads of specific files, triggered by a concrete validation need. Typical triggers include:
 
 - verifying a reported interface/provider match
 - inspecting a file implicated by a failed validation
 - inspecting a file in a declared write set
 - inspecting a file or artifact referenced by an unresolved finding
 
-Broad rereads of whole scopes or entire waves are not part of normal execution. If a broad reread seems necessary, the orchestrator should surface findings and stop rather than silently expand context.
+Implementations may add narrow triggers when a concrete validation need justifies it. Broad rereads of whole scopes or entire waves are not part of normal execution. If a broad reread seems necessary, the orchestrator should surface findings and stop rather than silently expand context.
 
 #### Template Loading
 
@@ -632,6 +701,8 @@ The cache is rebuilt whenever:
 - a contract artifact changes
 - a context artifact is regenerated
 - status or derivation metadata changes
+
+If the cache is missing, unreadable, or fails validation, the engine regenerates it from ground truth (contract + context artifacts) before proceeding.
 
 ### Status Snapshot
 
@@ -775,7 +846,7 @@ Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 - `status`
 - `help`
 
-`vibe` v1 exposes a simplified public surface:
+`vibe` v2 exposes a simplified public surface:
 
 - `approve intent-specs`
 - `generate code`
@@ -884,7 +955,7 @@ Generation order inside context:
 2. decision records if the change introduced product or architecture decisions
 3. component-scoped `bdd` scenarios for affected components
 
-Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, test commands, and cross-scope dependency cues — so that subagents can orient quickly within their scope without loading the full context graph. Component-scoped `bdd` is emitted under the owning component's `context/bdd/` directory and loaded only for subagents whose affected set intersects that component.
+Generated config follows the shape defined by the corresponding template in `assets/context/`. Templates ensure subagents can orient within their scope without loading the full context graph. Component-scoped `bdd` is emitted under the owning component's `context/bdd/` directory and loaded only for subagents whose affected set intersects that component.
 
 #### Compact Context Generation (`vibe`)
 
@@ -906,8 +977,7 @@ Context generation runs as a single parallel wave of explicit task units:
 
 - one task for root config
 - one task per affected container config
-- one task per affected component config
-- one task per affected component `bdd` artifact
+- one task per affected component — generates both component config and any component-scoped `bdd` artifacts in a single invocation, since they share load set and write scope
 
 Context tasks use the same dispatch-plan, structured-task-header, and result-summary model as other subagent work. Decision-ledger writes (`pdr`, `adr`) are orchestrator-local rather than subagent tasks. Each context task derives only from approved contract entities at its scope and above — no context task derives from a peer context task — so there is no inter-wave dependency. Writes are disjoint by scope.
 
@@ -932,14 +1002,17 @@ The orchestrator computes the affected component set from the graph, uses dispat
 
 Components with no remaining prerequisites and disjoint write scopes form the semantic ready set for the current wave. Runtime batching or concurrency caps are implementation-defined. Once the wave completes, the orchestrator accepts successful task results, retires superseded ones, recomputes the remaining dispatch plan from the updated accepted state, and dispatches the next ready set.
 
-Each dispatch-plan task records:
-- target scope
-- wave number
-- load set (baseline, owned scope, referenced foreign slice, relevant context slice)
-- write set
-- upstream prerequisites
-- validation expectations
-- expected subagent result summary contract (see Context Loading Protocol ### Subagent Result Summaries)
+**Dispatch-plan task obligations.** Each task record must carry enough for the orchestrator to dispatch the task and validate its result. At minimum a task record conveys:
+
+- target scope and the operation it implements
+- its wave position in the current run
+- the load set shape (baseline + owned scope + foreign slice + relevant context)
+- its allowed write set (if write-capable)
+- upstream prerequisites that must hold before dispatch
+- the validation contract the result will be checked against
+- which result-summary shape the subagent must return
+
+Implementations may adapt the exact schema as agent capabilities evolve, provided all obligations are met.
 
 Each subagent receives:
 - its structured task header
@@ -982,7 +1055,7 @@ The transition is one-way. `init --upgrade --mode vibe` is rejected. Attempting 
 
 ## Template System
 
-The v1 `assets/` tree is:
+The v2 `assets/` tree is:
 
 ```text
 assets/
@@ -1048,4 +1121,4 @@ The implementation is valid only if all of the following hold:
 - the skill can load one narrow template at a time rather than one large combined template
 - no `version` or `draft_revision` fields in any frontmatter definition
 
-This document is sufficient to author the `SKILL.md`, `references/`, and the v1 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.
+This document is sufficient to author the `SKILL.md`, `references/`, and the v2 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.

@@ -1,8 +1,8 @@
 # VibeLoom Implementation
 
-This document is the concrete implementation companion to [vibeloom-methodology.md](/Users/ilya.baimetov/Projects/vibeloom/v02/vibeloom-methodology.md). The methodology defines conceptual truth. This document defines the concrete artifact layout, metadata shape, ID schema, template inventory for contract and context artifacts, runtime behavior, and engine boundary required to build a working VibeLoom skill package and local engine.
+This document is the concrete implementation companion to `vibeloom-methodology.md`. The methodology defines WHAT and WHY. This document defines HOW — concretely enough that a skill builder can generate the skill without inventing rules. It specifies: artifact layout, metadata shape, ID schema, template inventory, runtime behavior, and engine boundary.
 
-The current working draft lives at repository root as `vibeloom-implementation.md`. Once the layered skill package is scaffolded, this file moves to `docs/vibeloom-implementation.md`.
+Every rule here either implements a methodology rule (with cross-reference) or adds an implementation-specific rule (clearly marked). When this document conflicts with the methodology, the methodology wins.
 
 ---
 
@@ -15,12 +15,40 @@ VibeLoom has two runtime layers:
 - the **skill**, which is the natural-language and orchestration layer
 - the **engine**, which is the deterministic substrate invoked by the skill
 
+```mermaid
+flowchart TD
+    U["User"] <-->|"natural language"| S["Skill<br/>(orchestrator)"]
+    S -->|"deterministic ops"| E["Engine<br/>(parsing, IDs, graph,<br/>staleness, status)"]
+    E <-->|"read/write"| A["Artifacts on Disk<br/>(contract, context, code)"]
+    E -->|"build/query"| G["Graph Cache<br/>(.vibeloom/state/)"]
+
+    S -->|"dispatch with load set"| W1["Worker<br/>(component A)"]
+    S -->|"dispatch with load set"| W2["Worker<br/>(component B)"]
+    S -->|"dispatch with load set"| W3["Worker<br/>(component ...)"]
+
+    W1 -->|"read contract slice + config"| A
+    W2 -->|"read contract slice + config"| A
+    W3 -->|"read contract slice + config"| A
+    W1 -->|"write code"| A
+    W2 -->|"write code"| A
+    W3 -->|"write code"| A
+
+    S -->|"validate cross-scope"| A
+
+    style S fill:#e8f4fd,stroke:#1a73e8
+    style E fill:#fff3e0,stroke:#e65100
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style G fill:#fff3e0,stroke:#e65100
+```
+
+In v1, the skill runs as a single agent session. Workers are subagents, each with its own context window. Worker load sets translate to file-read instructions in the subagent prompt. Subagents share the filesystem and communicate results through written artifacts only — they cannot communicate with each other directly.
+
 ### Skill Responsibilities
 
 The skill owns:
 
 - natural-language interface
-- operation selection
+- operation selection and parameter resolution
 - mode selection and validation
 - approval pauses and user interaction
 - context loading decisions
@@ -36,7 +64,7 @@ The engine owns:
 - validating artifact schemas and required fields
 - materializing templates into concrete artifacts
 - building and querying the context graph
-- computing stale propagation and impact sets
+- computing affected sets and staleness
 - computing status snapshots
 - handling deterministic generation bookkeeping
 
@@ -106,19 +134,19 @@ These files are derived runtime state. They are not contract, context, or code t
       status.json
 ```
 
-In `vibe`, there are no container directories, no `context/` directory, and no product-specs artifacts. All system-level information lives in the single flat `system.md`. Container and component directories appear only after upgrade to pm/dev/expert.
+In `vibe`, there are no container directories, no `context/` directory, and no product-specs artifacts. All system-level information lives in the single flat `system.md`. Container and component directories appear only after upgrade to a full mode.
 
 ### Placement Rules
 
 - root contract artifacts always live at repository root
 - containers live as direct child directories of repository root (full modes only)
 - components live as direct child directories of their container directory (full modes only)
-- assistant-specific execution guidance is emitted directly into the scope it governs (root only in `vibe`)
+- config artifacts (`AGENTS.md`, `CLAUDE.md`) are emitted directly into the scope they govern (root only in `vibe`)
 - `pdr` and `adr` are standardized as repo-level ledger artifacts in `context/` (full modes only)
 - `bdd` is standardized as a repo-level multi-file context artifact under `context/bdd/` (full modes only)
 - narrower context scopes may be added later, but are not required in v1
 
-The authoritative inventory of containers and components still lives in contract artifacts:
+The authoritative inventory of containers and components lives in contract artifacts:
 
 - In full modes: `containers.md` is the global container inventory; each `container.md` is the authoritative component inventory for that container
 - In `vibe`: the flat `system.md` contains both the container and component inventories
@@ -129,7 +157,7 @@ The filesystem is a navigation aid and consistency check. It is not the semantic
 
 ## Artifact Mapping
 
-The concrete output and template mapping for contract and context artifacts is:
+The concrete output and template mapping for contract and context artifacts:
 
 #### Full Artifact Mapping (`pm`, `dev`, `expert`)
 
@@ -144,9 +172,9 @@ The concrete output and template mapping for contract and context artifacts is:
 | `containers` | `/containers.md` | `assets/system-specs/containers.md` | root |
 | `container` | `/<container>/container.md` | `assets/system-specs/container.md` | container |
 | `component` | `/<container>/<component>/component.md` | `assets/system-specs/component.md` | component |
-| root execution guidance | `/AGENTS.md`, `/CLAUDE.md` | `assets/context/root-execution-guidance.md` | root |
-| container execution guidance | `/<container>/AGENTS.md`, `/<container>/CLAUDE.md` | `assets/context/container-execution-guidance.md` | container |
-| component execution guidance | `/<container>/<component>/AGENTS.md`, `/<container>/<component>/CLAUDE.md` | `assets/context/component-execution-guidance.md` | component |
+| root `config` | `/AGENTS.md`, `/CLAUDE.md` | `assets/context/root-config.md` | root |
+| container `config` | `/<container>/AGENTS.md`, `/<container>/CLAUDE.md` | `assets/context/container-config.md` | container |
+| component `config` | `/<container>/<component>/AGENTS.md`, `/<container>/<component>/CLAUDE.md` | `assets/context/component-config.md` | component |
 | `pdr` ledger | `/context/pdr.md` | `assets/context/pdr.md` | root |
 | `adr` ledger | `/context/adr.md` | `assets/context/adr.md` | root |
 | `bdd` | `/context/bdd/BDD-####-<behavior-slug>.md` | `assets/context/bdd.md` | root |
@@ -158,7 +186,7 @@ The concrete output and template mapping for contract and context artifacts is:
 | `intent` | `/intent.md` | `assets/intent-specs/vibe-intent.md` | root |
 | `defaults` | `/defaults.md` | `assets/intent-specs/defaults.md` | root |
 | `system` | `/system.md` | `assets/system-specs/vibe-system.md` | root |
-| root execution guidance | `/AGENTS.md`, `/CLAUDE.md` | `assets/context/root-execution-guidance.md` | root |
+| root `config` | `/AGENTS.md`, `/CLAUDE.md` | `assets/context/root-config.md` | root |
 
 The body shape of each generated contract or context artifact is defined by the corresponding template in `assets/`. This document defines the metadata, IDs, path rules, and runtime behavior that the templates must obey.
 
@@ -180,10 +208,11 @@ Every contract artifact must include:
 | `scope_kind`     | enum     | One of `root`, `container`, `component`                                                           |
 | `scope_id`       | string   | `root` or the governing container/component scope slug                                            |
 | `status`         | enum     | One of `draft`, `approved`                                                                        |
-| `version`        | integer  | Latest approved version number; starts at `0` until the first approval                            |
-| `draft_revision` | integer  | Optional; required when `status: draft` and content differs from the last approved version        |
+| `timestamp`      | string   | ISO 8601 date/time of the last change                                                             |
 | `approval_mode`  | enum     | One of `user`, `delegated`. Set at approval time only; absent on drafts.                          |
 | `derives_from`   | string[] | Upstream short item IDs that materially constrain this artifact                                   |
+
+`approval_mode` is provenance, not a declaration. Drafts do not carry `approval_mode`. At approval time, set `approval_mode: user` for explicit user approval or `approval_mode: delegated` for auto-advanced approval. (See methodology ## Generation ### Approval And Auto-Advance.)
 
 Additional required fields:
 
@@ -203,44 +232,36 @@ Every context artifact must include:
 | Field | Type | Notes |
 | --- | --- | --- |
 | `artifact_id` | string | Stable artifact identifier |
-| `artifact_type` | enum | One of `execution-guidance`, `pdr`, `adr`, `bdd` |
+| `artifact_type` | enum | One of `config`, `pdr`, `adr`, `bdd` |
 | `tier` | enum | Always `context` |
 | `scope_kind` | enum | One of `root`, `container`, `component` |
 | `scope_id` | string | `root` or the governing scope slug |
+| `timestamp` | string | ISO 8601 date/time of the last change |
 | `derives_from` | string[] | Upstream short item IDs that constrain this artifact |
 
 Additional required fields:
 
-- execution guidance artifacts
-  - `assistant`
+- `config` artifacts
+  - `assistant` — which assistant this config targets (e.g., `claude`, `codex`)
 
-Context artifacts do **not** carry `status`, `version`, or `approval_mode`.
+Context artifacts do **not** carry `status` or `approval_mode`. (See methodology ## Generation ### Lifecycle States.)
 
 For ledger artifacts (`pdr`, `adr`): artifact-level `derives_from` in frontmatter is always empty (`[]`). Per-record `derives_from` inside each `PDR-####` / `ADR-####` section is the canonical derivation link. The engine builds graph edges from per-record `derives_from`, not from artifact-level frontmatter.
-
-### Versioning Rule
-
-Contract versioning uses approved versions plus draft revisions:
-
-- first generated draft: `version: 0`, `draft_revision: 1`
-- first approved artifact: `version: 1`, no `draft_revision`
-- next unapproved change: `version: 1`, `draft_revision: 2`
-- next approval: `version: 2`, no `draft_revision`
-
-`approval_mode` is provenance, not a declaration. Drafts do not carry `approval_mode`. At approval time, set `approval_mode: user` for explicit user approval or `approval_mode: delegated` for auto-advanced approval.
 
 ### Direct Edit Detection
 
 When a user edits an approved contract artifact outside of skill operations:
 
-1. The user should set `status: draft` and add `draft_revision` in frontmatter to signal the edit.
-2. Alternatively, the skill detects the edit at the start of any operation by comparing artifact content against the approved state.
-3. The skill confirms the transition with the user before proceeding.
-4. Staleness propagation follows the same rules as any other draft transition.
+1. The user should set `status: draft` in frontmatter to signal the edit.
+2. Alternatively, the agent detects the edit at the start of any operation by comparing artifact content against the last approved state.
+3. The agent confirms the transition with the user before proceeding.
+4. Editing an approved contract artifact automatically reopens it to `draft`. (See methodology ## Generation ### Lifecycle States.)
 
 ### Staleness
 
-Staleness is never written into artifact frontmatter. It is computed by the context graph by comparing each artifact's derivation basis against the latest approved upstream versions. Unapproved drafts do not trigger staleness.
+Staleness is never written into artifact frontmatter. It is a computed property: an artifact is stale when its approved upstream basis has changed since the artifact was last approved. The engine computes staleness from the context graph. Timestamps serve as implementation-level revision signals; the methodology definition of staleness is approved-basis mismatch rather than raw file freshness.
+
+Unapproved drafts do not trigger downstream staleness. Downstream artifacts become stale only when an edited upstream artifact is re-approved. (See methodology ## Generation ### Staleness And Regeneration.)
 
 ---
 
@@ -260,51 +281,44 @@ Core rules:
 - deleted IDs are never reused
 - visible references use only short IDs; they do not encode artifact identity
 - semantic meaning lives in adjacent labels, titles, and statements rather than in the ID itself
-- overlays get IDs only when they are intentionally addressable
 
 ### Prefix Families
 
 | Family | Meaning |
 | --- | --- |
 | `CAP-####` | intent capability |
-| `WISH-####` | softer intent preference |
-| `CST-####` | hard constraint item in defaults, intent, PRD, or system-specs |
+| `CST-####` | hard constraint in defaults or intent |
+| `OBJ-####` | objective |
+| `KR-####` | key result |
+| `MET-####` | metric |
 | `FR-####` | functional requirement |
 | `NFR-####` | non-functional requirement |
-| `ASM-####` | assumption |
-| `IN-####` | in-scope boundary item |
-| `OOS-####` | out-of-scope item |
-| `Q-####` | open question |
 | `EPIC-####` | epic |
 | `FLOW-####` | workflow or journey |
 | `STORY-####` | story |
-| `ACC-####` | acceptance-framing entry |
+| `ACC-####` | acceptance criterion |
+| `MS-####` | milestone |
 | `TERM-####` | ubiquitous-language term |
 | `BC-####` | bounded context |
 | `AGG-####` | aggregate |
 | `ENT-####` | entity |
 | `VO-####` | value object |
 | `INV-####` | invariant or business rule |
-| `REL-####` | domain relationship or integration touchpoint |
 | `EXT-####` | external actor or system |
 | `TB-####` | trust boundary |
 | `SNFR-####` | system-wide NFR boundary |
 | `CONT-####` | container inventory item |
 | `CMP-####` | component inventory item |
-| `EDGE-####` | communication path or local dependency edge |
-| `IF-####` | owned interface |
-| `DEP-####` | component dependency |
-| `BEH-####` | local technical behavior or contract |
-| `NOTE-####` | local test or runtime note |
+| `IF-####` | owned interface (structured content within component spec) |
+| `DEP-####` | component dependency (structured content within component spec) |
+| `BEH-####` | local technical behavior (structured content within component spec) |
+| `NOTE-####` | local test or runtime note (structured content within component spec) |
 | `PDR-####` | product decision record item inside `pdr.md` |
 | `ADR-####` | architecture decision record item inside `adr.md` |
 | `BDD-####` | behavioral-scenario artifact |
 | `SCN-####` | individual Gherkin scenario |
-| `OBJ-####` | objective overlay item when explicitly addressable |
-| `KR-####` | key-result overlay item when explicitly addressable |
-| `MET-####` | metric overlay item when explicitly addressable |
-| `MS-####` | milestone overlay item when explicitly addressable |
-| `RISK-####` | risk overlay item when explicitly addressable |
+
+Prefixes `IF-####`, `DEP-####`, `BEH-####`, and `NOTE-####` are for structured content within component and container specs. They are addressable items but are not independent nodes in the derivation graph. (See methodology ## Context Graph ### Boundary Principle.)
 
 ### Artifact IDs
 
@@ -313,15 +327,15 @@ Core rules:
 | root contract artifacts | fixed name: `intent`, `defaults`, `prd`, `usm`, `dm`, `system`, `containers` |
 | `container.md` | `container.<container-slug>` |
 | `component.md` | `component.<container-slug>.<component-slug>` |
-| root `AGENTS.md` | `guidance.root.codex` |
-| root `CLAUDE.md` | `guidance.root.claude` |
-| container guidance | `guidance.container.<container-slug>.<assistant-slug>` |
-| component guidance | `guidance.component.<container-slug>.<component-slug>.<assistant-slug>` |
+| root `AGENTS.md` | `config.root.codex` |
+| root `CLAUDE.md` | `config.root.claude` |
+| container config | `config.container.<container-slug>.<assistant-slug>` |
+| component config | `config.component.<container-slug>.<component-slug>.<assistant-slug>` |
 | `pdr` ledger | `pdr` |
 | `adr` ledger | `adr` |
 | `bdd` | `BDD-####` |
 
-Root contract artifacts keep semantic IDs because there are few of them and they are not the hot path in derivation-heavy generation. Decision ledgers keep semantic artifact IDs because the record items inside them carry the addressable identity. `bdd` artifacts use short typed artifact IDs because each behavior file is its own selectively loadable context artifact.
+Root contract artifacts keep semantic IDs because there are few of them and they are not the hot path in derivation-heavy generation. Decision ledgers keep semantic artifact IDs because the record items inside them carry the addressable identity. `bdd` artifacts use short typed artifact IDs because each behavior scenario collection is its own selectively loadable context artifact.
 
 ### Engine Identity Model
 
@@ -344,7 +358,6 @@ Every addressable item is owned by exactly one artifact where it is defined.
 `intent` remains prose-first. Free prose in `intent` stays un-IDed. Structured `intent` entries use only:
 
 - `CAP-####`
-- `WISH-####`
 - `CST-####`
 
 ### Derivation References
@@ -367,6 +380,7 @@ Bootstrap commands are uniform across all modes:
 - `--mode` is required on both bootstrap commands
 - `init` always creates governed scaffolding, mode state, and draft `intent-specs` only
 - `import` reconstructs candidate contract according to the chosen initial mode
+- `init --upgrade --mode <pm|dev|expert>` is valid only when the repo is currently in `vibe` mode (see Upgrade Mechanics)
 
 During brownfield import:
 
@@ -377,16 +391,16 @@ During brownfield import:
 
 `import --mode vibe` reconstructs the compact stack bottom-up from code analysis:
 1. Analyze existing code to infer compact system-specs (flat system context, components, interfaces, behaviors)
-2. Infer compact intent-specs (capabilities, wishes, constraints, product-summary prose) from the reconstructed flat system
+2. Infer compact intent-specs (capabilities, constraints, product-summary prose) from the reconstructed flat system
 
-`system-specs` and `intent-specs` are marked `draft` after compact reconstruction. The skill keeps the explicit user review surface on `intent-specs`: review/eval/approve intent against the inferred compact system and current code, auto-advance compact system-specs when safe, then generate final root guidance and reconcile against code.
+`system-specs` and `intent-specs` are marked `draft` after compact reconstruction. Review and approval proceed top-down: review/eval/approve intent against the inferred compact system and current code, auto-advance compact system-specs when structural blockers clear, then generate root config and reconcile against code. (See methodology ## Workflows ### Import Review Flow.)
 
 `import --mode pm|dev|expert` reconstructs the full contract stack bottom-up from code analysis:
 1. Analyze existing code to infer system-specs (components, containers, interfaces, behaviors)
 2. Infer product-specs (requirements, stories, domain model) from the reconstructed system-specs
-3. Infer intent-specs (capabilities, wishes, constraints) from the reconstructed product-specs
+3. Infer intent-specs (capabilities, constraints) from the reconstructed product-specs
 
-All three contract tiers are marked `draft` after full reconstruction. The skill then runs `review` starting at system-specs and proceeding upward through product-specs and intent-specs, surfacing findings for user confirmation at each tier before moving to the next. Context is generated only after the full contract stack is approved.
+All three contract tiers are marked `draft` after full reconstruction. Review and approval proceed top-down: review `intent-specs` first, then `product-specs`, then `system-specs`, surfacing findings for user confirmation at each tier. Context is generated only after the full contract stack is approved. (See methodology ## Workflows ### Import Review Flow.)
 
 ---
 
@@ -414,13 +428,13 @@ Templates use these canonical column names across tiers:
 | `priority` | Relative importance or sequencing | prd (FR, features, scope) |
 | `measure` / `target` | Quantitative NFR specification | prd (NFR), system (SNFR) |
 
-Domain-specific columns (e.g., `kind`, `runtime`, `rule`, `relationship`) are template-local and documented within the template that uses them.
+Domain-specific columns (e.g., `kind`, `runtime`, `rule`) are template-local and documented within the template that uses them.
 
 ---
 
 ## Context Graph Realization
 
-The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, code drift is analyzed heuristically by the skill rather than through graph-backed code-item validation.
+The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, code drift is analyzed heuristically by the agent rather than through graph-backed code-item validation.
 
 ### Explicitly Stored
 
@@ -437,27 +451,41 @@ The engine stores:
 
 ### Inferred Views
 
-See methodology for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed in the graph only, never written to artifact frontmatter. The loading view is used to compute agent load sets — given a scope, the graph returns the minimum set of execution guidance and contract artifacts a worker agent needs.
+See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed in the graph only, never written to artifact frontmatter. The loading view is used to compute agent load sets — given a scope, the graph returns the minimum set of config and contract artifacts a worker agent needs.
 
 ### Agent Load Sets
 
-The context graph computes the load set for each worker agent. The orchestrator (skill) queries the graph and passes the result to each spawned worker. Workers receive both execution guidance and the governing contract slice.
+The context graph computes the load set for each worker agent. The orchestrator (skill) queries the graph and passes the result to each spawned worker. Workers receive both config and the governing contract slice.
 
 #### Full Modes (`pm`, `dev`, `expert`)
 
-| Worker scope | Execution guidance | Contract artifacts | Always included |
+| Worker scope | Config | Contract artifacts | Always included |
 | --- | --- | --- | --- |
-| component | component + container guidance | component spec, container spec | `defaults` |
-| container | container + root guidance | container spec, system + containers spec | `defaults` |
-| root | root guidance | system, containers | `defaults` |
+| component | component + container config | component spec, container spec | `defaults` |
+| container | container + root config | container spec, system + containers spec | `defaults` |
+| root | root config | system, containers | `defaults` |
 
 #### Compact Mode (`vibe`)
 
-All workers load root guidance + flat `system.md` + `defaults`.
+All workers load root config + flat `system.md` + `defaults`.
 
 #### Overhead Budget
 
-Generated guidance and contract artifacts total approximately 6,000–12,000 tokens per worker (2–5% of a 256K context window). The orchestrator additionally loads the skill (~5,000 tokens), status, and graph. Workers never load the skill or methodology.
+Generated config and contract artifacts total approximately 6,000–12,000 tokens per worker (2–5% of a 256K context window). The orchestrator additionally loads the skill (~5,000 tokens), status, and graph. Workers never load the skill or methodology.
+
+### Context Loading Protocol
+
+#### Orchestrator Load
+
+The orchestrator loads: skill instructions, status snapshot, graph cache, and the contract artifacts needed to compute the affected set and dispatch plan. It does **not** load all contract artifacts — only the minimal set for planning. After dispatching workers, the orchestrator retains only the graph + status for cross-scope validation.
+
+#### Worker Load
+
+Each worker receives a fixed load set at dispatch time (see Agent Load Sets above). Workers do not request additional context mid-generation. If a worker discovers it needs information outside its load set, it reports a finding rather than expanding its context.
+
+#### Template Loading
+
+During generation, the agent loads one template at a time for the artifact being generated. After the artifact is written, the template may be unloaded before loading the next. This keeps peak context usage minimal even when generating multiple artifacts in sequence.
 
 ### Graph Cache
 
@@ -483,10 +511,14 @@ The engine may materialize a derived status view at:
 
 This file summarizes:
 
-- latest approved contract versions
+- contract-tier lifecycle state (`draft` | `approved` | not yet generated)
+- for `context` and `code`: generated/not yet generated and current/stale
 - stale downstream artifacts
-- unresolved draft tiers
-- graph health warnings
+- affected tiers and scopes
+- coverage gaps
+- current mode
+
+(See methodology ## Operations ### `status` for the full report specification.)
 
 ---
 
@@ -494,7 +526,7 @@ This file summarizes:
 
 ### Tier Order
 
-See methodology for tier semantics and derivation rules. The concrete tier order depends on mode:
+See methodology ## Generation ### Tier Order for tier semantics and derivation rules. The concrete tier order depends on mode:
 
 Full tier order (`pm`, `dev`, `expert`):
 ```text
@@ -503,7 +535,7 @@ intent-specs -> product-specs -> system-specs -> context -> code
 
 Compact tier order (`vibe`):
 ```text
-intent-specs -> system-specs -> context (execution guidance only) -> code
+intent-specs -> system-specs -> context (root config only) -> code
 ```
 
 Within a contract tier, artifacts are generated in this order:
@@ -514,60 +546,61 @@ Within a contract tier, artifacts are generated in this order:
 
 ### Scope Of Regeneration
 
-Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. Artifacts with unchanged upstream bases are not regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set.
+Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. Artifacts with unchanged upstream bases are not regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set. (See methodology ## Generation ### Scope Of Regeneration.)
 
 ### Forward-Back Pass Generation
 
-See methodology for the conceptual forward-back pass model. The concrete steps per contract tier are:
+See methodology ## Generation ### Forward-Back Pass for the conceptual model. The concrete steps per contract tier are:
 
-1. generate artifacts in dependency order
-2. forward pass across the tier
-3. back pass if later artifacts sharpen earlier artifacts
+1. generate artifacts in dependency order (forward pass)
+2. check whether later artifacts constrain earlier artifacts (back pass)
+3. if back pass finds issues, re-enter affected earlier artifacts into the regeneration set and repeat until stable
 4. structural eval + semantic eval
 5. emit as `draft`, surface any remaining findings
 6. pause or auto-advance for review, eval, and approval according to mode and delegated-approval rules
 
-### Operation Contracts
+### Operation Commands
 
-| Operation | Required Inputs | Output |
-| --- | --- | --- |
-| `init` | project brief, initial mode | governed scaffolding, mode state, and initial `intent-specs` draft |
-| `generate` | target tier, scope, approved upstream basis, mode | regenerated tier artifacts |
-| `review` | current approval unit, or `intent-specs` in public `vibe` mode, scope, review style | interactive loop: eval → findings → fixes → user chooses (loop / eval-only / approve) |
-| `eval` | current approval unit, or `intent-specs` in public `vibe` mode, scope | structural and semantic findings |
-| `reconcile` | optional target tier (defaults to full downstream stack), approved upstream change set | interactive loop: detect drift → propose fixes → apply → eval → user chooses (loop / eval-only / approve) |
-| `approve` | current approval unit, approval mode | approved approval unit and updated versions |
-| `status` | scope | current lifecycle and stale summary |
-| `import` | unmanaged repo scope, initial mode | candidate contract drafts appropriate to the chosen initial mode |
+See methodology ## Operations for authoritative operation definitions (purpose, parameters, flags, preconditions, postconditions). The table below maps methodology operations to implementation commands with engine-internal details:
 
-`review` only acts on the current approval unit, checking upward against approved upstream truth. In the public `vibe` UX, this narrows to `review intent-specs` and `eval intent-specs`, both using downstream compact system and current code drift as heuristic evidence. `review intent-specs` keeps the normal interactive review loop and may propose or apply bounded fixes within the current draft `intent-specs` approval unit only. `eval intent-specs` remains read-only. These checks are outside graph-backed code-item analysis and never directly edit compact `system-specs` or code. `reconcile` only acts downward, checking downstream artifacts against approved upstream changes. Both `review` and `reconcile` are interactive loops: each cycle ends with the user choosing to loop, eval-only (after out-of-band edit), or approve and proceed. The symmetry: `review` is to `eval` as `reconcile` is to `generate`.
+| Command | Methodology operation | Engine inputs | Engine output |
+| --- | --- | --- | --- |
+| `init` | `init` | optional seed, `--mode`, optional `--upgrade` | governed scaffolding, mode state, draft `intent-specs` (or full stack on upgrade) |
+| `import` | `import` | optional source repo path, `--mode` | candidate contract artifacts in `draft` |
+| `generate <target>` | `generate` | optional target tier, mode, approved upstream basis | regenerated tier artifacts; eval runs automatically on contract tiers |
+| `eval <target>` | `eval` | optional target, mode | structural and semantic findings (no modifications) |
+| `review <target>` | `review` | optional target, mode | interactive loop: eval → findings → fixes → user exit choice |
+| `reconcile <target>` | `reconcile` | optional target scope, approved upstream change set | interactive loop: detect drift → propose → fix → eval → user exit choice |
+| `approve <target>` | `approve` | optional approval unit, approval mode | approved approval unit with provenance |
+| `status` | `status` | optional scope filter | read-only lifecycle and staleness report |
+
+For `eval` and `review`, the target can be any layer: `intent-specs`, `product-specs`, `system-specs`, `context`, or `code`. For contract targets, structural checks are blocking for approval. For `context` and `code`, diagnostics are implementation-defined but must validate the target against approved upstream truth. (See methodology ## Generation ### Eval.)
 
 ### Standard Operation Parameters
 
-Implementations should standardize these parameter names even if the user-facing CLI or skill phrasing differs:
+Implementations should standardize these parameter names even if the user-facing skill phrasing differs:
 
 | Parameter | Meaning |
 | --- | --- |
-| `target_tier` | One of `intent-specs`, `product-specs`, `system-specs`, `context`, `code` |
+| `target` | One of `intent-specs`, `product-specs`, `system-specs`, `context`, `code` |
 | `scope` | One of `root`, `container:<container-slug>`, `component:<container-slug>/<component-slug>` |
 | `mode` | One of `vibe`, `pm`, `dev`, `expert` |
-| `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the current approval unit that do not change approved upstream meaning. |
-
+| `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the target that do not change approved upstream meaning. |
 | `approval_mode` | One of `user`, `delegated` |
-| `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges downward from every changed item in the context graph |
+| `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges forward from every changed item in the context graph |
 
 These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
 
 ### Mode-Driven Approval Behavior
 
-Implementations should enforce the same stop behavior described in methodology:
+Implementations must enforce the stop behavior described in methodology ## Generation ### Approval And Auto-Advance:
 
 | Mode | Contract depth | Approval unit | Normal user contract stop | Delegated auto-advance by default |
 | --- | --- | --- | --- | --- |
 | `pm` | full (3 tiers) | each affected contract tier | `product-specs` | `system-specs` |
 | `dev` | full (3 tiers) | each affected contract tier | `system-specs` | `product-specs` |
 | `expert` | full (3 tiers) | each affected contract tier | every contract tier | none |
-| `vibe` | compact (2 tiers) | each affected contract tier | intent-specs only | system-specs |
+| `vibe` | compact (2 tiers) | each affected contract tier | `intent-specs` only | `system-specs` |
 
 In `pm` and `dev`, delegated auto-advance is allowed only when:
 
@@ -577,22 +610,21 @@ In `pm` and `dev`, delegated auto-advance is allowed only when:
 
 If a delegated approval unit is blocked or flagged in `pm` or `dev`, explicit user review and approval of that tier become required before the run can complete.
 
-In `vibe`, compact `system-specs` uses the same safety tests, but blocked or flagged results surface through `review intent-specs` / `eval intent-specs` and may recommend upgrade. Compact `system-specs` never becomes its own public user stop.
+In `vibe`, compact `system-specs` uses the same safety tests. Structural blockers halt downstream generation and are surfaced through the intent-centric UX. Non-blocking advisory findings may still allow best-effort continuation, with findings surfaced prominently and upgrade recommended when appropriate. Compact `system-specs` never becomes its own public approval stop.
 
 ### Public Skill Surfaces
 
 Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 
 - `generate <target>`
-- `review`
-- `eval`
-- `reconcile`
-- `approve`
+- `review <target>`
+- `eval <target>`
+- `reconcile <target>`
+- `approve <target>`
 - `status`
-- `configure`
 - `help`
 
-`vibe` exposes a simplified public surface:
+`vibe` v1 exposes a simplified public surface:
 
 - `approve intent-specs`
 - `generate code`
@@ -600,14 +632,15 @@ Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 - `review intent-specs`
 - `eval intent-specs`
 - `status`
-- `configure`
 - `help`
 
-In `vibe`, `review intent-specs` is a heuristic interactive review of compact intent/defaults using downstream compact system and current code as evidence, while `eval intent-specs` is the read-only counterpart. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion. Bare `review` / `eval` aliases may be added later, but they are not part of the current public spec.
+In `vibe`, `review intent-specs` is a heuristic interactive review of compact intent/defaults using downstream compact system and current code as evidence, while `eval intent-specs` is the read-only counterpart. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion.
+
+v1 note: the methodology allows implementations to additionally expose `eval context`, `eval code`, `review context`, `review code`, and `reconcile context` in vibe. These are deferred to a future version.
 
 ### Smart Orchestration
 
-In full modes, `generate <target>` orchestrates the full path from the current state to the target tier, following mode rules. The "normal forward surface" (see methodology) lists the commands the skill should suggest to the user after each stop.
+In full modes, `generate <target>` orchestrates the full path from the current state to the target tier, following mode rules:
 
 1. Check all upstream tiers are approved.
 2. For any upstream tier in draft: if it is **delegated** in the current mode → auto-advance (eval, approve, continue).
@@ -634,8 +667,8 @@ In `vibe`, compact `system-specs` never becomes a public user stop. If compact s
 
 | Command | Behavior |
 | --- | --- |
-| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root execution guidance, and code. If compact system auto-advance fails safety tests, continue generating code from best-effort system-specs, surface findings prominently, and recommend `review intent-specs` or upgrade |
-| `reconcile code` | auto-regenerate compact `system-specs` from approved intent as the first step, then run interactive downward drift review between refreshed system and current code. If `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before proceeding. If system-specs regen produces breaking changes, surface them prominently and recommend `review intent-specs` or upgrade. If compact system cannot safely auto-advance, continue from best-effort system-specs, surface findings, and recommend `review intent-specs` or upgrade |
+| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root config, and code. If compact system auto-advance fails safety tests, continue generating code from best-effort system-specs, surface findings prominently, and recommend `review intent-specs` or upgrade |
+| `reconcile code` | auto-regenerate compact `system-specs` from approved intent as the first step, then run interactive downward drift review between refreshed system and current code. If `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before proceeding. If system-specs regen produces breaking changes, surface them prominently and recommend `review intent-specs` or upgrade |
 | `review intent-specs` | heuristic interactive review of compact intent/defaults against downstream compact system and current code drift; uses agent reasoning over filesystem layout, exported interfaces, routes or commands, tests, key strings, and owned-path comparisons; may propose or apply bounded fixes within draft `intent` / `defaults` only |
 | `eval intent-specs` | heuristic read-only eval of compact intent/defaults against downstream compact system and current code drift; runs structural checks on the compact contract plus lightweight non-graph code-drift checks |
 
@@ -655,12 +688,12 @@ After every stop (approval, escalation, explicit `generate context` in full mode
 | Step | `vibe` | `pm` | `dev` | `expert` |
 | --- | --- | --- | --- | --- |
 | Bootstrap | `init --mode vibe` | `init --mode pm` | `init --mode dev` | `init --mode expert` |
-| Shape intent | edit `intent.md` directly; normalization runs during bootstrap/approval | `generate intent-specs` (if defaults need regen) | same | same |
-| Approve intent | `approve intent-specs` | `approve` | `approve` | `approve` |
+| Shape intent | `review intent-specs` | `review intent-specs` | `review intent-specs` | `review intent-specs` |
+| Approve intent | `approve intent-specs` | `approve intent-specs` | `approve intent-specs` | `approve intent-specs` |
 | Forward to product | — | `generate product-specs` | (automatic) | `generate product-specs` |
-| Approve product | — | `approve` | (auto or escalated) | `approve` |
+| Approve product | — | `approve product-specs` | (auto or escalated) | `approve product-specs` |
 | Forward to system | (automatic) | (automatic) | `generate system-specs` | `generate system-specs` |
-| Approve system | (automatic) | (auto or escalated) | `approve` | `approve` |
+| Approve system | (automatic) | (auto or escalated) | `approve system-specs` | `approve system-specs` |
 | Forward to code | `generate code` | `generate code` | `generate code` | `generate code` |
 
 `(automatic)` = handled by the forward `generate` command via smart orchestration / delegation. `(auto or escalated)` = normally delegated, but escalates to explicit approval if breaking change detected. `—` = tier does not exist in this mode.
@@ -671,15 +704,16 @@ These are skill-level commands that do not correspond to methodology operations:
 
 | Command | Purpose |
 | --- | --- |
-| `configure` | Change runtime settings: `mode` (`vibe` / `pm` / `dev` / `expert`) and any future skill-level options. Switching from `vibe` to any other mode triggers a one-way upgrade (see Upgrade Mechanics below). Switching back to `vibe` is not allowed. Other mode changes take effect on the next operation. |
-| `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. Use `help --explain <topic>` for detailed explanations (e.g., `help --explain generate`, `help --explain modes`). |
+| `help` | Explain any VibeLoom concept, operation, or workflow by referencing methodology and implementation docs. Does not modify artifacts or state. |
 
 Bootstrap-specific command rules:
 
 - `init --mode <mode>` and `import --mode <mode>` are the only valid bootstrap entrypoints
-- both require explicit `--mode`
-- both are valid only before the repo becomes governed
-- after bootstrap succeeds, later `init` or `import` calls return an error with guidance
+- `init --upgrade --mode <pm|dev|expert>` is the only valid upgrade entrypoint (see Upgrade Mechanics)
+- `--mode` is required on bootstrap and upgrade commands
+- bootstrap commands are valid only before the repo becomes governed
+- upgrade is valid only when the repo is currently in `vibe` mode
+- after bootstrap or upgrade succeeds, later `init` or `import` calls return an error with guidance
 
 ### Context Generation
 
@@ -689,33 +723,68 @@ Context generation happens after the required contract tiers are approved.
 
 Generation order inside context:
 
-1. execution guidance artifacts for affected scopes (root, container, component)
+1. config artifacts for affected scopes (root, container, component)
 2. decision records if the change introduced product or architecture decisions
 3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand in full modes via `generate context`
 
-Generated execution guidance should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope without loading the full context graph.
+Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope without loading the full context graph.
 
 #### Compact Context Generation (`vibe`)
 
-In `vibe`, context generation produces only root-level execution guidance (`AGENTS.md`, `CLAUDE.md`). No decision records or BDD scenarios are generated. These become available after upgrade to pm/dev/expert.
+In `vibe`, context generation produces only root-level config (`AGENTS.md`, `CLAUDE.md`). No decision records or BDD scenarios are generated. These become available after upgrade to a full mode.
 
-Context is assumed correct by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code. In `vibe`, context is generated only implicitly during `generate code` or during compact import.
+Context is treated as derived execution truth by default. When context is the explicit target (`generate context`), generation stops after context in all full modes. When the target is `generate code`, context is generated implicitly and the run continues into code. In `vibe`, context is generated only implicitly during `generate code` or during compact import.
+
+### Parallel Dispatch
+
+Contract generation (intent-specs, product-specs, system-specs) is sequential — each tier depends on the tier above it. Within a contract tier, root artifacts are generated first, then per-container and per-component artifacts sequentially in the forward-back pass.
+
+Context generation is sequential per scope but may parallelize across independent scopes (e.g., config for container A and config for container B can be generated concurrently).
+
+Code generation parallelizes at the component level: each worker receives its load set (see Agent Load Sets and Context Loading Protocol) and generates independently. Components within the same container are independent and can be generated concurrently. Cross-container components are also independent.
+
+After all workers complete, the orchestrator validates cross-scope consistency:
+- interface contracts declared in component specs are satisfied by generated code
+- dependency references resolve to actual generated outputs
+- no conflicting file writes across workers
+
+In `vibe`, the flat system doc means there is no component-level dispatch — code generation runs as a single agent with root config.
+
+### Code Generation Dispatch
+
+The orchestrator computes the affected component set from the graph, builds a dispatch plan, and spawns one worker per affected component.
+
+Each worker receives:
+- its load set (config + contract slice + defaults)
+- the component spec as the primary generation target
+- the relevant template(s) for source/test scaffolding
+
+Workers generate source code and tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each worker.
+
+After all workers complete, the orchestrator:
+1. Validates that generated code satisfies the interface contracts declared in component specs
+2. Validates that dependency references resolve to actual generated outputs
+3. Generates or updates `runtime` artifacts (packaging, deployment, migrations) which are inherently cross-component and therefore orchestrator-level work
+
+In `vibe`, code generation runs as a single agent (no component-level dispatch) using root config + flat system + defaults.
 
 ### Upgrade Mechanics
 
-When the user runs `configure mode pm|dev|expert` while in `vibe` mode, the skill performs a one-way upgrade:
+When the user runs `init --upgrade --mode <pm|dev|expert>` while in `vibe` mode, the agent performs a one-way upgrade:
 
 1. **Snapshot:** Copy vibe artifacts (`intent.md`, `defaults.md`, `system.md`) to `.vibeloom/vibe-snapshot/` as read-only reference.
 2. **Generate full contract stack** from the compact artifacts:
-   - Vibe `intent` (product summary section) → regular `intent` (narrowed to vision + capabilities + wishes + constraints) + `prd` + `usm` + `dm`
+   - Vibe `intent` (product summary section) → regular `intent` (narrowed to vision + capabilities + constraints) + `prd` + `usm` + `dm`
    - Vibe `system` (flat) → regular `system` + `containers` + per-container `container` + per-component `component`
    - `defaults` stays as-is.
 3. **Mark all new artifacts as `draft`.** Normal approval flow for the target mode takes over.
 4. **Optionally rearrange source code** into the container/component directory structure defined by the generated system-specs, but only after explicit user confirmation. Rearrangement is heuristic and best-effort; if ambiguous or unsafe, skip code moves and direct the user into `reconcile code` or manual follow-up. If the user declines rearrangement when prompted, skip code moves entirely and suggest `reconcile code` or manual follow-up.
-5. **Generate full context** (execution guidance at all scopes, decision records, BDD scenarios as applicable).
-6. The skill informs the user that the upgrade is complete and suggests the next command for the target mode.
+5. **Generate full context** (config at all scopes, decision records, BDD scenarios as applicable).
+6. The agent informs the user that the upgrade is complete and suggests the next command for the target mode.
 
-The transition is one-way. `configure mode vibe` from any other mode is rejected with an explanation.
+The transition is one-way. `init --upgrade --mode vibe` is rejected. Attempting to downgrade from any full mode to `vibe` is rejected with an explanation.
+
+(See methodology ## Vibe-to-Full Upgrade for additional context.)
 
 ---
 
@@ -743,9 +812,9 @@ assets/
     pdr.md               # full modes only
     adr.md               # full modes only
     bdd.md               # full modes only
-    root-execution-guidance.md        # all modes
-    container-execution-guidance.md   # full modes only
-    component-execution-guidance.md   # full modes only
+    root-config.md       # all modes
+    container-config.md  # full modes only
+    component-config.md  # full modes only
 ```
 
 Template rules:
@@ -772,16 +841,19 @@ The implementation is valid only if all of the following hold:
 - every contract artifact has stable artifact IDs and item carriers
 - every context artifact has stable artifact IDs and short derivation references
 - `bdd` is context, not contract
-- execution guidance is assistant-specific and scope-specific
+- config is assistant-specific and scope-specific
 - contract approval follows the mode-defined approval unit and delegated-auto-advance rules
-- `review` and structural/semantic `eval` act on the current approval unit plus approved upstream truth
+- `eval` and `review` can target any layer (`intent-specs` through `code`); structural checks are blocking only for contract tiers
 - `reconcile` remains downstream only
 - `vibe` remains intent-centric: compact `system-specs` never becomes a public user stop
 - full-mode import generates context only after the contract stack is approved
+- import review proceeds top-down even though reconstruction is bottom-up
 - the context graph can be rebuilt from artifact metadata and item carriers without hidden prompt-only state
 - brownfield import preserves compatible short IDs and records one-time remaps for incompatible legacy IDs
 - bootstrap commands require an initial mode and are rejected once the repo is already governed
+- upgrade uses `init --upgrade --mode` and is valid only from `vibe`
 - full modes expose one uniform public command surface while `vibe` exposes the restricted compact surface
 - the skill can load one narrow template at a time rather than one large combined template
+- no `version` or `draft_revision` fields in any frontmatter definition
 
-This document is sufficient to author the future `SKILL.md`, `references/`, and the v1 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.
+This document is sufficient to author the `SKILL.md`, `references/`, and the v1 contract/context engine without inventing new artifact rules. Concrete code templates and code-item carriers remain out of scope in this phase.

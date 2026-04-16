@@ -648,7 +648,7 @@ For `context` and `code`, the exact diagnostics are implementation-defined but m
 
 Reconciliation is asymmetric: approved upstream contract defines intended meaning. Downstream drift triggers proposals, not silent rewriting of approved truth. In practice, `generate code` is the 90% path; `reconcile` is the surgical review path for when you want to detect, inspect, and resolve drift before regenerating.
 
-In `vibe`, `reconcile code` remains the standard downstream repair path. If `intent-specs` is draft when reconciliation begins, the skill may normalize the draft intent for structural consistency but must stop for `approve intent-specs` before propagating changes into compact system-specs or code. When reconciling in vibe, the skill auto-regenerates compact system-specs from approved intent as the first step, then reconciles code against the refreshed system. If auto-regen generates breaking changes in system-specs, surface them prominently and recommend `review intent-specs`.
+In `vibe`, `reconcile code` remains the standard downstream repair path. If `intent-specs` is draft when reconciliation begins, the agent may normalize the draft intent for structural consistency but must stop for `approve intent-specs` before propagating changes into compact system-specs or code. When reconciling in vibe, the agent auto-regenerates compact system-specs from approved intent as the first step, then reconciles code against the refreshed system. If auto-regen generates breaking changes in system-specs, surface them prominently and recommend `review intent-specs`.
 
 Each reconciliation cycle:
 

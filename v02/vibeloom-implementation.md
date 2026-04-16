@@ -22,23 +22,22 @@ flowchart TD
     E <-->|"read/write"| A["Artifacts on Disk<br/>(contract, context, code)"]
     E -->|"build/query"| G["Graph Cache<br/>(.vibeloom/state/)"]
 
-    S -->|"dispatch plan"| DP["Wave 1<br/>(independent subagents)"]
-    DP --> SA1["subagent<br/>(scope A)"]
-    DP --> SA2["subagent<br/>(scope B)"]
+    S -->|"query affected set + dispatch support"| E
+    E -->|"iterative dispatch plan<br/>(load sets, prerequisites)"| DP["Wave 1 ready set"]
+    DP -->|"task header + scoped load set"| SA1["subagent<br/>(scope A)"]
+    DP -->|"task header + scoped load set"| SA2["subagent<br/>(scope B)"]
 
-    SA1 --> V["Cross-scope validation<br/>(summaries + spot reads)"]
-    SA2 --> V
-    V -->|"late-fetch re-invoke<br/>(at most once per task)"| SA1
-    V --> DP2["Wave 2<br/>(dependents of Wave 1)"]
+    SA1 -->|"accepted writes"| A
+    SA2 -->|"accepted writes"| A
+    SA1 -->|"ephemeral result summary"| V["Cross-scope validation<br/>(summaries + spot reads)"]
+    SA2 -->|"ephemeral result summary"| V
+    SA1 -->|"late-fetch request"| S
+    S -->|"approved late-fetch slice<br/>(once, same task)"| SA1
+    V -->|"recompute remaining plan<br/>from accepted state"| DP2["Wave 2 ready set"]
     DP2 --> SA3["subagent<br/>(scope C)"]
-    SA3 --> V2["Cross-scope validation"]
-
-    SA1 -->|"read load set"| A
-    SA2 -->|"read load set"| A
-    SA3 -->|"read load set"| A
-    SA1 -->|"write owned scope"| A
-    SA2 -->|"write owned scope"| A
-    SA3 -->|"write owned scope"| A
+    DP2 -->|"task header + scoped load set"| SA3
+    SA3 -->|"accepted writes"| A
+    SA3 -->|"ephemeral result summary"| V2["Cross-scope validation"]
 
     style S fill:#e8f4fd,stroke:#1a73e8
     style E fill:#fff3e0,stroke:#e65100
@@ -48,7 +47,19 @@ flowchart TD
     style V2 fill:#fff3e0,stroke:#e65100
 ```
 
-In v1, the skill runs as a single agent session. Subagents are spawned per task, each with its own context window. Subagent load sets translate to file-read instructions in the subagent prompt. Subagents share the filesystem and communicate results through written artifacts only — they cannot communicate with each other directly. Late-fetch requests surface in a subagent's result summary and are fulfilled by the orchestrator re-invoking the subagent with the additional slice, capped at one re-invocation per task.
+In v1, the skill runs as a single agent session. Subagents are spawned per task, each with its own context window. The engine shapes each scoped load set and the orchestrator packages it into the subagent prompt together with a task header. Subagents share the filesystem, but they do not communicate with each other directly. They communicate only through accepted artifact writes on disk plus orchestrator-mediated ephemeral result summaries. Late-fetch is task-local: when a subagent discovers one narrow missing dependency, it may request one approved additional slice and be re-invoked once for that same task.
+
+### Runtime Loop
+
+Each operation follows the same high-level loop:
+
+1. load only the minimal planning state needed for the current operation
+2. compute the affected set and build the initial dispatch plan from accepted state
+3. dispatch the current ready set as scoped subagent tasks when decomposition is useful
+4. validate subagent results from summaries plus allowed spot reads
+5. if a task needs one narrow missing dependency, re-invoke that task once with an approved late-fetch slice
+6. accept successful task results, retire superseded ones, recompute the remaining dispatch plan, and continue to the next ready set
+7. finish any shared/root/orchestrator-local work and return target-level findings or outputs
 
 ### Skill Responsibilities
 
@@ -89,6 +100,67 @@ The engine may maintain regenerable local state under:
 ```
 
 These files are derived runtime state. They are not contract, context, or code truth.
+
+### Subagent Execution Contract
+
+Subagents are a general execution primitive for scoped `import`, `generate`, `eval`, `review`, and `reconcile` work when decomposition is useful. Subagent decomposition is internal by default: the public skill surface remains operation-level, and low-level wave/subagent details appear only in concise progress summaries when useful.
+
+Each subagent runs in one of two modes:
+
+- **read-only analysis mode** — used for scoped `import` analysis, `eval`, advisory `review`, drift analysis inside `reconcile`, and other findings-only passes. Read-only tasks have no write scope. They may load templates only when a validation rule explicitly requires template shape awareness.
+- **write-capable generation / reconciliation mode** — used for contract generation, context generation, code generation, bounded-fix phases of `review`, and fix phases of `reconcile`. Write-capable tasks have an explicit write scope and may load templates needed for materialization.
+
+Every subagent invocation starts from a fresh prompt built from:
+
+- the dispatch-plan task header
+- the scoped load set for that task
+- only the minimal accepted prior-wave summaries needed for prerequisites, validation context, or unresolved findings
+
+The task header is derived from the dispatch plan and includes:
+
+- operation and target
+- target scope
+- objective
+- task mode (`read-only` or `write-capable`)
+- allowed writes, if any
+- upstream prerequisites
+- validation expectations
+- required result-summary shape
+
+Subagents may read only:
+
+- their dispatch-plan load set
+- one approved late-fetch slice for the same task, when allowed
+
+Subagents may not treat same-wave outputs as input, even if those files already exist on disk. Same-wave outputs become eligible inputs only after the wave is accepted and the remaining dispatch plan is recomputed.
+
+`accepted` is an operation-local runtime state, not artifact metadata:
+
+- for write-capable tasks, an accepted result is a validated set of writes retained in the active operation state
+- for read-only tasks, an accepted result is a validated scoped findings/evidence package retained in the active operation state
+- accepted is distinct from `approved`
+- superseded accepted results are retired from the active plan, though an implementation may retain them in transient debug traces
+
+Dispatch plans and subagent summaries are ephemeral by default. They are not governed repo truth and are not normal prompt inputs outside the current operation unless an implementation explicitly chooses to persist debug traces.
+
+The orchestrator may write only:
+
+- shared/root/runtime artifacts
+- decision ledgers (`pdr`, `adr`)
+- `.vibeloom/` runtime state
+
+Component-owned outputs are changed only through subagent rerun/reconcile flow, not direct orchestrator patching.
+
+### Runtime Vocabulary
+
+- **dispatch plan** — the iterative runtime plan that maps remaining work into scoped tasks, prerequisites, and validation contracts
+- **wave** — the semantic ready set of tasks whose prerequisites are satisfied and whose write scopes are mutually compatible
+- **load set** — the scoped input package for a subagent, built from scope base plus operation overlay
+- **late-fetch** — one approved, task-local additional slice supplied to the same subagent after a narrow missing dependency is discovered
+- **spot read** — an orchestrator reread triggered by explicit validation/failure rules, not by broad curiosity
+- **accepted result** — a validated task result retained in the active operation state and eligible to influence later planning
+- **read-only analysis task** — a subagent task that produces findings/evidence only and has no write scope
+- **write-capable task** — a subagent task that may materialize bounded outputs within an explicit write scope
 
 ---
 
@@ -402,6 +474,8 @@ During brownfield import:
 1. Analyze existing code to infer compact system-specs (flat system context, components, interfaces, behaviors)
 2. Infer compact intent-specs (capabilities, constraints, product-summary prose) from the reconstructed flat system
 
+Import analysis may use scoped read-only subagents. Those subagents emit inferred structure, candidate IDs, evidence, and findings only. They do not write reconstructed draft artifacts directly; the orchestrator merges their accepted analysis results and synthesizes the draft artifacts centrally.
+
 `system-specs` and `intent-specs` are marked `draft` after compact reconstruction. Review and approval proceed top-down: review/eval/approve intent against the inferred compact system and current code, auto-advance compact system-specs when structural blockers clear, then generate root config and reconcile against code. (See methodology ## Workflows ### Import Review Flow.)
 
 `import --mode pm|dev|expert` reconstructs the full contract stack bottom-up from code analysis:
@@ -468,7 +542,7 @@ See methodology ## Context Graph for conceptual definitions of traceability, sta
 
 ### Subagent Load Sets
 
-The context graph computes the load set for each subagent. The orchestrator (skill) queries the graph and passes the result to each spawned subagent. Subagents receive the minimum sufficient mix of config, contract, and relevant context for their scope.
+The context graph computes a scope base for each subagent. The orchestrator (skill) queries the graph and applies an operation overlay so each subagent receives the minimum sufficient mix of config, contract, code, and relevant context for its scope and operation.
 
 These load-set shapes govern steady-state subagent dispatch. If a subagent runs before a needed config artifact exists in the current run, the orchestrator substitutes the just-generated in-memory slice when available, or omits only the not-yet-generated config layer until context generation reaches that scope.
 
@@ -484,6 +558,15 @@ These load-set shapes govern steady-state subagent dispatch. If a subagent runs 
 
 All subagents load root config + `defaults` + approved `intent.md` as baseline. If internal component-level dispatch is used, each subagent additionally receives the targeted component slice extracted from flat `system.md`, plus directly referenced compact interface / dependency excerpts. If the compact system inventory is too ambiguous for safe partitioning, the orchestrator falls back to single-agent execution.
 
+#### Operation Overlays
+
+Scope base is filtered by operation:
+
+- **contract generation / eval / review** — load the contract target plus approved upstream basis; omit `bdd`; include config only when the validation or generation rule explicitly depends on it
+- **context generation / eval / review** — load the governing contract slice plus only the context artifacts at the target scope
+- **code generation / eval / review / reconcile** — load contract + config + relevant context + foreign dependency slice
+- **import analysis** — load code plus inferred-scope hints and minimal reconstruction guidance; do not load generated context artifacts as inputs
+
 #### Context Efficiency
 
 The implementation does not promise a fixed token budget. Efficiency comes from four mechanisms:
@@ -493,31 +576,44 @@ The implementation does not promise a fixed token budget. Efficiency comes from 
 - **bounded late-fetch** — at most one re-invocation per task, to limit context growth
 - **dependency-aware waves** — subagents share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied
 
-For reference, a component subagent typically receives 6–12K tokens of contract + config + context slice. Exact budgets depend on project size and scope.
-
 ### Context Loading Protocol
 
 #### Orchestrator Load
 
-The orchestrator loads: skill instructions, status snapshot, graph cache, and only the contract/context artifacts needed to compute the affected set and dispatch plan. It does **not** load all artifacts — only the minimal set required for planning. After dispatching subagents, the orchestrator retains the graph, status, dispatch plan, and subagent result summaries, and reopens specific artifacts or code only for targeted spot validation when required.
+The orchestrator loads: skill instructions, status snapshot, graph cache, and only the artifacts needed to compute the affected set and dispatch plan. It does **not** load all artifacts — only the minimal set required for planning. After dispatching subagents, the orchestrator retains the graph, status, dispatch plan, and subagent result summaries, and reopens artifacts or code only for targeted spot validation when allowed.
 
 #### Subagent Load
 
-Each subagent starts with a precomputed load set at dispatch time (see Subagent Load Sets above). A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency. The orchestrator evaluates the request: if a slice can be supplied without broadening the subagent's ownership or write scope, the orchestrator re-invokes the subagent once with the additional slice added to its prompt. If the re-invocation's result summary still requests missing slices, the orchestrator treats this as a finding and exits the task — at most one late-fetch re-invocation per task.
+Each subagent starts with a precomputed load set at dispatch time (see Subagent Load Sets above) plus its structured task header. A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency. The orchestrator evaluates the request: if a slice can be supplied without broadening the subagent's ownership or write scope, the orchestrator re-invokes the same task once with the additional slice added to its fresh prompt. If the re-invocation's result summary still requests missing slices, the orchestrator treats this as a finding and exits the task.
+
+Prior-wave summaries are orchestration metadata only. Later-wave subagents load actual accepted artifacts/files when those artifacts are part of their normal load set. Summaries are included only when needed for prerequisites, validation context, or unresolved findings.
 
 #### Subagent Result Summaries
 
-Every subagent returns a compact structured summary containing:
+Every subagent returns a compact structured summary. The payload is artifact-class-specific:
+
+- **contract task summary** — artifacts written (if any), item IDs created/updated, referenced upstream basis, notable findings, unresolved assumptions
+- **context task summary** — artifacts written (if any), derived IDs emitted, referenced upstream basis, notable findings, unresolved assumptions
+- **code task summary** — files written (if any), provided interfaces, consumed dependencies, notable findings, unresolved assumptions
+- **read-only analysis summary** — findings, evidence, referenced artifacts/files, unresolved ambiguity, and any candidate IDs or inferred structure when relevant to import analysis
+
+All summaries also include:
 
 - target scope
-- files written
-- provided interfaces
-- consumed dependencies
+- task mode (`read-only` or `write-capable`)
 - requested late-fetch slices (if any) and whether they were resolved
-- notable findings or unresolved assumptions
 - validation notes relevant to merge or cross-scope checks
 
 The orchestrator uses these summaries plus targeted spot reads for cross-scope validation and merge planning.
+
+Allowed spot-read triggers are limited to:
+
+- verifying a reported interface/provider match
+- inspecting a file implicated by a failed validation
+- inspecting a file in a declared write set
+- inspecting a file or artifact referenced by an unresolved finding
+
+Broad rereads of whole scopes or entire waves are not part of normal execution. If a broad reread seems necessary, the orchestrator should surface findings and stop rather than silently expand context.
 
 #### Template Loading
 
@@ -634,6 +730,17 @@ Implementations should standardize these parameter names even if the user-facing
 | `dispatch_plan` | Planner-produced wave, load-set, write-set, prerequisite, and validation contract for subagent tasks in the current run |
 
 These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
+
+### Scoped Operation Execution
+
+Subagents are a general execution primitive for scoped `import`, `generate`, `eval`, `review`, and `reconcile` work when decomposition is useful.
+
+- **`eval`** may use scoped read-only analysis tasks. Their accepted results are merged into one target-level read-only report.
+- **`review`** is two-phase. First, scoped read-only analysis tasks produce accepted findings. Second, if the user chooses bounded fixes, only the affected scopes are redispatched as write-capable tasks. Findings are merged and deduplicated into one target-level report, ordered by severity and grouped by scope.
+- **`reconcile`** is two-phase. First, scoped read-only drift analysis produces accepted drift cases with evidence and candidate directions. Second, after the user chooses direction per case or scope, only the affected scopes are redispatched as write-capable reconcile tasks. Conflicting drift choices must be surfaced before fixes are applied.
+- **`import`** may use scoped read-only analysis tasks, but draft artifact synthesis remains orchestrator-local.
+
+In all cases, user interaction remains target-level rather than subagent-level.
 
 ### Mode-Driven Approval Behavior
 
@@ -793,28 +900,37 @@ Contract generation stays sequential across tiers, but parallelizes inside a tie
 2. **Container wave** — all affected `container.md` files generate in parallel. Writes are disjoint by directory. Each `container.md` derives only from approved upstream contract, not from peer container specs.
 3. **Component wave** — all affected `component.md` files generate in parallel after the container wave completes. A `component.md` reads its own `container.md` as part of its derivation basis (per the DAG), which is why the component wave follows container wave rather than running concurrently. Writes are disjoint by directory.
 
-The back pass reopens only the affected subset rather than forcing a whole-tier sequential rerun.
+Container and component contract tasks use the same dispatch-plan, structured-task-header, and result-summary model as code tasks. The back pass reopens only the affected contract tasks rather than forcing a whole-tier sequential rerun.
 
-Context generation runs as a single parallel wave: all affected `config` artifacts (root, container, component), all affected component-scoped `bdd`, and any triggered decision-record appends run concurrently. Each artifact derives from approved contract entities at its scope and above — no context artifact derives from a peer context artifact — so there is no inter-wave dependency. Writes are always disjoint by scope.
+Context generation runs as a single parallel wave of explicit task units:
+
+- one task for root config
+- one task per affected container config
+- one task per affected component config
+- one task per affected component `bdd` artifact
+
+Context tasks use the same dispatch-plan, structured-task-header, and result-summary model as other subagent work. Decision-ledger writes (`pdr`, `adr`) are orchestrator-local rather than subagent tasks. Each context task derives only from approved contract entities at its scope and above — no context task derives from a peer context task — so there is no inter-wave dependency. Writes are disjoint by scope.
 
 Code generation parallelizes at the component level in dependency-aware waves. Components may share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied. See Code Generation Dispatch below for the wave computation rule.
 
-After each wave completes, the orchestrator validates cross-scope consistency from subagent summaries plus targeted spot reads:
+After each wave completes, the orchestrator validates cross-scope consistency from accepted subagent summaries plus targeted spot reads:
 - interface contracts declared in component specs are satisfied by generated code
 - dependency references resolve to actual generated outputs
 - no conflicting file writes or write-scope violations occurred
+
+If validation fails and the failing outputs can be localized, only the affected tasks are reopened and rerun. Unaffected accepted task results stay active. If the failure is cross-cutting or ownership-ambiguous, the orchestrator surfaces findings and stops rather than guessing.
 
 In `vibe`, the public UX remains a single flow, but the orchestrator may still use internal component-level dispatch when the compact system has a stable enough component inventory. If the compact inventory is too ambiguous, the orchestrator falls back to single-agent execution.
 
 ### Code Generation Dispatch
 
-The orchestrator computes the affected component set from the graph, partitions it into dependency-aware waves, and emits a dispatch plan for the run.
+The orchestrator computes the affected component set from the graph, uses dispatch-support indexes derived from `DEP-####` / `IF-####` carriers to partition it into dependency-aware waves, and emits an initial dispatch plan for the run.
 
-**Wave computation.** Waves are computed by topological sort over the `DEP-####` → `IF-####` edges in the graph. A component can join the current wave when:
+**Wave computation.** A component can join the current wave when:
 - all its `DEP-####` references resolve to components in already-completed waves (or to no components)
 - its `owned_paths` are disjoint from every other component's `owned_paths` in the same wave
 
-Components with no remaining prerequisites and disjoint write scopes form the current wave. Once the wave completes (all subagents return, cross-scope validation passes), the orchestrator recomputes and dispatches the next wave.
+Components with no remaining prerequisites and disjoint write scopes form the semantic ready set for the current wave. Runtime batching or concurrency caps are implementation-defined. Once the wave completes, the orchestrator accepts successful task results, retires superseded ones, recomputes the remaining dispatch plan from the updated accepted state, and dispatches the next ready set.
 
 Each dispatch-plan task records:
 - target scope
@@ -826,12 +942,13 @@ Each dispatch-plan task records:
 - expected subagent result summary contract (see Context Loading Protocol ### Subagent Result Summaries)
 
 Each subagent receives:
+- its structured task header
 - its load set
 - the component spec as the primary generation target
 - the relevant template(s) for source/test scaffolding
 - its explicit write scope
 
-Subagents generate source code and component-local tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each subagent. A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency (see Context Loading Protocol for the one-re-invocation cap). Subagents may write only within `owned_paths` plus component-local tests.
+Subagents generate source code and component-local tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each subagent. A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency (see Context Loading Protocol for the one-re-invocation cap). Subagents may write only within `owned_paths` plus component-local tests and may not treat same-wave outputs as input.
 
 Each subagent returns the structured summary defined in Context Loading Protocol ### Subagent Result Summaries.
 

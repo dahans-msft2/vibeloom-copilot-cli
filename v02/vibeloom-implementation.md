@@ -103,8 +103,6 @@ These files are derived runtime state. They are not contract, context, or code t
   context/
     pdr.md
     adr.md
-    bdd/
-      BDD-####-<behavior-slug>.md
   <container>/
     container.md
     AGENTS.md
@@ -113,6 +111,9 @@ These files are derived runtime state. They are not contract, context, or code t
       component.md
       AGENTS.md
       CLAUDE.md
+      context/
+        bdd/
+          BDD-####-<behavior-slug>.md
   .vibeloom/
     state/
       context-graph.json
@@ -143,8 +144,8 @@ In `vibe`, there are no container directories, no `context/` directory, and no p
 - components live as direct child directories of their container directory (full modes only)
 - config artifacts (`AGENTS.md`, `CLAUDE.md`) are emitted directly into the scope they govern (root only in `vibe`)
 - `pdr` and `adr` are standardized as repo-level ledger artifacts in `context/` (full modes only)
-- `bdd` is standardized as a repo-level multi-file context artifact under `context/bdd/` (full modes only)
-- narrower context scopes may be added later, but are not required in v1
+- `bdd` is standardized as a component-scoped multi-file context artifact under `/<container>/<component>/context/bdd/` (full modes only)
+- context stays scope-local where possible; repo-level context is reserved for cross-repo decision ledgers
 
 The authoritative inventory of containers and components lives in contract artifacts:
 
@@ -177,7 +178,7 @@ The concrete output and template mapping for contract and context artifacts:
 | component `config` | `/<container>/<component>/AGENTS.md`, `/<container>/<component>/CLAUDE.md` | `assets/context/component-config.md` | component |
 | `pdr` ledger | `/context/pdr.md` | `assets/context/pdr.md` | root |
 | `adr` ledger | `/context/adr.md` | `assets/context/adr.md` | root |
-| `bdd` | `/context/bdd/BDD-####-<behavior-slug>.md` | `assets/context/bdd.md` | root |
+| `bdd` | `/<container>/<component>/context/bdd/BDD-####-<behavior-slug>.md` | `assets/context/bdd.md` | component |
 
 #### Compact Artifact Mapping (`vibe`)
 
@@ -252,14 +253,14 @@ For ledger artifacts (`pdr`, `adr`): artifact-level `derives_from` in frontmatte
 
 When a user edits an approved contract artifact outside of skill operations:
 
-1. The user should set `status: draft` in frontmatter to signal the edit.
-2. Alternatively, the agent detects the edit at the start of any operation by comparing artifact content against the last approved state.
-3. The agent confirms the transition with the user before proceeding.
-4. Editing an approved contract artifact automatically reopens it to `draft`. (See methodology ## Generation ### Lifecycle States.)
+1. The agent detects the edit at the start of any operation by comparing the current artifact content and timestamp against the last approved revision.
+2. If an approved artifact has changed, the engine automatically reopens it to `draft` before proceeding.
+3. Users do not manually maintain `status` for this transition.
+4. Confirmation is required only for semantic decisions that follow, not for the lifecycle bookkeeping itself. (See methodology ## Generation ### Lifecycle States.)
 
 ### Staleness
 
-Staleness is never written into artifact frontmatter. It is a computed property: an artifact is stale when its approved upstream basis has changed since the artifact was last approved. The engine computes staleness from the context graph. Timestamps serve as implementation-level revision signals; the methodology definition of staleness is approved-basis mismatch rather than raw file freshness.
+Staleness is never written into artifact frontmatter. It is a computed property: an artifact is stale when its approved upstream basis has changed since that artifact was last synchronized to the same approved basis. For contract artifacts, synchronization happens at approval. For `context` and `code`, synchronization happens at generation or reconciliation. The engine computes staleness from approved-basis mismatch in the context graph. Timestamps serve as implementation-level revision signals; the methodology definition of staleness is approved-basis mismatch rather than raw file freshness.
 
 Unapproved drafts do not trigger downstream staleness. Downstream artifacts become stale only when an edited upstream artifact is re-approved. (See methodology ## Generation ### Staleness And Regeneration.)
 
@@ -335,11 +336,11 @@ Prefixes `IF-####`, `DEP-####`, `BEH-####`, and `NOTE-####` are for structured c
 | `adr` ledger | `adr` |
 | `bdd` | `BDD-####` |
 
-Root contract artifacts keep semantic IDs because there are few of them and they are not the hot path in derivation-heavy generation. Decision ledgers keep semantic artifact IDs because the record items inside them carry the addressable identity. `bdd` artifacts use short typed artifact IDs because each behavior scenario collection is its own selectively loadable context artifact.
+Root contract artifacts keep semantic IDs because there are few of them and they are not the hot path in derivation-heavy generation. Decision ledgers keep semantic artifact IDs because the record items inside them carry the addressable identity. `bdd` artifacts use short typed artifact IDs because each component-scoped behavior scenario collection is its own selectively loadable context artifact.
 
 ### Engine Identity Model
 
-The engine resolves short visible IDs through containment and index metadata rather than by qualifying the visible ID.
+The engine resolves short visible IDs through ownership and index metadata rather than by qualifying the visible ID.
 
 For each addressable item, the engine stores:
 
@@ -411,7 +412,7 @@ Templates in `assets/` are authoritative for body shape. The engine parses addre
 Key exceptions to the standard table-with-IDs pattern:
 - `defaults`: compact rule lists that still use `CST-####` item IDs so downstream derivation can reference individual repo-wide constraints
 - `pdr` / `adr`: ledger artifacts with repeated record sections (`PDR-####` / `ADR-####`), each carrying `recorded_at`, `derives_from`, `contract delta`, `impact`, `decision`, and `why`
-- `bdd`: multi-file (each `BDD-####` is its own context artifact under `/context/bdd/`) for selective loading during implementation
+- `bdd`: multi-file (each `BDD-####` is its own component-scoped context artifact under `/<container>/<component>/context/bdd/`) for selective loading during implementation
 
 Templates are intentionally standalone. Small structural duplication between templates is allowed when it reduces context load at generation time.
 
@@ -434,7 +435,7 @@ Domain-specific columns (e.g., `kind`, `runtime`, `rule`) are template-local and
 
 ## Context Graph Realization
 
-The v1 context graph realization is built from explicit derivation plus containment across contract and context artifacts. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, code drift is analyzed heuristically by the agent rather than through graph-backed code-item validation.
+The v1 context graph realization stores explicit forward-derivation edges across contract and derived context artifacts. Ownership, scope, and containment metadata are stored alongside the graph as indexes used for affected-set projection, load-set construction, dispatch planning, and status. Code does not yet participate in the explicit graph because concrete code-item carriers are not specified. In `vibe`, context/code drift is analyzed heuristically by the agent rather than through a fully materialized full-mode graph.
 
 ### Explicitly Stored
 
@@ -443,45 +444,63 @@ The engine stores:
 - artifact metadata from contract and context frontmatter
 - item IDs parsed from contract and context templates
 - item-level `derives_from` references
-- an index from short item IDs to owning artifact, section, tier, and scope
-- containment:
-  - item -> section
-  - section -> artifact
-  - artifact -> tier
+- an index from short item IDs to owning artifact, section, tier, scope, and filesystem path
+- dispatch-support indexes:
+  - interface provider / consumer index for `owned_interfaces`, `IF-####`, and `DEP-####` carriers
+  - dependency-target index for referenced components and containers
+  - write-scope index derived from `owned_paths`
+  - context-relevance index linking `bdd`, `pdr`, and `adr` records to affected scopes
+  - scope summary records used to build targeted foreign slices and dispatch plans
+
+Containment may be stored as parsing and navigation metadata, but it is not a graph-edge class.
 
 ### Inferred Views
 
-See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed in the graph only, never written to artifact frontmatter. The loading view is used to compute agent load sets — given a scope, the graph returns the minimum set of config and contract artifacts a worker agent needs.
+See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed from approved-basis mismatch in the graph and is never written to artifact frontmatter. The loading view is used to compute agent load sets. Given a scope, the graph returns four layers: baseline, owned scope, referenced foreign slice, and relevant context slice. In `vibe`, affected-set and status views for `context` and `code` remain heuristic approximations derived from approved `intent`, compact `system`, and current code.
 
 ### Agent Load Sets
 
-The context graph computes the load set for each worker agent. The orchestrator (skill) queries the graph and passes the result to each spawned worker. Workers receive both config and the governing contract slice.
+The context graph computes the load set for each worker agent. The orchestrator (skill) queries the graph and passes the result to each spawned worker. Workers receive the minimum sufficient mix of config, contract, and relevant context for their scope.
+
+These load-set shapes govern steady-state worker dispatch. If a worker runs before a needed config artifact exists in the current run, the orchestrator substitutes the just-generated in-memory slice when available, or omits only the not-yet-generated config layer until context generation reaches that scope.
 
 #### Full Modes (`pm`, `dev`, `expert`)
 
-| Worker scope | Config | Contract artifacts | Always included |
-| --- | --- | --- | --- |
-| component | component + container config | component spec, container spec | `defaults` |
-| container | container + root config | container spec, system + containers spec | `defaults` |
-| root | root config | system, containers | `defaults` |
+| Worker scope | Baseline | Owned scope | Referenced foreign slice | Relevant context |
+| --- | --- | --- | --- | --- |
+| component | root config + `defaults` | component + container config, component spec, container spec, relevant `system` / `containers` summary | directly referenced interface / dependency snippets from sibling or cross-container scopes | component-scoped `bdd`, intersecting `pdr` / `adr` records |
+| container | root config + `defaults` | container config, container spec, `system`, `containers`, affected component inventory summary | directly referenced cross-container interface / dependency snippets | intersecting `pdr` / `adr` records |
+| root | root config + `defaults` | target root artifact(s), `system`, `containers` as needed | targeted downstream summaries only when required for planning or merge validation | intersecting `pdr` / `adr` records |
 
 #### Compact Mode (`vibe`)
 
-All workers load root config + flat `system.md` + `defaults`.
+All workers load root config + `defaults` + approved `intent.md` as baseline. If internal component-level dispatch is used, each worker additionally receives the targeted component slice extracted from flat `system.md`, plus directly referenced compact interface / dependency excerpts. If the compact system inventory is too ambiguous for safe partitioning, the orchestrator falls back to single-agent execution.
 
-#### Overhead Budget
-
-Generated config and contract artifacts total approximately 6,000–12,000 tokens per worker (2–5% of a 256K context window). The orchestrator additionally loads the skill (~5,000 tokens), status, and graph. Workers never load the skill or methodology.
+The implementation does not promise a fixed token budget. Context efficiency comes from targeted slices, one-template-at-a-time loading, bounded late fetch, and dependency-aware concurrency rather than from a hardcoded token estimate.
 
 ### Context Loading Protocol
 
 #### Orchestrator Load
 
-The orchestrator loads: skill instructions, status snapshot, graph cache, and the contract artifacts needed to compute the affected set and dispatch plan. It does **not** load all contract artifacts — only the minimal set for planning. After dispatching workers, the orchestrator retains only the graph + status for cross-scope validation.
+The orchestrator loads: skill instructions, status snapshot, graph cache, and only the contract/context artifacts needed to compute the affected set and dispatch plan. It does **not** load all artifacts — only the minimal set required for planning. After dispatching workers, the orchestrator retains the graph, status, dispatch plan, and worker result summaries, and reopens specific artifacts or code only for targeted spot validation when required.
 
 #### Worker Load
 
-Each worker receives a fixed load set at dispatch time (see Agent Load Sets above). Workers do not request additional context mid-generation. If a worker discovers it needs information outside its load set, it reports a finding rather than expanding its context.
+Each worker starts with a precomputed load set at dispatch time (see Agent Load Sets above). Workers may request a bounded late-fetch slice when they discover a narrow missing dependency. Late fetches must stay within approved upstream truth, remain explicitly scoped, and cannot broaden the worker's ownership or write scope. The orchestrator decides whether to supply the slice or return a finding instead.
+
+#### Worker Result Summaries
+
+Every worker returns a compact structured summary containing:
+
+- target scope
+- files written
+- provided interfaces
+- consumed dependencies
+- requested late-fetch slices (if any) and whether they were resolved
+- notable findings or unresolved assumptions
+- validation notes relevant to merge or cross-scope checks
+
+The orchestrator uses these summaries plus targeted spot reads for cross-scope validation and merge planning.
 
 #### Template Loading
 
@@ -518,6 +537,8 @@ This file summarizes:
 - coverage gaps
 - current mode
 
+In full modes, stale artifacts, affected scopes, and coverage gaps are graph-backed. In `vibe`, the same fields are heuristic approximations derived from approved `intent`, compact `system`, root config, and current code.
+
 (See methodology ## Operations ### `status` for the full report specification.)
 
 ---
@@ -538,11 +559,11 @@ Compact tier order (`vibe`):
 intent-specs -> system-specs -> context (root config only) -> code
 ```
 
-Within a contract tier, artifacts are generated in this order:
+Within a contract tier, artifacts are generated in dependency order:
 
 1. root artifacts in the tier
-2. local `container.md` files for affected containers (full modes only)
-3. local `component.md` files for affected components (full modes only)
+2. independent `container.md` files for affected containers in dependency-aware parallel waves (full modes only)
+3. independent `component.md` files for affected components in dependency-aware parallel waves (full modes only)
 
 ### Scope Of Regeneration
 
@@ -570,11 +591,16 @@ See methodology ## Operations for authoritative operation definitions (purpose, 
 | `generate <target>` | `generate` | optional target tier, mode, approved upstream basis | regenerated tier artifacts; eval runs automatically on contract tiers |
 | `eval <target>` | `eval` | optional target, mode | structural and semantic findings (no modifications) |
 | `review <target>` | `review` | optional target, mode | interactive loop: eval → findings → fixes → user exit choice |
-| `reconcile <target>` | `reconcile` | optional target scope, approved upstream change set | interactive loop: detect drift → propose → fix → eval → user exit choice |
+| `reconcile <target>` | `reconcile` | optional target scope, approved upstream affected set | interactive loop: detect drift → propose → fix → validate target → user exit choice |
 | `approve <target>` | `approve` | optional approval unit, approval mode | approved approval unit with provenance |
 | `status` | `status` | optional scope filter | read-only lifecycle and staleness report |
 
-For `eval` and `review`, the target can be any layer: `intent-specs`, `product-specs`, `system-specs`, `context`, or `code`. For contract targets, structural checks are blocking for approval. For `context` and `code`, diagnostics are implementation-defined but must validate the target against approved upstream truth. (See methodology ## Generation ### Eval.)
+For `eval` and `review`, the target can be any layer: `intent-specs`, `product-specs`, `system-specs`, `context`, or `code`.
+
+- For contract targets, `eval` validates both internal consistency within the target tier and conformance to approved upstream truth. Structural checks are blocking for approval.
+- For `context` and `code`, `eval` validates only the target against approved upstream truth. It never walks downstream from the target.
+- `review` is the interactive shell on `eval` for any target. For contract targets, draft artifacts may exit to `Proceed to approve`, while already-approved contract artifacts remain findings-only. For `context` and `code`, the exit choices are `Loop`, `Eval only`, or `Accept`.
+- `approve` remains contract-only. (See methodology ## Generation ### Eval.)
 
 ### Standard Operation Parameters
 
@@ -588,6 +614,7 @@ Implementations should standardize these parameter names even if the user-facing
 | `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the target that do not change approved upstream meaning. |
 | `approval_mode` | One of `user`, `delegated` |
 | `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges forward from every changed item in the context graph |
+| `dispatch_plan` | Planner-produced wave, load-set, write-set, prerequisite, and validation contract for worker tasks in the current run |
 
 These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
 
@@ -628,15 +655,17 @@ Full modes (`pm`, `dev`, `expert`) expose one uniform public surface:
 
 - `approve intent-specs`
 - `generate code`
-- `reconcile code`
 - `review intent-specs`
 - `eval intent-specs`
+- `review context`
+- `eval context`
+- `reconcile code`
+- `review code`
+- `eval code`
 - `status`
 - `help`
 
-In `vibe`, `review intent-specs` is a heuristic interactive review of compact intent/defaults using downstream compact system and current code as evidence, while `eval intent-specs` is the read-only counterpart. `generate` and `reconcile` accept only `code` as the public target. Unsupported public commands or targets in `vibe` return a mode-aware explanation and, when useful, an upgrade suggestion.
-
-v1 note: the methodology allows implementations to additionally expose `eval context`, `eval code`, `review context`, `review code`, and `reconcile context` in vibe. These are deferred to a future version.
+In `vibe`, contract-facing UX remains intent-centric. `review intent-specs` is a heuristic interactive review of compact intent/defaults using downstream compact system and current code as evidence, while `eval intent-specs` is the read-only counterpart. Compact `system-specs` remains internal and never becomes a public target. Downstream `review` / `eval` targets remain target-bounded: `context` validates root config against approved compact intent/system, and `code` validates code against approved compact contract plus root config. Unsupported compact-system targets return a mode-aware explanation and, when useful, an upgrade suggestion.
 
 ### Smart Orchestration
 
@@ -661,14 +690,18 @@ Concrete behavior for full-mode public targets:
 
 Intent-specs are never delegated. `generate intent-specs` uses the user's current `intent.md` content as authoritative semantic input, reshapes it for structural consistency (IDs, table formatting), and regenerates `defaults.md` to stay aligned. The user's semantic intent is never overridden by generation. Always stops for explicit user approval regardless of mode. In `vibe`, the public skill does not expose `generate intent-specs`; the same normalization step runs implicitly during bootstrap and before approving draft intent.
 
-In `vibe`, compact `system-specs` never becomes a public user stop. If compact system auto-advance fails the delegated safety tests during `generate code` or `reconcile code`, the run continues from best-effort system-specs, surfaces findings prominently, and recommends `review intent-specs` or upgrade.
+In `vibe`, compact `system-specs` never becomes a public user stop. During `generate code` or `reconcile code`, the engine regenerates compact `system-specs` from approved intent. Structural blockers halt before downstream generation and are surfaced through the intent-centric UX. Non-blocking advisory findings may still allow continuation from the refreshed compact system, with findings surfaced prominently and upgrade recommended when appropriate.
 
 `vibe` public command behavior:
 
 | Command | Behavior |
 | --- | --- |
-| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise generate delegated compact `system-specs`, root config, and code. If compact system auto-advance fails safety tests, continue generating code from best-effort system-specs, surface findings prominently, and recommend `review intent-specs` or upgrade |
-| `reconcile code` | auto-regenerate compact `system-specs` from approved intent as the first step, then run interactive downward drift review between refreshed system and current code. If `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before proceeding. If system-specs regen produces breaking changes, surface them prominently and recommend `review intent-specs` or upgrade |
+| `generate code` | if `intent-specs` is still draft, stop for explicit `approve intent-specs`; otherwise regenerate delegated compact `system-specs`, then generate root config and code. If compact system auto-advance hits a structural blocker, halt before downstream generation, surface findings prominently, and recommend `review intent-specs` or upgrade. If only advisory findings remain, continue and surface them prominently |
+| `review context` | interactive bounded review of generated root config against approved compact intent/system. May propose or apply bounded fixes within root config only |
+| `eval context` | read-only validation of generated root config against approved compact intent/system. No downstream inspection |
+| `reconcile code` | auto-regenerate compact `system-specs` from approved intent as the first step, halt if structural blockers remain, then run interactive downward drift review between refreshed system and current code. If `intent-specs` is draft, normalize if needed and stop for explicit `approve intent-specs` before proceeding. If refreshed system implies breaking changes, surface them prominently and recommend `review intent-specs` or upgrade |
+| `review code` | interactive bounded review of code against approved compact contract plus root config. May propose or apply bounded fixes inside code only. If findings suggest upstream truth is wrong or drift should be preserved, recommend `review intent-specs` or `reconcile code` |
+| `eval code` | read-only validation of code against approved compact contract plus root config. No downstream walk |
 | `review intent-specs` | heuristic interactive review of compact intent/defaults against downstream compact system and current code drift; uses agent reasoning over filesystem layout, exported interfaces, routes or commands, tests, key strings, and owned-path comparisons; may propose or apply bounded fixes within draft `intent` / `defaults` only |
 | `eval intent-specs` | heuristic read-only eval of compact intent/defaults against downstream compact system and current code drift; runs structural checks on the compact contract plus lightweight non-graph code-drift checks |
 
@@ -717,7 +750,7 @@ Bootstrap-specific command rules:
 
 ### Context Generation
 
-Context generation happens after the required contract tiers are approved.
+Context generation happens only after the required contract tiers are approved. `generate system-specs` never materializes context on its own.
 
 #### Full Context Generation (`pm`, `dev`, `expert`)
 
@@ -725,9 +758,9 @@ Generation order inside context:
 
 1. config artifacts for affected scopes (root, container, component)
 2. decision records if the change introduced product or architecture decisions
-3. `bdd` scenarios are created both (a) automatically when `generate system-specs` produces BEH-#### items and (b) on-demand in full modes via `generate context`
+3. component-scoped `bdd` scenarios for affected components
 
-Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, and test commands — so that worker agents can orient quickly within their scope without loading the full context graph.
+Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, test commands, and cross-scope dependency cues — so that worker agents can orient quickly within their scope without loading the full context graph. Component-scoped `bdd` is emitted under the owning component's `context/bdd/` directory and loaded only for workers whose affected set intersects that component.
 
 #### Compact Context Generation (`vibe`)
 
@@ -737,36 +770,54 @@ Context is treated as derived execution truth by default. When context is the ex
 
 ### Parallel Dispatch
 
-Contract generation (intent-specs, product-specs, system-specs) is sequential — each tier depends on the tier above it. Within a contract tier, root artifacts are generated first, then per-container and per-component artifacts sequentially in the forward-back pass.
+Contract generation stays sequential across tiers, but parallelizes inside a tier once dependency cut points are satisfied. Root artifacts are generated first. Independent container artifacts can then run in dependency-aware parallel waves, followed by independent component artifacts in dependency-aware parallel waves. The back pass reopens only the affected subset rather than forcing a whole-tier sequential rerun.
 
-Context generation is sequential per scope but may parallelize across independent scopes (e.g., config for container A and config for container B can be generated concurrently).
+Context generation follows the same pattern. Root config is generated first when needed, then independent container/component configs may run in parallel, and component-scoped `bdd` generation may run in parallel across affected components.
 
-Code generation parallelizes at the component level: each worker receives its load set (see Agent Load Sets and Context Loading Protocol) and generates independently. Components within the same container are independent and can be generated concurrently. Cross-container components are also independent.
+Code generation parallelizes at the component level in dependency-aware waves with bounded concurrency. Components may share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied.
 
-After all workers complete, the orchestrator validates cross-scope consistency:
+After each wave completes, the orchestrator validates cross-scope consistency from worker summaries plus targeted spot reads:
 - interface contracts declared in component specs are satisfied by generated code
 - dependency references resolve to actual generated outputs
-- no conflicting file writes across workers
+- no conflicting file writes or write-scope violations occurred
 
-In `vibe`, the flat system doc means there is no component-level dispatch — code generation runs as a single agent with root config.
+In `vibe`, the public UX remains a single flow, but the orchestrator may still use internal component-level dispatch when the compact system has a stable enough component inventory. If the compact inventory is too ambiguous, the orchestrator falls back to single-agent execution.
 
 ### Code Generation Dispatch
 
-The orchestrator computes the affected component set from the graph, builds a dispatch plan, and spawns one worker per affected component.
+The orchestrator computes the affected component set from the graph, partitions it into dependency-aware waves with bounded concurrency, and emits a dispatch plan for the run.
+
+Each dispatch-plan task records:
+- target scope
+- wave number
+- load set (baseline, owned scope, referenced foreign slice, relevant context slice)
+- write set
+- upstream prerequisites
+- validation expectations
+- expected worker result summary contract
 
 Each worker receives:
-- its load set (config + contract slice + defaults)
+- its load set
 - the component spec as the primary generation target
 - the relevant template(s) for source/test scaffolding
+- its explicit write scope
 
-Workers generate source code and tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each worker.
+Workers generate source code and component-local tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each worker. Workers may request bounded late-fetch slices from the orchestrator when a narrow missing dependency is discovered, but they may write only within `owned_paths` plus component-local tests.
 
-After all workers complete, the orchestrator:
+Each worker returns a compact structured summary with:
+- files written
+- provided interfaces
+- consumed dependencies
+- unresolved findings or assumptions
+- validation notes relevant to merge / cross-scope checks
+
+After each wave completes, the orchestrator:
 1. Validates that generated code satisfies the interface contracts declared in component specs
 2. Validates that dependency references resolve to actual generated outputs
-3. Generates or updates `runtime` artifacts (packaging, deployment, migrations) which are inherently cross-component and therefore orchestrator-level work
+3. Validates that write scopes remained disjoint for the wave
+4. Generates or updates shared `runtime` artifacts (packaging, deployment, migrations) as orchestrator-level work when required
 
-In `vibe`, code generation runs as a single agent (no component-level dispatch) using root config + flat system + defaults.
+In `vibe`, code generation may use the same wave planner internally when the compact system has a stable component inventory. In that case, each worker receives root config + `defaults` + approved `intent`, the targeted component slice extracted from flat `system.md`, and directly referenced compact dependency snippets. If the compact system is too ambiguous for safe partitioning, code generation falls back to a single agent.
 
 ### Upgrade Mechanics
 

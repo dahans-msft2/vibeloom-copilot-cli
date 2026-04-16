@@ -22,26 +22,33 @@ flowchart TD
     E <-->|"read/write"| A["Artifacts on Disk<br/>(contract, context, code)"]
     E -->|"build/query"| G["Graph Cache<br/>(.vibeloom/state/)"]
 
-    S -->|"dispatch with load set"| W1["Worker<br/>(component A)"]
-    S -->|"dispatch with load set"| W2["Worker<br/>(component B)"]
-    S -->|"dispatch with load set"| W3["Worker<br/>(component ...)"]
+    S -->|"dispatch plan"| DP["Wave 1<br/>(independent subagents)"]
+    DP --> SA1["subagent<br/>(scope A)"]
+    DP --> SA2["subagent<br/>(scope B)"]
 
-    W1 -->|"read contract slice + config"| A
-    W2 -->|"read contract slice + config"| A
-    W3 -->|"read contract slice + config"| A
-    W1 -->|"write code"| A
-    W2 -->|"write code"| A
-    W3 -->|"write code"| A
+    SA1 --> V["Cross-scope validation<br/>(summaries + spot reads)"]
+    SA2 --> V
+    V -->|"late-fetch re-invoke<br/>(at most once per task)"| SA1
+    V --> DP2["Wave 2<br/>(dependents of Wave 1)"]
+    DP2 --> SA3["subagent<br/>(scope C)"]
+    SA3 --> V2["Cross-scope validation"]
 
-    S -->|"validate cross-scope"| A
+    SA1 -->|"read load set"| A
+    SA2 -->|"read load set"| A
+    SA3 -->|"read load set"| A
+    SA1 -->|"write owned scope"| A
+    SA2 -->|"write owned scope"| A
+    SA3 -->|"write owned scope"| A
 
     style S fill:#e8f4fd,stroke:#1a73e8
     style E fill:#fff3e0,stroke:#e65100
     style A fill:#e8f5e9,stroke:#2e7d32
     style G fill:#fff3e0,stroke:#e65100
+    style V fill:#fff3e0,stroke:#e65100
+    style V2 fill:#fff3e0,stroke:#e65100
 ```
 
-In v1, the skill runs as a single agent session. Workers are subagents, each with its own context window. Worker load sets translate to file-read instructions in the subagent prompt. Subagents share the filesystem and communicate results through written artifacts only — they cannot communicate with each other directly.
+In v1, the skill runs as a single agent session. Subagents are spawned per task, each with its own context window. Subagent load sets translate to file-read instructions in the subagent prompt. Subagents share the filesystem and communicate results through written artifacts only — they cannot communicate with each other directly. Late-fetch requests surface in a subagent's result summary and are fulfilled by the orchestrator re-invoking the subagent with the additional slice, capped at one re-invocation per task.
 
 ### Skill Responsibilities
 
@@ -145,7 +152,7 @@ In `vibe`, there are no container directories, no `context/` directory, and no p
 - config artifacts (`AGENTS.md`, `CLAUDE.md`) are emitted directly into the scope they govern (root only in `vibe`)
 - `pdr` and `adr` are standardized as repo-level ledger artifacts in `context/` (full modes only)
 - `bdd` is standardized as a component-scoped multi-file context artifact under `/<container>/<component>/context/bdd/` (full modes only)
-- context stays scope-local where possible; repo-level context is reserved for cross-repo decision ledgers
+- context stays scope-local where possible; repo-level context is reserved for repo-wide decision ledgers (`pdr`, `adr`)
 
 The authoritative inventory of containers and components lives in contract artifacts:
 
@@ -253,10 +260,11 @@ For ledger artifacts (`pdr`, `adr`): artifact-level `derives_from` in frontmatte
 
 When a user edits an approved contract artifact outside of skill operations:
 
-1. The agent detects the edit at the start of any operation by comparing the current artifact content and timestamp against the last approved revision.
-2. If an approved artifact has changed, the engine automatically reopens it to `draft` before proceeding.
-3. Users do not manually maintain `status` for this transition.
-4. Confirmation is required only for semantic decisions that follow, not for the lifecycle bookkeeping itself. (See methodology ## Generation ### Lifecycle States.)
+1. The engine records each artifact's filesystem modification time at the moment of each approval and stores it in graph state alongside the artifact's `timestamp` frontmatter field.
+2. At the start of any subsequent operation, the engine compares each approved artifact's current filesystem modification time to the recorded last-approved modification time. A mismatch means the artifact has been edited.
+3. If an approved artifact has been edited, the engine automatically reopens it to `draft` before proceeding.
+4. Users do not manually maintain `status` for this transition.
+5. Confirmation is required only for semantic decisions that follow, not for the lifecycle bookkeeping itself. (See methodology ## Generation ### Lifecycle States.)
 
 ### Staleness
 
@@ -458,15 +466,15 @@ Containment may be stored as parsing and navigation metadata, but it is not a gr
 
 See methodology ## Context Graph for conceptual definitions of traceability, staleness, loading, and artifact impact. In v1, the engine computes all four from contract and context artifacts only. Staleness is computed from approved-basis mismatch in the graph and is never written to artifact frontmatter. The loading view is used to compute agent load sets. Given a scope, the graph returns four layers: baseline, owned scope, referenced foreign slice, and relevant context slice. In `vibe`, affected-set and status views for `context` and `code` remain heuristic approximations derived from approved `intent`, compact `system`, and current code.
 
-### Agent Load Sets
+### Subagent Load Sets
 
-The context graph computes the load set for each worker agent. The orchestrator (skill) queries the graph and passes the result to each spawned worker. Workers receive the minimum sufficient mix of config, contract, and relevant context for their scope.
+The context graph computes the load set for each subagent. The orchestrator (skill) queries the graph and passes the result to each spawned subagent. Subagents receive the minimum sufficient mix of config, contract, and relevant context for their scope.
 
-These load-set shapes govern steady-state worker dispatch. If a worker runs before a needed config artifact exists in the current run, the orchestrator substitutes the just-generated in-memory slice when available, or omits only the not-yet-generated config layer until context generation reaches that scope.
+These load-set shapes govern steady-state subagent dispatch. If a subagent runs before a needed config artifact exists in the current run, the orchestrator substitutes the just-generated in-memory slice when available, or omits only the not-yet-generated config layer until context generation reaches that scope.
 
 #### Full Modes (`pm`, `dev`, `expert`)
 
-| Worker scope | Baseline | Owned scope | Referenced foreign slice | Relevant context |
+| Subagent scope | Baseline | Owned scope | Referenced foreign slice | Relevant context |
 | --- | --- | --- | --- | --- |
 | component | root config + `defaults` | component + container config, component spec, container spec, relevant `system` / `containers` summary | directly referenced interface / dependency snippets from sibling or cross-container scopes | component-scoped `bdd`, intersecting `pdr` / `adr` records |
 | container | root config + `defaults` | container config, container spec, `system`, `containers`, affected component inventory summary | directly referenced cross-container interface / dependency snippets | intersecting `pdr` / `adr` records |
@@ -474,23 +482,32 @@ These load-set shapes govern steady-state worker dispatch. If a worker runs befo
 
 #### Compact Mode (`vibe`)
 
-All workers load root config + `defaults` + approved `intent.md` as baseline. If internal component-level dispatch is used, each worker additionally receives the targeted component slice extracted from flat `system.md`, plus directly referenced compact interface / dependency excerpts. If the compact system inventory is too ambiguous for safe partitioning, the orchestrator falls back to single-agent execution.
+All subagents load root config + `defaults` + approved `intent.md` as baseline. If internal component-level dispatch is used, each subagent additionally receives the targeted component slice extracted from flat `system.md`, plus directly referenced compact interface / dependency excerpts. If the compact system inventory is too ambiguous for safe partitioning, the orchestrator falls back to single-agent execution.
 
-The implementation does not promise a fixed token budget. Context efficiency comes from targeted slices, one-template-at-a-time loading, bounded late fetch, and dependency-aware concurrency rather than from a hardcoded token estimate.
+#### Context Efficiency
+
+The implementation does not promise a fixed token budget. Efficiency comes from four mechanisms:
+
+- **targeted slices** — subagents receive only the contract + context artifacts intersecting their scope
+- **one-template-at-a-time loading** — the agent loads one template per artifact, unloading between artifacts
+- **bounded late-fetch** — at most one re-invocation per task, to limit context growth
+- **dependency-aware waves** — subagents share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied
+
+For reference, a component subagent typically receives 6–12K tokens of contract + config + context slice. Exact budgets depend on project size and scope.
 
 ### Context Loading Protocol
 
 #### Orchestrator Load
 
-The orchestrator loads: skill instructions, status snapshot, graph cache, and only the contract/context artifacts needed to compute the affected set and dispatch plan. It does **not** load all artifacts — only the minimal set required for planning. After dispatching workers, the orchestrator retains the graph, status, dispatch plan, and worker result summaries, and reopens specific artifacts or code only for targeted spot validation when required.
+The orchestrator loads: skill instructions, status snapshot, graph cache, and only the contract/context artifacts needed to compute the affected set and dispatch plan. It does **not** load all artifacts — only the minimal set required for planning. After dispatching subagents, the orchestrator retains the graph, status, dispatch plan, and subagent result summaries, and reopens specific artifacts or code only for targeted spot validation when required.
 
-#### Worker Load
+#### Subagent Load
 
-Each worker starts with a precomputed load set at dispatch time (see Agent Load Sets above). Workers may request a bounded late-fetch slice when they discover a narrow missing dependency. Late fetches must stay within approved upstream truth, remain explicitly scoped, and cannot broaden the worker's ownership or write scope. The orchestrator decides whether to supply the slice or return a finding instead.
+Each subagent starts with a precomputed load set at dispatch time (see Subagent Load Sets above). A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency. The orchestrator evaluates the request: if a slice can be supplied without broadening the subagent's ownership or write scope, the orchestrator re-invokes the subagent once with the additional slice added to its prompt. If the re-invocation's result summary still requests missing slices, the orchestrator treats this as a finding and exits the task — at most one late-fetch re-invocation per task.
 
-#### Worker Result Summaries
+#### Subagent Result Summaries
 
-Every worker returns a compact structured summary containing:
+Every subagent returns a compact structured summary containing:
 
 - target scope
 - files written
@@ -559,11 +576,11 @@ Compact tier order (`vibe`):
 intent-specs -> system-specs -> context (root config only) -> code
 ```
 
-Within a contract tier, artifacts are generated in dependency order:
+Within a contract tier, artifacts are generated in three phases (see Parallel Dispatch for details):
 
-1. root artifacts in the tier
-2. independent `container.md` files for affected containers in dependency-aware parallel waves (full modes only)
-3. independent `component.md` files for affected components in dependency-aware parallel waves (full modes only)
+1. root artifacts in the tier (sequential forward-back)
+2. affected `container.md` files in a single parallel wave (full modes only)
+3. affected `component.md` files in a single parallel wave (full modes only), after the container wave completes
 
 ### Scope Of Regeneration
 
@@ -614,7 +631,7 @@ Implementations should standardize these parameter names even if the user-facing
 | `review_style` | One of `advisory`, `bounded`. `advisory` surfaces findings without modifying artifacts. `bounded` surfaces findings and applies fixes within the target that do not change approved upstream meaning. |
 | `approval_mode` | One of `user`, `delegated` |
 | `affected_set` | Items, artifacts, tiers, and scopes reachable by walking derivation edges forward from every changed item in the context graph |
-| `dispatch_plan` | Planner-produced wave, load-set, write-set, prerequisite, and validation contract for worker tasks in the current run |
+| `dispatch_plan` | Planner-produced wave, load-set, write-set, prerequisite, and validation contract for subagent tasks in the current run |
 
 These parameters are the internal engine vocabulary behind the methodology-level operations. Public skill commands may expose a narrower surface than the engine, especially in `vibe`.
 
@@ -760,7 +777,7 @@ Generation order inside context:
 2. decision records if the change introduced product or architecture decisions
 3. component-scoped `bdd` scenarios for affected components
 
-Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, test commands, and cross-scope dependency cues — so that worker agents can orient quickly within their scope without loading the full context graph. Component-scoped `bdd` is emitted under the owning component's `context/bdd/` directory and loaded only for workers whose affected set intersects that component.
+Generated config should include concrete project-specific pointers — artifact IDs, interface names, owned paths, test commands, and cross-scope dependency cues — so that subagents can orient quickly within their scope without loading the full context graph. Component-scoped `bdd` is emitted under the owning component's `context/bdd/` directory and loaded only for subagents whose affected set intersects that component.
 
 #### Compact Context Generation (`vibe`)
 
@@ -770,13 +787,19 @@ Context is treated as derived execution truth by default. When context is the ex
 
 ### Parallel Dispatch
 
-Contract generation stays sequential across tiers, but parallelizes inside a tier once dependency cut points are satisfied. Root artifacts are generated first. Independent container artifacts can then run in dependency-aware parallel waves, followed by independent component artifacts in dependency-aware parallel waves. The back pass reopens only the affected subset rather than forcing a whole-tier sequential rerun.
+Contract generation stays sequential across tiers, but parallelizes inside a tier:
 
-Context generation follows the same pattern. Root config is generated first when needed, then independent container/component configs may run in parallel, and component-scoped `bdd` generation may run in parallel across affected components.
+1. **Root forward-back pass** — root artifacts in the tier generate in dependency order (e.g., `prd` → `usm` → `dm`), with back-pass reopening as needed until stable.
+2. **Container wave** — all affected `container.md` files generate in parallel. Writes are disjoint by directory. Each `container.md` derives only from approved upstream contract, not from peer container specs.
+3. **Component wave** — all affected `component.md` files generate in parallel after the container wave completes. A `component.md` reads its own `container.md` as part of its derivation basis (per the DAG), which is why the component wave follows container wave rather than running concurrently. Writes are disjoint by directory.
 
-Code generation parallelizes at the component level in dependency-aware waves with bounded concurrency. Components may share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied.
+The back pass reopens only the affected subset rather than forcing a whole-tier sequential rerun.
 
-After each wave completes, the orchestrator validates cross-scope consistency from worker summaries plus targeted spot reads:
+Context generation runs as a single parallel wave: all affected `config` artifacts (root, container, component), all affected component-scoped `bdd`, and any triggered decision-record appends run concurrently. Each artifact derives from approved contract entities at its scope and above — no context artifact derives from a peer context artifact — so there is no inter-wave dependency. Writes are always disjoint by scope.
+
+Code generation parallelizes at the component level in dependency-aware waves. Components may share a wave only when their write scopes are disjoint and their declared dependencies are already satisfied. See Code Generation Dispatch below for the wave computation rule.
+
+After each wave completes, the orchestrator validates cross-scope consistency from subagent summaries plus targeted spot reads:
 - interface contracts declared in component specs are satisfied by generated code
 - dependency references resolve to actual generated outputs
 - no conflicting file writes or write-scope violations occurred
@@ -785,7 +808,13 @@ In `vibe`, the public UX remains a single flow, but the orchestrator may still u
 
 ### Code Generation Dispatch
 
-The orchestrator computes the affected component set from the graph, partitions it into dependency-aware waves with bounded concurrency, and emits a dispatch plan for the run.
+The orchestrator computes the affected component set from the graph, partitions it into dependency-aware waves, and emits a dispatch plan for the run.
+
+**Wave computation.** Waves are computed by topological sort over the `DEP-####` → `IF-####` edges in the graph. A component can join the current wave when:
+- all its `DEP-####` references resolve to components in already-completed waves (or to no components)
+- its `owned_paths` are disjoint from every other component's `owned_paths` in the same wave
+
+Components with no remaining prerequisites and disjoint write scopes form the current wave. Once the wave completes (all subagents return, cross-scope validation passes), the orchestrator recomputes and dispatches the next wave.
 
 Each dispatch-plan task records:
 - target scope
@@ -794,22 +823,17 @@ Each dispatch-plan task records:
 - write set
 - upstream prerequisites
 - validation expectations
-- expected worker result summary contract
+- expected subagent result summary contract (see Context Loading Protocol ### Subagent Result Summaries)
 
-Each worker receives:
+Each subagent receives:
 - its load set
 - the component spec as the primary generation target
 - the relevant template(s) for source/test scaffolding
 - its explicit write scope
 
-Workers generate source code and component-local tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each worker. Workers may request bounded late-fetch slices from the orchestrator when a narrow missing dependency is discovered, but they may write only within `owned_paths` plus component-local tests.
+Subagents generate source code and component-local tests for their component independently. Cross-component interface contracts are defined in component specs and treated as stable inputs by each subagent. A subagent may surface a late-fetch request in its result summary when it discovers a narrow missing dependency (see Context Loading Protocol for the one-re-invocation cap). Subagents may write only within `owned_paths` plus component-local tests.
 
-Each worker returns a compact structured summary with:
-- files written
-- provided interfaces
-- consumed dependencies
-- unresolved findings or assumptions
-- validation notes relevant to merge / cross-scope checks
+Each subagent returns the structured summary defined in Context Loading Protocol ### Subagent Result Summaries.
 
 After each wave completes, the orchestrator:
 1. Validates that generated code satisfies the interface contracts declared in component specs
@@ -817,7 +841,7 @@ After each wave completes, the orchestrator:
 3. Validates that write scopes remained disjoint for the wave
 4. Generates or updates shared `runtime` artifacts (packaging, deployment, migrations) as orchestrator-level work when required
 
-In `vibe`, code generation may use the same wave planner internally when the compact system has a stable component inventory. In that case, each worker receives root config + `defaults` + approved `intent`, the targeted component slice extracted from flat `system.md`, and directly referenced compact dependency snippets. If the compact system is too ambiguous for safe partitioning, code generation falls back to a single agent.
+In `vibe`, code generation may use the same wave planner internally when the compact system has a stable component inventory. In that case, each subagent receives root config + `defaults` + approved `intent`, the targeted component slice extracted from flat `system.md`, and directly referenced compact dependency snippets. If the compact system is too ambiguous for safe partitioning, code generation falls back to a single agent.
 
 ### Upgrade Mechanics
 

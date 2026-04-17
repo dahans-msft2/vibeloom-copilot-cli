@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibeloom-engine"
+version = "0.1.0"
+description = "Deterministic substrate for VibeLoom v2: parsing, graph construction, affected-set computation, staleness, and structural eval."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "VibeLoom" }]
+keywords = ["vibeloom", "contract", "governance", "graph", "eval"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+]
+
+[project.scripts]
+vibeloom-engine = "vibeloom_engine.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["vibeloom_engine*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -38,6 +38,28 @@ The 17 artifact templates live under [`assets/`](assets/):
 
 Load one template at a time for the artifact being generated.
 
+## Engine
+
+The [`engine/`](engine/) directory contains the Python package that implements the deterministic substrate described in `vibeloom-implementation.md`. Install once per environment:
+
+```bash
+pip install -e engine
+```
+
+Then invoke the engine CLI for deterministic operations:
+
+| Engine command | Purpose |
+|---|---|
+| `vibeloom-engine parse --repo <path>` | Parse all artifacts; emit JSON inventory |
+| `vibeloom-engine graph --repo <path>` | Build + persist `.vibeloom/state/context-graph.json` |
+| `vibeloom-engine eval --repo <path> [--target <tier>]` | Run structural eval; non-zero exit on blocking findings |
+| `vibeloom-engine affected --repo <path> --ids <IDs...>` | Compute the affected set from changed item IDs |
+| `vibeloom-engine staleness --repo <path>` | Detect stale artifacts (approved-basis mismatch) |
+| `vibeloom-engine status --repo <path>` | Emit a status snapshot; persist `.vibeloom/state/status.json` |
+| `vibeloom-engine detect-edits --repo <path>` | Detect direct edits on approved contract artifacts via filesystem mtime |
+
+All engine commands emit JSON on stdout. The engine does not make semantic judgments — it parses, validates structure, computes the graph, and reports. Semantic judgment and user interaction remain with the skill.
+
 ## Command routing
 
 On any operation invocation, load `references/operations.md` first for parameters and preconditions, then load the subset of `references/` relevant to the operation:

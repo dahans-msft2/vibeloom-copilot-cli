@@ -1,3 +1,18 @@
+<!--
+VibeLoom template: system (vibe mode)
+Tier: system-specs (vibe only)
+Purpose: all-inclusive summary "technical" spec. Flat covering system context, containers, components, and structured local content.
+Entities: CONT-#### and CMP-#### only (per methodology ## Modes ### Vibe Mode).
+
+Note on scope: vibe keeps the derivation graph unmaterialized. EXT/TB/SNFR/interfaces/dependencies/behaviors appear as structured content in this one file rather than as distinct artifacts. Upgrade to pm/dev/expert expands this into system + containers + per-container + per-component.
+
+Generator guidance:
+- Keep this tight. Vibe is a compromise between ceremony and structure.
+- Each CONT derives from CAP (root entity type in vibe) or CST; each CMP derives from CONT + optional CAP.
+- Inter-container communication paths and component-level interfaces/behaviors appear as tables but not as graph entities.
+- Do not introduce BC, AGG, ENT, VO, INV, TERM, FR, NFR, EPIC, FLOW, STORY, ACC here — those only exist in full modes.
+-->
+
 ---
 artifact_id: system
 artifact_type: system
@@ -5,72 +20,50 @@ tier: system-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
-# System
+# System (vibe)
 
-Flat system specification for vibe mode. Covers system context, containers, components, interfaces, and behaviors in one document. On upgrade to pm/dev/expert, this document is expanded into the full system-specs tier: `system`, `containers`, per-container `container`, and per-component `component`.
+<!-- One-paragraph system context: purpose, users, and what it interacts with. -->
 
-## System Purpose And Context
+## External actors and systems
 
-<What the system does, who it serves, and what it interacts with.>
-<!--
-Exemplar:
-A workspace collaboration platform that manages invitations, access control, and collaborator lifecycle. It exposes a web UI for human users and integrates with an external email delivery service for notifications.
--->
+<!-- Structured content in vibe — not graph entities. Kept here for orientation. -->
 
-## External Actors And Systems
+| name | kind | relationship |
+|---|---|---|
+| | | |
 
-| id | kind | name | relationship | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific actors.
-| `EXT-0001` | `actor` | Workspace Owner | Creates workspaces, sends invitations, manages collaborators | `CAP-0001` |
-| `EXT-0002` | `external-system` | Email Service | Delivers invitation notifications | `CAP-0001` |
--->
+## Container inventory
 
-## Container Inventory
+<!-- Each CONT derives from CAP or CST in intent (root entity types in vibe). -->
 
-| id | container_slug | responsibility | runtime | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific containers.
-| `CONT-0001` | `app` | Web application serving UI and API | Node.js | `CAP-0001, CAP-0002` |
-| `CONT-0002` | `notifications` | Sends email notifications via external service | Node.js worker | `CAP-0001` |
--->
+| id | slug | description | runtime | derives_from | notes |
+|---|---|---|---|---|---|
+| CONT-0001 | | | | | |
 
-## Communication Paths
+## Inter-container communication paths
 
-| id | from | to | protocol | purpose |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific paths.
-| `EDGE-0001` | `CONT-0001` | `CONT-0002` | async queue | Dispatch invitation notification jobs |
-| `EDGE-0002` | `CONT-0002` | `EXT-0002` | HTTPS | Deliver email via external service API |
--->
+<!-- Structured content, not graph entities. Describes how containers talk. -->
 
-## Component Inventory
+| from | to | protocol | purpose |
+|---|---|---|---|
+| | | | |
 
-| id | container_id | folder | responsibility | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific components.
-| `CMP-0001` | `CONT-0001` | `src/invite-lifecycle` | Manages invitation creation, acceptance, decline, and revocation | `CAP-0001` |
-| `CMP-0002` | `CONT-0001` | `src/workspace` | Manages workspace creation and membership | `CAP-0001` |
-| `CMP-0003` | `CONT-0002` | `src/email-sender` | Formats and dispatches invitation emails | `CAP-0001` |
--->
+## Component inventory
 
-## Interfaces And Behaviors
+<!-- Each CMP derives from its CONT plus optional CAP. -->
 
-| id | component_id | kind | description | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific interfaces and behaviors.
-| `IF-0001` | `CMP-0001` | `command` | CreateInvitation — creates a pending invitation for a target email | `CAP-0001` |
-| `IF-0002` | `CMP-0001` | `event` | InvitationAccepted — emitted when a collaborator accepts | `CAP-0002` |
-| `BEH-0001` | `CMP-0001` | `behavior` | An invitation must not grant access until explicitly accepted | `CST-0001` |
-| `BEH-0002` | `CMP-0001` | `behavior` | Revoking an accepted invitation removes collaborator access | `CAP-0001` |
--->
+| id | slug | container_id | description | derives_from | notes |
+|---|---|---|---|---|---|
+| CMP-0001 | | | | | |
+
+## Interfaces, dependencies, behaviors
+
+<!-- Structured content per component. Not graph entities. -->
+
+| id | component | kind | description | notes |
+|---|---|---|---|---|
+| | | | | |

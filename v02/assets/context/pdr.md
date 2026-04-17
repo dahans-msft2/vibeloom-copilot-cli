@@ -1,57 +1,59 @@
+<!--
+VibeLoom template: pdr (product decision record ledger)
+Tier: context (full modes only; in vibe, pdr is a record of change for intent)
+Purpose: append-only ledger of product-level decisions that were triggered by contract changes but are not themselves contract truth.
+Entities: PDR-#### records.
+Derivation rules:
+- Artifact-level derives_from is always empty ([]).
+- Per-record derives_from inside each PDR-#### section is the canonical derivation link. It points at "any changed product-side entity" that triggered the decision.
+
+Generator guidance:
+- Append-only. Never mutate past PDR records.
+- Each record captures: recorded_at, derives_from (item IDs that triggered it), contract delta, impact, decision, why.
+- Records do not participate in the forward derivation chain — they are a history, not a source of truth.
+-->
+
 ---
 artifact_id: pdr
 artifact_type: pdr
 tier: context
 scope_kind: root
 scope_id: root
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
-# Product Decision Ledger
+# Product Decision Records
 
-`pdr` is an append-only ledger of product decisions recorded after they are already reflected in contract.
+Append-only ledger of product decisions.
 
-## `PDR-0001`
-- **recorded_at:** `2026-03-25T00:00:00Z`
-- **derives_from:** `[FR-0001, Q-0001]`
-<!--
-Append new records as additional `## PDR-####` sections in chronological order.
-Replace the ID, timestamp, and causal item IDs with the actual record values.
--->
+## PDR-0001
+
+<!-- One record per decision. Add new records as additional `## PDR-####` sections in chronological order. -->
+
+- **recorded_at:**
+- **derives_from:**
 
 ### Decision
 
-<What product decision was made>
-<!--
-Exemplar:
-Keep explicit approval mandatory before any invitation grants access.
--->
+<!-- What product decision was made. -->
 
 ### Why
 
-<Reason, tradeoff, or trigger>
-<!--
-Exemplar:
-Implicit access made ownership and auditability unclear, especially when invitations were retried or revoked.
--->
+<!-- Rationale, trigger, or tradeoff. -->
 
-### Contract Delta
+### Contract delta
+
+<!-- Which contract items changed as a result of this decision. -->
 
 | changed_item_id | change |
-| --- | --- |
-<!--
-Exemplar rows. Replace with project-specific contract deltas.
-| `FR-0002` | Clarified that invite creation alone never grants access. |
-| `Q-0001` | Resolved the question of whether approval is optional. |
--->
+|---|---|
+| | |
 
 ### Impact
 
+<!-- Downstream items expected to be affected. -->
+
 | affected_item_id | expected_effect |
-| --- | --- |
-<!--
-Exemplar rows. Replace with downstream impact for this decision.
-| `STORY-0007` | Reconcile the story with the explicit approval rule. |
-| `ACC-0003` | Regenerate acceptance framing to reflect the clarified product behavior. |
-| `BDD-0004` | Regenerate behavioral scenarios for the approval flow. |
--->
+|---|---|
+| | |

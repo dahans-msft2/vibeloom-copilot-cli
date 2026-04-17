@@ -1,3 +1,20 @@
+<!--
+VibeLoom template: component (per-component spec)
+Tier: system-specs (full modes only) — terminal node in the derivation graph.
+Purpose: full contract for one owned technical boundary.
+Structured content: IF-####, DEP-####, BEH-####, NOTE-####. These are addressable items but NOT independent graph nodes (per Boundary Principle).
+
+Derivation rules (per DAG) for the component itself:
+- component derives from AGG, ENT, BC, CONT, FLOW, VO
+
+Generator guidance:
+- `container_id`, `component_id`, `bounded_context` identify the component's ownership.
+- `owned_paths` and `owned_interfaces` in frontmatter are SUMMARY INDEXES — the body IF table and explicit path declarations are the source of truth. Frontmatter is regenerated from the body.
+- Every component belongs to exactly one container and exactly one bounded context.
+- Interfaces, dependencies, behaviors, and notes are structured content, not graph entities. They are not subject to DAG edge validation.
+- Each IF-#### is an interface this component provides. Each DEP-#### is a dependency on another component or external system. Each BEH-#### is a local behavior contract. Each NOTE-#### captures a local test or runtime concern.
+-->
+
 ---
 artifact_id: component.<container-slug>.<component-slug>
 artifact_type: component
@@ -7,76 +24,57 @@ scope_id: <container-slug>.<component-slug>
 container_id: <CONT-####>
 component_id: <CMP-####>
 bounded_context: <BC-####>
-owned_paths:
-  - <path-pattern>
-owned_interfaces:
-  - <interface-name>
+owned_paths: []
+owned_interfaces: []
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
-# Component
+# Component — <component-slug>
 
-`component` is the smallest owned technical boundary.
-
-Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., CMP-0001, AGG-0001).
+<!-- One-paragraph statement of what this component owns and why it exists. -->
 
 ## Responsibility
 
-<State what this component owns and why it exists.>
-<!--
-Exemplar:
-This component owns invitation lifecycle behavior, including creation, resend, revoke, and state transition rules that stay inside the collaboration access boundary.
--->
+<!-- Clear statement of the component's technical boundary: what it does, what it does not do. -->
 
-## Owned Paths
+## Owned paths
+
+<!-- Filesystem patterns this component owns. The body is source of truth; frontmatter owned_paths is a summary. -->
 
 | path | notes |
-| --- | --- |
-<!--
-Exemplar rows. Replace with project-specific owned paths.
-| `src/components/invite-lifecycle/**` | Primary implementation surface for this component. |
-| `tests/invite-lifecycle/**` | Keeps executable verification aligned with owned behavior. |
--->
+|---|---|
+| | |
 
-## Owned Interfaces
+## Owned interfaces
 
-| id | interface | kind | notes |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific owned interfaces.
-| `IF-0001` | `CreateInvitation` | `command` | This component owns invitation creation semantics and validation. |
-| `IF-0002` | `InvitationAccepted` | `event` | This component emits the boundary event that may trigger downstream activation. |
--->
+<!-- Interfaces this component provides to other components or external consumers. Each IF-#### is structured content. -->
+
+| id | name | kind | description | notes |
+|---|---|---|---|---|
+| IF-0001 | | | | |
 
 ## Dependencies
 
-| id | dependency | kind | notes | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific dependencies.
-| `DEP-0001` | `CMP-0002` | `component` | Membership activation depends on accepted invitation outcomes. | `[REL-0001]` |
-| `DEP-0002` | Identity provider | `external-system` | Invitee identity must be resolved before activation succeeds. | `[REL-0001]` |
--->
+<!-- Components or external systems this component consumes. Each DEP-#### references a provider. -->
 
-## Behavior / Contracts
+| id | target | kind | notes |
+|---|---|---|---|
+| DEP-0001 | | | |
 
-| id | statement | derives_from |
-| --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific local behavior contracts.
-| `BEH-0001` | Invitation acceptance succeeds only for a still-pending invitation owned by this component. | `[STORY-0002, INV-0001]` |
-| `BEH-0002` | Revocation prevents future acceptance without mutating already-active memberships. | `[STORY-0001, INV-0002]` |
--->
+## Behaviors
 
-## Local Test / Runtime Notes
+<!-- Local behavior contracts. Each BEH-#### is a statement about how this component behaves under specific conditions. -->
 
-| id | type | note |
-| --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific verification or runtime notes.
-| `NOTE-0001` | `test` | Verify all invitation state transitions, especially pending -> accepted and pending -> revoked races. |
-| `NOTE-0002` | `runtime` | Keep acceptance handling idempotent so retries do not create duplicate memberships. |
--->
+| id | description | notes |
+|---|---|---|
+| BEH-0001 | | |
+
+## Notes
+
+<!-- Local test or runtime notes. Each NOTE-#### captures a concern the implementer should remember. -->
+
+| id | kind | note |
+|---|---|---|
+| NOTE-0001 | | |

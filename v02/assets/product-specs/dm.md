@@ -1,3 +1,26 @@
+<!--
+VibeLoom template: dm
+Tier: product-specs (full modes only)
+Purpose: domain model — bounded contexts, aggregates, entities, value objects, invariants, ubiquitous language.
+Entities: TERM-####, BC-####, AGG-####, ENT-####, VO-####, INV-####.
+Derivation rules (per DAG):
+- TERM derives from CAP, FR, STORY
+- BC derives from FR, STORY, FLOW, TERM
+- AGG derives from STORY, BC
+- ENT derives from STORY, BC
+- VO derives from ACC, STORY
+- INV derives from FR, ACC, BC
+
+`dm` is the semantic source for technical boundary derivation. Components come from domain semantics, not folder shape.
+
+Generator guidance:
+- Every entity has a derives_from pointing at valid upstream item IDs per the DAG.
+- Invariants are business rules that must always hold.
+- Value objects are immutable attribute clusters.
+- Aggregates own invariants; entities are identity-bearing.
+- Bounded contexts scope semantic homes — components will later map to exactly one BC.
+-->
+
 ---
 artifact_id: dm
 artifact_type: dm
@@ -5,62 +28,58 @@ tier: product-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # Domain Model
 
-`dm` is the semantic source for technical boundary derivation.
+<!-- One-paragraph summary of the domain and its major concepts. -->
 
-Populate `derives_from` in frontmatter with the smallest relevant approved `prd` and `usm` item IDs (e.g., FR-0001, STORY-0001, ACC-0001).
+## Ubiquitous language
 
-## Ubiquitous Language
+<!-- Shared vocabulary terms. Each TERM derives from CAP, FR, or STORY. -->
 
-| id | term | definition | notes |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific terms.
-| `TERM-0001` | Invitation | A pending request for access initiated by an owner and acted on by an invitee. | Do not confuse with an already-active membership. |
-| `TERM-0002` | Membership | An active access relationship between a user and a workspace. | Membership starts only after the invite lifecycle completes successfully. |
--->
+| id | term | definition | derives_from | notes |
+|---|---|---|---|---|
+| TERM-0001 | | | | |
 
-## Bounded Contexts
+## Bounded contexts
 
-| id | bounded_context | purpose | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific boundaries.
-| `BC-0001` | Collaboration access | Owns invitation lifecycle and membership activation semantics. | `[FR-0001, FR-0002]` |
--->
+<!-- Semantic boundaries for domain logic. Each BC derives from FR, STORY, FLOW, or TERM. -->
 
-## Aggregates / Entities / Value Objects
+| id | description | derives_from | notes |
+|---|---|---|---|
+| BC-0001 | | | |
 
-| id | kind | bounded_context_id | name | responsibility | derives_from |
-| --- | --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific structures.
-| `AGG-0001` | `aggregate` | `BC-0001` | Invitation | Owns invitation state transitions and approval rules. | `[STORY-0001, STORY-0002]` |
-| `ENT-0001` | `entity` | `BC-0001` | Membership | Represents active access granted after successful invitation completion. | `[STORY-0002]` |
-| `VO-0001` | `value-object` | `BC-0001` | InvitationStatus | Encodes pending, accepted, declined, revoked, and expired lifecycle states. | `[ACC-0001, ACC-0002]` |
--->
+## Aggregates
 
-## Invariants / Business Rules
+<!-- Invariant-owning state clusters. Each AGG derives from STORY or BC and belongs to one BC. -->
 
-| id | bounded_context_id | rule | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific invariants.
-| `INV-0001` | `BC-0001` | Only a pending invitation can be accepted. | `[FR-0002, STORY-0002]` |
-| `INV-0002` | `BC-0001` | One invitation cannot activate more than one membership. | `[FR-0002]` |
--->
+| id | description | bounded_context | derives_from | notes |
+|---|---|---|---|---|
+| AGG-0001 | | | | |
 
-## Relationships / Integration Touchpoints
+## Entities
 
-| id | from_item | to_item | relationship | notes |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific relationships.
-| `REL-0001` | `AGG-0001` | `ENT-0001` | Invitation activation creates membership under the collaboration access boundary. | Maintain a clear state transition boundary between pending and active access. |
--->
+<!-- Identity-bearing domain objects. Each ENT derives from STORY or BC and belongs to one BC. -->
+
+| id | description | bounded_context | derives_from | notes |
+|---|---|---|---|---|
+| ENT-0001 | | | | |
+
+## Value objects
+
+<!-- Immutable attribute clusters. Each VO derives from ACC or STORY. -->
+
+| id | description | derives_from | notes |
+|---|---|---|---|
+| VO-0001 | | | |
+
+## Invariants
+
+<!-- Business rules that must always hold. Each INV derives from FR, ACC, or BC. -->
+
+| id | rule | derives_from | notes |
+|---|---|---|---|
+| INV-0001 | | | |

@@ -1,57 +1,59 @@
+<!--
+VibeLoom template: adr (architecture decision record ledger)
+Tier: context (full modes only; in vibe, adr is a record of change for system)
+Purpose: append-only ledger of technical decisions that were triggered by contract changes but are not themselves contract truth.
+Entities: ADR-#### records.
+Derivation rules:
+- Artifact-level derives_from is always empty ([]).
+- Per-record derives_from inside each ADR-#### section is the canonical derivation link. It points at "any changed technical-side entity" that triggered the decision.
+
+Generator guidance:
+- Append-only. Never mutate past ADR records.
+- Each record captures: recorded_at, derives_from, contract delta, impact, decision, why.
+- Records do not participate in the forward derivation chain.
+-->
+
 ---
 artifact_id: adr
 artifact_type: adr
 tier: context
 scope_kind: root
 scope_id: root
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
-# Architecture Decision Ledger
+# Architecture Decision Records
 
-`adr` is an append-only ledger of technical decisions recorded after they are already reflected in contract.
+Append-only ledger of technical decisions.
 
-## `ADR-0001`
-- **recorded_at:** `2026-03-25T00:00:00Z`
-- **derives_from:** `[CMP-0001, NFR-0001]`
-<!--
-Append new records as additional `## ADR-####` sections in chronological order.
-Replace the ID, timestamp, and causal item IDs with the actual record values.
--->
+## ADR-0001
+
+<!-- One record per decision. Add new records as additional `## ADR-####` sections in chronological order. -->
+
+- **recorded_at:**
+- **derives_from:**
 
 ### Decision
 
-<What technical decision was made>
-<!--
-Exemplar:
-Isolate invitation lifecycle behavior into its own component rather than letting it spread across shared helpers.
--->
+<!-- What technical decision was made. -->
 
 ### Why
 
-<Reason, tradeoff, or trigger>
-<!--
-Exemplar:
-This keeps approval semantics, invariants, and executable verification inside one owned boundary instead of distributing them across unrelated code.
--->
+<!-- Rationale, trigger, or tradeoff. -->
 
-### Contract Delta
+### Contract delta
+
+<!-- Which contract items changed as a result of this decision. -->
 
 | changed_item_id | change |
-| --- | --- |
-<!--
-Exemplar rows. Replace with project-specific contract deltas.
-| `CMP-0001` | Declared a dedicated invitation lifecycle component. |
-| `NFR-0001` | Tightened the auditability and durability expectations for state transitions. |
--->
+|---|---|
+| | |
 
 ### Impact
 
+<!-- Downstream items expected to be affected. -->
+
 | affected_item_id | expected_effect |
-| --- | --- |
-<!--
-Exemplar rows. Replace with downstream impact for this decision.
-| `DEP-0001` | Reconcile component dependencies with the new ownership boundary. |
-| `BEH-0002` | Regenerate local behavior contracts to match the isolated component. |
-| `NOTE-0001` | Re-align verification notes and tests around the new technical boundary. |
--->
+|---|---|
+| | |

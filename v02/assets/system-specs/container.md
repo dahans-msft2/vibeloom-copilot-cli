@@ -1,3 +1,20 @@
+<!--
+VibeLoom template: container (per-container spec)
+Tier: system-specs (full modes only)
+Purpose: local runtime boundary; resident bounded contexts; authoritative component inventory; local dependency edges and local constraints.
+Entities: CMP-#### (components owned by this container).
+Derivation rules (per DAG):
+- CMP derives from AGG, ENT, BC, CONT (its container), FLOW, VO
+
+Local dependency edges and local constraints are structured content within this container spec, not independent graph nodes.
+
+Generator guidance:
+- Fill `container_id` with the governing CONT-#### from containers.md.
+- Bounded contexts must not span multiple containers. List only BCs resident in this container.
+- Every CMP references the container and at least one BC + optional AGG/ENT/FLOW/VO in derives_from.
+- Components from the same BC must be co-located in this container.
+-->
+
 ---
 artifact_id: container.<container-slug>
 artifact_type: container
@@ -6,58 +23,42 @@ scope_kind: container
 scope_id: <container-slug>
 container_id: <CONT-####>
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
-# Container
+# Container — <container-slug>
 
-`container` is the authoritative local inventory for one runtime boundary.
+<!-- One-paragraph statement of this container's purpose and runtime boundary. -->
 
-Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., CONT-0001, BC-0001).
+## Resident bounded contexts
 
-## Purpose And Runtime Boundary
+<!-- List BCs whose semantic home is this container. Each BC is owned by exactly one container. -->
 
-<Describe what this container is for and where its runtime boundary sits.>
-<!--
-Exemplar:
-This container owns the user-facing collaboration access workflow and keeps invitation lifecycle behavior inside one coherent runtime boundary.
--->
+| bounded_context | notes |
+|---|---|
+| BC-0001 | |
 
-## Resident Bounded Contexts
+## Component inventory
 
-| bounded_context_id | role |
-| --- | --- |
-<!--
-Exemplar rows. Replace with project-specific residency.
-| `BC-0001` | Collaboration access semantics live here because this container owns invitation lifecycle and membership activation behavior. |
--->
+<!-- Authoritative list of components inside this container. Each CMP derives from its container (CONT-####), at least one BC, and any relevant AGG/ENT/FLOW/VO. -->
 
-## Component Inventory
+| id | slug | description | bounded_context | derives_from | notes |
+|---|---|---|---|---|---|
+| CMP-0001 | | | | | |
 
-| id | folder | bounded_context_id | responsibility | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific component ownership.
-| `CMP-0001` | `invite-lifecycle` | `BC-0001` | Own invitation creation, resend, revoke, accept, and decline behavior. | `[AGG-0001, STORY-0001]` |
-| `CMP-0002` | `membership-activation` | `BC-0001` | Activate access only after invitation acceptance satisfies invariants. | `[ENT-0001, STORY-0002]` |
--->
+## Local dependency edges
 
-## Local Interfaces And Dependencies
+<!-- Structured content — how components inside this container relate. Not graph entities. -->
 
-| id | kind | source | target | notes |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific local edges.
-| `EDGE-0002` | `interface` | `CMP-0001` | `CMP-0002` | Invitation acceptance is the only path that may trigger membership activation. |
--->
+| from | to | kind | notes |
+|---|---|---|---|
+| CMP-0001 | | | |
 
-## Local NFR / Operational Constraints
+## Local constraints
 
-| id | constraint | target | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific local constraints.
-| `CST-0004` | Invitation state transitions must remain durable across retries and restarts. | `CMP-0001` | `[NFR-0001, SNFR-0001]` |
--->
+<!-- Local NFR/operational constraints specific to this container. Each item is structured content, not a graph entity. -->
+
+| constraint | affects | notes |
+|---|---|---|
+| | | |

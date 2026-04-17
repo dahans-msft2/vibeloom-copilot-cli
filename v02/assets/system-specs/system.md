@@ -1,3 +1,21 @@
+<!--
+VibeLoom template: system
+Tier: system-specs (full modes only)
+Purpose: system context — external actors/systems, trust boundaries, system-wide NFR boundaries.
+Entities: EXT-####, TB-####, SNFR-####.
+Derivation rules (per DAG):
+- EXT derives from FR, NFR, CAP
+- TB derives from NFR
+- SNFR derives from NFR
+
+Deployment topology does NOT live here — that is `containers`.
+
+Generator guidance:
+- Define system purpose, external actors, trust boundaries, and system-wide NFRs only.
+- Do not inventory containers or components. Those are downstream artifacts.
+- Every entity carries a derives_from pointing at valid upstream items per the DAG.
+-->
+
 ---
 artifact_id: system
 artifact_type: system
@@ -5,49 +23,38 @@ tier: system-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # System
 
-`system` defines the whole system and its relationship to the outside world. Do not place deployment topology here.
+<!-- One-paragraph statement of what the system is and where it sits in its broader environment. -->
 
-Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., FR-0001, NFR-0001, BC-0001).
+## Context
 
-## System Purpose And Context
+<!-- Prose description of the system's scope, stakeholders, and surrounding environment. -->
 
-<Describe what the system is and where it sits in its broader environment.>
-<!--
-Exemplar:
-The system governs shared-workspace access by coordinating invitation lifecycle, approval, membership activation, and operational visibility across the collaboration product.
--->
+## External actors and systems
 
-## External Actors And Systems
+<!-- Outside entities the system interacts with. Each EXT derives from FR, NFR, or CAP. -->
 
-| id | kind | name | relationship | derives_from |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific context.
-| `EXT-0001` | `actor` | Workspace owner | Initiates and manages invitations for collaborators. | `[FR-0001]` |
-| `EXT-0002` | `external-system` | Notification delivery service | Delivers invitation and lifecycle notifications. | `[NFR-0001]` |
--->
+| id | description | kind | derives_from | notes |
+|---|---|---|---|---|
+| EXT-0001 | | | | |
 
-## Trust Boundaries
+## Trust boundaries
 
-| id | boundary | implication | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific trust boundaries.
-| `TB-0001` | Invitation approval boundary | Access cannot cross from pending to active without explicit approval or acceptance semantics. | `[NFR-0001]` |
--->
+<!-- Security or permission lines. Each TB derives from NFR. -->
 
-## System-Wide NFR Boundaries
+| id | description | derives_from | notes |
+|---|---|---|---|
+| TB-0001 | | | |
 
-| id | constraint | target | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific system guardrails.
-| `SNFR-0001` | Invitation lifecycle state changes are durable and auditable. | `100% of create, resend, accept, decline, revoke actions` | `[NFR-0001]` |
--->
+## System-wide NFR boundaries
+
+<!-- Global quality constraints. Each SNFR derives from NFR. -->
+
+| id | description | measure | target | derives_from | notes |
+|---|---|---|---|---|---|
+| SNFR-0001 | | | | | |

@@ -1,3 +1,21 @@
+<!--
+VibeLoom template: containers
+Tier: system-specs (full modes only)
+Purpose: global runtime/deployment topology; inter-container communication paths as structured content.
+Entities: CONT-####.
+Derivation rules (per DAG):
+- CONT derives from BC, NFR, SNFR
+
+Communication paths between containers are structured content within this artifact (NOT graph entities). Every communication path references valid container endpoints.
+
+Generator guidance:
+- Every container appears in the topology.
+- Each CONT derives from at least one BC (semantic home) plus optionally NFR or SNFR.
+- Communication paths describe how containers talk to each other (event, HTTP, RPC, etc.). They are table content, not items with IDs in the derivation graph.
+- Do not list components here — components are inventoried in each container.md.
+- Hosting/runtime choices can be noted in the notes column or a separate prose section.
+-->
+
 ---
 artifact_id: containers
 artifact_type: containers
@@ -5,62 +23,30 @@ tier: system-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # Containers
 
-`containers` owns the global runtime topology of the system.
+<!-- One-paragraph statement of the system's runtime topology. -->
 
-Populate `derives_from` in frontmatter with the smallest relevant approved upstream item IDs (e.g., BC-0001, NFR-0001, SNFR-0001).
+## Container inventory
 
-## Container Inventory
+<!-- Each CONT is a runtime/deployment unit. Each derives from BC (semantic home) + optional NFR/SNFR. -->
 
-| id | container_slug | responsibility | runtime | deployment_unit | derives_from |
-| --- | --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific topology.
-| `CONT-0001` | `app` | Owns product-facing invitation workflow and collaboration access behavior. | `web app` | `frontend + API deployable` | `[BC-0001]` |
-| `CONT-0002` | `notifications` | Delivers invitation lifecycle notifications and asynchronous follow-up. | `worker` | `background worker` | `[NFR-0001]` |
--->
+| id | slug | description | runtime | deployment_unit | derives_from | notes |
+|---|---|---|---|---|---|---|
+| CONT-0001 | | | | | | |
 
-## Responsibilities
+## Inter-container communication paths
 
-| container_id | statement |
-| --- | --- |
-<!--
-Exemplar rows. Replace with project-specific responsibilities.
-| `CONT-0001` | Keeps invitation approval and membership activation behavior inside the user-facing workflow boundary. |
-| `CONT-0002` | Handles delivery concerns only; it does not become the source of invitation truth. |
--->
+<!-- Structured content, not graph entities. Describes how containers talk to each other. Each row references valid container endpoints or external systems. -->
 
-## Communication Paths
+| from | to | protocol | purpose | notes |
+|---|---|---|---|---|
+| CONT-0001 | | | | |
 
-| id | from_container_id | to_container_or_external | protocol | purpose |
-| --- | --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific communication paths.
-| `EDGE-0001` | `CONT-0001` | `CONT-0002` | `event` | Publish invitation lifecycle events for delivery and audit fan-out. |
-| `EDGE-0002` | `CONT-0001` | Identity provider | `HTTP` | Resolve invitee identity before activation. |
--->
+## Deployment and runtime choices
 
-## Deployment / Runtime Choices
-
-| target | choice | notes |
-| --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific runtime choices.
-| `CONT-0001` | Keep the primary workflow container deployable as one coherent runtime slice until scaling pressure proves otherwise. | Preserve clear ownership while the domain is still stabilizing. |
-| `CONT-0002` | Keep asynchronous delivery isolated from approval semantics. | Delivery failures should not redefine core invitation truth. |
--->
-
-## Cross-Container Constraints
-
-| id | constraint | affects | derives_from |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific cross-container constraints.
-| `CST-0003` | Asynchronous delivery must not become the source of truth for invitation state. | `CONT-0001`, `CONT-0002` | `[NFR-0001, SNFR-0001]` |
--->
+<!-- Prose notes on hosting, packaging, scaling, and runtime decisions. -->

@@ -1,3 +1,18 @@
+<!--
+VibeLoom template: defaults
+Tier: intent-specs (all modes)
+Purpose: minimal repo-wide constitution — binding global rules, technology baseline, quality guardrails.
+Entities: `default` items carried as CST-#### (derives from `constraint` in intent per DAG).
+Rules: only always-on, globally binding constraints. Downstream tiers treat `defaults` as binding.
+
+Generator guidance:
+- Keep this short. Defaults are the narrow set of rules every downstream tier must respect.
+- Each default derives from exactly one `constraint` in intent — every CST-#### row here must have a derives_from pointing at an intent CST-####.
+- Do not duplicate the prose of the source constraint. State the binding rule crisply.
+- If a rule is optional, situational, or tactical, it belongs in intent or in a config artifact, not in defaults.
+- A default becomes universally binding once derived; downstream entities may reference it without requiring an additional typed edge.
+-->
+
 ---
 artifact_id: defaults
 artifact_type: defaults
@@ -5,45 +20,32 @@ tier: intent-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # Defaults
 
-`defaults` is the minimal repo-wide constitution. It contains only always-on, globally binding defaults that downstream tiers and code must follow.
+Repo-wide constitution. Binding globally and always.
 
-Do not put these here:
-- product rationale
-- local scope guidance
-- optional tactics or pattern catalogs
-- detailed runtime or generation mechanics
+## Rules
 
-Put those in `intent`, execution guidance, or implementation instead.
+<!-- Each rule is a `default` item. It derives from a `constraint` in intent. -->
 
-## Repo Constitution
+| id | rule | derives_from | notes |
+|---|---|---|---|
+| CST-0001 | | | |
 
-| id | rule | rationale |
-| --- | --- | --- |
-| `CST-0001` | Approved contract is the semantic source of truth; if context or code conflicts with approved contract, contract wins semantically. | Preserves contract-first governance and prevents downstream artifacts from becoming accidental truth. |
-| `CST-0002` | Bounded contexts do not span containers. | Keeps semantic boundaries and runtime boundaries aligned. |
-| `CST-0003` | Each component has exactly one semantic home and one runtime home. | Prevents smeared ownership and ambiguous technical boundaries. |
-| `CST-0004` | Filesystem layout reflects declared ownership but does not define semantic truth. | Prevents folder shape from silently becoming architecture. |
+## Technology baseline
 
-## Technology Baseline
+<!-- Language, runtime, framework, and platform choices that are globally binding. Each still carries a CST-#### id and a derives_from link. -->
 
-| id | choice | scope | notes |
-| --- | --- | --- | --- |
-| `CST-0005` | Standardize one primary implementation stack per repo or governed runtime slice. | `repo` or one governed runtime slice | Introduce another stack only through a narrower downstream contract that explicitly owns it. |
-| `CST-0006` | Standardize one web UI stack per web-facing surface when the repo includes a UI. | web-facing scope | Record framework, styling system, and component library once and reuse them consistently. |
-| `CST-0007` | Make persistence, messaging, and external platform baselines explicit when they are globally assumed. | `repo` | Prevent hidden infrastructure assumptions from leaking into downstream generation. |
+| id | rule | derives_from | notes |
+|---|---|---|---|
 
-## Quality Guardrails
+## Quality guardrails
 
-| id | guardrail | expectation | notes |
-| --- | --- | --- | --- |
-| `CST-0008` | Behavior changes include executable verification at the narrowest useful scope. | Tests or checks are added or updated before the change is considered complete. | Broaden scope only when boundaries require it. |
-| `CST-0009` | Invariants and boundary contracts are enforced explicitly in code. | Preconditions, postconditions, or invariant checks exist where the contract requires them. | Especially at component, container, and external boundaries. |
-| `CST-0010` | Approved contract changes are reconciled downward before downstream work is treated as current. | Regenerate or realign affected context and code after approved upstream change. | Prevents stale downstream truth from lingering. |
-| `CST-0011` | Semantic drift is corrected upstream first. | Change contract before patching context or code when the meaning is wrong. | Keeps contract-first governance intact. |
+<!-- Testing, invariant enforcement, reconciliation discipline. Each still carries a CST-#### id and a derives_from link. -->
+
+| id | rule | derives_from | notes |
+|---|---|---|---|

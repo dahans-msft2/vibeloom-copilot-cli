@@ -1,3 +1,18 @@
+<!--
+VibeLoom template: intent
+Tier: intent-specs (full modes: pm, dev, expert)
+Purpose: prose-first description of the system; captures user intent as capabilities and hard constraints.
+Entities: CAP-####, CST-#### (root entity types — no derives_from).
+Downstream: drives prd, usm, dm, system, containers, container, component; constraints graduate to defaults when repo-wide and always-on.
+
+Generator guidance:
+- Keep prose first. Structured entries are a side effect of the prose, not the primary output.
+- Every CAP is an observable user-facing outcome.
+- Every CST is a hard requirement or binding preference. Repo-wide always-on CSTs also appear in defaults.md as `default` items.
+- Intent is a root artifact; CAP and CST carry no derives_from (they are root entity types).
+- Free prose stays un-IDed — only entries that downstream tiers must reference need IDs.
+-->
+
 ---
 artifact_id: intent
 artifact_type: intent
@@ -5,47 +20,42 @@ tier: intent-specs
 scope_kind: root
 scope_id: root
 status: draft
-version: 0
-draft_revision: 1
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # Intent
 
-`intent` stays prose-first. Use coarse IDs only for structured capabilities or constraints that must participate in derivation.
-
-### Guidance
-
-- **Capabilities** (CAP) are user-facing, observable outcomes the system should deliver. Focus on what the user needs and why, not how to build it.
-- **Wishes** (WISH) are softer preferences that clarify priorities but do not block delivery if omitted. They inform downstream trade-offs.
-- **Constraints** (CST) are hard, non-negotiable requirements. Violating a constraint blocks delivery. Constraints may be product-level (e.g., "explicit approval before access") or technical (e.g., "must run on ARM64").
-- Keep items coarse. If a capability naturally subdivides into multiple requirements, that decomposition belongs in `prd`, not here.
-- Items that are repo-wide and always-on belong in `defaults`, not `intent`.
+<!-- One-paragraph statement of what the system is, for whom, and why it should exist. -->
 
 ## Vision
 
-<Free-form prose description of the system: purpose, users, value proposition, and any high-level context that does not fit into structured tables below.>
-<!--
-Exemplar:
-A lightweight workspace collaboration tool that lets owners invite trusted collaborators into a shared environment. The product emphasizes explicit approval, auditability, and a calm user experience over complex role hierarchies.
--->
+<!-- 2-5 sentence vision. What does success look like? -->
 
-## Functionality
+## Context and motivation
 
-| id | statement | notes |
-| --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific intent.
-| `CAP-0001` | Workspace owners can invite collaborators into a shared workspace. | Invitations require explicit acceptance before access is granted. |
-| `CAP-0002` | Invited users can review and act on pending invitations inside the product. | Support accept and decline flows. |
--->
+<!-- What is the surrounding problem, environment, or opportunity? What exists today and why is it insufficient? -->
 
-## Miscellaneous
+## Capabilities
 
-| id | type | statement | notes |
-| --- | --- | --- | --- |
-<!--
-Exemplar rows. Replace with project-specific intent.
-| `WISH-0001` | `wish` | Prefer a calm, low-ceremony approval flow for invitation management. | Keep the UX direct and easy to explain. |
-| `CST-0001` | `constraint` | Preserve explicit approval before any shared access is granted. | This drives downstream security and lifecycle rules. |
--->
+<!-- Observable user-facing outcomes. Each capability is a functional promise the system makes to the user. -->
+
+| id | description | notes |
+|---|---|---|
+| CAP-0001 | | |
+
+## Constraints
+
+<!-- Hard requirements or binding preferences. Repo-wide always-on constraints also appear in defaults.md as `default` items. -->
+
+| id | description | notes |
+|---|---|---|
+| CST-0001 | | |
+
+## Out of scope
+
+<!-- Optional prose: what is explicitly not this project's concern. Free prose, no IDs. -->
+
+## Open assumptions and risks
+
+<!-- Optional prose. No IDs — these are not graph entities in v2. They may feed future review/eval cycles. -->

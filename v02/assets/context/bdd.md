@@ -1,56 +1,53 @@
+<!--
+VibeLoom template: bdd (behavioral scenarios)
+Tier: context (full modes only; not generated in vibe)
+Purpose: non-executable Gherkin scenarios derived from approved contract for one component-owned behavior slice.
+Entities: SCN-#### (individual Gherkin scenarios).
+Derivation rules (per DAG):
+- SCN derives from ACC, INV, component (CMP), STORY
+
+One artifact per behavior: filename BDD-####-<slug>.md under /<container>/<component>/context/bdd/.
+
+Generator guidance:
+- One BDD artifact = one component-scoped behavior collection.
+- Each scenario carries a SCN-#### id and its own derives_from pointing at ACC, INV, CMP, or STORY items.
+- Write scenarios in Gherkin style: Given / When / Then / And.
+- Keep scenarios observable and deterministic — no implementation details.
+- bdd is generated only for components whose contract references acceptance criteria that reach this component (via ACC-#### → FR-#### → STORY-#### → CMP-####).
+-->
+
 ---
 artifact_id: BDD-<####>
 artifact_type: bdd
 tier: context
-scope_kind: root
-scope_id: root
+scope_kind: component
+scope_id: <container-slug>.<component-slug>
+timestamp: "<ISO-8601 timestamp>"
 derives_from: []
 ---
 
 # Behavioral Scenarios
 
-`bdd` contains generated, non-executable Gherkin scenarios derived from approved contract.
+<!-- One-paragraph statement of the behavior this artifact covers. -->
 
-Populate `derives_from` in frontmatter with the approved upstream item IDs that produced this scenario set (e.g., STORY-0001, ACC-0001).
-
-This template produces one behavior artifact per file. Keep generated BDD artifacts under `/context/bdd/`, for example `BDD-0001-<behavior-slug>.md`.
-
-## Feature / Capability
-
-- **id:** `BDD-<####>`
-- **title:** <Feature or capability title>
-- **derives_from:** `[<short-item-id>, <short-item-id>]`
-<!--
-Exemplar:
-- **id:** `BDD-0001`
-- **title:** Invitation approval
-- **derives_from:** `[FR-0001, STORY-0001]`
--->
+- **artifact id:** BDD-<####>
+- **behavior title:**
+- **owning component:** <CMP-####>
+- **derives_from:**
 
 ## Scenarios
 
-### `SCN-<####>`
+<!-- Each scenario is a SCN-#### item. Add one ### SCN-#### block per scenario. -->
 
-- **derives_from:** `[<short-item-id>, <short-item-id>]`
-<!--
-Exemplar:
-- **derives_from:** `[ACC-0001, INV-0001]`
--->
+### SCN-0001
+
+- **derives_from:**
 
 ```gherkin
-Scenario: <Scenario title>
-  Given <starting condition>
+Scenario: <title>
+  Given <precondition>
   And <additional context>
   When <action>
   Then <expected outcome>
   And <additional observable outcome>
 ```
-<!--
-Exemplar:
-Scenario: Owner revokes a pending invitation
-  Given a workspace owner has sent an invitation
-  And the invitation is still pending
-  When the owner revokes the invitation
-  Then the invitation can no longer be accepted
-  And no workspace access is granted
--->

@@ -374,21 +374,48 @@ Context artifacts do **not** carry `status` or `approval_mode`. (See methodology
 
 For ledger artifacts (`pdr`, `adr`): artifact-level `derives_from` in frontmatter is always empty (`[]`). Per-record `derives_from` inside each `PDR-####` / `ADR-####` section is the canonical derivation link. The engine builds graph edges from per-record `derives_from`, not from artifact-level frontmatter.
 
+### Approved-State Snapshot
+
+At each contract approval, the engine captures a per-artifact snapshot into the graph cache (see Graph Cache below):
+
+```text
+approved_snapshots: { artifact_id → { mtime, item_hashes: { item_id → sha256 } } }
+```
+
+Each entry records:
+
+- the filesystem modification time of the approved artifact at approval
+- the canonical content hash of every item defined in that artifact at approval
+
+The approved-state snapshot is the basis for all direct-edit and staleness detection. Snapshots are captured only for approved contract artifacts; context artifacts and drafts do not contribute.
+
+An item's **canonical hash** is a SHA-256 over a normalized representation (see Graph Cache for canonicalization rules). The item's `item_id` is the lookup key and not part of the hashed payload; volatile frontmatter (file paths, file mtimes, approval timestamps) is excluded so non-semantic edits do not cause rehash churn.
+
 ### Direct Edit Detection
 
-When a user edits an approved contract artifact outside of skill operations:
+When a user edits an approved contract artifact outside of skill operations, the engine detects the edit automatically and reopens the artifact to `draft` before proceeding. Detection uses a two-tier compare against `approved_snapshots[artifact_id]`:
 
-1. The engine records each artifact's filesystem modification time at the moment of each approval and stores it in graph state alongside the artifact's `timestamp` frontmatter field.
-2. At the start of any subsequent operation, the engine compares each approved artifact's current filesystem modification time to the recorded last-approved modification time. A mismatch means the artifact has been edited.
-3. If an approved artifact has been edited, the engine automatically reopens it to `draft` before proceeding.
-4. Users do not manually maintain `status` for this transition.
-5. Confirmation is required only for semantic decisions that follow, not for the lifecycle bookkeeping itself. (See methodology ## Generation ### Lifecycle States.)
+1. **Fast filter — filesystem mtime.** At the start of any operation, the engine reads the current mtime for each approved artifact and compares it to the snapshot's recorded mtime. If they match, the file is byte-identical to the approved form and no further work is done on it.
+2. **Authoritative check — per-item content hash.** When mtimes diverge, the engine re-parses the artifact and compares each current item's canonical hash to the snapshot's `item_hashes`. Items are classified as **added** (present now, absent in snapshot), **removed** (present in snapshot, absent now), **modified** (hash differs), or **unchanged** (hash matches).
+
+If any item is added, removed, or modified, the artifact is reopened to `draft` and the snapshot is left intact (so that when the user re-approves, a fresh snapshot can be captured from the new approved state). If the mtime changed but every item's hash matches (e.g., whitespace-only edit, non-semantic frontmatter edit), the artifact remains `approved` and no reopen is triggered.
+
+Users do not manually maintain `status` for this transition. Confirmation is required only for the semantic decisions that follow, not for the lifecycle bookkeeping itself. (See methodology ## Generation ### Lifecycle States and the Direct Edits subsection of ## Generation ### Staleness And Regeneration.)
 
 ### Staleness
 
-Staleness is never written into artifact frontmatter. It is a computed property: an artifact is stale when its approved upstream basis has changed since that artifact was last synchronized to the same approved basis. For contract artifacts, synchronization happens at approval. For `context` and `code`, synchronization happens at generation or reconciliation. The engine computes staleness from approved-basis mismatch in the context graph. Timestamps serve as implementation-level revision signals; the methodology definition of staleness is approved-basis mismatch rather than raw file freshness.
+Staleness is never written into artifact frontmatter. It is a computed property: an artifact is stale when its approved upstream basis has changed since that artifact was last synchronized to that basis. For contract artifacts, synchronization is approval. For `context` and `code`, synchronization is generation or reconciliation.
 
-Unapproved drafts do not trigger downstream staleness. Downstream artifacts become stale only when an edited upstream artifact is re-approved. (See methodology ## Generation ### Staleness And Regeneration.)
+The engine computes staleness per item using the approved-state snapshot:
+
+1. For each approved artifact with a snapshot, walk its `item_hashes` map. Compare the current canonical hash of each item to the snapshot hash. Classify items as **modified** (hash differs), **removed** (item absent from current state), or **unchanged**. Added items (in current state, not in snapshot) do not contribute — nothing downstream can yet depend on them.
+2. Union the modified and removed items across all snapshots into the **changed-upstream set**.
+3. Walk the `derives_from` graph forward from each changed-upstream item, collecting all reachable items. These form the **stale item set**.
+4. The owning artifacts of the stale item set are the **stale artifact set**.
+
+Removed items additionally surface as dangling-reference findings during eval (reference integrity). Because a removed upstream item's edges are not materialized in the current graph, the forward walk for a removed item is seeded from every current item whose `derives_from` still references it.
+
+Unapproved drafts do not trigger downstream staleness. Downstream becomes stale only when an edited upstream artifact is re-approved — at re-approval the engine replaces that artifact's snapshot with a new one, and the next staleness pass compares against it. (See methodology ## Generation ### Staleness And Regeneration.)
 
 ---
 
@@ -696,13 +723,46 @@ The engine materializes a regenerable graph cache at:
 /.vibeloom/state/context-graph.json
 ```
 
+The cache is a JSON document containing:
+
+| Field | Shape | Purpose |
+|---|---|---|
+| `artifacts` | `{ artifact_id → artifact }` | Frontmatter, items, current filesystem `mtime` per artifact |
+| `items` | `{ item_id → item }` | Item type, body, `derives_from`, owning `artifact_id` |
+| `edges` | `[{ source, target }]` | Item-level `derives_from` edges (`source` derives from `target`) |
+| `approved_snapshots` | `{ artifact_id → { mtime, item_hashes } }` | Per-approved-artifact snapshot: approval-time mtime and per-item canonical hashes |
+
+#### Canonical Item Hash
+
+An item's canonical hash is `sha256(canonical_bytes)`, where `canonical_bytes` is the UTF-8 encoding of the item's serialized form with:
+
+- `item_id` removed (it is the lookup key, not hashed content; a rename is surfaced as remove + add — see the Kinds Of Change subsection of methodology ## Generation ### Staleness And Regeneration)
+- `derives_from` sorted lexicographically (derivation is a set, not a sequence — order must not affect the hash)
+- remaining fields (item type prefix, section, description, scope, `artifact_id`, extra columns) serialized as JSON with keys sorted
+
+Volatile frontmatter on the owning artifact (`path`, file `mtime`, approval `timestamp`, `status`) is not part of the item's hash — it changes during normal lifecycle transitions and must not cause false staleness.
+
+#### Snapshot Lifecycle
+
+A snapshot for artifact X is:
+
+- **captured** the first time the engine sees X with `status: approved` and no prior snapshot. The snapshot records X's current `mtime` and a canonical hash for each item in X.
+- **preserved** across cache rebuilds for as long as X remains approved. Subsequent rebuilds do not overwrite the snapshot, even if X's current filesystem state has diverged — keeping the snapshot stable is what allows direct-edit detection to work.
+- **dropped** when X transitions to `draft` (e.g., after a direct edit is detected and the skill reopens X). The next approval re-captures a fresh snapshot.
+
+The engine does not need an explicit `approve` command to manage snapshots: it infers approval transitions from `status` frontmatter on subsequent runs. The only time a snapshot is written fresh is when an artifact with `status: approved` has no prior entry in the cache.
+
+#### Rebuild Conditions
+
 The cache is rebuilt whenever:
 
 - a contract artifact changes
 - a context artifact is regenerated
 - status or derivation metadata changes
 
-If the cache is missing, unreadable, or fails validation, the engine regenerates it from ground truth (contract + context artifacts) before proceeding.
+Graph structure (`artifacts`, `items`, `edges`) and per-file `mtime` are always re-derived from the filesystem on rebuild. `approved_snapshots` are preserved across rebuilds according to the lifecycle above.
+
+If the cache is missing, unreadable, or fails validation, the engine regenerates graph structure from ground truth (contract + context artifacts) before proceeding. The approved-state snapshots cannot be recovered from current filesystem state — their whole purpose is to represent a frozen past point. On unrecoverable cache loss, the engine re-seeds snapshots from the current state of approved artifacts and treats that as the new approved baseline; edits made while the cache was absent are not retroactively detectable.
 
 ### Status Snapshot
 

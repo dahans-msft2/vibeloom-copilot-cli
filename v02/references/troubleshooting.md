@@ -14,9 +14,9 @@ Common failure modes and recovery paths. Load on demand when the normal flow hit
 
 ## Direct edit detected on an approved artifact
 
-**Symptom:** An approved contract artifact's current filesystem modification time differs from the recorded last-approved modification time.
+**Symptom:** An approved contract artifact's content differs from the last-approved form. The engine detects this via a two-tier compare: filesystem mtime mismatch triggers per-item hash comparison against the approved-state snapshot.
 
-**Action:** The engine automatically reopens the artifact to `draft` before proceeding. Users do not manually maintain `status` for this transition. Confirmation is required only for the semantic decisions that follow, not for the lifecycle bookkeeping itself.
+**Action:** If any item was added, removed, or modified (hash differs), the engine automatically reopens the artifact to `draft` before proceeding. If mtime changed but every item's hash still matches (e.g., whitespace-only or non-semantic frontmatter edit), the artifact stays `approved` and the recorded mtime is updated. Users do not manually maintain `status` for this transition. Confirmation is required only for the semantic decisions that follow, not for the lifecycle bookkeeping itself.
 
 ---
 

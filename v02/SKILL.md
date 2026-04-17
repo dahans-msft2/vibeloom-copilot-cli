@@ -56,7 +56,7 @@ Then invoke the engine CLI for deterministic operations:
 | `vibeloom-engine affected --repo <path> --ids <IDs...>` | Compute the affected set from changed item IDs |
 | `vibeloom-engine staleness --repo <path>` | Detect stale artifacts (approved-basis mismatch) |
 | `vibeloom-engine status --repo <path>` | Emit a status snapshot; persist `.vibeloom/state/status.json` |
-| `vibeloom-engine detect-edits --repo <path>` | Detect direct edits on approved contract artifacts via filesystem mtime |
+| `vibeloom-engine detect-edits --repo <path>` | Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation) |
 
 All engine commands emit JSON on stdout. The engine does not make semantic judgments — it parses, validates structure, computes the graph, and reports. Semantic judgment and user interaction remain with the skill.
 

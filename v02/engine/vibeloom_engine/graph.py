@@ -10,28 +10,57 @@ Graph queries are provided for:
 - upstream / downstream walks
 - forward reachability (for affected sets)
 - cycle detection (should never trigger; DAG invariant)
+
+Approved-state snapshots (per-artifact mtime + per-item canonical hashes) are
+captured at first sight of an approved artifact and preserved across rebuilds
+until the artifact transitions to `draft`. See vibeloom-implementation.md
+## Runtime State ### Graph Cache ### Snapshot Lifecycle.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections import deque
 
-from vibeloom_engine.models import Artifact, Edge, Graph, Item
+from vibeloom_engine.models import ApprovalSnapshot, Artifact, Edge, Graph, Item
 
 
-def build_graph(artifacts: list[Artifact]) -> Graph:
+def canonical_item_hash(item: Item) -> str:
+    """Return the canonical SHA-256 hex digest of an item's semantic content.
+
+    The hash is over a sorted-keys JSON of the item's fields, with:
+      - item_id removed (it's the lookup key; a rename is remove + add)
+      - derives_from sorted lexicographically (derivation is a set, not a
+        sequence)
+
+    See vibeloom-implementation.md ## Runtime State ### Graph Cache ### Canonical
+    Item Hash for the full specification.
+    """
+    payload = item.to_dict()
+    payload.pop("item_id", None)
+    payload["derives_from"] = sorted(payload.get("derives_from", []))
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def build_graph(artifacts: list[Artifact], prior: Graph | None = None) -> Graph:
     """Build a Graph from a list of parsed Artifacts.
 
     The returned Graph contains:
       - artifacts indexed by artifact_id
       - items indexed by item_id
       - edges for each item-level derives_from where both endpoints exist
-      - approved_mtimes: last-known mtime per approved contract artifact (used
-        later for edit detection). This is seeded from current artifact mtimes
-        for artifacts that are currently in `approved` status; callers may
-        persist it separately.
+      - approved_snapshots: per-approved-artifact mtime + per-item hashes
+
+    Approved-state snapshots follow the lifecycle in vibeloom-implementation.md:
+    captured at first sight of an approved artifact, preserved across rebuilds,
+    and dropped when the artifact transitions to `draft`. Pass `prior` (a
+    previously-built graph loaded from cache) to preserve existing snapshots;
+    omit it for a cold start.
     """
     g = Graph()
+    prior_snapshots = prior.approved_snapshots if prior is not None else {}
     # Index artifacts and items.
     for a in artifacts:
         g.artifacts[a.artifact_id] = a
@@ -41,8 +70,17 @@ def build_graph(artifacts: list[Artifact]) -> Graph:
                 # first occurrence in the graph.
                 continue
             g.items[item.item_id] = item
+        # Manage approval snapshot: preserve prior if present and still approved;
+        # capture fresh snapshot on first sight of an approved artifact; drop
+        # snapshot for drafts.
         if a.status and a.status.value == "approved" and a.mtime is not None:
-            g.approved_mtimes[a.artifact_id] = a.mtime
+            if a.artifact_id in prior_snapshots:
+                g.approved_snapshots[a.artifact_id] = prior_snapshots[a.artifact_id]
+            else:
+                g.approved_snapshots[a.artifact_id] = ApprovalSnapshot(
+                    mtime=a.mtime,
+                    item_hashes={item.item_id: canonical_item_hash(item) for item in a.items},
+                )
     # Emit edges from item-level derives_from.
     for item in g.items.values():
         for upstream_id in item.derives_from:

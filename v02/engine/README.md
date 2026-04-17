@@ -36,7 +36,7 @@ vibeloom-engine staleness --repo /path/to/repo
 # Emit a status snapshot as JSON (and persist to .vibeloom/state/status.json)
 vibeloom-engine status --repo /path/to/repo [--scope <scope-filter>]
 
-# Detect direct edits on approved contract artifacts (filesystem mtime comparison)
+# Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation)
 vibeloom-engine detect-edits --repo /path/to/repo
 ```
 
@@ -86,4 +86,4 @@ Smoke tests use small fixture repos under `tests/fixtures/`.
 
 ## Versioning
 
-The engine is versioned independently of the methodology and implementation docs. v0.1 targets the stabilized methodology + implementation committed on `main`.
+The engine is versioned independently of the methodology and implementation docs. The current engine targets the v2 stabilized methodology + implementation committed on `main`.

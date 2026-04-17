@@ -587,9 +587,41 @@ Within a tier, only artifacts whose derivation basis includes changed upstream i
 
 When approved upstream truth changes, dependent downstream entities enter the affected set and the owning downstream artifacts become stale. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time.
 
-Manual or generated edits always update `timestamp`. If an approved contract artifact is edited, tooling automatically reopens it to `draft`. Downstream artifacts become stale only when the edited upstream artifact is approved again.
+Staleness is a computed property over current state, never a persisted flag, and never written into artifact frontmatter. An implementation derives it by comparing the current state of approved upstream entities against their last-approved state.
 
-Staleness is never written into artifact frontmatter. Implementations may use timestamps as revision signals, but the methodology definition of staleness is approved-basis mismatch rather than raw file freshness.
+#### Kinds Of Change
+
+Change detection recognizes four kinds of change on an entity between its last-approved state and its current state:
+
+- **Add** — a new entity appears. Nothing downstream depends on it yet, so it does not contribute to staleness.
+- **Remove** — a previously approved entity has disappeared. Downstream derivations now dangle; this is both a staleness trigger and a structural finding (reference integrity, see Eval).
+- **Modify** — an entity's content, fields, or `derives_from` edges have changed.
+- **Rename** — an entity's ID has changed. Treated at detection as remove + add.
+
+Additions do not propagate staleness; modifications and removals do.
+
+#### Propagation
+
+Staleness propagates node-level through the derivation graph. For each modified or removed upstream node, every node reachable forward through `derives_from` edges becomes stale. The owning artifacts of those nodes form the affected artifact set for regeneration or reconciliation.
+
+Staleness propagates only from changes to approved upstream truth. Unapproved drafts do not trigger downstream staleness; the downstream remains coherent against its last-approved upstream basis until that basis is re-approved with changes.
+
+#### Invariant
+
+False positives are acceptable; false negatives are not. An over-marked stale set causes unnecessary review; an under-marked set lets drift leak silently past approval gates. When in doubt, mark stale.
+
+#### Regeneration Versus Reconciliation
+
+Both `generate` and `reconcile` consume the stale set and operate at node-level in principle — only stale entities need to be reproduced or repaired. The difference is intent:
+
+- `generate` reproduces downstream artifacts from approved upstream truth. It does not attempt to preserve manual edits on downstream.
+- `reconcile` inspects existing downstream artifacts before touching them, surfaces drift the user may want to preserve, and applies fixes per user direction.
+
+Whether an implementation regenerates an entire owning artifact or only the affected nodes within it is an implementation choice; both are consistent with the methodology as long as the resulting artifact is coherent and its downstream closure is itself re-evaluated for staleness.
+
+#### Direct Edits
+
+A direct edit is any change to an approved contract artifact outside the normal flow — a manual edit, an out-of-band tool, or any change not gated through `generate` or `reconcile`. Any such change reopens the artifact to `draft` automatically (see Lifecycle States). Staleness does not propagate until the artifact is re-approved, at which point the kinds of change above apply and downstream propagation follows Propagation above.
 
 ### Review
 

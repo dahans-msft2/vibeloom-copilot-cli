@@ -196,14 +196,35 @@ class Edge:
 
 
 @dataclass
+class ApprovalSnapshot:
+    """Per-artifact approval-time state, used for direct-edit and staleness detection.
+
+    Captured when the engine first sees an artifact with `status: approved` and
+    preserved across cache rebuilds until the artifact transitions to `draft`.
+    See vibeloom-implementation.md ## Runtime State ### Graph Cache ### Snapshot
+    Lifecycle.
+    """
+
+    mtime: float  # filesystem mtime of the artifact at approval
+    item_hashes: dict[str, str] = field(default_factory=dict)  # item_id -> canonical sha256 hex
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"mtime": self.mtime, "item_hashes": dict(self.item_hashes)}
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "ApprovalSnapshot":
+        return cls(mtime=d["mtime"], item_hashes=dict(d.get("item_hashes", {})))
+
+
+@dataclass
 class Graph:
     """The context graph: artifacts, items, and derivation edges."""
 
     artifacts: dict[str, Artifact] = field(default_factory=dict)  # by artifact_id
     items: dict[str, Item] = field(default_factory=dict)  # by item_id
     edges: list[Edge] = field(default_factory=list)
-    # Provenance: last-approved mtime per approved artifact_id (used for edit detection)
-    approved_mtimes: dict[str, float] = field(default_factory=dict)
+    # Per-approved-artifact snapshot: mtime + per-item hashes at last approval.
+    approved_snapshots: dict[str, ApprovalSnapshot] = field(default_factory=dict)
 
     # --- queries -----------------------------------------------------------
 
@@ -229,7 +250,7 @@ class Graph:
             "artifacts": {aid: a.to_dict() for aid, a in self.artifacts.items()},
             "items": {iid: i.to_dict() for iid, i in self.items.items()},
             "edges": [e.to_dict() for e in self.edges],
-            "approved_mtimes": dict(self.approved_mtimes),
+            "approved_snapshots": {aid: s.to_dict() for aid, s in self.approved_snapshots.items()},
         }
 
     @classmethod
@@ -238,5 +259,8 @@ class Graph:
             artifacts={aid: Artifact.from_dict(a) for aid, a in d.get("artifacts", {}).items()},
             items={iid: Item.from_dict(i) for iid, i in d.get("items", {}).items()},
             edges=[Edge(source=e["source"], target=e["target"]) for e in d.get("edges", [])],
-            approved_mtimes=dict(d.get("approved_mtimes", {})),
+            approved_snapshots={
+                aid: ApprovalSnapshot.from_dict(s)
+                for aid, s in d.get("approved_snapshots", {}).items()
+            },
         )

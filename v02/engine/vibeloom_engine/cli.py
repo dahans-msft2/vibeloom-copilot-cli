@@ -23,7 +23,7 @@ from pathlib import Path
 
 from vibeloom_engine import __version__
 from vibeloom_engine.affected import compute_affected_set
-from vibeloom_engine.cache import save_graph, save_status
+from vibeloom_engine.cache import load_graph, save_graph, save_status
 from vibeloom_engine.eval_ import eval_graph, eval_target
 from vibeloom_engine.graph import build_graph
 from vibeloom_engine.indexes import build_indexes
@@ -60,7 +60,8 @@ def _cmd_parse(args: argparse.Namespace) -> int:
 def _cmd_graph(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     indexes = build_indexes(graph)
     path = save_graph(graph, repo)
     payload = {
@@ -83,7 +84,8 @@ def _cmd_graph(args: argparse.Namespace) -> int:
 def _cmd_eval(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     if args.target:
         findings = eval_target(graph, artifacts, args.target)
     else:
@@ -104,7 +106,8 @@ def _cmd_eval(args: argparse.Namespace) -> int:
 def _cmd_affected(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     affected = compute_affected_set(graph, args.ids)
     print(json.dumps(affected.to_dict(), indent=2, sort_keys=True))
     return 0
@@ -113,7 +116,8 @@ def _cmd_affected(args: argparse.Namespace) -> int:
 def _cmd_staleness(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     stale = compute_stale(graph)
     payload = [
         {
@@ -130,7 +134,8 @@ def _cmd_staleness(args: argparse.Namespace) -> int:
 def _cmd_status(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     report = compute_status(graph, artifacts, repo)
     data = report.to_dict()
     save_status(data, repo)
@@ -141,7 +146,8 @@ def _cmd_status(args: argparse.Namespace) -> int:
 def _cmd_detect_edits(args: argparse.Namespace) -> int:
     repo = _resolve_repo(args)
     artifacts = parse_repo_path(repo)
-    graph = build_graph(artifacts)
+    prior = load_graph(repo)
+    graph = build_graph(artifacts, prior=prior)
     edited = detect_direct_edits(graph)
     payload = [
         {
@@ -149,6 +155,9 @@ def _cmd_detect_edits(args: argparse.Namespace) -> int:
             "path": e.path,
             "last_approved_mtime": e.last_approved_mtime,
             "current_mtime": e.current_mtime,
+            "added_items": e.added_items,
+            "removed_items": e.removed_items,
+            "modified_items": e.modified_items,
         }
         for e in edited
     ]
@@ -187,7 +196,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("staleness", help="Detect stale artifacts (approved-basis mismatch).")
     sub.add_parser("status", help="Emit a status snapshot; persist to .vibeloom/state/status.json.")
     sub.add_parser(
-        "detect-edits", help="Detect direct edits on approved contract artifacts via mtime mismatch."
+        "detect-edits",
+        help="Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation).",
     )
 
     return p

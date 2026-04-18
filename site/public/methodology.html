@@ -74,6 +74,7 @@
     <a href="index.html#features">Features</a>
     <a href="index.html#how-it-works">How it works</a>
     <a href="methodology.html" class="active">Methodology</a>
+    <a href="implementation.html">Implementation</a>
     <a href="index.html#get-started" class="nav-cta">Get Started</a>
   </div>
   <details class="nav-mobile">
@@ -87,6 +88,7 @@
       <a href="index.html#features">Features</a>
       <a href="index.html#how-it-works">How it works</a>
       <a href="methodology.html" class="active">Methodology</a>
+      <a href="implementation.html">Implementation</a>
       <a href="index.html#get-started" class="nav-cta">Get Started</a>
     </div>
   </details>
@@ -110,12 +112,13 @@
       <div class="toc-item"><a href="#positioning">Context</a><span class="toc-desc">Why These Terms Matter — what spec-first and contract-driven actually mean</span></div>
       <div class="toc-item"><a href="#comparison">Landscape</a><span class="toc-desc">How VibeLoom Compares — side-by-side with Tessl, Kiro, and GitHub Spec Kit</span></div>
       <div class="toc-item"><a href="#core-thesis">Foundation</a><span class="toc-desc">Core Thesis — the principles that anchor the methodology</span></div>
-      <div class="toc-item"><a href="#contract-stack">Architecture</a><span class="toc-desc">The Contract Stack — layered artifacts from intent to running code</span></div>
+      <div class="toc-item"><a href="#contract-stack">Architecture</a><span class="toc-desc">The Contract Stack — five tiers from intent to running code</span></div>
       <div class="toc-item"><a href="#workflow">Workflow</a><span class="toc-desc">How It All Fits Together — artifacts moving through the lifecycle</span></div>
-      <div class="toc-item"><a href="#profiles">Scaling</a><span class="toc-desc">Lite vs Full Profiles — pick the right level of ceremony</span></div>
-      <div class="toc-item"><a href="#evals">Quality</a><span class="toc-desc">Eval Framework — structural and semantic checks at every tier</span></div>
-      <div class="toc-item"><a href="#modules">Agents</a><span class="toc-desc">Module Interface Contracts — composable agents for planning, review, and generation</span></div>
-      <div class="toc-item"><a href="#commands">Interface</a><span class="toc-desc">Command Reference — every command with usage examples</span></div>
+      <div class="toc-item"><a href="#modes">Scaling</a><span class="toc-desc">Four Modes — vibe, pm, dev, expert: pick the right gates</span></div>
+      <div class="toc-item"><a href="#evals">Quality</a><span class="toc-desc">Eval Framework — structural (engine) and semantic (agent) checks</span></div>
+      <div class="toc-item"><a href="#drift">Drift</a><span class="toc-desc">Three forms of drift — structural, lifecycle, semantic — and how each is detected</span></div>
+      <div class="toc-item"><a href="#components">Agents</a><span class="toc-desc">Component Interface Contracts — subagent boundaries with typed interfaces</span></div>
+      <div class="toc-item"><a href="#commands">Interface</a><span class="toc-desc">Command Reference — eight operations with inputs, pre/post-conditions</span></div>
       <div class="toc-item"><a href="#quickstart">Quickstart</a><span class="toc-desc">Get Started — three commands to your first contract stack</span></div>
     </div>
   </div>
@@ -246,33 +249,31 @@
   <div class="doc-section reveal" id="contract-stack">
     <span class="label">Architecture</span>
     <h2>The Contract Stack</h2>
-    <p class="lead">A multi-tier stack from foundational rules to running code. Each tier constrains the next. Upstream specs serve as evals for downstream work.</p>
+    <p class="lead">Five tiers from user intent down to running code. Each tier derives from the approved tier above. Upstream items serve as the eval basis for downstream work.</p>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Tier</th><th>Artifact</th><th>Role</th><th>ID Prefixes</th></tr></thead>
+        <thead><tr><th>Tier</th><th>Artifacts</th><th>Role</th><th>ID Prefixes</th></tr></thead>
         <tbody>
-          <tr><td><span class="tag tag-accent">Foundation</span></td><td><code>constitution.md</code></td><td>Universal rules, lifecycle states, ID grammar</td><td><code>ART-</code>, <code>EVAL-</code></td></tr>
-          <tr><td><span class="tag tag-accent">Prose</span></td><td><code>intent.md</code></td><td>Loose description of what to build</td><td>Optional <code>CAP-</code></td></tr>
-          <tr><td><span class="tag tag-ok">Product</span></td><td><code>prd.md</code></td><td>Structured requirements + priorities</td><td><code>USR-</code>, <code>GOAL-</code>, <code>METRIC-</code>, <code>PRD-FR-</code>, <code>NFR-</code>, <code>RISK-</code></td></tr>
-          <tr><td><span class="tag tag-ok">Product</span></td><td><code>usm.md</code></td><td>User story map (epics + stories)</td><td><code>EPIC-</code>, <code>STORY-</code>, <code>AC-</code></td></tr>
-          <tr><td><span class="tag tag-ok">Domain</span></td><td><code>dm.md</code></td><td>DDD domain model — semantic anchor</td><td><code>BC-</code>, <code>ENT-</code>, <code>INV-</code>, <code>EVT-</code></td></tr>
-          <tr><td><span class="tag tag-warn">Technical</span></td><td><code>spec.md</code></td><td>Architecture, APIs, modules, deployment</td><td><code>MOD-</code>, <code>API-</code>, <code>FLOW-</code></td></tr>
-          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Generated implementation + tests</td><td><code>TASK-</code>, <code>TEST-</code></td></tr>
+          <tr><td><span class="tag tag-accent">Intent-specs</span></td><td><code>intent.md</code>, <code>defaults.md</code></td><td>Capabilities, objectives, and hard constraints</td><td><code>CAP-</code>, <code>CST-</code></td></tr>
+          <tr><td><span class="tag tag-ok">Product-specs</span></td><td><code>prd.md</code>, <code>usm.md</code>, <code>dm.md</code></td><td>Requirements, story map, and domain model (semantic anchor)</td><td><code>OBJ-</code>, <code>KR-</code>, <code>MET-</code>, <code>FR-</code>, <code>NFR-</code>, <code>EPIC-</code>, <code>FLOW-</code>, <code>STORY-</code>, <code>ACC-</code>, <code>MS-</code>, <code>TERM-</code>, <code>BC-</code>, <code>AGG-</code>, <code>ENT-</code>, <code>VO-</code>, <code>INV-</code></td></tr>
+          <tr><td><span class="tag tag-ok">System-specs</span></td><td><code>system.md</code>, <code>containers.md</code>, per-<code>container</code> + per-<code>component</code></td><td>Runtime actors, trust boundaries, container / component inventory with typed interfaces</td><td><code>EXT-</code>, <code>TB-</code>, <code>SNFR-</code>, <code>CONT-</code>, <code>CMP-</code>, <code>IF-</code>, <code>DEP-</code>, <code>BEH-</code></td></tr>
+          <tr><td><span class="tag tag-warn">Context</span></td><td><code>pdr</code>, <code>adr</code>, <code>bdd</code>, root / container / component configs</td><td>Decision ledgers, behavioral scenarios, runtime configuration — derived from approved contract</td><td><code>PDR-</code>, <code>ADR-</code>, <code>BDD-</code>, <code>SCN-</code></td></tr>
+          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Per-component implementation and tests, evaluated against approved upstream</td><td>—</td></tr>
         </tbody>
       </table>
     </div>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Why rigid IDs matter</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Why stable, typed IDs matter</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p>Every traced normative item below draft intent, plus optional reconciled <code>CAP-*</code> intent capabilities when present, gets a rigid, machine-parseable ID using the standardized prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, <code>INV-</code>, <code>MOD-</code>, <code>API-</code>, etc.). This enables Tier 1 structural evals to be fully mechanical: the Agent can verify that every <code>ENT-005</code> referenced in a module spec actually exists in <code>dm.md</code>. Without rigid IDs, consistency checking degrades to "does this look right?" — which is unreliable.</p>
+        <p>Every graph entity gets a short, machine-parseable ID of the form <code>PREFIX-####</code> (e.g., <code>STORY-0003</code>, <code>CMP-0012</code>). Numbers are append-only within each prefix family; deleted IDs are never reused. This lets the engine build a concrete derivation graph where every <code>derives_from</code> reference points at a real, typed upstream item — and every structural eval check (reference integrity, coverage, stack order) becomes fully mechanical rather than "does this look right?".</p>
       </div>
     </details>
     <details class="expandable">
       <summary class="expandable-header"><span>Why the domain model is the semantic anchor</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p><code>dm.md</code> defines entities, relationships, and invariants as seen by system users — not internal technical details. It captures user value independently of implementation choices. The domain model is the most stable layer: UIs change, APIs change, databases change, but "a Customer has Orders which contain LineItems" rarely does.</p>
+        <p><code>dm.md</code> defines bounded contexts, aggregates, entities, value objects, and invariants as seen by system users — not internal technical details. It captures user value independently of implementation choices. The domain model is the most stable layer: UIs change, APIs change, databases change, but "a <code>Customer</code> has <code>Orders</code> which contain <code>LineItems</code>" rarely does. System-specs derive component boundaries from the bounded contexts declared here.</p>
       </div>
     </details>
   </div>
@@ -284,170 +285,207 @@
     <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates bracket intent, the product batch, and the spec layer.</p>
 
     <div class="diagram-wrap">
-      <svg viewBox="0 0 720 660" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
+      <svg viewBox="0 0 720 700" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
         <defs>
           <marker id="ad" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
             <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
           </marker>
         </defs>
 
-        <!-- ═══ CANONICAL CONTRACTS tier group ═══ -->
-        <rect x="30" y="10" width="620" height="400" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="30" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CANONICAL CONTRACTS</text>
+        <!-- ═══ CONTRACT TIERS group ═══ -->
+        <rect x="30" y="10" width="620" height="440" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="30" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CONTRACT TIERS — APPROVAL-GATED</text>
 
-        <!-- Constitution -->
-        <rect x="240" y="46" width="200" height="38" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <text x="340" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#8a8a9a">constitution</text>
+        <!-- ─── Intent-specs sub-group ─── -->
+        <rect x="60" y="46" width="560" height="60" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="80" y="62" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Intent-specs — capabilities + hard constraints</text>
 
-        <!-- dotted arrow: constitution → intent -->
-        <line x1="340" y1="84" x2="340" y2="102" stroke="#5a5a6a" stroke-width="1" stroke-dasharray="4,3"/>
+        <rect x="120" y="72" width="220" height="28" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
+        <text x="230" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">intent.md</text>
 
-        <!-- Intent -->
-        <rect x="240" y="102" width="200" height="38" rx="8" fill="#16161f" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <text x="340" y="126" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#8a8a9a">intent.md</text>
+        <rect x="360" y="72" width="220" height="28" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="470" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">defaults.md</text>
 
-        <!-- arrow + APPROVE gate -->
-        <line x1="340" y1="140" x2="340" y2="152" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="308" y="152" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="165" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
-        <line x1="340" y1="170" x2="340" y2="184" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- APPROVE gate (intent-specs) -->
+        <line x1="340" y1="106" x2="340" y2="118" stroke="#5a5a6a" stroke-width="1"/>
+        <rect x="280" y="118" width="120" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="131" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE intent-specs</text>
+        <line x1="340" y1="136" x2="340" y2="150" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- ─── Product Specs sub-group ─── -->
-        <rect x="60" y="184" width="560" height="80" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="80" y="200" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Product Specs — sequential, batch-approved</text>
+        <!-- ─── Product-specs sub-group ─── -->
+        <rect x="60" y="150" width="560" height="80" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="80" y="166" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Product-specs — forward-back pass, batch-approved</text>
 
-        <!-- PRD -->
-        <rect x="80" y="210" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="155" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">prd.md</text>
-        <text x="155" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements</text>
+        <rect x="80" y="176" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="155" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">prd.md</text>
+        <text x="155" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements</text>
+        <line x1="230" y1="196" x2="260" y2="196" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- PRD → USM arrow -->
-        <line x1="230" y1="230" x2="260" y2="230" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <rect x="260" y="176" width="160" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="340" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">usm.md</text>
+        <text x="340" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">stories + acceptance</text>
+        <line x1="420" y1="196" x2="450" y2="196" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- USM -->
-        <rect x="260" y="210" width="160" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="340" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">usm.md</text>
-        <text x="340" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">stories + acceptance</text>
+        <rect x="450" y="176" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
+        <text x="525" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">dm.md</text>
+        <text x="525" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
 
-        <!-- USM → DM arrow -->
-        <line x1="420" y1="230" x2="450" y2="230" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
+        <!-- bracket down to APPROVE -->
+        <line x1="155" y1="216" x2="155" y2="238" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="216" x2="340" y2="238" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="525" y1="216" x2="525" y2="238" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="155" y1="238" x2="525" y2="238" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="238" x2="340" y2="250" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- DM (semantic anchor — emphasized) -->
-        <rect x="450" y="210" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="525" y="226" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">dm.md</text>
-        <text x="525" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
+        <!-- APPROVE gate (product-specs) -->
+        <rect x="276" y="250" width="128" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="263" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE product-specs</text>
+        <line x1="340" y1="268" x2="340" y2="282" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- bracket from all three down to APPROVE -->
-        <line x1="155" y1="250" x2="155" y2="276" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="250" x2="340" y2="276" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="525" y1="250" x2="525" y2="276" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="155" y1="276" x2="525" y2="276" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="276" x2="340" y2="286" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- ─── System-specs sub-group ─── -->
+        <rect x="60" y="282" width="560" height="90" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="80" y="298" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">System-specs — root, then container wave, then component wave</text>
 
-        <!-- APPROVE gate (product) -->
-        <rect x="308" y="286" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="299" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
-        <line x1="340" y1="304" x2="340" y2="318" stroke="#5a5a6a" stroke-width="1"/>
+        <rect x="75" y="310" width="125" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="137" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">system.md</text>
+        <text x="137" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">actors + boundaries</text>
+        <line x1="200" y1="332" x2="230" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- Technical Spec -->
-        <rect x="220" y="318" width="240" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1"/>
-        <text x="340" y="337" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#e84057">spec.md</text>
-        <text x="340" y="352" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">architecture + modules + interfaces</text>
+        <rect x="230" y="310" width="135" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="297" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">containers.md</text>
+        <text x="297" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">inventory</text>
+        <line x1="365" y1="332" x2="395" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- arrow down from spec + APPROVE gate -->
-        <line x1="340" y1="362" x2="340" y2="374" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="308" y="374" width="64" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="387" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE</text>
+        <rect x="395" y="310" width="110" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
+        <text x="450" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">container</text>
+        <text x="450" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">per runtime unit</text>
+        <line x1="505" y1="332" x2="535" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
 
-        <!-- ═══ DERIVED ARTIFACTS tier group ═══ -->
-        <rect x="30" y="424" width="620" height="80" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="444" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">DERIVED ARTIFACTS</text>
+        <rect x="535" y="310" width="110" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
+        <text x="590" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">component</text>
+        <text x="590" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">IF / DEP / BEH</text>
 
-        <!-- arrow from APPROVE to derived tier -->
-        <line x1="340" y1="392" x2="340" y2="412" stroke="#5a5a6a" stroke-width="1"/>
-        <!-- fan out to AGENTS and plan -->
-        <line x1="340" y1="412" x2="240" y2="456" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="412" x2="440" y2="456" stroke="#5a5a6a" stroke-width="1"/>
+        <!-- bracket down to APPROVE -->
+        <line x1="137" y1="354" x2="137" y2="378" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="297" y1="354" x2="297" y2="378" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="450" y1="354" x2="450" y2="378" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="590" y1="354" x2="590" y2="378" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="137" y1="378" x2="590" y2="378" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="378" x2="340" y2="390" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- AGENTS.md -->
-        <rect x="150" y="456" width="180" height="36" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="240" y="479" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">AGENTS.md</text>
+        <!-- APPROVE gate (system-specs) -->
+        <rect x="276" y="390" width="128" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
+        <text x="340" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE system-specs</text>
 
-        <!-- plan.md -->
-        <rect x="350" y="456" width="180" height="36" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="440" y="479" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">plan.md</text>
+        <!-- ═══ CONTEXT (derived) ═══ -->
+        <rect x="30" y="460" width="620" height="92" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="480" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CONTEXT — DERIVED, NOT APPROVED</text>
 
-        <!-- ═══ IMPLEMENTATION tier group ═══ -->
-        <rect x="30" y="520" width="620" height="72" rx="12" fill="rgba(232,64,87,0.03)" stroke="rgba(232,64,87,0.12)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="540" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">IMPLEMENTATION</text>
+        <line x1="340" y1="408" x2="340" y2="430" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="430" x2="125" y2="500" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="430" x2="270" y2="500" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="430" x2="415" y2="500" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="340" y1="430" x2="577" y2="500" stroke="#5a5a6a" stroke-width="1"/>
 
-        <!-- arrows from derived to code -->
-        <line x1="240" y1="492" x2="340" y2="550" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="440" y1="492" x2="340" y2="550" stroke="#5a5a6a" stroke-width="1"/>
+        <rect x="60" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="125" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">pdr</text>
 
-        <!-- Code + Tests -->
-        <rect x="200" y="550" width="280" height="30" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.40)" stroke-width="1.5"/>
-        <text x="340" y="570" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="600" fill="#e84057">Code + Tests</text>
+        <rect x="205" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="270" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">adr</text>
+
+        <rect x="350" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="415" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">bdd</text>
+
+        <rect x="495" y="500" width="165" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
+        <text x="577" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">configs</text>
+
+        <!-- ═══ IMPLEMENTATION ═══ -->
+        <rect x="30" y="568" width="620" height="72" rx="12" fill="rgba(232,64,87,0.03)" stroke="rgba(232,64,87,0.12)" stroke-width="1" stroke-dasharray="6,3"/>
+        <text x="50" y="588" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">IMPLEMENTATION</text>
+
+        <line x1="125" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="270" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="415" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
+        <line x1="577" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
+
+        <rect x="200" y="598" width="280" height="30" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.40)" stroke-width="1.5"/>
+        <text x="340" y="618" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="600" fill="#e84057">Code + Tests</text>
 
         <!-- ═══ EVAL arrow (right side, bottom-up) ═══ -->
-        <path d="M670,570 L670,46 L440,46" fill="none" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
-        <text x="684" y="320" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#e84057" opacity="0.4" transform="rotate(-90,684,320)">EVALS: verify against upstream</text>
+        <path d="M670,618 L670,46 L580,46" fill="none" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+        <text x="684" y="340" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#e84057" opacity="0.4" transform="rotate(-90,684,340)">EVALS: structural (engine) + semantic (agent)</text>
 
         <!-- ═══ LEGEND ═══ -->
-        <rect x="20" y="616" width="10" height="10" rx="2" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)"/>
-        <text x="36" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Tier group</text>
-        <rect x="120" y="616" width="10" height="10" rx="2" fill="#16161f" stroke="rgba(232,64,87,0.20)"/>
-        <text x="136" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Contract</text>
-        <rect x="210" y="616" width="10" height="10" rx="2" fill="rgba(232,64,87,0.15)"/>
-        <text x="226" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
-        <line x1="330" y1="621" x2="360" y2="621" stroke="#e84057" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4"/>
-        <text x="366" y="626" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
+        <rect x="20" y="666" width="10" height="10" rx="2" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)"/>
+        <text x="36" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Tier group</text>
+        <rect x="120" y="666" width="10" height="10" rx="2" fill="#16161f" stroke="rgba(232,64,87,0.20)"/>
+        <text x="136" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Contract</text>
+        <rect x="210" y="666" width="10" height="10" rx="2" fill="rgba(232,64,87,0.15)"/>
+        <text x="226" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
+        <line x1="330" y1="671" x2="360" y2="671" stroke="#e84057" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="366" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
       </svg>
     </div>
   </div>
 
-  <!-- ═══ PROFILES ═══ -->
-  <div class="doc-section reveal" id="profiles">
+  <!-- ═══ MODES ═══ -->
+  <div class="doc-section reveal" id="modes">
     <span class="label">Scaling</span>
-    <h2>Lite vs Full Profiles</h2>
-    <p class="lead">VibeLoom adapts to project complexity. The Agent recommends a profile after analyzing the domain model; you have the final say.</p>
+    <h2>Four Modes</h2>
+    <p class="lead">VibeLoom offers four modes that pick the right level of ceremony for the project. Mode is chosen at <code>init</code>; you can upgrade from <code>vibe</code> to a full mode later.</p>
 
-    <div class="profile-grid">
+    <div class="profile-grid profile-grid--quad">
       <div class="profile-card">
-        <h3>Lite</h3>
-        <div class="subtitle">Single domain, single agent</div>
+        <h3>vibe</h3>
+        <div class="subtitle">Compact, intent-centric</div>
         <ul>
-          <li><span class="check">&#10003;</span> One cohesive bounded context</li>
-          <li><span class="check">&#10003;</span> Separate USM + DM (always mandatory)</li>
-          <li><span class="check">&#10003;</span> Shallow module decomposition</li>
-          <li><span class="check">&#10003;</span> Intent, product, and spec approvals</li>
-          <li><span class="check">&#10003;</span> Best for MVPs, tools, internal apps</li>
+          <li><span class="check">&#10003;</span> Single user gate: <code>intent-specs</code></li>
+          <li><span class="check">&#10003;</span> No <code>product-specs</code> tier</li>
+          <li><span class="check">&#10003;</span> Compact <code>system</code> auto-advances internally</li>
+          <li><span class="check">&#10003;</span> Heuristic eval (no explicit graph)</li>
+          <li><span class="check">&#10003;</span> Best for prototypes, solo work</li>
         </ul>
       </div>
       <div class="profile-card">
-        <h3>Full</h3>
-        <div class="subtitle">Multiple domains, parallel agents</div>
+        <h3>pm</h3>
+        <div class="subtitle">Product-focused, delegated system</div>
         <ul>
-          <li><span class="check">&#10003;</span> Multiple bounded contexts</li>
-          <li><span class="check">&#10003;</span> Module specs with interface contracts + DAG</li>
-          <li><span class="check">&#10003;</span> Explicit interface ownership rules</li>
-          <li><span class="check">&#10003;</span> Intent, product, and spec approvals</li>
-          <li><span class="check">&#10003;</span> Best for platforms, SaaS, team projects</li>
+          <li><span class="check">&#10003;</span> User gates: <code>intent</code> + <code>product-specs</code></li>
+          <li><span class="check">&#10003;</span> <code>system-specs</code> delegated with breaking-change escalation</li>
+          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
+          <li><span class="check">&#10003;</span> Parallel component waves</li>
+          <li><span class="check">&#10003;</span> Best for PM-led feature work</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <h3>dev</h3>
+        <div class="subtitle">Dev-focused, delegated product</div>
+        <ul>
+          <li><span class="check">&#10003;</span> User gates: <code>intent</code> + <code>system-specs</code></li>
+          <li><span class="check">&#10003;</span> <code>product-specs</code> delegated with breaking-change escalation</li>
+          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
+          <li><span class="check">&#10003;</span> Parallel component waves</li>
+          <li><span class="check">&#10003;</span> Best for devs steering the system</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <h3>expert</h3>
+        <div class="subtitle">Full gates, nothing delegated</div>
+        <ul>
+          <li><span class="check">&#10003;</span> User gates: <code>intent</code>, <code>product</code>, <code>system</code></li>
+          <li><span class="check">&#10003;</span> Nothing auto-advances</li>
+          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
+          <li><span class="check">&#10003;</span> Maximal human oversight</li>
+          <li><span class="check">&#10003;</span> Best for regulated or critical systems</li>
         </ul>
       </div>
     </div>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Selection heuristics</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Delegated auto-advance + breaking-change escalation</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p><strong>Use Full when ANY of these are true:</strong></p>
-        <ul>
-          <li>More than one bounded context is clearly named</li>
-          <li>One module cannot own the full write surface without ambiguity</li>
-          <li>Interfaces between semantic areas need stable contracts</li>
-          <li>Multiple agents or developers will work in parallel</li>
-        </ul>
-        <p><strong>Otherwise, use Lite.</strong> You can upgrade from Lite to Full later.</p>
+        <p>In <code>pm</code> and <code>dev</code>, whichever tier is delegated auto-advances after structural eval passes <strong>and</strong> no breaking semantic change is detected against approved truth. A breaking change — item deleted, field changed, interface semantics changed, invariant weakened or strengthened — halts auto-advance and escalates to explicit user review.</p>
+        <p>In <code>vibe</code>, compact <code>system-specs</code> uses the same safety tests but never becomes its own public approval stop. Structural blockers halt downstream generation; non-blocking findings surface with an upgrade recommendation.</p>
       </div>
     </details>
   </div>
@@ -456,112 +494,128 @@
   <div class="doc-section reveal" id="evals">
     <span class="label">Quality</span>
     <h2>Eval Framework</h2>
-    <p class="lead">Specifications aren't documentation — they're verification contracts. Two runtime eval tiers plus one on-demand behavioral tier keep everything consistent.</p>
+    <p class="lead">Specs aren't documentation — they're verification contracts. Eval runs in two layers: a deterministic engine (structural, blocking) and an agent pass (semantic, breaking or advisory).</p>
 
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Tier</th><th>Type</th><th>What it checks</th><th>Blocking?</th></tr></thead>
+        <thead><tr><th>Layer</th><th>Who</th><th>What it checks</th><th>Outcome</th></tr></thead>
         <tbody>
-          <tr><td><span class="tag tag-block">Tier 1</span></td><td>Structural</td><td>IDs valid, cross-refs resolve, required sections present, module dirs match spec</td><td><strong>Yes</strong></td></tr>
-          <tr><td><span class="tag tag-warn">Tier 2</span></td><td>Semantic</td><td>Coverage gaps, contradictions between tiers, orphan entities, NFRs not addressed</td><td>Warnings</td></tr>
-          <tr><td><span class="tag tag-ok">Tier 3</span></td><td>Behavioral</td><td>Test scenarios from stories, invariant tests from dm.md, contract tests</td><td>No (on demand)</td></tr>
+          <tr><td><span class="tag tag-block">Structural</span></td><td>Engine</td><td>9 mechanical checks: reference integrity, coverage, stack order, schema, componentization fit, context sufficiency, etc.</td><td><strong>Blocking</strong></td></tr>
+          <tr><td><span class="tag tag-warn">Semantic</span></td><td>Agent</td><td>4 dimensions: faithful representation, naming consistency, implicit dependencies, capability gaps</td><td><code>breaking</code> or <code>advisory</code></td></tr>
         </tbody>
       </table>
     </div>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 1: Structural checks (blocking)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Engine structural checks (blocking)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ol>
-          <li><strong>Metadata completeness</strong> — required frontmatter fields present with valid values</li>
-          <li><strong>Artifact authority</strong> — canonical vs derived status correctly assigned</li>
-          <li><strong>ID grammar compliance</strong> — all items use the defined prefixes (<code>PRD-FR-</code>, <code>STORY-</code>, <code>ENT-</code>, etc.)</li>
-          <li><strong>Reference integrity</strong> — every cross-file ID reference resolves to an existing item</li>
-          <li><strong>Lifecycle correctness</strong> — only valid lifecycle states used (draft, approved, stale, superseded)</li>
-          <li><strong>Profile correctness</strong> — lite or full only; USM and DM always mandatory</li>
-          <li><strong>Traceability completeness</strong> — intent &rarr; PRD &rarr; USM &rarr; DM &rarr; spec &rarr; test chain intact</li>
-          <li><strong>Projection budget</strong> — only 3 durable projections allowed</li>
-          <li><strong>Module and interface ownership</strong> — every module has clear ownership (Full profile)</li>
-          <li><strong>Stale edge validity</strong> — stale markers have explicit dependency-driven justification</li>
+          <li><strong>Lifecycle consistency</strong> — <code>draft</code> / <code>approved</code> states align across the approval unit</li>
+          <li><strong>Reference integrity</strong> — every <code>derives_from</code> points at a real item</li>
+          <li><strong>Required fields</strong> — every artifact has the required frontmatter per template</li>
+          <li><strong>Declared relationships</strong> — items owned by correct artifact / scope / tier</li>
+          <li><strong>Stack integrity</strong> — tiers in correct dependency order</li>
+          <li><strong>Coverage</strong> — every non-terminal upstream item has ≥1 downstream <code>derives_from</code> reference</li>
+          <li><strong>Contradiction (structural)</strong> — no downstream item structurally conflicts with its derivation basis</li>
+          <li><strong>Componentization fit</strong> — each component maps to one bounded context; BCs fully contained in a container</li>
+          <li><strong>Context sufficiency</strong> — code-owning components have config; populated containers have container-level config</li>
         </ol>
       </div>
     </details>
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 2: Semantic checks (warnings)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Agent semantic checks (breaking / advisory)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
-          <li>Requirement to story coverage</li>
-          <li>Story to entity coverage</li>
-          <li>Entity and invariant necessity</li>
-          <li>Workflow completeness</li>
-          <li>Boundary sanity</li>
-          <li>Context slice sufficiency</li>
-          <li>Import confidence review</li>
-          <li>Local bugfix path correctness</li>
-          <li>Derived artifact restraint</li>
-          <li>Projection restraint</li>
+          <li><strong>Faithful representation</strong> — downstream neither narrows, widens, nor reverses upstream meaning. Interface semantics changed, invariant weakened or strengthened &rarr; <code>breaking</code></li>
+          <li><strong>Naming consistency</strong> — terminology aligns with the <code>TERM-####</code> items in the domain model</li>
+          <li><strong>Implicit dependencies</strong> — missing <code>derives_from</code> edges where the downstream clearly depends on an upstream item</li>
+          <li><strong>Capability gaps</strong> — <code>CAP-####</code> / <code>CST-####</code> items entirely unaddressed in the downstream stack</li>
         </ul>
+        <p>Breaking findings block delegated auto-advance in <code>pm</code> and <code>dev</code> and escalate to explicit user review. Advisory findings surface in the report but do not block approval.</p>
       </div>
     </details>
     <details class="expandable">
-      <summary class="expandable-header"><span>Tier 3: Behavioral (on demand, separate step)</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Behavioral scenarios (generated from contract)</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p>Behavioral checks are methodology-level guidance and are not part of the current runtime command surface.</p>
-        <ul>
-          <li>Scenario descriptions from usm.md stories</li>
-          <li>Domain invariant tests from dm.md</li>
-          <li>Interface contract tests from module specs (Full)</li>
-        </ul>
+        <p><code>bdd</code> artifacts capture behavioral scenarios in the context tier, derived from approved <code>STORY-</code> / <code>ACC-</code> / <code>INV-</code> / <code>CMP-</code> items. They are regenerable from approved contract state and are not themselves an approval stop.</p>
       </div>
     </details>
   </div>
 
-  <!-- ═══ MODULES ═══ -->
-  <div class="doc-section reveal" id="modules">
+  <!-- ═══ DRIFT ═══ -->
+  <div class="doc-section reveal" id="drift">
+    <span class="label">Drift</span>
+    <h2>Three Forms of Drift</h2>
+    <p class="lead">Drift is any divergence between the current state of the stack and its approved-upstream basis. Three forms are recognized, each with its own detection mechanism.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Form</th><th>Trigger</th><th>Detection</th><th>Remediation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-block">Structural</span></td><td>Approved upstream item modified or removed since downstream was synchronized to it</td><td>Per-item canonical hash diff + forward DAG walk from changed upstream items</td><td><code>generate</code> (forward-only) or <code>reconcile</code> (preserves manual edits)</td></tr>
+          <tr><td><span class="tag tag-warn">Lifecycle</span></td><td>Approved contract artifact edited outside the skill's flow</td><td>Filesystem mtime fast-filter + per-item canonical hash confirmation</td><td>Auto-reopen to <code>draft</code> (lifecycle bookkeeping); semantic resolution follows</td></tr>
+          <tr><td><span class="tag tag-accent">Semantic</span></td><td>Downstream content no longer faithfully represents upstream meaning, even when structure matches</td><td>Agent-side semantic eval (4 dimensions above)</td><td>Surfaced as findings; <code>reconcile</code> for user-directed fixes</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><code>reconcile</code> is the user-initiated remediation loop for all three forms. <code>generate</code> handles structural drift on the forward-only path. Lifecycle drift is handled automatically by reopening the edited artifact to <code>draft</code>.</p>
+
+    <details class="expandable">
+      <summary class="expandable-header"><span>Staleness is computed, not stored</span><span class="arrow">&#9654;</span></summary>
+      <div class="expandable-body">
+        <p>Staleness is never written into artifact frontmatter. It is a view over current state, derived by comparing current content against the last-approved state of each upstream entity. If a user edits and then reverts, nothing persists incorrectly — the next staleness pass sees the reverted content and reports no drift.</p>
+        <p><strong>Invariant:</strong> false positives are acceptable; false negatives are not. An over-marked stale set causes unnecessary review; an under-marked set lets drift leak silently past approval gates. When in doubt, the system marks stale.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- ═══ COMPONENTS ═══ -->
+  <div class="doc-section reveal" id="components">
     <span class="label">Multi-Agent</span>
-    <h2>Module Interface Contracts</h2>
-    <p class="lead">Modules aren't just code organization — they're agent boundaries. Each fits in one context window with typed interfaces.</p>
+    <h2>Component Interface Contracts</h2>
+    <p class="lead">Components aren't just code organization — they are subagent boundaries. Each component fits in one context window with typed, stable interfaces.</p>
 
     <details class="expandable" open>
-      <summary class="expandable-header"><span>Interface contract example</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Component spec example</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-<pre><span class="comment">## Module: MOD-orders</span>
+<pre><span class="comment">## Component: CMP-0007 (orders)</span>
 
-<span class="keyword">### Owned APIs</span>
-<span class="type">- API-001:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
+<span class="keyword">### Owned interfaces</span>
+<span class="type">- IF-0012:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
+<span class="type">- IF-0013:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
 
-<span class="keyword">### Owned Events</span>
-<span class="type">- API-002:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
+<span class="keyword">### Dependencies</span>
+<span class="comment">- DEP-0021 &rarr; CMP-0009 / IF-0034:</span> <span class="string">checkAvailability(sku) &rarr; AvailabilityResult</span>
+<span class="comment">- DEP-0022 &rarr; CMP-0012 / IF-0041:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span>
 
-<span class="keyword">### Imported Interfaces</span>
-<span class="comment">- From MOD-inventory / API-014:</span> <span class="string">checkAvailability(sku: string) &rarr; AvailabilityResult</span>
-<span class="comment">- From MOD-payments / API-021:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span></pre>
+<span class="keyword">### Owned behaviors</span>
+<span class="type">- BEH-0009:</span> <span class="string">retries once on transient inventory failure, surfaces error otherwise</span></pre>
       </div>
     </details>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Dependency rules &amp; shared types</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Dependency rules &amp; interface ownership</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
         <ul>
-          <li>Dependency graph must be a <strong>DAG</strong> (no cycles)</li>
-          <li>New cross-module dependencies require <code>spec.md</code> amendment (human-approved)</li>
-          <li>Shared types have an <strong>owner module</strong> — only the owner can change the definition</li>
+          <li>The cross-component dependency graph must be a <strong>DAG</strong> (no cycles)</li>
+          <li>An interface is <strong>owned by exactly one component</strong>; only the owner can change its definition</li>
+          <li>Changing an interface's semantics is a breaking change — caught by both engine (structural diff) and agent (semantic diff against approved version)</li>
+          <li>New cross-component dependencies require a <code>component</code> spec amendment (approval-gated)</li>
         </ul>
-        <p>When an interface changes: eval identifies downstream modules &rarr; marks stale &rarr; specs update &rarr; contract tests regenerate.</p>
+        <p>When an interface changes: engine marks all downstream components structurally stale &rarr; agent evaluates semantic impact &rarr; specs regenerate &rarr; affected code is re-generated per component wave.</p>
       </div>
     </details>
 
 	    <details class="expandable">
-	      <summary class="expandable-header"><span>Context loading protocol</span><span class="arrow">&#9654;</span></summary>
+	      <summary class="expandable-header"><span>Subagent dispatch contract</span><span class="arrow">&#9654;</span></summary>
 	      <div class="expandable-body">
-	        <p>Each agent task gets a scoped <strong>context envelope</strong>. The skill chooses the exact per-command bundle; the pattern is:</p>
+	        <p>Each subagent runs in one of two modes with a fresh prompt built from a scoped load set:</p>
 	        <ul>
-	          <li><strong>Start from the governing boundary:</strong> the target artifact for artifact review, or the relevant spec and module boundary for technical work</li>
-	          <li><strong>Bring extra scope only when it helps:</strong> trace entries when IDs or stale impact matter, and AGENTS.md when it exists and reduces ambiguity</li>
-	          <li><strong>Loaded conditionally:</strong> relevant PRD, USM, and DM slices when workflows, concepts, invariants, interfaces, or cross-boundary ownership are touched</li>
-	          <li><strong>Not loaded by default:</strong> unrelated modules' code, unrelated product or domain slices, and deeper methodology prose</li>
+	          <li><strong>read-only analysis</strong> — used for scoped <code>import</code> analysis, <code>eval</code>, advisory <code>review</code>, and drift analysis inside <code>reconcile</code>. No write scope.</li>
+	          <li><strong>write-capable generation / reconciliation</strong> — used for contract, context, and code generation, bounded-fix phases of <code>review</code>, and fix phases of <code>reconcile</code>. Explicit write scope.</li>
 	        </ul>
-	        <p><strong>Guideline:</strong> keep the active technical slice and directly governing contracts in view first, and summarize broader upstream context only when the task needs it.</p>
+	        <p>Subagents may not treat same-wave outputs as input. Same-wave outputs become eligible inputs only after the wave is accepted and the dispatch plan is recomputed. Late-fetch is capped at one re-invocation per task.</p>
 	      </div>
     </details>
   </div>
@@ -572,43 +626,29 @@
     <h2>Command Reference</h2>
     <p class="lead"><code>$vibeloom</code> is the state-aware entrypoint. Use explicit <code>/vibeloom</code> commands that follow the abstract model <code>&lt;action&gt; &lt;target&gt; &lt;context&gt;</code> when you want direct control.</p>
 
-	    <!-- Command table: keep in sync with v01/references/command-surface.md and site/public/index.html#commands -->
+	    <!-- Command table: keep in sync with v02/references/operations.md, v02/SKILL.md, and site/public/index.html#commands -->
 	    <div class="cmd-grid">
-	      <div class="cmd-row"><code>/vibeloom init [intent seed]</code> <span>Initialize a governed project</span></div>
-	      <div class="cmd-row"><code>/vibeloom import [path-or-current]</code> <span>Bootstrap governance for an existing repo</span></div>
-	      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a canonical or derived artifact</span></div>
-	      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve an allowed target</span></div>
-	      <div class="cmd-row"><code>/vibeloom develop &lt;request&gt;</code> <span>Run feature or enhancement flow</span></div>
-	      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Run bugfix flow</span></div>
-	      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Evaluate an allowed target</span></div>
-	      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Review one artifact or module</span></div>
-	      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Reconcile repo-wide drift</span></div>
-	      <div class="cmd-row"><code>/vibeloom status</code> <span>Report overall governed state</span></div>
-	      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
-	      <div class="cmd-row"><code>/vibeloom help ...</code> <span>Guidance for topics or one command</span></div>
+	      <div class="cmd-row"><code>/vibeloom init --mode &lt;mode&gt; [seed]</code> <span>Bootstrap an ungoverned repo (<code>vibe</code> | <code>pm</code> | <code>dev</code> | <code>expert</code>)</span></div>
+	      <div class="cmd-row"><code>/vibeloom import --mode &lt;mode&gt; [repo]</code> <span>Reconstruct a candidate contract bottom-up from existing code</span></div>
+	      <div class="cmd-row"><code>/vibeloom generate [target]</code> <span>Forward-back pass generation of the next affected tier from approved upstream</span></div>
+	      <div class="cmd-row"><code>/vibeloom eval [target]</code> <span>Structural + semantic validation against approved upstream basis</span></div>
+	      <div class="cmd-row"><code>/vibeloom review [target]</code> <span>Interactive eval loop with bounded fixes within the target</span></div>
+	      <div class="cmd-row"><code>/vibeloom reconcile [target]</code> <span>User-initiated remediation loop for all three forms of drift</span></div>
+	      <div class="cmd-row"><code>/vibeloom approve [target]</code> <span>Advance a reviewed contract tier from <code>draft</code> to <code>approved</code></span></div>
+	      <div class="cmd-row"><code>/vibeloom status [scope]</code> <span>Lifecycle, freshness, coverage, affected scope, current mode</span></div>
 	    </div>
 
     <details class="expandable" style="margin-top:16px">
-      <summary class="expandable-header"><span>Key workflow: /vibeloom develop</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Primitive vs interactive operations</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <ol>
-          <li>Describe a change: <code>/vibeloom develop "add CSV export"</code></li>
-          <li>Agent maps to affected specs (stories, entities, modules)</li>
-          <li>Agent proposes spec changes first (shows diffs)</li>
-          <li>You review and approve affected canonical artifacts through the normal intent, product, or spec gates</li>
-          <li>Agent runs bounded reconciliation if upstream affected</li>
-          <li>Agent continues with the scoped downstream work against the approved slice</li>
-          <li>Agent runs evals on the affected result</li>
-        </ol>
-        <p><strong>Specs always lead.</strong> Code is always a derivative of approved specifications.</p>
+        <p><code>generate</code> and <code>eval</code> are the two primitives. <code>review</code> is an interactive shell on top of <code>eval</code>; <code>reconcile</code> is an interactive shell on top of <code>generate</code>. Each interactive cycle loops through detect &rarr; propose &rarr; fix &rarr; validate with explicit user exit choices (<code>Loop</code>, <code>Eval only</code>, <code>Proceed to approve</code> / <code>Accept</code>).</p>
       </div>
     </details>
 
     <details class="expandable">
-      <summary class="expandable-header"><span>Reconciliation: bounded, not infinite</span><span class="arrow">&#9654;</span></summary>
+      <summary class="expandable-header"><span>Reconciliation is asymmetric</span><span class="arrow">&#9654;</span></summary>
       <div class="expandable-body">
-        <p>After manual edits: <strong>1 up-pass + 1 down-pass + 1 validation.</strong> No infinite loops.</p>
-        <p>Reconciliation is asymmetric: approved upstream contracts define intended semantics. Downstream drift produces proposals, not silent rewrites. The agent proposes a direction (amend upstream or fix downstream), and humans choose.</p>
+        <p>Approved upstream contract defines intended meaning. Downstream drift produces <strong>proposals, not silent rewrites</strong>. For each conflict, the agent offers direction options — amend upstream truth, preserve upstream and correct downstream, or a user-specified alternative — and the user chooses. In practice <code>generate code</code> is the 90% path; <code>reconcile</code> is the surgical review path for when you want to detect, inspect, and preserve manual edits.</p>
       </div>
     </details>
   </div>

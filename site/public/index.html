@@ -62,6 +62,7 @@
     <a href="index.html#features">Features</a>
     <a href="index.html#how-it-works">How it works</a>
     <a href="methodology.html">Methodology</a>
+    <a href="implementation.html">Implementation</a>
     <a href="index.html#get-started" class="nav-cta">Get Started</a>
   </div>
   <details class="nav-mobile">
@@ -75,6 +76,7 @@
       <a href="index.html#features">Features</a>
       <a href="index.html#how-it-works">How it works</a>
       <a href="methodology.html">Methodology</a>
+      <a href="implementation.html">Implementation</a>
       <a href="index.html#get-started" class="nav-cta">Get Started</a>
     </div>
   </details>
@@ -117,19 +119,19 @@
         <div class="terminal-title">claude code — ~/my-project</div>
       </div>
       <div class="terminal-body">
-        <div><span class="prompt">$</span> <span class="cmd">/vibeloom init</span></div>
-        <div class="output" style="margin-top:8px"><span class="success">✓</span> Created intent.md <span class="dim">(draft)</span></div>
-        <div class="output"><span class="info">?</span> Would you like me to interview you about your project?</div>
-        <div style="margin-top:16px"><span class="prompt">$</span> <span class="cmd">/vibeloom approve intent</span></div>
-        <div class="output" style="margin-top:8px"><span class="success">✓</span> intent.md <span class="dim">→ approved</span></div>
+        <div><span class="prompt">$</span> <span class="cmd">/vibeloom init --mode pm</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✓</span> Created intent.md + defaults.md <span class="dim">(draft)</span></div>
+        <div class="output"><span class="info">?</span> Interview you about what you're building?</div>
+        <div style="margin-top:16px"><span class="prompt">$</span> <span class="cmd">/vibeloom approve intent-specs</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✓</span> intent-specs <span class="dim">→ approved</span></div>
         <div class="output"><span class="success">✓</span> Generating prd.md + usm.md + dm.md <span class="dim">... done (draft)</span></div>
-        <div class="output"><span class="info">ℹ</span> Next: review <span class="cmd">prd.md</span>, <span class="cmd">usm.md</span>, and <span class="cmd">dm.md</span>, then run <span class="cmd">/vibeloom approve product</span></div>
+        <div class="output"><span class="info">ℹ</span> Next: <span class="cmd">/vibeloom review product-specs</span></div>
         <div style="margin-top:16px"><span class="prompt">$</span> <span class="cmd">/vibeloom status</span></div>
-        <div class="output" style="margin-top:8px"><span class="success">✅</span> intent.md — approved</div>
-        <div class="output">✏️  prd.md — draft</div>
-        <div class="output">✏️  usm.md — draft</div>
-        <div class="output">✏️  dm.md — draft</div>
-        <div class="output"><span class="dim">⏳ spec.md — not yet generated</span></div>
+        <div class="output" style="margin-top:8px"><span class="success">✅</span> intent-specs — approved</div>
+        <div class="output">✏️  product-specs — draft</div>
+        <div class="output"><span class="dim">⏳ system-specs — not yet generated</span></div>
+        <div class="output"><span class="dim">⏳ context — not yet generated</span></div>
+        <div class="output"><span class="dim">⏳ code — not yet generated</span></div>
       </div>
     </div>
   </div>
@@ -257,42 +259,42 @@
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 4h14M3 8h10M3 12h14M3 16h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <h3>Contract Stack</h3>
-        <p>Constitution &rarr; Intent &rarr; PRD &rarr; USM &rarr; Domain Model &rarr; Spec &rarr; Code. Each tier is verified against its upstream contracts.</p>
+        <p>Intent-specs &rarr; Product-specs &rarr; System-specs &rarr; Context &rarr; Code. Each tier is derived from the approved tier above, and structurally verified against it.</p>
       </div>
       <div class="grid-card">
         <div class="feature-icon green">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2v16M2 10h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/></svg>
         </div>
         <h3>Domain Model Anchor</h3>
-        <p>DDD-style domain model is the semantic core. It captures user value independently of technical decisions — the most stable layer.</p>
+        <p>A DDD-style domain model (bounded contexts, aggregates, entities, invariants) sits at the center. It captures user value independently of technical choices — the most stable layer.</p>
       </div>
       <div class="grid-card">
         <div class="feature-icon blue">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 6h4v4H4zM12 6h4v4h-4zM8 12h4v4H8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 10v2h2M14 10v4h-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </div>
         <h3>Multi-Agent Ready</h3>
-        <p>Modules derived from bounded contexts. Each fits one context window. Interface contracts prevent incompatible APIs between parallel agents.</p>
+        <p>Components derived from bounded contexts. Each fits one context window. Typed interface contracts prevent incompatible APIs between subagents working in parallel.</p>
       </div>
       <div class="grid-card">
         <div class="feature-icon green">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <h3>Specs as Evals</h3>
-        <p>Multi-tier evaluation: structural checks (blocking), semantic coverage analysis (warnings), and test generation from specs (on-demand).</p>
+        <p>Two eval layers: a deterministic engine runs 9 structural checks (blocking), and the agent runs 4 semantic checks against upstream intent (breaking or advisory).</p>
       </div>
       <div class="grid-card">
         <div class="feature-icon purple">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v4M10 13v4M3 10h4M13 10h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5.5 5.5l2.8 2.8M11.7 11.7l2.8 2.8M5.5 14.5l2.8-2.8M11.7 8.3l2.8-2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
-        <h3>Bidirectional Consistency</h3>
-        <p>Edit any spec — upstream and downstream are checked automatically. Bounded reconciliation: one up-pass, one down-pass, no infinite loops.</p>
+        <h3>Drift Detection</h3>
+        <p>Three forms of drift: structural (upstream changed), lifecycle (approved artifact edited directly), and semantic (meaning shifted). <code>reconcile</code> is the user-initiated remediation loop for all three.</p>
       </div>
       <div class="grid-card">
         <div class="feature-icon blue">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9h6M7 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
         </div>
         <h3>Human Governed</h3>
-        <p>Approval gates keep governance explicit: intent, product, and spec. Agents generate, you verify. Lifecycle states (draft, approved, stale, superseded) keep authority clear.</p>
+        <p>Approval gates bracket each contract tier. Lifecycle is just <code>draft</code> / <code>approved</code> — direct edits to approved artifacts auto-reopen them to draft. Agents generate, you approve.</p>
       </div>
     </div>
   </div>
@@ -309,27 +311,27 @@
       <div class="workflow-step">
         <div class="step-num">1</div>
         <h4>Describe</h4>
-        <p>Write your intent in plain language or let the Agent interview you</p>
+        <p>Draft <code>intent</code> + <code>defaults</code> — capabilities and hard constraints</p>
       </div>
       <div class="workflow-step">
         <div class="step-num">2</div>
-        <h4>Generate Specs</h4>
-        <p>PRD, USM, and domain model generated as a batch for review</p>
+        <h4>Product</h4>
+        <p><code>prd</code>, <code>usm</code>, and <code>dm</code> generated and approved as a batch</p>
       </div>
       <div class="workflow-step">
         <div class="step-num">3</div>
-        <h4>Design</h4>
-        <p>Architecture spec with modules, APIs, data model, and deployment</p>
+        <h4>System</h4>
+        <p><code>system</code>, <code>containers</code>, and per-<code>component</code> specs with typed interfaces</p>
       </div>
       <div class="workflow-step">
         <div class="step-num">4</div>
-        <h4>Generate Code</h4>
-        <p>Implementation per module, verified against specs, with tests</p>
+        <h4>Code</h4>
+        <p>Context (configs, decisions) then code generated per component, evaluated upstream</p>
       </div>
       <div class="workflow-step">
         <div class="step-num">5</div>
         <h4>Evolve</h4>
-        <p>Describe changes &mdash; specs update first, then code follows</p>
+        <p>Drift is detected per-node; <code>reconcile</code> proposes fixes, you choose the direction</p>
       </div>
     </div>
 
@@ -337,28 +339,28 @@
     <div class="stack-visual">
       <span class="stack-eval-label">↑ Evals check upstream ↑</span>
       <div class="stack-tier tier-prose">
-        <span class="tier-label">Foundation</span>
-        <div class="tier-bar">constitution.md <span style="opacity:0.5; font-size:0.75rem">— universal rules</span></div>
-      </div>
-      <div class="stack-arrow">↓</div>
-      <div class="stack-tier tier-prose">
-        <span class="tier-label">Prose</span>
-        <div class="tier-bar">intent.md</div>
+        <span class="tier-label">Intent-specs</span>
+        <div class="tier-bar">intent.md + defaults.md <span style="opacity:0.5; font-size:0.75rem">— capabilities, hard constraints</span></div>
       </div>
       <div class="stack-arrow">↓</div>
       <div class="stack-tier tier-product">
-        <span class="tier-label">Product</span>
-        <div class="tier-bar">prd.md → usm.md → dm.md <span style="opacity:0.5; font-size:0.75rem">— sequential, batch-approved</span></div>
+        <span class="tier-label">Product-specs</span>
+        <div class="tier-bar">prd.md → usm.md → dm.md <span style="opacity:0.5; font-size:0.75rem">— forward-back, batch-approved</span></div>
       </div>
       <div class="stack-arrow">↓</div>
       <div class="stack-tier tier-tech">
-        <span class="tier-label">Technical</span>
-        <div class="tier-bar">spec.md + module specs</div>
+        <span class="tier-label">System-specs</span>
+        <div class="tier-bar">system.md → containers.md → container → component <span style="opacity:0.5; font-size:0.75rem">— parallel waves</span></div>
+      </div>
+      <div class="stack-arrow">↓</div>
+      <div class="stack-tier tier-domain">
+        <span class="tier-label">Context</span>
+        <div class="tier-bar">pdr + adr + bdd + configs <span style="opacity:0.5; font-size:0.75rem">— decisions, behaviors, runtime</span></div>
       </div>
       <div class="stack-arrow">↓</div>
       <div class="stack-tier tier-code">
         <span class="tier-label">Code</span>
-        <div class="tier-bar">src/ + tests/</div>
+        <div class="tier-bar">src/ + tests/ <span style="opacity:0.5; font-size:0.75rem">— per-component, eval-bounded</span></div>
       </div>
     </div>
   </div>
@@ -371,20 +373,16 @@
     <h2 class="section-title">One command to rule them all</h2>
     <p class="section-desc">Invoke <code style="background:var(--bg-tertiary); color:var(--accent)">$vibeloom</code> for state-aware triage, then use explicit <code style="background:var(--bg-tertiary); color:var(--accent)">/vibeloom</code> commands that follow the abstract model <code style="background:var(--bg-tertiary); color:var(--accent)">&lt;action&gt; &lt;target&gt; &lt;context&gt;</code> when you want direct control.</p>
 
-	    <!-- Command table: keep in sync with v01/references/command-surface.md and site/public/methodology.html#commands -->
+	    <!-- Command table: keep in sync with v02/references/operations.md, v02/SKILL.md, and site/public/methodology.html#commands -->
 	    <div class="cmd-grid">
-	      <div class="cmd-row"><code>/vibeloom init [intent seed]</code> <span>Initialize a governed project</span></div>
-	      <div class="cmd-row"><code>/vibeloom import [path-or-current]</code> <span>Bootstrap governance for an existing repo</span></div>
-	      <div class="cmd-row"><code>/vibeloom generate &lt;selector&gt;</code> <span>Generate a canonical or derived artifact</span></div>
-	      <div class="cmd-row"><code>/vibeloom approve &lt;target&gt; [context]</code> <span>Approve an allowed target</span></div>
-	      <div class="cmd-row"><code>/vibeloom develop &lt;request&gt;</code> <span>Run feature or enhancement flow</span></div>
-	      <div class="cmd-row"><code>/vibeloom fix &lt;repro-or-bug&gt;</code> <span>Run bugfix flow</span></div>
-	      <div class="cmd-row"><code>/vibeloom eval &lt;target&gt; [context]</code> <span>Evaluate an allowed target</span></div>
-	      <div class="cmd-row"><code>/vibeloom review &lt;target&gt; [context]</code> <span>Review one artifact or module</span></div>
-	      <div class="cmd-row"><code>/vibeloom reconcile</code> <span>Reconcile repo-wide drift</span></div>
-	      <div class="cmd-row"><code>/vibeloom status</code> <span>Report overall governed state</span></div>
-	      <div class="cmd-row"><code>/vibeloom surface &lt;product-first|code-first&gt;</code> <span>Set the current session surface</span></div>
-	      <div class="cmd-row"><code>/vibeloom help ...</code> <span>Guidance for topics or one command</span></div>
+	      <div class="cmd-row"><code>/vibeloom init --mode &lt;mode&gt; [seed]</code> <span>Bootstrap a governed project (vibe | pm | dev | expert)</span></div>
+	      <div class="cmd-row"><code>/vibeloom import --mode &lt;mode&gt; [repo]</code> <span>Reconstruct a contract bottom-up from existing code</span></div>
+	      <div class="cmd-row"><code>/vibeloom generate [target]</code> <span>Forward-pass generation of the next affected tier</span></div>
+	      <div class="cmd-row"><code>/vibeloom eval [target]</code> <span>Structural + semantic validation against approved upstream</span></div>
+	      <div class="cmd-row"><code>/vibeloom review [target]</code> <span>Interactive eval loop with bounded fixes within the target</span></div>
+	      <div class="cmd-row"><code>/vibeloom reconcile [target]</code> <span>Resolve drift between approved upstream and downstream</span></div>
+	      <div class="cmd-row"><code>/vibeloom approve [target]</code> <span>Advance a reviewed contract tier from draft to approved</span></div>
+	      <div class="cmd-row"><code>/vibeloom status [scope]</code> <span>Lifecycle, freshness, coverage, affected scope, mode</span></div>
 	    </div>
   </div>
 </section>

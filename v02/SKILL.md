@@ -25,6 +25,7 @@ Always consult these before making decisions:
 - **[references/modes.md](references/modes.md)** — per-mode behavior (`vibe`, `pm`, `dev`, `expert`): tier ownership, auto-advance, public surface.
 - **[references/runtime.md](references/runtime.md)** — dispatch mechanics: runtime loop, waves, load sets, late-fetch, validation.
 - **[references/artifacts.md](references/artifacts.md)** — artifact layout, frontmatter shapes, ID schema, derivation rules.
+- **[references/eval.md](references/eval.md)** — semantic-eval dimensions, finding schema, severity classification (what the agent checks on top of the engine's structural eval).
 - **[references/troubleshooting.md](references/troubleshooting.md)** — failure modes and recovery (cache corruption, direct edits, breaking changes, partial wave failure).
 
 ## Templates
@@ -68,9 +69,9 @@ On any operation invocation, load `references/operations.md` first for parameter
 |---|---|---|
 | `init`, `import` | `operations.md`, `modes.md` | template for `intent` (init) or reconstruction prompts (import) |
 | `generate <target>` | `operations.md`, `runtime.md` | target-tier templates + graph cache |
-| `eval <target>`, `review <target>` | `operations.md`, `runtime.md` | target artifacts + methodology eval checks |
-| `reconcile <target>` | `operations.md`, `runtime.md` | downstream artifacts + graph |
-| `approve <target>` | `operations.md`, `modes.md` | target artifacts |
+| `eval <target>`, `review <target>` | `operations.md`, `runtime.md`, `eval.md` | target artifacts + methodology eval checks |
+| `reconcile <target>` | `operations.md`, `runtime.md`, `eval.md` | downstream artifacts + graph |
+| `approve <target>` | `operations.md`, `modes.md`, `eval.md` | target artifacts |
 | `status` | `artifacts.md` | graph cache + status snapshot |
 
 ## Getting started

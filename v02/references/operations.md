@@ -56,9 +56,9 @@ Quick runtime reference for the eight VibeLoom operations. Authoritative semanti
 
 ## `reconcile`
 
-- **Purpose:** Detect and resolve downstream drift from approved upstream changes. Inspects existing downstream artifacts, surfaces conflicts, selectively regenerates after user direction. Interactive shell on `generate`.
+- **Purpose:** Remediation loop for all three forms of drift (structural, lifecycle, semantic — see [`../vibeloom-methodology.md`](../vibeloom-methodology.md) ## Generation ### Drift). Inspects existing downstream artifacts, surfaces conflicts, selectively regenerates after user direction. Interactive shell on `generate`.
 - **Parameter:** Optional target scope (`product-specs` | `system-specs` | `context` | `code`). When omitted, reconciles from the highest changed tier downward through `code`.
-- **Precondition:** Approved upstream truth has changed; downstream may be stale or drifted.
+- **Precondition:** At least one drift form is present — approved upstream has changed (structural), an approved artifact was edited outside the flow (lifecycle), or semantic eval surfaced content divergence.
 - **Postcondition:** Drift resolved; affected artifacts regenerated via `generate`.
 - Always user-initiated. The default forward path is `generate`.
 - Two-phase: scoped read-only drift analysis → user direction per case → scoped write-capable reconcile tasks.

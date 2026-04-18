@@ -583,6 +583,16 @@ This is deliberate: user requirements and constraints may survive all the way in
 
 Within a tier, only artifacts whose derivation basis includes changed upstream items are regenerated. When the back-pass identifies cross-artifact effects within the tier, those additional artifacts enter the regeneration set. Artifacts with unchanged upstream bases are not regenerated.
 
+### Drift
+
+Drift is any divergence between the current state of the stack and its approved-upstream basis. Three forms are recognized, each with its own detection mechanism defined below:
+
+- **Structural drift** — approved upstream basis has changed since a downstream artifact was last synchronized to it. Detected by the staleness computation (see Staleness And Regeneration below).
+- **Lifecycle drift** — an approved contract artifact has been edited outside the flow. Detected by direct-edit detection on `status: approved` artifacts (see Staleness And Regeneration ### Direct Edits).
+- **Semantic drift** — downstream content no longer faithfully represents upstream meaning even when the structure matches. Detected by the semantic portion of `eval` (see Eval below).
+
+`reconcile` is the user-initiated remediation loop for all three forms. `generate` handles structural drift on the forward-only path. Lifecycle drift is handled automatically by reopening the edited artifact to `draft`; the reopen is lifecycle bookkeeping, and any further resolution depends on what the edit contained.
+
 ### Staleness And Regeneration
 
 When approved upstream truth changes, dependent downstream entities enter the affected set and the owning downstream artifacts become stale. Generation is therefore not only a bootstrap mechanism; it is also the way the stack is kept coherent over time.

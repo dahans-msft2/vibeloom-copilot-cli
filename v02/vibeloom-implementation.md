@@ -374,6 +374,15 @@ Context artifacts do **not** carry `status` or `approval_mode`. (See methodology
 
 For ledger artifacts (`pdr`, `adr`): artifact-level `derives_from` in frontmatter is always empty (`[]`). Per-record `derives_from` inside each `PDR-####` / `ADR-####` section is the canonical derivation link. The engine builds graph edges from per-record `derives_from`, not from artifact-level frontmatter.
 
+### Drift Detection Scope
+
+The methodology defines three forms of drift (see methodology ## Generation ### Drift): structural, lifecycle, and semantic. The engine implements the first two — both deterministic and grounded in the approved-state snapshot below. Semantic drift is agent-side and is detected outside the engine (see the skill's `references/eval.md`).
+
+- **Structural drift** → Staleness, below.
+- **Lifecycle drift** → Direct Edit Detection, below.
+
+Both detectors share the same underlying data: the approved-state snapshot.
+
 ### Approved-State Snapshot
 
 At each contract approval, the engine captures a per-artifact snapshot into the graph cache (see Graph Cache below):

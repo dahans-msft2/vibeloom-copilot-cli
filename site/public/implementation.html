@@ -523,24 +523,24 @@
 
     <ol class="steps">
       <li>
-        <strong>Clone the repo and install the engine</strong>
+        <strong>Clone the repo</strong>
 <pre>git clone https://github.com/ilya-baimetov/vibeloom
-cd vibeloom
-pip install -e v02/engine</pre>
+cd vibeloom</pre>
+        <span style="color:var(--text-tertiary)">No <code>pip install</code>, no dependencies. Python 3.10+ is the only requirement — the engine is pure Python with its own minimal frontmatter parser.</span>
       </li>
       <li>
-        <strong>Verify</strong>
-<pre>vibeloom-engine --version
+        <strong>Verify the engine runs</strong>
+<pre>PYTHONPATH=v02/engine python3 -m vibeloom_engine --version
 # vibeloom-engine 0.2.0</pre>
       </li>
       <li>
         <strong>Use the skill</strong>
-        <span style="color:var(--text-tertiary)">Open Claude Code or Codex inside a project. The VibeLoom skill in <code>v02/</code> will be picked up automatically. Run <code>/vibeloom init --mode pm</code> to bootstrap a governed project, or <code>/vibeloom import --mode pm</code> to reconstruct a contract from existing code.</span>
+        <span style="color:var(--text-tertiary)">Open Claude Code or Codex inside a project. The VibeLoom skill in <code>v02/</code> is picked up automatically and invokes the engine via <code>python -m</code>. Run <code>/vibeloom init --mode pm</code> to bootstrap a governed project, or <code>/vibeloom import --mode pm</code> to reconstruct a contract from existing code.</span>
       </li>
     </ol>
 
     <div style="text-align:center; margin-top:48px">
-      <p style="font-size:1.05rem; font-weight:600; margin-bottom:8px">The skill runs inside Claude Code or Codex. The engine runs deterministically on the side.</p>
+      <p style="font-size:1.05rem; font-weight:600; margin-bottom:8px">Zero install. Zero dependencies. Pure Python.</p>
       <p style="color:var(--text-tertiary); margin-bottom:32px">No API keys. No subscription fees. No runtime service to operate.</p>
       <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
         <a href="methodology.html" class="btn btn-secondary">

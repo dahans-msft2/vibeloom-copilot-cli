@@ -20,8 +20,6 @@ import re
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 from vibeloom_engine.ids import parse_id
 from vibeloom_engine.io_ import DiscoveredFile, read_text
 from vibeloom_engine.models import (
@@ -42,7 +40,71 @@ _FRONTMATTER_RE = re.compile(
 )
 
 
-# --- frontmatter ------------------------------------------------------------
+# --- frontmatter parser (narrow YAML subset, zero runtime deps) -------------
+
+_INT_RE = re.compile(r"^-?\d+$")
+_FLOAT_RE = re.compile(r"^-?\d+\.\d+$")
+
+
+def _parse_scalar(raw: str) -> Any:
+    """Parse a bare scalar: null, bool, int, float, quoted or bare string."""
+    if raw == "" or raw == "null" or raw == "~":
+        return None
+    if raw == "true":
+        return True
+    if raw == "false":
+        return False
+    if len(raw) >= 2 and raw[0] in ('"', "'") and raw[-1] == raw[0]:
+        return raw[1:-1]
+    if _INT_RE.match(raw):
+        return int(raw)
+    if _FLOAT_RE.match(raw):
+        return float(raw)
+    return raw
+
+
+def _parse_frontmatter(text: str) -> dict[str, Any]:
+    """Parse VibeLoom frontmatter: a narrow flat subset of YAML.
+
+    Supported:
+      - `key: value` with scalar values (null, bool, int, float, string)
+      - Double- and single-quoted string values (may contain colons)
+      - Inline-flow lists: `key: []` or `key: [a, b, c]`
+      - Blank lines and `# comment` lines
+
+    Rejected (raise ValueError; caller treats as no frontmatter):
+      - Indented / nested structures (no block-style lists or mappings)
+      - YAML anchors, tags, multi-document streams
+
+    VibeLoom frontmatter is flat by design — see methodology ## Artifact
+    Format ### Frontmatter. Anything beyond this subset is a schema mistake
+    and should surface loudly rather than silently parse wrong.
+    """
+    result: dict[str, Any] = {}
+    for raw_line in text.splitlines():
+        stripped = raw_line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if raw_line[: len(raw_line) - len(raw_line.lstrip())]:
+            raise ValueError(f"indented frontmatter lines are not supported: {raw_line!r}")
+        if ":" not in stripped:
+            raise ValueError(f"frontmatter line missing ':': {raw_line!r}")
+        key, _, rest = stripped.partition(":")
+        key = key.strip()
+        if not key:
+            raise ValueError(f"frontmatter line missing key: {raw_line!r}")
+        rest = rest.strip()
+        value: Any
+        if rest.startswith("[") and rest.endswith("]"):
+            inner = rest[1:-1].strip()
+            if not inner:
+                value = []
+            else:
+                value = [_parse_scalar(item.strip()) for item in inner.split(",")]
+        else:
+            value = _parse_scalar(rest)
+        result[key] = value
+    return result
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, Any] | None, str]:
@@ -51,11 +113,9 @@ def split_frontmatter(text: str) -> tuple[dict[str, Any] | None, str]:
     if not m:
         return None, text
     try:
-        parsed = yaml.safe_load(m.group("yaml"))
-    except yaml.YAMLError:
+        parsed = _parse_frontmatter(m.group("yaml"))
+    except ValueError:
         return None, m.group("body")
-    if not isinstance(parsed, dict):
-        parsed = None
     return parsed, m.group("body")
 
 

@@ -6,18 +6,29 @@ Authoritative specification: [`vibeloom-implementation.md`](../vibeloom-implemen
 
 ## Install
 
+**Zero-install.** Python 3.10+ is the only requirement — no pip install, no dependencies. The engine is pure Python.
+
+The skill invokes the engine via `python -m`:
+
+```bash
+PYTHONPATH=/path/to/v02/engine python3 -m vibeloom_engine --version
+# vibeloom-engine 0.2.0
+```
+
+If you want the `vibeloom-engine` command on your `PATH` for direct use (optional), install it:
+
 ```bash
 cd v02/engine
 pip install -e .
 ```
 
-Python 3.10+ required. The only runtime dependency is `pyyaml`.
-
 ## CLI
 
-The engine exposes a small CLI. All commands are read-only except when an explicit writable target is given.
+The engine exposes a small CLI. All commands default `--repo` to the current working directory.
 
 ```bash
+# (If installed — otherwise prefix each with `PYTHONPATH=.../v02/engine python3 -m vibeloom_engine ...`)
+
 # Parse all artifacts in a repo and print the parsed inventory as JSON
 vibeloom-engine parse --repo /path/to/repo
 
@@ -39,8 +50,6 @@ vibeloom-engine status --repo /path/to/repo [--scope <scope-filter>]
 # Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation)
 vibeloom-engine detect-edits --repo /path/to/repo
 ```
-
-All commands default `--repo` to the current working directory.
 
 ## Responsibilities (what this engine does)
 
@@ -77,9 +86,12 @@ vibeloom_engine/
 
 ## Testing
 
+`pytest` is the only dev dependency. Install it directly, or use a venv:
+
 ```bash
-pip install -e '.[dev]'
-pytest
+python3 -m venv .venv
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/pytest
 ```
 
 Smoke tests use small fixture repos under `tests/fixtures/`.

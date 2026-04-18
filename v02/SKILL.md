@@ -41,25 +41,27 @@ Load one template at a time for the artifact being generated.
 
 ## Engine
 
-The [`engine/`](engine/) directory contains the Python package that implements the deterministic substrate described in `vibeloom-implementation.md`. Install once per environment:
+The [`engine/`](engine/) directory contains the Python package that implements the deterministic substrate described in `vibeloom-implementation.md`. **Zero install, zero dependencies** — Python 3.10+ is the only requirement. Invoke the engine via `python -m` with `PYTHONPATH` pointing at `engine/`:
 
 ```bash
-pip install -e engine
+PYTHONPATH=<skill-root>/engine python3 -m vibeloom_engine <command> --repo <target-repo>
 ```
 
-Then invoke the engine CLI for deterministic operations:
+`<skill-root>` is the directory containing this `SKILL.md`. Available commands:
 
 | Engine command | Purpose |
 |---|---|
-| `vibeloom-engine parse --repo <path>` | Parse all artifacts; emit JSON inventory |
-| `vibeloom-engine graph --repo <path>` | Build + persist `.vibeloom/state/context-graph.json` |
-| `vibeloom-engine eval --repo <path> [--target <tier>]` | Run structural eval; non-zero exit on blocking findings |
-| `vibeloom-engine affected --repo <path> --ids <IDs...>` | Compute the affected set from changed item IDs |
-| `vibeloom-engine staleness --repo <path>` | Detect stale artifacts (approved-basis mismatch) |
-| `vibeloom-engine status --repo <path>` | Emit a status snapshot; persist `.vibeloom/state/status.json` |
-| `vibeloom-engine detect-edits --repo <path>` | Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation) |
+| `python3 -m vibeloom_engine parse --repo <path>` | Parse all artifacts; emit JSON inventory |
+| `python3 -m vibeloom_engine graph --repo <path>` | Build + persist `.vibeloom/state/context-graph.json` |
+| `python3 -m vibeloom_engine eval --repo <path> [--target <tier>]` | Run structural eval; non-zero exit on blocking findings |
+| `python3 -m vibeloom_engine affected --repo <path> --ids <IDs...>` | Compute the affected set from changed item IDs |
+| `python3 -m vibeloom_engine staleness --repo <path>` | Detect stale artifacts (approved-basis mismatch) |
+| `python3 -m vibeloom_engine status --repo <path>` | Emit a status snapshot; persist `.vibeloom/state/status.json` |
+| `python3 -m vibeloom_engine detect-edits --repo <path>` | Detect direct edits on approved contract artifacts (mtime fast-path, per-item hash confirmation) |
 
-All engine commands emit JSON on stdout. The engine does not make semantic judgments — it parses, validates structure, computes the graph, and reports. Semantic judgment and user interaction remain with the skill.
+All engine commands emit JSON on stdout. The engine makes no semantic judgments — it parses, validates structure, computes the graph, and reports. Semantic judgment and user interaction remain with the skill.
+
+> Optional: `pip install -e engine` puts a shorter `vibeloom-engine` command on `PATH`. Not required for skill operation.
 
 ## Command routing
 

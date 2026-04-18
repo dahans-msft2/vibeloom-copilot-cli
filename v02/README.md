@@ -32,12 +32,17 @@ v02/
 
 ## Install
 
+**Zero-install.** Python 3.10+ is the only requirement — no pip install, no runtime dependencies. The engine is pure Python, including its own minimal YAML-frontmatter parser.
+
 ```bash
-pip install -e engine
-vibeloom-engine --version   # should print 0.2.0
+# Verify from anywhere
+PYTHONPATH=/path/to/vibeloom/v02/engine python3 -m vibeloom_engine --version
+# vibeloom-engine 0.2.0
 ```
 
-Python 3.10+ required. The only runtime dependency is `pyyaml`.
+The skill invokes the engine via `python -m vibeloom_engine` with `PYTHONPATH` pointing at `v02/engine`. No setup beyond cloning the repo.
+
+Optional — if you want the `vibeloom-engine` command on your `PATH` for direct CLI use: `pip install -e engine`.
 
 ## Using the skill
 
@@ -56,15 +61,21 @@ Open a project directory in Claude Code or Codex; the skill is picked up automat
 
 ## Engine CLI (for direct deterministic work)
 
+Without install — invoke via `python -m`:
+
 ```bash
-vibeloom-engine parse --repo <path>          # Parse all artifacts; JSON inventory
-vibeloom-engine graph --repo <path>          # Build + persist .vibeloom/state/context-graph.json
-vibeloom-engine eval  --repo <path>          # 9 structural checks; non-zero exit on blockers
-vibeloom-engine affected --repo <path> --ids FR-0001 STORY-0003
-vibeloom-engine staleness --repo <path>      # Per-item hash diff + forward DAG walk
-vibeloom-engine detect-edits --repo <path>   # mtime fast-filter + per-item hash confirmation
-vibeloom-engine status --repo <path>         # Emit + persist status snapshot
+ENG=/path/to/v02/engine
+
+PYTHONPATH=$ENG python3 -m vibeloom_engine parse --repo <path>          # Parse all artifacts; JSON inventory
+PYTHONPATH=$ENG python3 -m vibeloom_engine graph --repo <path>          # Build + persist .vibeloom/state/context-graph.json
+PYTHONPATH=$ENG python3 -m vibeloom_engine eval  --repo <path>          # 9 structural checks; non-zero exit on blockers
+PYTHONPATH=$ENG python3 -m vibeloom_engine affected --repo <path> --ids FR-0001 STORY-0003
+PYTHONPATH=$ENG python3 -m vibeloom_engine staleness --repo <path>      # Per-item hash diff + forward DAG walk
+PYTHONPATH=$ENG python3 -m vibeloom_engine detect-edits --repo <path>   # mtime fast-filter + per-item hash confirmation
+PYTHONPATH=$ENG python3 -m vibeloom_engine status --repo <path>         # Emit + persist status snapshot
 ```
+
+(If you installed the engine, use `vibeloom-engine …` directly instead of the `PYTHONPATH=… python3 -m …` prefix.)
 
 See [`engine/README.md`](engine/README.md) for engine internals.
 
@@ -81,10 +92,13 @@ See [`engine/README.md`](engine/README.md) for engine internals.
 
 ## Testing the engine
 
+`pytest` is the only dev dependency:
+
 ```bash
 cd engine
-pip install -e '.[dev]'
-pytest
+python3 -m venv .venv
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/pytest
 # ... 25 tests pass
 ```
 

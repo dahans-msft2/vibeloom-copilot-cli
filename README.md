@@ -24,18 +24,20 @@ Everything new lives in `v02/`:
 ## Quick start
 
 ```bash
-# Clone
+# Clone — no install, no dependencies
 git clone https://github.com/ilya-baimetov/vibeloom
 cd vibeloom
 
-# Install the engine (used by the skill for deterministic work)
-pip install -e v02/engine
-vibeloom-engine --version   # should print 0.2.0
+# Verify the engine runs (Python 3.10+ is the only requirement)
+PYTHONPATH=v02/engine python3 -m vibeloom_engine --version
+# vibeloom-engine 0.2.0
 
 # Open a project directory in Claude Code or Codex
 # The v02/ skill is loaded automatically; run:
 /vibeloom init --mode pm     # or vibe | dev | expert
 ```
+
+The engine is pure Python — no `pip install` needed. The skill invokes it via `python -m` using the path to `v02/engine`.
 
 See [`v02/README.md`](v02/README.md) for a deeper walkthrough and [vibeloom.ai/implementation](https://vibeloom.ai/implementation) for how the skill + engine fit together.
 

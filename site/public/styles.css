@@ -62,7 +62,7 @@ body {
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
 
-/* (page-toc overrides removed — landing & consulting now use the same
+/* (page-toc overrides removed — landing & contact now use the same
    .doc-layout grid + sticky .doc-toc as methodology/implementation.) */
 
 /* ===== skip link ===== */
@@ -1391,50 +1391,6 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
 .compare-table tbody tr.is-self td { background: var(--c-red-tint); color: var(--c-ink); }
 .compare-table tbody tr.is-self td:first-child { color: var(--c-red-deep); }
 
-/* ===== quote / consulting ===== */
-.consulting {
-  padding: 120px 0;
-  position: relative;
-}
-.consulting-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-.consulting blockquote {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(1.4rem, 2.4vw, 1.8rem);
-  line-height: 1.4;
-  letter-spacing: -0.015em;
-  color: var(--c-ink);
-  border-left: 3px solid var(--c-red);
-  padding-left: 28px;
-  margin: 32px 0;
-}
-.consulting .author {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-}
-.consulting .author .avatar {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  background: var(--c-ink);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: -0.02em;
-}
-.consulting .author .name { font-weight: 600; color: var(--c-ink); }
-.consulting .author .who { font-size: 0.86rem; color: var(--c-ink-4); }
-
 /* ===== faq ===== */
 .faq {
   padding: 120px 0;
@@ -1634,7 +1590,7 @@ footer .small a { color: #6b7280; }
 footer .small a:hover { color: #fff; }
 
 /* ============================================================
-   content pages (methodology, implementation, consulting)
+   content pages (methodology, implementation, contact)
    ============================================================ */
 
 .page-hero {
@@ -1754,7 +1710,7 @@ footer .small a:hover { color: #fff; }
   line-height: 1.7;
   color: var(--c-ink-2);
 }
-/* Wider variant for landing & consulting — fills the right column */
+/* Wider variant for landing & contact — fills the right column */
 .doc-body.doc-body-wide {
   max-width: 100%;
   font-size: inherit;
@@ -1892,56 +1848,18 @@ footer .small a:hover { color: #fff; }
   margin: 48px 0;
 }
 
-/* consulting page-specific */
-.consult-hero {
+/* contact page-specific */
+.contact-hero {
   padding: 80px 0 64px;
   background: var(--c-bg-soft);
   border-bottom: 1px solid var(--c-line);
 }
-.consult-hero .consult-hero-content {
+.contact-hero .contact-hero-content {
   max-width: 720px;
 }
-.consult-hero h1 { letter-spacing: -0.035em; margin-bottom: 18px; }
-.consult-hero .lead { color: var(--c-ink-3); font-size: 1.1rem; line-height: 1.55; max-width: 56ch; margin-bottom: 24px; }
-.consult-hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.consult-card {
-  background: #fff;
-  border: 1px solid var(--c-line);
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: var(--shadow-card);
-}
-.consult-card .ava {
-  display: flex; align-items: center; gap: 14px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--c-line);
-}
-.consult-card .ava .av {
-  width: 50px; height: 50px;
-  border-radius: 50%;
-  background: var(--c-ink);
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; letter-spacing: -0.02em;
-}
-.consult-card .ava .who .n { font-weight: 700; color: var(--c-ink); font-size: 1.05rem; }
-.consult-card .ava .who .r { font-size: 0.82rem; color: var(--c-ink-4); }
-.consult-card ul {
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.consult-card li {
-  display: flex;
-  gap: 10px;
-  font-size: 0.9rem;
-  color: var(--c-ink-2);
-  line-height: 1.5;
-}
-.consult-card li .x { color: var(--c-red); flex: 0 0 auto; }
+.contact-hero h1 { letter-spacing: -0.035em; margin-bottom: 18px; }
+.contact-hero .lead { color: var(--c-ink-3); font-size: 1.1rem; line-height: 1.55; max-width: 56ch; margin-bottom: 24px; }
+.contact-hero .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
 .engagements {
   padding: 96px 0 120px;
@@ -1999,7 +1917,7 @@ footer .small a:hover { color: #fff; }
 }
 .eng-tile .deets .v { color: var(--c-ink-2); font-weight: 500; }
 
-/* ===== consulting · 6-step process timeline ===== */
+/* ===== contact · 6-step process timeline ===== */
 .process {
   padding: 96px 0 120px;
   background: var(--c-ink);
@@ -2094,8 +2012,7 @@ footer .small a:hover { color: #fff; }
   .doc-toc ol { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px 24px; }
   .hero-visual { grid-template-columns: 1fr; }
   .engine-grid { grid-template-columns: 1fr; gap: 48px; }
-  .consulting-grid { grid-template-columns: 1fr; gap: 32px; }
-  .consult-hero .consult-hero-content { max-width: 100%; }
+  .contact-hero .contact-hero-content { max-width: 100%; }
   .section-head { grid-template-columns: 1fr; gap: 18px; }
   .engagement-grid { grid-template-columns: 1fr; }
 }
@@ -2160,7 +2077,7 @@ footer .small a:hover { color: #fff; }
   .vision-body .vision-pull { font-size: 1.15rem; padding: 18px 4px; }
 
   /* Engine + drift padding */
-  .engine, .drift, .ops, .stack, .modes, .compare, .faq, .problem, .model, .consulting, .engagements, .process { padding: 72px 0; }
+  .engine, .drift, .ops, .stack, .modes, .compare, .faq, .problem, .model, .engagements, .process { padding: 72px 0; }
 
   /* Section heads tighter on mobile */
   .section-head { gap: 16px; margin-bottom: 36px; }

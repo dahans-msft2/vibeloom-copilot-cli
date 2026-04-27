@@ -23,7 +23,7 @@ Use this directory as the project root in Cloudflare.
 ## Local Notes
 
 - Static assets are served from `public/`.
-- Deployed URL structure: `/` (overview), `/methodology`, `/implementation`, `/consulting`, `/robots.txt`, `/sitemap.xml`.
+- Deployed URL structure: `/` (overview), `/methodology`, `/implementation`, `/contact`, `/robots.txt`, `/sitemap.xml`.
 - One shared stylesheet at `public/styles.css`; one logo at `public/vibeloom-logo-loom.svg`.
 
 ## Local Preview

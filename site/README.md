@@ -22,5 +22,15 @@ Use this directory as the project root in Cloudflare.
 
 ## Local Notes
 
-- static assets are served from `public/`
-- the deployed URL structure should remain `/`, `/methodology`, `/robots.txt`, and `/sitemap.xml`
+- Static assets are served from `public/`.
+- Deployed URL structure: `/` (overview), `/methodology`, `/implementation`, `/consulting`, `/robots.txt`, `/sitemap.xml`.
+- One shared stylesheet at `public/styles.css`; one logo at `public/vibeloom-logo-loom.svg`.
+
+## Local Preview
+
+Any static-file server works. Example:
+
+```bash
+npx http-server site/public -p 8124 -c-1
+# open http://127.0.0.1:8124/
+```

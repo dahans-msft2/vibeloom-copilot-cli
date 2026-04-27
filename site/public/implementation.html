@@ -1,571 +1,406 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom Implementation — Skill + Engine</title>
-<meta name="description" content="How VibeLoom is implemented: the agent-side skill (SKILL.md, references, assets, subagent dispatch) and the deterministic vibeloom-engine Python substrate (parser, graph, hash-based drift detection, structural eval).">
-<meta name="author" content="VibeLoom">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Implementation — Skill + Engine + Runtime · VibeLoom</title>
+<meta name="description" content="How VibeLoom is built: the Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate that ties them together.">
+<meta name="keywords" content="vibeloom-engine, Python engine, Claude Code skill, Codex skill, deterministic substrate, context graph, approved-state snapshot, subagent dispatch">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:locale" content="en_US">
 <link rel="canonical" href="https://vibeloom.ai/implementation">
 
-<!-- Open Graph -->
 <meta property="og:type" content="article">
+<meta property="og:site_name" content="VibeLoom">
 <meta property="og:url" content="https://vibeloom.ai/implementation">
-<meta property="og:title" content="VibeLoom Implementation — Skill + Engine">
-<meta property="og:description" content="How VibeLoom is implemented: the agent-side skill and the deterministic Python engine that parses artifacts, builds the context graph, and detects drift via per-item content hashes.">
+<meta property="og:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta property="og:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
+<meta property="og:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
+<meta property="og:image:alt" content="VibeLoom logo — woven threads">
+<meta property="article:author" content="Ilya Baimetov">
+<meta property="article:published_time" content="2026-04-17T00:00:00Z">
+<meta property="article:modified_time" content="2026-04-26T00:00:00Z">
 
-<!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VibeLoom Implementation — Skill + Engine">
-<meta name="twitter:description" content="How VibeLoom is implemented: the agent-side skill and the deterministic engine that detects drift via per-item content hashes.">
+<meta name="twitter:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta name="twitter:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
+<meta name="twitter:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
+<meta name="twitter:image:alt" content="VibeLoom logo — woven threads">
 
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
-<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="styles.css">
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "VibeLoom Implementation: Skill + Engine",
-  "description": "How the VibeLoom methodology is implemented as an agent-side skill plus a deterministic Python engine substrate.",
-  "url": "https://vibeloom.ai/implementation",
-  "mainEntityOfPage": "https://vibeloom.ai/implementation",
-  "publisher": {
-    "@type": "Organization",
-    "name": "VibeLoom",
-    "url": "https://vibeloom.ai"
-  }
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "VibeLoom Implementation",
+      "description": "Skill + engine + runtime substrate for the VibeLoom methodology. Pure Python, zero runtime dependencies.",
+      "author": {"@type":"Person","name":"Ilya Baimetov"},
+      "publisher": {"@type":"Organization","name":"VibeLoom","logo":{"@type":"ImageObject","url":"https://vibeloom.ai/vibeloom-logo-loom.svg"}},
+      "image": "https://vibeloom.ai/vibeloom-logo-loom.svg",
+      "url": "https://vibeloom.ai/implementation",
+      "mainEntityOfPage": "https://vibeloom.ai/implementation",
+      "datePublished": "2026-04-17",
+      "dateModified": "2026-04-26",
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Overview","item":"https://vibeloom.ai/"},
+        {"@type":"ListItem","position":2,"name":"Implementation","item":"https://vibeloom.ai/implementation"}
+      ]
+    }
+  ]
 }
 </script>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="vibeloom-logo-loom.svg" alt="VibeLoom logo">
-    VibeLoom
-  </a>
-  <div class="nav-links">
-    <a href="index.html#features">Features</a>
-    <a href="index.html#how-it-works">How it works</a>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="/" aria-label="VibeLoom home"><img src="vibeloom-logo-loom.svg" alt="" width="26" height="26"> VibeLoom</a>
+  <div class="links">
+    <a href="index.html">Overview</a>
     <a href="methodology.html">Methodology</a>
-    <a href="implementation.html" class="active">Implementation</a>
-    <a href="index.html#get-started" class="nav-cta">Get Started</a>
+    <a href="implementation.html" class="is-active" aria-current="page">Implementation</a>
+    <a href="consulting.html">Consulting</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta" href="index.html#start">Get started</a>
   </div>
-  <details class="nav-mobile">
-    <summary aria-label="Open navigation menu">
-      Menu
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+  <details class="menu">
+    <summary aria-label="Open menu">Menu
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </summary>
-    <div class="nav-mobile-panel">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how-it-works">How it works</a>
+    <div class="panel">
+      <a href="index.html">Overview</a>
       <a href="methodology.html">Methodology</a>
-      <a href="implementation.html" class="active">Implementation</a>
-      <a href="index.html#get-started" class="nav-cta">Get Started</a>
+      <a href="implementation.html" class="is-active" aria-current="page">Implementation</a>
+      <a href="consulting.html">Consulting</a>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      <a class="cta" href="index.html#start">Get started</a>
     </div>
   </details>
 </nav>
 
-<!-- HEADER -->
-<div class="page-header reveal">
-  <div class="section-inner section-inner--narrow">
-    <h1>How VibeLoom Is Implemented</h1>
-    <p>Two layers: an agent-side skill that handles semantic judgment and user interaction, and a deterministic Python engine that handles parsing, graph construction, and hash-based drift detection.</p>
-  </div>
-</div>
-
-<!-- CONTENT -->
-<div class="content section-inner section-inner--narrow">
-
-  <!-- TOC -->
-  <div class="reveal">
-    <span class="label">On this page</span>
-    <div class="toc">
-      <div class="toc-item"><a href="#overview">Overview</a><span class="toc-desc">Two layers — what the skill decides and what the engine computes</span></div>
-      <div class="toc-item"><a href="#skill">Skill Layer</a><span class="toc-desc">SKILL.md routing, load-on-demand references, artifact templates, subagent dispatch</span></div>
-      <div class="toc-item"><a href="#engine">Engine Layer</a><span class="toc-desc">vibeloom-engine Python package: CLI, pipeline, responsibilities</span></div>
-      <div class="toc-item"><a href="#data-model">Data Model</a><span class="toc-desc">Graph, items, edges, approved-state snapshots, canonical item hash</span></div>
-      <div class="toc-item"><a href="#drift">Drift Detection</a><span class="toc-desc">How the three drift forms map to concrete mechanisms</span></div>
-      <div class="toc-item"><a href="#eval">Eval Layers</a><span class="toc-desc">Engine structural eval + agent semantic eval — how they compose</span></div>
-      <div class="toc-item"><a href="#storage">Storage</a><span class="toc-desc">Flat-JSON graph cache under .vibeloom/state/, regenerable from artifacts</span></div>
-      <div class="toc-item"><a href="#quickstart">Install</a><span class="toc-desc">Install the engine and verify; use the skill from Claude Code or Codex</span></div>
+<main id="main">
+<header class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Implementation · v0.2</span>
+    <h1>Two layers: the Skill and the engine.</h1>
+    <p class="lead">The Skill handles natural language, orchestration, semantic judgment, approvals, and scoped subagent dispatch. The engine provides the deterministic substrate for parsing, graph construction, eval, staleness, affected sets, and status. Both ship together; both stay in their lane.</p>
+    <aside class="thesis">
+      <span class="thesis-label">Boundary</span>
+      The engine never decides product meaning or approval outcomes. It emits JSON facts; the Skill and the user make every semantic decision. Mixing the two produces software that's neither deterministic nor smart.
+    </aside>
+    <div class="meta">
+      <span>~10 min read</span>
+      <span>Engine: <code>vibeloom-engine 0.2.0</code></span>
+      <span>Python 3.10+</span>
     </div>
   </div>
+</header>
 
-  <!-- ═══ OVERVIEW ═══ -->
-  <div class="doc-section reveal" id="overview">
-    <span class="label">Overview</span>
-    <h2>Two Layers</h2>
-    <p class="lead">The skill is where agent reasoning lives; the engine is where deterministic computation lives. The two communicate through a small CLI surface and a shared filesystem state.</p>
+<div class="wrap">
+  <div class="doc-layout">
+    <aside class="doc-toc" aria-label="Implementation table of contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#overview" class="is-active">Two layers, one substrate</a></li>
+        <li><a href="#skill">The Skill</a></li>
+        <li><a href="#engine">The engine</a></li>
+        <li><a href="#cli">Engine CLI</a></li>
+        <li><a href="#snapshot">Approved-state snapshot</a></li>
+        <li><a href="#graph">The context graph</a></li>
+        <li><a href="#ids">IDs and frontmatter</a></li>
+        <li><a href="#dispatch">Subagent dispatch</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
+        <li><a href="#layout">Source layout</a></li>
+        <li><a href="#testing">Testing</a></li>
+      </ol>
+    </aside>
 
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
-        <defs>
-          <marker id="ad2" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
-            <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
-          </marker>
-        </defs>
+    <article class="doc-body">
 
-        <!-- ═══ SKILL LAYER ═══ -->
-        <rect x="30" y="10" width="660" height="180" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.12)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="30" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#e84057">SKILL — AGENT-SIDE (SEMANTIC JUDGMENT, USER INTERACTION)</text>
+      <h2 id="overview">Two layers, one substrate</h2>
+      <p>VibeLoom v0.2 is delivered as two cooperating layers:</p>
+      <ul>
+        <li><strong>The Skill</strong> — a prompt-and-policy package that loads automatically inside Claude Code or Codex. It owns the natural-language interface, mode selection, approval pauses, semantic judgment, subagent orchestration, and template materialization.</li>
+        <li><strong>The engine</strong> — a deterministic Python package (<code>vibeloom-engine 0.2.0</code>) that parses artifacts, validates schemas, builds the derivation graph, computes affected sets, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
+      </ul>
+      <p>They cooperate through a single shared substrate: <code>.vibeloom/state/</code>. The engine writes <code>context-graph.json</code>, <code>status.json</code>, and <code>approved_snapshots/</code>. The Skill reads them, makes decisions, generates content, and invokes the engine again on the result. There is no other channel between them.</p>
 
-        <rect x="60" y="46" width="200" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="160" y="64" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">SKILL.md</text>
-        <text x="160" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">routing + guardrails</text>
-
-        <rect x="280" y="46" width="180" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="370" y="64" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">references/</text>
-        <text x="370" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">load-on-demand guides</text>
-
-        <rect x="480" y="46" width="180" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="570" y="64" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">assets/</text>
-        <text x="570" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">17 artifact templates</text>
-
-        <rect x="60" y="110" width="600" height="66" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="360" y="130" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">Subagent dispatch</text>
-        <text x="360" y="148" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">read-only analysis · write-capable generation · scoped load sets · late-fetch capped at 1</text>
-        <text x="360" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic eval (4 dimensions) · reconcile fix phases · review bounded fixes</text>
-
-        <!-- ═══ BOUNDARY ARROWS ═══ -->
-        <line x1="200" y1="192" x2="200" y2="232" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad2)"/>
-        <text x="220" y="215" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">engine CLI calls</text>
-        <line x1="520" y1="232" x2="520" y2="192" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad2)"/>
-        <text x="400" y="215" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">JSON findings + graph data</text>
-
-        <!-- ═══ ENGINE LAYER ═══ -->
-        <rect x="30" y="240" width="660" height="190" rx="12" fill="rgba(232,64,87,0.03)" stroke="rgba(232,64,87,0.18)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="260" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#e84057">ENGINE — DETERMINISTIC PYTHON (vibeloom-engine 0.2.0)</text>
-
-        <rect x="60" y="276" width="140" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="130" y="300" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">parse</text>
-
-        <rect x="210" y="276" width="140" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="280" y="300" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">graph</text>
-
-        <rect x="360" y="276" width="140" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="430" y="300" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">eval</text>
-
-        <rect x="510" y="276" width="150" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="585" y="300" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">affected</text>
-
-        <rect x="60" y="326" width="190" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="155" y="350" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#e84057">staleness</text>
-
-        <rect x="260" y="326" width="200" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="360" y="350" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#e84057">detect-edits</text>
-
-        <rect x="470" y="326" width="190" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="565" y="350" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">status</text>
-
-        <!-- Shared state box -->
-        <rect x="160" y="380" width="400" height="36" rx="8" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.20)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="360" y="402" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="#e84057">.vibeloom/state/context-graph.json</text>
-      </svg>
-    </div>
-
-    <p>The engine handles anything that can be decided mechanically — parsing, reference integrity, coverage, hash-based drift detection. The skill handles anything that requires semantic judgment — whether a downstream story faithfully represents its upstream requirement, whether naming aligns with the ubiquitous language, whether a capability is substantively addressed.</p>
-  </div>
-
-  <!-- ═══ SKILL LAYER ═══ -->
-  <div class="doc-section reveal" id="skill">
-    <span class="label">Skill</span>
-    <h2>Skill Layer</h2>
-    <p class="lead">The skill is a small set of markdown files loaded into Claude Code or Codex. It decides which references and templates to load per operation, routes subagent dispatch, and composes the final response to the user.</p>
-
-    <details class="expandable" open>
-      <summary class="expandable-header"><span>Directory layout</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-<pre>v02/
-├── <span class="keyword">SKILL.md</span>                  <span class="comment"># routing table, guardrails, response shape</span>
-├── <span class="keyword">references/</span>              <span class="comment"># load-on-demand guides (skill-level only)</span>
-│   ├── operations.md        <span class="comment"># per-op purpose, parameters, pre/post-conditions</span>
-│   ├── modes.md             <span class="comment"># vibe | pm | dev | expert — gates, auto-advance</span>
-│   ├── runtime.md           <span class="comment"># dispatch mechanics, waves, load sets</span>
-│   ├── artifacts.md         <span class="comment"># frontmatter, IDs, derivation rules</span>
-│   ├── eval.md              <span class="comment"># semantic-eval prompts, finding schema</span>
-│   └── troubleshooting.md   <span class="comment"># failure modes, recovery</span>
-├── <span class="keyword">assets/</span>                  <span class="comment"># 17 artifact templates materialized into target repos</span>
-│   ├── intent-specs/        <span class="comment"># intent, defaults, vibe-intent</span>
-│   ├── product-specs/       <span class="comment"># prd, usm, dm</span>
-│   ├── system-specs/        <span class="comment"># system, vibe-system, containers, container, component</span>
-│   └── context/             <span class="comment"># pdr, adr, bdd, root / container / component configs</span>
-├── <span class="keyword">engine/</span>                  <span class="comment"># deterministic Python substrate</span>
-├── vibeloom-methodology.md  <span class="comment"># authoritative WHY</span>
-└── vibeloom-implementation.md <span class="comment"># authoritative HOW</span></pre>
+      <div class="callout">
+        <strong>Why split it.</strong> Anything load-bearing — hash diffs, derivation walks, schema validation — needs to be deterministic and auditable. Anything that requires judgment — semantic eval, mode selection, conflict resolution — needs a model. Mixing the two produces software that's neither.
       </div>
-    </details>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Command routing</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p><code>SKILL.md</code> maps each operation to the minimal set of references to load. Everything else stays out of context until needed:</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Operation</th><th>First load</th><th>Then</th></tr></thead>
-            <tbody>
-              <tr><td><code>init</code>, <code>import</code></td><td><code>operations.md</code>, <code>modes.md</code></td><td>intent template or reconstruction prompts</td></tr>
-              <tr><td><code>generate &lt;target&gt;</code></td><td><code>operations.md</code>, <code>runtime.md</code></td><td>target-tier templates + graph cache</td></tr>
-              <tr><td><code>eval</code>, <code>review &lt;target&gt;</code></td><td><code>operations.md</code>, <code>runtime.md</code>, <code>eval.md</code></td><td>target artifacts + methodology checks</td></tr>
-              <tr><td><code>reconcile &lt;target&gt;</code></td><td><code>operations.md</code>, <code>runtime.md</code>, <code>eval.md</code></td><td>downstream artifacts + graph</td></tr>
-              <tr><td><code>approve &lt;target&gt;</code></td><td><code>operations.md</code>, <code>modes.md</code>, <code>eval.md</code></td><td>target artifacts</td></tr>
-              <tr><td><code>status</code></td><td><code>artifacts.md</code></td><td>graph cache + status snapshot</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </details>
+      <hr>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Subagent execution contract</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>When work can be decomposed — a <code>component</code> wave, a reconcile fix phase, a parallel <code>import</code> analysis — the orchestrator dispatches subagents. Each subagent runs in one of two modes:</p>
-        <ul>
-          <li><strong>read-only analysis</strong> — scoped <code>import</code> analysis, <code>eval</code>, advisory <code>review</code>, drift analysis inside <code>reconcile</code>. No write scope.</li>
-          <li><strong>write-capable generation / reconciliation</strong> — contract, context, and code generation; bounded-fix phases of <code>review</code>; fix phases of <code>reconcile</code>. Explicit write scope.</li>
-        </ul>
-        <p>Each invocation starts from a fresh prompt built from: the task header (operation, target, scope, objective, write permissions, prerequisites, validation contract, result-shape), the scoped load set, and minimal accepted prior-wave summaries. Same-wave outputs cannot be read as input until the wave is accepted. Late-fetch is capped at one re-invocation per task.</p>
-      </div>
-    </details>
+      <h2 id="skill">The Skill</h2>
+      <p>The Skill is a single SKILL.md file plus a <code>references/</code> tree of load-on-demand guides. It's loaded automatically by Claude Code and Codex when you invoke <code>/vibeloom</code> or <code>$vibeloom</code>.</p>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Semantic eval prompts</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p><code>references/eval.md</code> defines the four semantic-eval dimensions and a unified finding schema. Prompts are written declaratively — <em>what</em> to validate, not <em>how</em> — so they remain stable as models improve:</p>
-        <ul>
-          <li><strong>Faithful representation</strong> — does downstream narrow, widen, or reverse upstream meaning?</li>
-          <li><strong>Naming consistency</strong> — does terminology align with the <code>TERM-####</code> domain model?</li>
-          <li><strong>Implicit dependencies</strong> — are there missing <code>derives_from</code> edges the downstream depends on?</li>
-          <li><strong>Capability gaps</strong> — are any <code>CAP-####</code> / <code>CST-####</code> items unaddressed in the stack?</li>
-        </ul>
-        <p>Findings are returned in a fixed schema: <code>{severity, dimension, upstream_id, downstream_id, message, suggested_fix}</code>. Severity is <code>breaking</code> (escalates delegated auto-advance) or <code>advisory</code>.</p>
-      </div>
-    </details>
-  </div>
+      <p>The Skill's responsibilities:</p>
+      <ul>
+        <li>Receive operations (<code>init</code>, <code>generate</code>, <code>review</code>, etc.) and parse them into a target tier and scope.</li>
+        <li>Load the correct subset of <code>references/</code> for the operation — never load everything.</li>
+        <li>Materialize templates from <code>assets/</code> when generating new artifacts.</li>
+        <li>Invoke the engine via <code>python -m vibeloom_engine</code> for parsing, eval, staleness, and status.</li>
+        <li>Run the four-dimension semantic eval against the items the engine flagged as in scope.</li>
+        <li>Dispatch scoped subagents in waves for code generation, with bounded load sets.</li>
+        <li>Pause at every approval gate the current mode requires; never bypass one.</li>
+      </ul>
 
-  <!-- ═══ ENGINE LAYER ═══ -->
-  <div class="doc-section reveal" id="engine">
-    <span class="label">Engine</span>
-    <h2>Engine Layer</h2>
-    <p class="lead">The <code>vibeloom-engine</code> Python package (version 0.2.0) is the deterministic substrate. It parses artifacts, builds the context graph, and implements structural eval, staleness, and direct-edit detection. It makes no semantic judgments.</p>
+      <p>The Skill is intentionally short — most of the operational detail lives in the methodology and in narrowly scoped references that are loaded only when relevant. This keeps the always-resident context small.</p>
 
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
-        <defs>
-          <marker id="ad3" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
-            <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
-          </marker>
-        </defs>
+      <hr>
 
-        <!-- Input: filesystem artifacts -->
-        <rect x="30" y="40" width="160" height="56" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="110" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#8a8a9a">Filesystem</text>
-        <text x="110" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a6a">.md artifacts + state/</text>
+      <h2 id="engine">The engine</h2>
+      <p><code>vibeloom-engine 0.2.0</code> is a pure Python package. Including its custom-built minimal YAML frontmatter parser, it has <strong>zero runtime dependencies</strong> beyond Python 3.10+. No <code>pip install</code> is required to use it from the Skill — invoke via <code>python -m vibeloom_engine</code>.</p>
 
-        <line x1="190" y1="68" x2="230" y2="68" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
+      <p>The engine's responsibilities, in scope and out:</p>
+      <ul>
+        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the context graph; computing affected sets; capturing and comparing approved-state snapshots; emitting status snapshots.</li>
+        <li><strong>Out of scope:</strong> deciding what items <em>mean</em>; deciding which fix direction is correct; choosing modes; talking to users.</li>
+      </ul>
 
-        <!-- parser -->
-        <rect x="230" y="40" width="120" height="56" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="290" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">parser</text>
-        <text x="290" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">frontmatter + body</text>
+      <p>All engine commands emit JSON on stdout. Non-zero exit codes indicate blocking findings or errors. The Skill consumes the JSON and renders human-facing output.</p>
 
-        <line x1="350" y1="68" x2="390" y2="68" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
+      <hr>
 
-        <!-- graph builder -->
-        <rect x="390" y="40" width="130" height="56" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="455" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">graph builder</text>
-        <text x="455" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">DAG + snapshots</text>
+      <h2 id="cli">Engine CLI</h2>
+      <p>Seven commands cover the deterministic surface.</p>
+      <pre><code>parse       --repo &lt;path&gt;                       # Parse all artifacts; emit JSON inventory
+graph       --repo &lt;path&gt;                       # Build + persist .vibeloom/state/context-graph.json
+eval        --repo &lt;path&gt; [--target &lt;tier&gt;]     # Run 9 structural checks; non-zero exit on blockers
+affected    --repo &lt;path&gt; --ids &lt;IDs...&gt;        # Compute affected set from changed item IDs
+staleness   --repo &lt;path&gt;                       # Per-item hash diff + forward DAG walk
+detect-edits --repo &lt;path&gt;                      # mtime fast-filter + per-item hash confirmation
+status      --repo &lt;path&gt;                       # Emit + persist status snapshot</code></pre>
 
-        <line x1="520" y1="68" x2="560" y2="68" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
+      <p>Without install, prefix every invocation with <code>PYTHONPATH=&lt;skill-root&gt;/engine</code>. With <code>pip install -e engine</code>, a shorter <code>vibeloom-engine</code> binary lands on PATH.</p>
 
-        <!-- cache -->
-        <rect x="560" y="40" width="130" height="56" rx="8" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.25)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="625" y="62" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">graph cache</text>
-        <text x="625" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#5a5a6a">JSON</text>
+      <hr>
 
-        <!-- Fan-out from cache to consumers -->
-        <line x1="625" y1="96" x2="130" y2="170" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="625" y1="96" x2="290" y2="170" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="625" y1="96" x2="450" y2="170" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="625" y1="96" x2="590" y2="170" stroke="#5a5a6a" stroke-width="1"/>
+      <h2 id="snapshot">Approved-state snapshot</h2>
+      <p>The snapshot is the single most important data structure in v0.2 — it's what makes drift detection enforceable rather than aspirational.</p>
 
-        <!-- Consumer row 1: staleness, detect-edits, eval, affected -->
-        <rect x="60" y="170" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="130" y="195" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#e84057">staleness</text>
+      <p>When the user (or the agent, in delegated mode) approves a contract tier, the engine captures, per artifact:</p>
+      <ul>
+        <li>The artifact's filesystem mtime.</li>
+        <li>For each item parsed out of the artifact, its <strong>SHA-256 canonical hash</strong> — normalized so renames surface as remove+add and non-semantic edits (whitespace, comment-only changes) don't churn.</li>
+      </ul>
 
-        <rect x="220" y="170" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="290" y="195" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="700" fill="#e84057">detect-edits</text>
+      <p>The snapshot is preserved across rebuilds. It is dropped only when the artifact transitions back to <code>draft</code>. This is what enables the staleness pass — the engine compares <em>current</em> per-item hashes against the snapshot, and the diff <em>is</em> the set of changed items.</p>
 
-        <rect x="380" y="170" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="450" y="195" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">eval</text>
+      <p><strong>Direct-edit detection</strong> uses the same snapshot via a two-tier compare: filesystem mtime first (fast), then per-item hash (precise). If any item is added, removed, or modified, the artifact auto-reopens to <code>draft</code>. Whitespace-only edits leave the artifact <code>approved</code>.</p>
 
-        <rect x="540" y="170" width="140" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="610" y="195" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="500" fill="#e84057">affected</text>
+      <hr>
 
-        <!-- Output: JSON -->
-        <line x1="130" y1="210" x2="130" y2="240" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
-        <line x1="290" y1="210" x2="290" y2="240" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
-        <line x1="450" y1="210" x2="450" y2="240" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
-        <line x1="610" y1="210" x2="610" y2="240" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad3)"/>
+      <h2 id="graph">The context graph</h2>
+      <p>The graph is built by the engine from the entire artifact set. Nodes are items (with stable IDs); edges are typed derivation relationships read out of <code>derives_from</code> frontmatter. The graph is a DAG — cycles are forbidden, and only <code>capability</code> and <code>constraint</code> are valid roots.</p>
 
-        <rect x="60" y="240" width="620" height="38" rx="8" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.20)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="370" y="264" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">JSON on stdout — consumed by the skill</text>
-      </svg>
-    </div>
+      <p>Two operations compute on the graph:</p>
+      <ul>
+        <li><strong>Affected set</strong> — given a set of changed item IDs, walk forward through <code>derives_from</code> to collect every reachable downstream item. This is the unit of work for <code>generate</code> and <code>reconcile</code>.</li>
+        <li><strong>Stale set</strong> — combination of: items modified since the snapshot, items removed since the snapshot, and the affected-set walk forward from both. Stale items map back to their owning artifacts to produce the stale-artifact set.</li>
+      </ul>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>CLI surface</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <div class="cmd-grid">
-          <div class="cmd-row"><code>vibeloom-engine parse --repo &lt;path&gt;</code> <span>Parse all artifacts; print typed JSON inventory</span></div>
-          <div class="cmd-row"><code>vibeloom-engine graph --repo &lt;path&gt;</code> <span>Build + persist the graph cache (preserves approval snapshots)</span></div>
-          <div class="cmd-row"><code>vibeloom-engine eval --repo &lt;path&gt; [--target &lt;tier&gt;]</code> <span>Run 9 structural checks; non-zero exit on blocking findings</span></div>
-          <div class="cmd-row"><code>vibeloom-engine affected --repo &lt;path&gt; --ids &lt;IDs...&gt;</code> <span>Forward DAG walk from changed item IDs</span></div>
-          <div class="cmd-row"><code>vibeloom-engine staleness --repo &lt;path&gt;</code> <span>Per-item hash diff + forward DAG walk; returns stale artifacts</span></div>
-          <div class="cmd-row"><code>vibeloom-engine detect-edits --repo &lt;path&gt;</code> <span>Two-tier compare: filesystem mtime fast-filter, per-item hash authoritative</span></div>
-          <div class="cmd-row"><code>vibeloom-engine status --repo &lt;path&gt;</code> <span>Emit + persist a status snapshot</span></div>
-        </div>
-      </div>
-    </details>
+      <p>The graph is persisted to <code>.vibeloom/state/context-graph.json</code>. It's regenerated on demand and is safe to delete — the next pass rebuilds it.</p>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>What the engine does NOT decide</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>The engine is strictly mechanical. It does not decide product meaning, whether a story faithfully represents a requirement, which interpretation of an ambiguous intent to adopt, or whether a drafted artifact is "good enough". All of those belong to the skill and the approval-gated workflow. Template materialization is also skill-invoked subagent work — the engine neither writes nor reads templates.</p>
-      </div>
-    </details>
-  </div>
+      <hr>
 
-  <!-- ═══ DATA MODEL ═══ -->
-  <div class="doc-section reveal" id="data-model">
-    <span class="label">Data Model</span>
-    <h2>Graph + Approved-State Snapshots</h2>
-    <p class="lead">The context graph holds artifacts, items, and <code>derives_from</code> edges. Alongside it, the engine stores a per-artifact <strong>approval snapshot</strong> — the approval-time mtime and canonical hash of every item inside every approved contract artifact. Both detectors (staleness, direct edits) are grounded in this snapshot.</p>
+      <h2 id="ids">IDs and frontmatter</h2>
+      <p>Every first-class item carries a stable, prefixed, fixed-width ID. There are 30+ ID families covering the contract stack — a few examples:</p>
 
-    <details class="expandable" open>
-      <summary class="expandable-header"><span>Cache schema</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Field</th><th>Shape</th><th>Purpose</th></tr></thead>
-            <tbody>
-              <tr><td><code>artifacts</code></td><td><code>{ artifact_id &rarr; artifact }</code></td><td>Frontmatter, items, current filesystem mtime per artifact</td></tr>
-              <tr><td><code>items</code></td><td><code>{ item_id &rarr; item }</code></td><td>Item type, body, <code>derives_from</code>, owning <code>artifact_id</code></td></tr>
-              <tr><td><code>edges</code></td><td><code>[{ source, target }]</code></td><td>Materialized item-level <code>derives_from</code> edges</td></tr>
-              <tr><td><code>approved_snapshots</code></td><td><code>{ artifact_id &rarr; { mtime, item_hashes } }</code></td><td>Per-approved-artifact mtime and canonical item hashes</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </details>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Canonical item hash</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>An item's canonical hash is a SHA-256 over a normalized JSON representation of its fields:</p>
-        <ul>
-          <li><strong>item_id is excluded</strong> — it's the lookup key, not content; a rename surfaces as <em>remove + add</em>, not a content match</li>
-          <li><strong><code>derives_from</code> is sorted lexicographically</strong> — derivation is a set, not a sequence</li>
-          <li><strong>Remaining fields</strong> (item type, section, description, scope, <code>artifact_id</code>, extra columns) are serialized with JSON sort_keys</li>
-          <li><strong>Volatile frontmatter</strong> on the owning artifact (path, mtime, approval timestamp, status) is not part of the item hash — it changes during normal lifecycle transitions and must not cause false drift</li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Snapshot lifecycle</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>A snapshot for an artifact is:</p>
-        <ul>
-          <li><strong>captured</strong> the first time the engine sees the artifact with <code>status: approved</code> and no prior snapshot</li>
-          <li><strong>preserved</strong> across cache rebuilds for as long as the artifact remains approved — even if its current filesystem state has diverged (this is what makes direct-edit detection work)</li>
-          <li><strong>dropped</strong> when the artifact transitions to <code>draft</code> (e.g., after a direct edit is detected and the skill reopens it)</li>
-        </ul>
-        <p>The next approval re-captures a fresh snapshot from the new approved state. No explicit "capture approval" command is needed; the engine infers transitions from <code>status</code> frontmatter on each run.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ DRIFT ═══ -->
-  <div class="doc-section reveal" id="drift">
-    <span class="label">Drift</span>
-    <h2>Drift Detection — Three Mechanisms</h2>
-    <p class="lead">The three drift forms from the methodology (structural, lifecycle, semantic) map to three concrete detectors. The first two run in the engine; the third runs in the skill.</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
-        <!-- 3 vertical lanes -->
-
-        <!-- Structural lane -->
-        <rect x="20" y="20" width="210" height="320" rx="12" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.18)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="125" y="44" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em" fill="#e84057">STRUCTURAL</text>
-        <text x="125" y="60" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">upstream changed</text>
-
-        <rect x="40" y="80" width="170" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="125" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="#e84057">staleness</text>
-
-        <text x="125" y="144" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">per-item hash diff</text>
-        <text x="125" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">current vs snapshot</text>
-        <text x="125" y="180" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">+ forward DAG walk</text>
-        <text x="125" y="194" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">from changed items</text>
-
-        <line x1="125" y1="220" x2="125" y2="240" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="40" y="240" width="170" height="32" rx="8" fill="rgba(232,64,87,0.06)" stroke="rgba(232,64,87,0.25)" stroke-width="1"/>
-        <text x="125" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#e84057">stale artifact set</text>
-        <text x="125" y="296" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">&rarr; <code>generate</code> or <code>reconcile</code></text>
-        <text x="125" y="322" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">engine</text>
-
-        <!-- Lifecycle lane -->
-        <rect x="255" y="20" width="210" height="320" rx="12" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.18)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="360" y="44" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em" fill="#e84057">LIFECYCLE</text>
-        <text x="360" y="60" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">approved file edited</text>
-
-        <rect x="275" y="80" width="170" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="360" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="#e84057">detect-edits</text>
-
-        <text x="360" y="144" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">fast filter: mtime</text>
-        <text x="360" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">equal &rarr; skip</text>
-        <text x="360" y="180" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">confirm: per-item hash</text>
-        <text x="360" y="194" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">added / removed / modified</text>
-
-        <line x1="360" y1="220" x2="360" y2="240" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="275" y="240" width="170" height="32" rx="8" fill="rgba(232,64,87,0.06)" stroke="rgba(232,64,87,0.25)" stroke-width="1"/>
-        <text x="360" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#e84057">auto-reopen to draft</text>
-        <text x="360" y="296" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">&rarr; user re-reviews</text>
-        <text x="360" y="322" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">engine</text>
-
-        <!-- Semantic lane -->
-        <rect x="490" y="20" width="210" height="320" rx="12" fill="rgba(232,64,87,0.04)" stroke="rgba(232,64,87,0.18)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="595" y="44" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em" fill="#e84057">SEMANTIC</text>
-        <text x="595" y="60" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">meaning shifted</text>
-
-        <rect x="510" y="80" width="170" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="595" y="104" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="600" fill="#e84057">semantic eval</text>
-
-        <text x="595" y="144" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">4 dimensions:</text>
-        <text x="595" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">faithful-repr, naming,</text>
-        <text x="595" y="172" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">implicit deps, cap gaps</text>
-        <text x="595" y="194" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#8a8a9a">breaking / advisory</text>
-
-        <line x1="595" y1="220" x2="595" y2="240" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="510" y="240" width="170" height="32" rx="8" fill="rgba(232,64,87,0.06)" stroke="rgba(232,64,87,0.25)" stroke-width="1"/>
-        <text x="595" y="260" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#e84057">findings (blocking or not)</text>
-        <text x="595" y="296" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">&rarr; <code>reconcile</code></text>
-        <text x="595" y="322" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">agent</text>
-      </svg>
-    </div>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Why mtime is a short-circuit, not a fallback</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Detection is authoritatively <strong>node-level via content hash</strong>. Filesystem mtime is a performance short-circuit: when a file's current mtime equals its approval-time mtime, we know the content is byte-identical and skip the hash comparison. When mtimes differ, we re-hash every item and classify changes as added, removed, or modified. Every reported edit goes through the hash check — nothing is reported from mtime alone.</p>
-        <p>Cosmetic edits (whitespace, non-semantic frontmatter) pass the mtime filter but match on every hash, so the artifact stays approved and no reopen is triggered.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ EVAL LAYERS ═══ -->
-  <div class="doc-section reveal" id="eval">
-    <span class="label">Eval</span>
-    <h2>How Eval Layers Compose</h2>
-    <p class="lead">Each <code>eval</code> invocation runs two passes. The engine's structural pass is blocking: if any of the nine mechanical checks fails, the target cannot advance to <code>approved</code>. The agent's semantic pass is informational and classifies findings as <code>breaking</code> (escalates in <code>pm</code>/<code>dev</code> delegated modes) or <code>advisory</code>.</p>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Pass order and stopping rule</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <ol>
-          <li><strong>Engine structural pass</strong> — fast, deterministic. If blocking findings are present, the approval gate is closed and the target must be reviewed and fixed before proceeding.</li>
-          <li><strong>Agent semantic pass</strong> — runs regardless of structural result, but its findings never override structural failures. Breaking semantic findings escalate in delegated modes (<code>pm</code>, <code>dev</code>); in <code>expert</code> they flow into the user review anyway.</li>
-          <li><strong>Combined report</strong> — the skill merges both finding lists into one response with severity-sorted items and specific IDs.</li>
-        </ol>
-        <p>See <a href="methodology.html#evals">Methodology &rarr; Eval Framework</a> for the full list of structural and semantic checks.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ STORAGE ═══ -->
-  <div class="doc-section reveal" id="storage">
-    <span class="label">Storage</span>
-    <h2>Storage — Flat JSON, Regenerable</h2>
-    <p class="lead">The engine persists derived state to two JSON files in the target repo. Both are regenerable; the markdown artifacts are the ground truth.</p>
-
-    <div class="table-wrap">
       <table>
-        <thead><tr><th>Path</th><th>Contents</th><th>When rebuilt</th></tr></thead>
+        <thead><tr><th>Tier</th><th>Family</th><th>Item type</th></tr></thead>
         <tbody>
-          <tr><td><code>.vibeloom/state/context-graph.json</code></td><td>Artifacts, items, edges, <code>approved_snapshots</code></td><td>On artifact change, context regeneration, or status / derivation-metadata change</td></tr>
-          <tr><td><code>.vibeloom/state/status.json</code></td><td>Lifecycle, freshness, coverage, affected scopes, current mode</td><td>On every <code>status</code> invocation</td></tr>
+          <tr><td>intent-specs</td><td><code>CAP-####</code></td><td>capability</td></tr>
+          <tr><td>intent-specs</td><td><code>CST-####</code></td><td>constraint</td></tr>
+          <tr><td>product-specs</td><td><code>FR-####</code></td><td>functional requirement</td></tr>
+          <tr><td>product-specs</td><td><code>STORY-####</code></td><td>user story</td></tr>
+          <tr><td>product-specs</td><td><code>BC-####</code></td><td>bounded context</td></tr>
+          <tr><td>product-specs</td><td><code>TERM-####</code></td><td>ubiquitous-language term</td></tr>
+          <tr><td>system-specs</td><td><code>CMP-####</code></td><td>component</td></tr>
+          <tr><td>system-specs</td><td><code>IF-####</code></td><td>typed interface</td></tr>
+          <tr><td>system-specs</td><td><code>BEH-####</code></td><td>component behavior</td></tr>
         </tbody>
       </table>
-    </div>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Why JSON and not a database</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>The engine is a short-lived CLI, not a service. JSON is human-readable, git-friendly, requires no runtime dependencies, and loads in milliseconds even for large graphs. The state file is a cache — if it's missing, corrupted, or fails validation, the engine regenerates graph structure from the markdown artifacts (the source of truth). Only <code>approved_snapshots</code> represent frozen past state that can't be recovered — losing them means the engine treats the current state of approved artifacts as the new approval baseline.</p>
-      </div>
-    </details>
+      <p>Each artifact carries YAML frontmatter recording lifecycle status, mode metadata, and per-item <code>derives_from</code> references. A typical component fragment:</p>
 
-    <details class="expandable">
-      <summary class="expandable-header"><span>Cache vs. ground truth</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>The markdown artifacts are always the source of truth. The graph cache is a derived view — rebuildable on demand. This means the engine can be audited, inspected, and version-controlled transparently. It also means the engine stays portable: clone a repo, install <code>vibeloom-engine</code>, run <code>graph</code>, and you have the full state reconstructed.</p>
+      <pre><code>---
+type: component
+status: approved
+approval_mode: user
+container: api
+component: notes-search
+---
+
+## IF-0014 · search(query, tags) → results
+derives_from: [FR-0007, STORY-0023]
+behavior: Returns the top 50 results matching all tags AND any token in query, ranked by recency.
+
+## DEP-0002 · depends_on: index-store
+derives_from: [BC-0003]
+interface: IF-0011 (read)
+
+## BEH-0019 · empty-query short-circuit
+derives_from: [STORY-0023]
+expected: An empty query with no tags returns 0 results without touching the index.</code></pre>
+
+      <p>The frontmatter parser is strict — required fields are validated by the engine, and unknown fields are flagged. This keeps the graph buildable without ambiguity.</p>
+
+      <hr>
+
+      <h2 id="dispatch">Subagent dispatch</h2>
+      <p>Code generation runs as scoped subagent waves. The Skill computes the affected component set from the engine's affected-set output, then dispatches one subagent per component.</p>
+
+      <ul>
+        <li><strong>Wave</strong> — a set of subagent tasks whose prerequisites are satisfied and whose write scopes are mutually compatible. Writes are disjoint by directory ownership declared in <code>component.md</code>, so subagents within a wave cannot collide.</li>
+        <li><strong>Load set</strong> — what each subagent receives: baseline (root config + defaults) + owned scope + a referenced foreign slice (only the IF-#### contracts of dependencies, not their internals) + relevant context. Typical loads sit at 6-12K tokens.</li>
+        <li><strong>Late-fetch</strong> — a single approved task-local additional context slice that a subagent may request once if it discovers a narrow missing dependency. Cap is one re-invocation per task; exceeding it surfaces a finding and exits.</li>
+        <li><strong>Spot reads</strong> — read-only access to specific items outside the load set, for verification only. Never used to expand write scope.</li>
+      </ul>
+
+      <p>The orchestrator validates cross-scope consistency after each wave: do the IFs match? do the dependencies resolve? are the BDD scenarios still satisfied? Failures in this validation reopen the affected components for another pass.</p>
+
+      <hr>
+
+      <h2 id="install">Install</h2>
+      <p>Zero install. Python 3.10+ is the only system requirement. From the Skill's perspective, the engine is invoked via:</p>
+      <pre><code>PYTHONPATH=&lt;skill-root&gt;/engine python3 -m vibeloom_engine &lt;command&gt; --repo &lt;target-repo&gt;</code></pre>
+
+      <p>Optional, for CLI-only direct use:</p>
+      <pre><code>cd &lt;skill-root&gt;/engine
+pip install -e .
+vibeloom-engine --version
+# vibeloom-engine 0.2.0</code></pre>
+
+      <hr>
+
+      <h2 id="quickstart">Quickstart</h2>
+      <p>Open a project directory in Claude Code or Codex. The Skill is picked up automatically.</p>
+
+      <pre><code>$ /vibeloom init --mode vibe "a CLI for journaling with tags"
+
+✓ Created intent.md (draft, 5 capabilities, 2 constraints)
+✓ Created defaults.md (draft, 7 defaults derived from intent)
+✓ Eval intent-specs: 0 blocking, 0 advisory
+→ Next: /vibeloom approve intent-specs
+
+$ /vibeloom approve intent-specs
+✓ intent-specs approved (mode=user, snapshot captured)
+✓ Auto-advanced compact system-specs (3 components)
+✓ Generated context: AGENTS.md, CLAUDE.md
+✓ Generated code: 9 files in 1 dispatch wave
+
+$ /vibeloom status
+✅ intent-specs    approved (clean)
+✅ system-specs    approved (clean, delegated)
+✅ context         current
+✅ code            current — 9 files, 3 components</code></pre>
+
+      <hr>
+
+      <h2 id="layout">Source layout</h2>
+      <p>The repo is small and self-contained.</p>
+      <pre><code>v02/
+├── SKILL.md                      # the skill, loaded by Claude Code / Codex
+├── vibeloom-methodology.md       # WHY — tiers, modes, ops, drift, eval
+├── vibeloom-implementation.md    # HOW — metadata, IDs, snapshots
+├── references/                   # load-on-demand skill guides
+│   ├── operations.md
+│   ├── modes.md
+│   ├── runtime.md
+│   ├── artifacts.md
+│   ├── eval.md
+│   └── troubleshooting.md
+├── assets/                       # 17 artifact templates
+│   ├── intent-specs/
+│   ├── product-specs/
+│   ├── system-specs/
+│   └── context/
+└── engine/                       # the deterministic Python package
+    ├── pyproject.toml
+    ├── vibeloom_engine/
+    │   ├── parser.py
+    │   ├── graph.py
+    │   ├── eval_.py
+    │   ├── staleness.py
+    │   ├── affected.py
+    │   ├── status.py
+    │   ├── ids.py
+    │   ├── schema.py
+    │   └── cli.py
+    └── tests/                    # 25 tests across parser, graph, eval, staleness, CLI</code></pre>
+
+      <hr>
+
+      <h2 id="testing">Testing</h2>
+      <p>The engine has 25 tests covering parser, graph, eval, staleness, and CLI. <code>pytest</code> is the only dev dependency.</p>
+      <pre><code>cd engine
+python3 -m venv .venv
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/pytest
+# 25 passed</code></pre>
+
+      <p>The Skill is, by nature, harder to unit-test — it runs inside an LLM. Behavior is verified end-to-end against the seven canonical operations on a set of seed projects.</p>
+
+      <div class="callout">
+        <strong>Next:</strong> read the <a class="linky" href="methodology.html">Methodology</a> for the WHY behind these mechanics, or jump to <a class="linky" href="index.html#start">getting started</a>.
       </div>
-    </details>
+
+    </article>
   </div>
-
-  <!-- ═══ QUICKSTART ═══ -->
-  <div class="doc-section reveal" id="quickstart">
-    <span class="label">Install</span>
-    <h2>Install + Verify</h2>
-
-    <ol class="steps">
-      <li>
-        <strong>Clone the repo</strong>
-<pre>git clone https://github.com/ilya-baimetov/vibeloom
-cd vibeloom</pre>
-        <span style="color:var(--text-tertiary)">No <code>pip install</code>, no dependencies. Python 3.10+ is the only requirement — the engine is pure Python with its own minimal frontmatter parser.</span>
-      </li>
-      <li>
-        <strong>Verify the engine runs</strong>
-<pre>PYTHONPATH=v02/engine python3 -m vibeloom_engine --version
-# vibeloom-engine 0.2.0</pre>
-      </li>
-      <li>
-        <strong>Use the skill</strong>
-        <span style="color:var(--text-tertiary)">Open Claude Code or Codex inside a project. The VibeLoom skill in <code>v02/</code> is picked up automatically and invokes the engine via <code>python -m</code>. Run <code>/vibeloom init --mode pm</code> to bootstrap a governed project, or <code>/vibeloom import --mode pm</code> to reconstruct a contract from existing code.</span>
-      </li>
-    </ol>
-
-    <div style="text-align:center; margin-top:48px">
-      <p style="font-size:1.05rem; font-weight:600; margin-bottom:8px">Zero install. Zero dependencies. Pure Python.</p>
-      <p style="color:var(--text-tertiary); margin-bottom:32px">No API keys. No subscription fees. No runtime service to operate.</p>
-      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
-        <a href="methodology.html" class="btn btn-secondary">
-          Read the Methodology
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:var(--accent); color:#fff; border-radius:10px; font-weight:600; text-decoration:none; font-size:0.95rem;">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          View on GitHub
-        </a>
-      </div>
-    </div>
-  </div>
-
 </div>
 
+</main>
+
 <footer>
-  <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
-  <p class="footer-links">
-    <a href="index.html">Home</a>
-    &middot;
-    <a href="methodology.html">Methodology</a>
-    &middot;
-    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
-  </p>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="/"><img src="vibeloom-logo-loom.svg" alt="" width="22" height="22"> VibeLoom</a>
+      <div class="nav">
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="consulting.html">Consulting</a>
+        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="small">
+      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>v0.2 · MIT licensed · Built by <a href="consulting.html">Ilya Baimetov</a></span>
+    </div>
+  </div>
 </footer>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length) return;
+    var sections = links.map(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (s) { return s.el; });
+    function set() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].el.offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      current.a.classList.add('is-active');
+    }
+    window.addEventListener('scroll', set, { passive: true });
+    set();
+  })();
+</script>
 </body>
 </html>

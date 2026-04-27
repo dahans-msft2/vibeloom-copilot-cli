@@ -1,697 +1,483 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeLoom Methodology — Contract-Driven Development</title>
-<meta name="description" content="A deep dive into VibeLoom's contract-driven methodology, including its contract stack, approval flow, eval framework, and multi-agent module model.">
-<meta name="author" content="VibeLoom">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Methodology — Contract-Driven Agentic Engineering · VibeLoom</title>
+<meta name="description" content="The VibeLoom methodology: a five-tier contract stack, four operating modes, three forms of drift detection. How contract-driven agentic engineering works.">
+<meta name="keywords" content="contract-driven methodology, agentic engineering methodology, contract stack, drift detection, AI agent governance, modes, generation flow, eval">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:locale" content="en_US">
 <link rel="canonical" href="https://vibeloom.ai/methodology">
 
-<!-- Open Graph -->
 <meta property="og:type" content="article">
+<meta property="og:site_name" content="VibeLoom">
 <meta property="og:url" content="https://vibeloom.ai/methodology">
-<meta property="og:title" content="VibeLoom Methodology — Contract-Driven Development">
-<meta property="og:description" content="The complete guide to VibeLoom's contract-driven methodology, including its contract stack, eval framework, module contracts, and multi-agent coordination.">
+<meta property="og:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta property="og:description" content="Five-tier contract stack, four operating modes, three forms of drift detection. The full methodology.">
+<meta property="og:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
+<meta property="og:image:alt" content="VibeLoom logo — woven threads">
+<meta property="article:author" content="Ilya Baimetov">
+<meta property="article:published_time" content="2026-04-17T00:00:00Z">
+<meta property="article:modified_time" content="2026-04-26T00:00:00Z">
 
-<!-- Twitter -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="VibeLoom Methodology — Contract-Driven">
-<meta name="twitter:description" content="A deep dive into VibeLoom's contract-driven methodology, including its contract stack, eval framework, and module contracts.">
+<meta name="twitter:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta name="twitter:description" content="Five-tier contract stack, four operating modes, three forms of drift detection. The full methodology.">
+<meta name="twitter:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
+<meta name="twitter:image:alt" content="VibeLoom logo — woven threads">
 
 <link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
-<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="styles.css">
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "TechArticle",
-  "headline": "VibeLoom Methodology: Contract-Driven Development",
-  "description": "A deep dive into VibeLoom's contract-driven methodology, including its contract stack, eval framework, and multi-agent modules.",
-  "url": "https://vibeloom.ai/methodology",
-  "mainEntityOfPage": "https://vibeloom.ai/methodology",
-  "publisher": {
-    "@type": "Organization",
-    "name": "VibeLoom",
-    "url": "https://vibeloom.ai"
-  },
-  "about": [
+  "@graph": [
     {
-      "@type": "Thing",
-      "name": "spec-driven development"
+      "@type": "TechArticle",
+      "headline": "VibeLoom Methodology",
+      "description": "The contract-driven methodology for long-lived AI-coded projects: principles, contract stack, modes, operations, drift detection.",
+      "author": {"@type":"Person","name":"Ilya Baimetov"},
+      "publisher": {"@type":"Organization","name":"VibeLoom","logo":{"@type":"ImageObject","url":"https://vibeloom.ai/vibeloom-logo-loom.svg"}},
+      "image": "https://vibeloom.ai/vibeloom-logo-loom.svg",
+      "url": "https://vibeloom.ai/methodology",
+      "mainEntityOfPage": "https://vibeloom.ai/methodology",
+      "datePublished": "2026-04-17",
+      "dateModified": "2026-04-26",
+      "inLanguage": "en-US"
     },
     {
-      "@type": "Thing",
-      "name": "spec-first development"
-    },
-    {
-      "@type": "Thing",
-      "name": "contract-driven development"
-    },
-    {
-      "@type": "Thing",
-      "name": "contract-first development"
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Overview","item":"https://vibeloom.ai/"},
+        {"@type":"ListItem","position":2,"name":"Methodology","item":"https://vibeloom.ai/methodology"}
+      ]
     }
-  ],
-  "keywords": [
-    "spec-driven",
-    "contract-driven",
-    "spec-first",
-    "contract-first",
-    "AI development methodology",
-    "vibe coding methodology"
   ]
 }
 </script>
 </head>
 <body>
 
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="vibeloom-logo-loom.svg" alt="VibeLoom logo">
-    VibeLoom
-  </a>
-  <div class="nav-links">
-    <a href="index.html#features">Features</a>
-    <a href="index.html#how-it-works">How it works</a>
-    <a href="methodology.html" class="active">Methodology</a>
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="/" aria-label="VibeLoom home"><img src="vibeloom-logo-loom.svg" alt="" width="26" height="26"> VibeLoom</a>
+  <div class="links">
+    <a href="index.html">Overview</a>
+    <a href="methodology.html" class="is-active" aria-current="page">Methodology</a>
     <a href="implementation.html">Implementation</a>
-    <a href="index.html#get-started" class="nav-cta">Get Started</a>
+    <a href="consulting.html">Consulting</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta" href="index.html#start">Get started</a>
   </div>
-  <details class="nav-mobile">
-    <summary aria-label="Open navigation menu">
-      Menu
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+  <details class="menu">
+    <summary aria-label="Open menu">Menu
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </summary>
-    <div class="nav-mobile-panel">
-      <a href="index.html#features">Features</a>
-      <a href="index.html#how-it-works">How it works</a>
-      <a href="methodology.html" class="active">Methodology</a>
+    <div class="panel">
+      <a href="index.html">Overview</a>
+      <a href="methodology.html" class="is-active" aria-current="page">Methodology</a>
       <a href="implementation.html">Implementation</a>
-      <a href="index.html#get-started" class="nav-cta">Get Started</a>
+      <a href="consulting.html">Consulting</a>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      <a class="cta" href="index.html#start">Get started</a>
     </div>
   </details>
 </nav>
 
-<!-- HEADER -->
-<div class="page-header reveal">
-  <div class="section-inner section-inner--narrow">
-    <h1>The VibeLoom Methodology</h1>
-    <p>A deep dive into contract-driven vibe coding: how it works, why each layer exists, and how to use it effectively.</p>
+<main id="main">
+<header class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Methodology · v0.2</span>
+    <h1>The contract-driven methodology for AI-coded projects.</h1>
+    <p class="lead">VibeLoom turns intent into a tiered, version-controlled contract — durable, derivation-aware, and treated as both source of truth and eval system. This page explains the principles, the artifacts, the operations, and the invariants that hold the stack together.</p>
+    <aside class="thesis">
+      <span class="thesis-label">Core thesis</span>
+      AI-generated systems need a governed contract stack, not a longer prompt. The stack doubles as the eval surface that keeps downstream artifacts coherent across every generation, contributor, and revision.
+    </aside>
+    <div class="meta">
+      <span>~14 min read</span>
+      <span>Source: <code>vibeloom-methodology.md</code></span>
+      <span>Version 0.2</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="doc-layout">
+    <aside class="doc-toc" aria-label="Methodology table of contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#principles" class="is-active">Principles</a></li>
+        <li><a href="#problem">The problem</a></li>
+        <li><a href="#vision">The bet</a></li>
+        <li><a href="#architecture">Three-layer architecture</a></li>
+        <li><a href="#contract">The contract stack</a></li>
+        <li><a href="#graph">The context graph</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#operations">Operations</a></li>
+        <li><a href="#lifecycle">Generation, approval, lifecycle</a></li>
+        <li><a href="#evals">Eval, two layers</a></li>
+        <li><a href="#drift">Drift, three forms</a></li>
+        <li><a href="#whenuse">When to use it</a></li>
+        <li><a href="#compare">How it compares</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc-body">
+
+      <h2 id="principles">Principles</h2>
+      <p>VibeLoom rests on four load-bearing ideas. Everything else — the artifacts, the modes, the operations, the engine — is mechanism in service of these.</p>
+      <ol>
+        <li><strong>The system is defined as a contract stack, not a set of stale one-off specs.</strong> Specs are a graph of derived items, not a folder of documents.</li>
+        <li><strong>The contract stack doubles as the eval stack.</strong> Upstream items are the basis for downstream work and the criterion against which it's checked.</li>
+        <li><strong>Agents are responsible for generation and validation, gated by the user.</strong> Mode picks where the gates sit; everything between gates is the agent's job.</li>
+        <li><strong>Scoped context enables agent scaling.</strong> Subagents receive bounded load sets, not whole-repo dumps. The context graph makes this safe at scale.</li>
+      </ol>
+
+      <hr>
+
+      <h2 id="problem">The problem VibeLoom is designed for</h2>
+      <p>AI coding agents create local momentum but struggle to preserve consistency over time. The first generation pass can look impressive; the twentieth is where the cost shows up — meaning shifts, decisions disappear, and every new agent has to rediscover what the software is supposed to be. Four named failure modes show up in any sufficiently large AI-coded project:</p>
+      <ul>
+        <li><strong>Semantic drift</strong> — concepts and invariants shift subtly with every prompt.</li>
+        <li><strong>Invisible governance</strong> — intent lives only in chat history with no durable review surface.</li>
+        <li><strong>Context fragmentation</strong> — large codebases exceed one agent's context, making ownership guesswork.</li>
+        <li><strong>Reconciliation failure</strong> — manual edits and drift have no principled path back to specifications.</li>
+      </ul>
+      <p>These four failure modes are the entire reason the methodology exists. Every artifact, mode, operation, and engine command in VibeLoom maps to mitigating one or more of them.</p>
+
+      <hr>
+
+      <h2 id="vision">The bet: implementation goes commodity, intent doesn't</h2>
+      <p>The history of AI coding tools is a history of compensating for what the model couldn't yet do. Plan-first tools exist because the model wouldn't hold a plan. Per-feature spec workflows exist because the model would skip steps. Steering files exist because the model would forget conventions. IDE scaffolding exists because the model would lose context. Every one of these mechanisms is a workaround for a current limitation — and every one of them becomes overhead the moment the model improves past it.</p>
+
+      <p>Look at the ground that's already shifted. <strong>Tessl</strong>, which launched as a per-file <em>spec-as-source</em> tool — the spec is the only editable artifact, code is regenerated, marked <code>DO NOT EDIT</code> — visibly pivoted in early 2026 to a "package manager for agent skills and context." The per-file implementation-control story didn't survive contact with smarter agents. Their bet now is on context: better instructions, better library knowledge, better evaluation. That's a real bet, and a strong one — but it stops at the skill boundary. There's no artifact in Tessl that says what your <em>system</em> is.</p>
+
+      <p><strong>GitHub Spec Kit</strong> invests its complexity budget in workflow ceremony — seven phases, slash commands, branch-scoped specs that go stale post-merge. Its constitution is genuinely durable; the rest is scaffolding the model is rapidly outgrowing. <strong>Kiro</strong> packages the spec/design/tasks pipeline into an IDE with credit billing; its steering files and hooks are useful, but the per-feature artifacts go static the moment they're approved.</p>
+
+      <p>The pattern is clear. Tools that double down on directing the model's <em>implementation</em> are betting against the model curve. <strong>The model curve is steeper than the tooling curve.</strong></p>
+
+      <div class="callout">
+        <strong>The bet, in one sentence.</strong> Implementation is becoming a commodity; intent isn't. The dark factory needs a blueprint, and the blueprint has to outlive the machinery.
+      </div>
+
+      <p>VibeLoom bets the other direction. We treat the <strong>contract</strong> — intent, product requirements, domain model, system architecture, component invariants — as the load-bearing artifact, governed by a context graph that detects when changes upstream make downstream specs stale. The model writes the code; the contract governs whether the code is <em>what you meant</em>. As models get better at code, the contract doesn't become less valuable — it becomes the only thing that's still uniquely yours.</p>
+
+      <p>Every section that follows — the contract stack, the context graph, the modes, the operations, the eval and drift mechanisms — exists to make this bet operational. If the bet is wrong, VibeLoom is a more disciplined version of what other tools already do. If the bet is right, contract-driven tools compound while implementation-direction tools age. The downside is bounded; the upside scales with model improvement.</p>
+
+      <hr>
+
+      <h2 id="architecture">Three-layer architecture: contract → context → code</h2>
+      <p>VibeLoom partitions a governed application into three layers.</p>
+      <p><strong><code>contract</code> — governed semantic truth.</strong> The user seeds the intent and retains approval-policy authority. Depending on mode, some tiers are explicit user stops while others may auto-advance under delegated rules. The agent generates, validates, and refines the tiered <code>intent-specs</code> → <code>product-specs</code> → <code>system-specs</code> stack. Each tier derives from and is checked against approved upstream truth.</p>
+      <p><strong><code>context</code> — definitive execution config for agents, plus read-only change records.</strong> These artifacts do not require approval. They are generated only from approved contract truth. Users may inspect, eval, review, and edit them when needed, but if context is wrong, the normal fix path is upstream in the contract.</p>
+      <p><strong><code>code</code> — the executable result.</strong> Users are not expected to edit code directly. The orchestrator agent reads contract and context, identifies affected scopes, and dispatches scoped worker agents. Each worker receives only the slice of context and contract pertinent to its scope.</p>
+
+      <div class="callout">
+        <strong>Important note on terminology:</strong> the <code>context</code> tier in VibeLoom means generated execution truth (configs, decision records, BDD scenarios) — <em>not</em> the LLM's context window. The two are easy to confuse.
+      </div>
+
+      <hr>
+
+      <h2 id="contract">The contract stack, in detail</h2>
+      <p>Three contract tiers, plus context and code. Each derives from the approved tier above. Every artifact is parsed into <strong>items</strong> — capabilities, requirements, stories, components, interfaces, behaviors. Each item carries a stable, prefixed ID, and each derivation between items is declared explicitly in artifact frontmatter as <code>derives_from</code>.</p>
+
+      <h3>Tier 1 · <code>intent-specs</code></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>intent</code></td><td>Prose-first description: capabilities and hard constraints</td><td>User request</td></tr>
+          <tr><td><code>defaults</code></td><td>Repo-wide constitution: binding global rules, tech baseline, quality guardrails</td><td><code>intent</code></td></tr>
+        </tbody>
+      </table>
+      <p>In <code>vibe</code> mode, <code>intent</code> also carries a product-summary section that seeds future product-specs if the project later upgrades.</p>
+
+      <h3>Tier 2 · <code>product-specs</code> <span style="font-weight:400;color:var(--c-ink-5);font-size:0.9rem">(absent in vibe mode)</span></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>prd</code></td><td>Objectives, key results, metrics, functional/non-functional requirements</td><td><code>intent</code></td></tr>
+          <tr><td><code>usm</code></td><td>Epics, flows, stories, acceptance criteria, milestones</td><td><code>intent</code> + <code>prd</code></td></tr>
+          <tr><td><code>dm</code></td><td>Domain model: bounded contexts, aggregates, entities, value objects, invariants, ubiquitous language</td><td><code>intent</code> + <code>prd</code> + <code>usm</code></td></tr>
+        </tbody>
+      </table>
+      <p>The domain model is the semantic anchor for the whole stack: components are derived from bounded contexts, not from folder shape.</p>
+
+      <h3>Tier 3 · <code>system-specs</code></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>system</code></td><td>External actors, trust boundaries, system-wide non-functional requirements</td><td>Approved product-specs</td></tr>
+          <tr><td><code>containers</code></td><td>Runtime topology: how the system is deployed</td><td><code>system</code></td></tr>
+          <tr><td><code>container.md</code></td><td>Per-container detail: components inside, internal dependencies</td><td><code>containers</code></td></tr>
+          <tr><td><code>component.md</code></td><td>Per-component spec: typed interfaces (IF-####), dependencies (DEP-####), behaviors (BEH-####), owned filesystem paths</td><td><code>container</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tier 4 · <code>context</code> <span style="font-weight:400;color:var(--c-ink-5);font-size:0.9rem">(derived, no approval)</span></h3>
+      <p>Generated execution truth: <code>config</code> (CLAUDE.md / AGENTS.md at root, container, and component scope), <code>pdr</code> (product decision records), <code>adr</code> (architecture decision records), <code>bdd</code> (Gherkin scenarios per component).</p>
+
+      <h3>Tier 5 · <code>code</code></h3>
+      <p>Source organized by <code>&lt;container&gt;/&lt;component&gt;</code>, tests (unit, integration, BDD), and runtime (packaging, deployment, migrations). Code is judged against upstream — never approved as a separate tier.</p>
+
+      <hr>
+
+      <h2 id="graph">The context graph</h2>
+      <p>The contract stack is what you author. The <strong>context graph</strong> is what the engine builds from it — a single, queryable model of the system, assembled by parsing every artifact's items and following every <code>derives_from</code> edge. Almost every load-bearing operation in VibeLoom — derivation, affected-set computation, drift detection, scoped subagent dispatch — runs on this graph.</p>
+
+      <h3>Anatomy</h3>
+      <p>Items are the nodes; <code>derives_from</code> declarations are the edges. Together they form a <strong>directed acyclic graph</strong>: cycles are forbidden, and only capabilities and constraints are valid roots. Every other item, transitively, derives from one or more capabilities or constraints.</p>
+
+      <h3>Why it's load-bearing</h3>
+      <ul>
+        <li><strong>Derivation order.</strong> The graph determines what to generate next: never a downstream item before its upstream is approved.</li>
+        <li><strong>Affected-set computation.</strong> When an item changes, walking forward through <code>derives_from</code> yields every item that may need to follow.</li>
+        <li><strong>Drift detection.</strong> The graph is what makes drift <em>locatable</em> — a stale item maps back to its owning artifact, and forward to every artifact that depends on it.</li>
+        <li><strong>Scoped subagent dispatch.</strong> The graph makes it safe to run parallel subagents: each agent's load set is a precise slice of the graph; write scopes are disjoint by construction.</li>
+        <li><strong>Traceability.</strong> Any code, test, or context file can be traced back to the capabilities and constraints it implements.</li>
+      </ul>
+
+      <h3>How it relates to authoring</h3>
+      <p>You don't author the graph — you author artifacts. The graph is computed: parsed from frontmatter, validated for integrity, persisted as cache. If two artifacts disagree on a derivation edge, that's a structural finding the engine surfaces immediately. If you delete an upstream item, every downstream item that referenced it shows up as broken on the next pass.</p>
+      <p>This is what makes the methodology <em>enforceable</em> rather than aspirational. Without the graph, contract-driven would be a discipline. With it, it's a substrate.</p>
+
+      <hr>
+
+      <h2 id="modes">Four modes</h2>
+      <p>A mode controls three things: which tiers the user explicitly co-authors and approves, which are delegated to the agent, and whether the contract stack is full or compact.</p>
+
+      <table>
+        <thead><tr><th>Mode</th><th>Stack</th><th>User owns</th><th>Auto-advances</th></tr></thead>
+        <tbody>
+          <tr><td><code>vibe</code></td><td>Compact (intent + defaults + flat system)</td><td>intent-specs</td><td>system, code</td></tr>
+          <tr><td><code>pm</code></td><td>Full</td><td>intent-specs, product-specs</td><td>system-specs</td></tr>
+          <tr><td><code>dev</code></td><td>Full</td><td>intent-specs, system-specs</td><td>product-specs</td></tr>
+          <tr><td><code>expert</code></td><td>Full</td><td>all three contract tiers</td><td>nothing</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Vibe → full upgrade is one-way.</strong> Run <code>/vibeloom init --upgrade --mode pm|dev|expert</code> to promote a vibe repo to a full mode. Compact <code>intent</code> seeds full <code>prd</code>/<code>usm</code>/<code>dm</code>; flat <code>system</code> expands into the full <code>system</code> + <code>containers</code> + per-component layout. There is no downgrade.</p>
+
+      <p><strong>Delegated auto-advance is bounded.</strong> Even in <code>vibe</code>, <code>pm</code>, and <code>dev</code>, the agent only auto-advances when the structural eval passes <em>and</em> no breaking semantic change is detected. Breaking change means any mutation to an existing approved item; only adding new items consistent with approved truth is non-breaking.</p>
+
+      <hr>
+
+      <h2 id="operations">Eight operations</h2>
+      <p>The CLI surface is intentionally small. <code>generate</code> and <code>eval</code> are the two primitives; the others are interactive shells, lifecycle transitions, or read-only reports.</p>
+
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>/vibeloom init</code></td><td>Bootstrap an ungoverned repo. Picks a mode and an initial intent. A separate upgrade flow promotes a vibe repo to a full mode (one-way).</td></tr>
+          <tr><td><code>/vibeloom import</code></td><td>Reconstruct a candidate contract bottom-up from existing code.</td></tr>
+          <tr><td><code>/vibeloom generate</code></td><td>Forward-back-pass produce the next affected tier from approved upstream truth. Idempotent.</td></tr>
+          <tr><td><code>/vibeloom eval</code></td><td>Structural plus semantic validation; reports findings, modifies nothing.</td></tr>
+          <tr><td><code>/vibeloom review</code></td><td>Interactive shell on <code>eval</code> — surface findings, propose bounded fixes, loop until you proceed.</td></tr>
+          <tr><td><code>/vibeloom reconcile</code></td><td>User-initiated remediation loop for any of the three drift forms. Always user-initiated.</td></tr>
+          <tr><td><code>/vibeloom approve</code></td><td>Advance a reviewed contract approval unit from <code>draft</code> to <code>approved</code>.</td></tr>
+          <tr><td><code>/vibeloom status</code></td><td>Read-only report of lifecycle, freshness, coverage, affected scope, and current mode.</td></tr>
+        </tbody>
+      </table>
+
+      <p>Plus a <code>$vibeloom</code> shorthand that triages by current state and suggests the next operation. Full CLI syntax — flags, targets, scopes — lives in <a class="linky" href="implementation.html#cli">Implementation · Engine CLI</a>.</p>
+
+      <div class="callout">
+        <strong>Why this works at scale.</strong> Because the context graph maps each item to its owning artifact and each component to a disjoint slice of the filesystem, <code>generate</code> can dispatch parallel subagents safely — each with a precise, bounded load set, no cross-talk between writes. The orchestration mechanics live in <a class="linky" href="implementation.html#dispatch">Implementation · Subagent dispatch</a>.
+      </div>
+
+      <hr>
+
+      <h2 id="lifecycle">Generation, approval, lifecycle</h2>
+      <p>Every generation is <strong>forward-back</strong> within a tier. The forward pass produces artifacts in dependency order. The back pass checks whether later artifacts constrain earlier ones — if a story implies a requirement that wasn't in the PRD, the back pass reopens the PRD as draft and amends it. The loop terminates when nothing more reopens. Generation is idempotent: same approved upstream, same output.</p>
+
+      <p>The lifecycle itself is intentionally two states: <code>draft</code> and <code>approved</code>. No in-progress, no review-pending, no published. <code>draft</code> means "not yet trusted as upstream truth"; <code>approved</code> means "downstream tiers may derive from this."</p>
+
+      <p>An <strong>approval unit</strong> is one contract tier — the affected artifact set within it advances together. <code>approve intent-specs</code> moves both <code>intent.md</code> and <code>defaults.md</code> if they're coherent. Tier-level approval keeps related artifacts in sync.</p>
+
+      <p>On approval, the engine captures an <strong>approved-state snapshot</strong>: a per-item content fingerprint of every approved artifact. It's the basis for staleness and direct-edit detection, preserved across rebuilds and discarded only when an artifact returns to <code>draft</code>. (Algorithm and on-disk format: see <a class="linky" href="implementation.html#snapshot">Implementation · Approved-state snapshot</a>.)</p>
+
+      <hr>
+
+      <h2 id="evals">Eval, two layers</h2>
+      <p>VibeLoom has two stacked eval layers. The structural layer is deterministic (engine-side); the semantic layer is judgment-based (agent-side). Both run in <code>eval</code> and <code>review</code>.</p>
+
+      <h3>Structural — 9 checks (blocking on approval)</h3>
+      <ol>
+        <li><strong>Lifecycle consistency</strong> — every artifact's frontmatter status matches its tier rules.</li>
+        <li><strong>Reference integrity</strong> — every <code>derives_from</code> resolves to an existing item.</li>
+        <li><strong>Required fields</strong> — frontmatter completeness per artifact type.</li>
+        <li><strong>Declared relationships</strong> — items live in correct artifacts, scopes, and tiers.</li>
+        <li><strong>Stack integrity</strong> — tier order respected; no upward derivation.</li>
+        <li><strong>Coverage</strong> — every non-terminal upstream item has at least one downstream item.</li>
+        <li><strong>Contradiction</strong> — no downstream item directly conflicts with upstream meaning.</li>
+        <li><strong>Componentization fit</strong> <em>(full modes only)</em> — every component maps to exactly one bounded context; every BC sits in exactly one container.</li>
+        <li><strong>Context sufficiency</strong> <em>(full modes only)</em> — every code-owning component has the execution config it needs.</li>
+      </ol>
+
+      <h3>Semantic — 4 dimensions (breaking or advisory)</h3>
+      <ol>
+        <li><strong>Faithful representation</strong> — downstream content does not narrow, widen, or reverse upstream meaning.</li>
+        <li><strong>Naming consistency</strong> — terms align with the ubiquitous language (<code>TERM-####</code> in the domain model).</li>
+        <li><strong>Implicit dependencies</strong> — load-bearing references are explicit in <code>derives_from</code>, not hidden in prose.</li>
+        <li><strong>Capability gaps</strong> — every <code>CAP-####</code> capability and <code>CST-####</code> constraint is substantively addressed downstream.</li>
+      </ol>
+
+      <p>The principle behind both layers: <em>false positives are acceptable; false negatives are not</em>. An over-marked stale set causes unnecessary review. An under-marked set lets drift leak silently past approval gates.</p>
+
+      <hr>
+
+      <h2 id="drift">Drift, three named forms</h2>
+      <p>Drift is the central concern of v0.2. It comes in three forms, and each has its own detection mechanism.</p>
+
+      <table>
+        <thead><tr><th>Form</th><th>What it is</th><th>Detection</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Structural</strong></td>
+            <td>Approved upstream item modified or removed since downstream was last synchronized.</td>
+            <td>Engine: content diff against the approved snapshot, propagated forward through the derivation graph.</td>
+          </tr>
+          <tr>
+            <td><strong>Lifecycle</strong></td>
+            <td>Approved contract artifact edited outside the flow.</td>
+            <td>Engine: detects approved-file edits and auto-reopens them to <code>draft</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Semantic</strong></td>
+            <td>Downstream content no longer represents upstream meaning even when structure matches.</td>
+            <td>Agent: 4-dimension semantic eval. Findings are <em>breaking</em> or <em>advisory</em>.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><code>reconcile</code> handles all three. It is the user-initiated loop where conflicts are surfaced with item IDs, the user picks fix direction (amend upstream, preserve upstream and correct downstream, or alternative), and <code>generate</code> is invoked on the affected artifacts. The agent never auto-invokes reconcile.</p>
+
+      <hr>
+
+      <h2 id="whenuse">When to use VibeLoom</h2>
+      <p>VibeLoom is strongest where prompt-only generation stops being reliable. Use it when:</p>
+      <ul>
+        <li>The codebase must survive more than one generation step, more than one contributor, or more than one architectural revision</li>
+        <li>Multiple bounded contexts, non-trivial workflows, or meaningful technical boundaries are present</li>
+        <li>Multiple agents or users may work in parallel and need consistent context</li>
+        <li>Semantic coherence matters more than raw generation speed</li>
+      </ul>
+
+      <p>VibeLoom adds ceremony. For a weekend prototype, single-file utility, or throwaway script, prompt-only generation is likely faster and sufficient. For anything that will be maintained, extended, or shared, VibeLoom pays for itself through reduced drift and explicit traceability.</p>
+
+      <hr>
+
+      <h2 id="compare">How VibeLoom compares</h2>
+      <p>The right way to compare AI-coding tools is to ask <em>where each one invests its complexity budget</em> — because that's where the tool's value lives, and that's what determines whether the value compounds or ages as models improve. Five dimensions, four tools, honest comparison.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>VibeLoom</th>
+            <th>GitHub Spec Kit</th>
+            <th>Kiro</th>
+            <th>Tessl</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Where the complexity budget goes</strong></td>
+            <td>Contract graph + reconciliation</td>
+            <td>Per-feature workflow ceremony + constitution</td>
+            <td>IDE + per-feature spec pipeline</td>
+            <td>Reusable context packaging + registry</td>
+          </tr>
+          <tr>
+            <td><strong>Scope of governance</strong></td>
+            <td>Whole-system (context graph)</td>
+            <td>Per-feature + global constitution</td>
+            <td>Per-feature + global steering files</td>
+            <td>Per-skill (reusable, cross-project)</td>
+          </tr>
+          <tr>
+            <td><strong>What persists across generations</strong></td>
+            <td>Specs evolve, graph-tracked</td>
+            <td>Specs decay, branch-scoped</td>
+            <td>Specs go static post-creation</td>
+            <td>Skills evolve (semver-versioned)</td>
+          </tr>
+          <tr>
+            <td><strong>Coupling to current model capability</strong></td>
+            <td>Low — value grows with model quality</td>
+            <td>Medium-high — ceremony scaffolds the model</td>
+            <td>High — workflow keeps the model on rails</td>
+            <td>Low — better models use better context better</td>
+          </tr>
+          <tr>
+            <td><strong>Cross-cutting coherence</strong></td>
+            <td>Native (graph + DDD invariants)</td>
+            <td>Constitution only — features don't talk</td>
+            <td>Steering files only — specs are siloed</td>
+            <td>None at system level — skills are independent</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Where each tool lands relative to the bet.</strong> Spec Kit and Kiro double down on directing implementation per feature, with light global rules layered on top. As models improve, that ceremony becomes overhead. Tessl <em>already pivoted</em> in early 2026 — they walked away from per-file <code>DO NOT EDIT</code> spec-as-source and reorganized around versioned context skills. That move validates the bet from a different angle: managing what the agent <em>knows</em> beats managing what it <em>writes</em>. VibeLoom takes the next step up the same staircase: managing what the system <em>is supposed to be</em> beats managing what each agent invocation knows.</p>
+
+      <p><strong>Where each tool wins.</strong> Spec Kit is the strongest open-source starting point with the largest community and a genuinely durable constitution mechanism. Kiro is the cleanest auditable per-feature trail for regulated environments inside an integrated IDE. Tessl is the strongest per-skill knowledge distribution layer; if you want to make a single agent invocation 3× more accurate at using a specific library, Tessl is what you reach for. None of these are bad tools — they're betting on different ground.</p>
+
+      <p><strong>Where the bet is weakest.</strong> Contracts decay too if nobody maintains them; the context graph detects drift but doesn't prevent cultural neglect. The DDD vocabulary in full modes narrows the addressable market. And if Tessl extends upward into system-scope skills, they could occupy adjacent ground. The bet is asymmetric — bounded downside, scales with model improvement. That's a position worth taking.</p>
+
+      <div class="callout">
+        <strong>Next:</strong> read the <a class="linky" href="implementation.html">Implementation page</a> for the engine internals, or jump straight to <a class="linky" href="index.html#start">getting started</a>.
+      </div>
+
+    </article>
   </div>
 </div>
 
-<!-- CONTENT -->
-<div class="content section-inner section-inner--narrow">
-
-  <!-- TOC -->
-  <div class="reveal">
-    <span class="label">On this page</span>
-    <div class="toc">
-      <div class="toc-item"><a href="#positioning">Context</a><span class="toc-desc">Why These Terms Matter — what spec-first and contract-driven actually mean</span></div>
-      <div class="toc-item"><a href="#comparison">Landscape</a><span class="toc-desc">How VibeLoom Compares — side-by-side with Tessl, Kiro, and GitHub Spec Kit</span></div>
-      <div class="toc-item"><a href="#core-thesis">Foundation</a><span class="toc-desc">Core Thesis — the principles that anchor the methodology</span></div>
-      <div class="toc-item"><a href="#contract-stack">Architecture</a><span class="toc-desc">The Contract Stack — five tiers from intent to running code</span></div>
-      <div class="toc-item"><a href="#workflow">Workflow</a><span class="toc-desc">How It All Fits Together — artifacts moving through the lifecycle</span></div>
-      <div class="toc-item"><a href="#modes">Scaling</a><span class="toc-desc">Four Modes — vibe, pm, dev, expert: pick the right gates</span></div>
-      <div class="toc-item"><a href="#evals">Quality</a><span class="toc-desc">Eval Framework — structural (engine) and semantic (agent) checks</span></div>
-      <div class="toc-item"><a href="#drift">Drift</a><span class="toc-desc">Three forms of drift — structural, lifecycle, semantic — and how each is detected</span></div>
-      <div class="toc-item"><a href="#components">Agents</a><span class="toc-desc">Component Interface Contracts — subagent boundaries with typed interfaces</span></div>
-      <div class="toc-item"><a href="#commands">Interface</a><span class="toc-desc">Command Reference — eight operations with inputs, pre/post-conditions</span></div>
-      <div class="toc-item"><a href="#quickstart">Quickstart</a><span class="toc-desc">Get Started — three commands to your first contract stack</span></div>
-    </div>
-  </div>
-
-  <!-- ═══ POSITIONING ═══ -->
-  <div class="doc-section reveal" id="positioning">
-    <span class="label">Context</span>
-    <h2>Why these terms matter</h2>
-    <p class="lead">Spec-driven, contract-first, and contract-driven approaches are gaining attention because teams want AI-assisted development to stay reviewable, traceable, and coherent as systems grow.</p>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>What do these terms mean in practice?</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <ul>
-          <li><strong>Spec-first</strong> means requirements and design artifacts are created before implementation starts.</li>
-          <li><strong>Spec-driven</strong> means those specs continue to guide implementation, evaluation, and change management after planning.</li>
-          <li><strong>Contract-first</strong> means interfaces, invariants, and acceptance boundaries are defined before code is generated.</li>
-          <li><strong>Contract-driven</strong> means those contracts remain active constraints on downstream code, tests, and reconciliation.</li>
-        </ul>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ COMPARISON ═══ -->
-  <div class="doc-section reveal" id="comparison">
-    <span class="label">Landscape</span>
-    <h2>How VibeLoom compares</h2>
-    <p class="lead">This comparison focuses on public product framing: whether each tool starts from explicit pre-code artifacts and contracts, and whether those artifacts continue to govern the downstream workflow.</p>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Open the comparison table</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <div class="table-wrap comparison-table">
-          <table>
-            <thead><tr><th>Tool</th><th>Spec-first</th><th>Contract-first</th><th>Spec-driven</th><th>Contract-driven</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><strong>VibeLoom</strong></td>
-                <td><span class="tag tag-ok">Primary</span></td>
-                <td><span class="tag tag-ok">Primary</span></td>
-                <td><span class="tag tag-ok">Primary</span></td>
-                <td><span class="tag tag-ok">Primary</span></td>
-              </tr>
-              <tr class="comparison-workflow-row">
-                <td class="comparison-tool-spacer"></td>
-                <td class="comparison-workflow" colspan="4">Intent, product specs, domain model, and architecture are created and approved up front; those same artifacts are then reused as explicit eval inputs and gating checkpoints for downstream code and reconciliation.</td>
-              </tr>
-              <tr>
-                <td><a href="https://docs.tessl.io/use/spec-driven-development-with-tessl" target="_blank" rel="noopener">Tessl</a></td>
-                <td><span class="tag tag-ok">Strong</span></td>
-                <td><span class="tag tag-warn">Limited</span></td>
-                <td><span class="tag tag-ok">Explicit</span></td>
-                <td><span class="tag tag-warn">Partial</span></td>
-              </tr>
-              <tr class="comparison-workflow-row">
-                <td class="comparison-tool-spacer"></td>
-                <td class="comparison-workflow" colspan="4">A spec is written and approved up front, then code and tests are generated from it; the spec continues to guide downstream work, but contract-style eval and approval gates are less central than in VibeLoom.</td>
-              </tr>
-              <tr>
-                <td><a href="https://kiro.dev/docs/specs/" target="_blank" rel="noopener">Kiro</a></td>
-                <td><span class="tag tag-warn">Variant</span></td>
-                <td><span class="tag tag-accent">Limited</span></td>
-                <td><span class="tag tag-ok">Explicit</span></td>
-                <td><span class="tag tag-accent">Limited</span></td>
-              </tr>
-              <tr class="comparison-workflow-row">
-                <td class="comparison-tool-spacer"></td>
-                <td class="comparison-workflow" colspan="4">Requirements, design, and tasks are created up front for a feature, then used to steer implementation; they remain part of the workflow, but the docs do not frame them as strong later-stage contract gates.</td>
-              </tr>
-              <tr>
-                <td><a href="https://github.github.com/spec-kit/index.html" target="_blank" rel="noopener">GitHub Spec Kit</a></td>
-                <td><span class="tag tag-ok">Strong</span></td>
-                <td><span class="tag tag-accent">Limited</span></td>
-                <td><span class="tag tag-ok">Explicit</span></td>
-                <td><span class="tag tag-accent">Limited</span></td>
-              </tr>
-              <tr class="comparison-workflow-row">
-                <td class="comparison-tool-spacer"></td>
-                <td class="comparison-workflow" colspan="4">A spec, plan, and task list are created up front, then used to organize downstream agent execution; those artifacts stay relevant later, but they are framed more as planning scaffolding than as hard contract eval gates.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="comparison-note">Comparison reflects public docs and product positioning rather than hidden implementation details or internal roadmaps.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ CORE THESIS ═══ -->
-  <div class="doc-section reveal" id="core-thesis">
-    <span class="label">Foundation</span>
-    <h2>Core Thesis</h2>
-    <p class="lead">The principles that underpin everything VibeLoom does.</p>
-
-    <details class="expandable" open>
-      <summary class="expandable-header"><span>1. Prompts are not contracts</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Prompt-first generation is insufficient for long-lived systems. A natural-language prompt is vague by nature and cannot serve as a verifiable contract. Multiple semantic layers are missing between "build me a scheduling app" and the code that implements it: requirements, user stories, domain model, architecture decisions.</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>2. AI makes specs economically viable again</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Historically, teams were lax about maintaining high-quality specifications — the overhead was too high. With AI agents, generating and maintaining structured specs is cheap. This doesn't mean returning to 200-page requirements documents. It means concise, structured specs that humans can scan in minutes, verify, and spot-edit.</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>3. Upstream specs must be evals</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Every derived artifact and every implementation unit is checked against its upstream contracts. This is the enforcement mechanism — not aspiration, but concrete evaluations with defined pass/fail criteria and blocking behavior.</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>4. Modules enable multi-agent development</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Breaking the application into modules scoped to bounded contexts enables parallel agent work, controls context window usage, and provides clear ownership boundaries. Each module fits in one agent's context window. Interface contracts prevent incompatible APIs between agents working in parallel.</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>5. Workflow semantics and domain semantics must stay separate</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>The User Story Map (USM) captures workflows, user value, and acceptance criteria. The Domain Model (DM) captures entities, relationships, and invariants. Both are mandatory in every profile. Merging them hides workflow mistakes inside semantic models or buries domain rules inside user stories. Keeping them separate ensures each layer can be reviewed, evaluated, and evolved independently.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ CONTRACT STACK ═══ -->
-  <div class="doc-section reveal" id="contract-stack">
-    <span class="label">Architecture</span>
-    <h2>The Contract Stack</h2>
-    <p class="lead">Five tiers from user intent down to running code. Each tier derives from the approved tier above. Upstream items serve as the eval basis for downstream work.</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Tier</th><th>Artifacts</th><th>Role</th><th>ID Prefixes</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tag tag-accent">Intent-specs</span></td><td><code>intent.md</code>, <code>defaults.md</code></td><td>Capabilities, objectives, and hard constraints</td><td><code>CAP-</code>, <code>CST-</code></td></tr>
-          <tr><td><span class="tag tag-ok">Product-specs</span></td><td><code>prd.md</code>, <code>usm.md</code>, <code>dm.md</code></td><td>Requirements, story map, and domain model (semantic anchor)</td><td><code>OBJ-</code>, <code>KR-</code>, <code>MET-</code>, <code>FR-</code>, <code>NFR-</code>, <code>EPIC-</code>, <code>FLOW-</code>, <code>STORY-</code>, <code>ACC-</code>, <code>MS-</code>, <code>TERM-</code>, <code>BC-</code>, <code>AGG-</code>, <code>ENT-</code>, <code>VO-</code>, <code>INV-</code></td></tr>
-          <tr><td><span class="tag tag-ok">System-specs</span></td><td><code>system.md</code>, <code>containers.md</code>, per-<code>container</code> + per-<code>component</code></td><td>Runtime actors, trust boundaries, container / component inventory with typed interfaces</td><td><code>EXT-</code>, <code>TB-</code>, <code>SNFR-</code>, <code>CONT-</code>, <code>CMP-</code>, <code>IF-</code>, <code>DEP-</code>, <code>BEH-</code></td></tr>
-          <tr><td><span class="tag tag-warn">Context</span></td><td><code>pdr</code>, <code>adr</code>, <code>bdd</code>, root / container / component configs</td><td>Decision ledgers, behavioral scenarios, runtime configuration — derived from approved contract</td><td><code>PDR-</code>, <code>ADR-</code>, <code>BDD-</code>, <code>SCN-</code></td></tr>
-          <tr><td><span class="tag tag-block">Code</span></td><td><code>src/ + tests/</code></td><td>Per-component implementation and tests, evaluated against approved upstream</td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Why stable, typed IDs matter</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Every graph entity gets a short, machine-parseable ID of the form <code>PREFIX-####</code> (e.g., <code>STORY-0003</code>, <code>CMP-0012</code>). Numbers are append-only within each prefix family; deleted IDs are never reused. This lets the engine build a concrete derivation graph where every <code>derives_from</code> reference points at a real, typed upstream item — and every structural eval check (reference integrity, coverage, stack order) becomes fully mechanical rather than "does this look right?".</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>Why the domain model is the semantic anchor</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p><code>dm.md</code> defines bounded contexts, aggregates, entities, value objects, and invariants as seen by system users — not internal technical details. It captures user value independently of implementation choices. The domain model is the most stable layer: UIs change, APIs change, databases change, but "a <code>Customer</code> has <code>Orders</code> which contain <code>LineItems</code>" rarely does. System-specs derive component boundaries from the bounded contexts declared here.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ WORKFLOW DIAGRAM ═══ -->
-  <div class="doc-section reveal" id="workflow">
-    <span class="label">Workflow</span>
-    <h2>How It All Fits Together</h2>
-    <p class="lead">Generation flows top-down. Evals check bottom-up. Human approval gates bracket intent, the product batch, and the spec layer.</p>
-
-    <div class="diagram-wrap">
-      <svg viewBox="0 0 720 700" xmlns="http://www.w3.org/2000/svg" style="max-width:720px">
-        <defs>
-          <marker id="ad" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="5" markerHeight="5" orient="auto">
-            <path d="M0,0 L5,10 L10,0" fill="none" stroke="#5a5a6a" stroke-width="1.5"/>
-          </marker>
-        </defs>
-
-        <!-- ═══ CONTRACT TIERS group ═══ -->
-        <rect x="30" y="10" width="620" height="440" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="30" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CONTRACT TIERS — APPROVAL-GATED</text>
-
-        <!-- ─── Intent-specs sub-group ─── -->
-        <rect x="60" y="46" width="560" height="60" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="80" y="62" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Intent-specs — capabilities + hard constraints</text>
-
-        <rect x="120" y="72" width="220" height="28" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="230" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">intent.md</text>
-
-        <rect x="360" y="72" width="220" height="28" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="470" y="91" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">defaults.md</text>
-
-        <!-- APPROVE gate (intent-specs) -->
-        <line x1="340" y1="106" x2="340" y2="118" stroke="#5a5a6a" stroke-width="1"/>
-        <rect x="280" y="118" width="120" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="131" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE intent-specs</text>
-        <line x1="340" y1="136" x2="340" y2="150" stroke="#5a5a6a" stroke-width="1"/>
-
-        <!-- ─── Product-specs sub-group ─── -->
-        <rect x="60" y="150" width="560" height="80" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="80" y="166" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">Product-specs — forward-back pass, batch-approved</text>
-
-        <rect x="80" y="176" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="155" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">prd.md</text>
-        <text x="155" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">requirements</text>
-        <line x1="230" y1="196" x2="260" y2="196" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-
-        <rect x="260" y="176" width="160" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="340" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">usm.md</text>
-        <text x="340" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">stories + acceptance</text>
-        <line x1="420" y1="196" x2="450" y2="196" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-
-        <rect x="450" y="176" width="150" height="40" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="525" y="192" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">dm.md</text>
-        <text x="525" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">semantic anchor</text>
-
-        <!-- bracket down to APPROVE -->
-        <line x1="155" y1="216" x2="155" y2="238" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="216" x2="340" y2="238" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="525" y1="216" x2="525" y2="238" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="155" y1="238" x2="525" y2="238" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="238" x2="340" y2="250" stroke="#5a5a6a" stroke-width="1"/>
-
-        <!-- APPROVE gate (product-specs) -->
-        <rect x="276" y="250" width="128" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="263" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE product-specs</text>
-        <line x1="340" y1="268" x2="340" y2="282" stroke="#5a5a6a" stroke-width="1"/>
-
-        <!-- ─── System-specs sub-group ─── -->
-        <rect x="60" y="282" width="560" height="90" rx="10" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="4,2"/>
-        <text x="80" y="298" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#5a5a6a">System-specs — root, then container wave, then component wave</text>
-
-        <rect x="75" y="310" width="125" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="137" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">system.md</text>
-        <text x="137" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">actors + boundaries</text>
-        <line x1="200" y1="332" x2="230" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-
-        <rect x="230" y="310" width="135" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="297" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">containers.md</text>
-        <text x="297" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">inventory</text>
-        <line x1="365" y1="332" x2="395" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-
-        <rect x="395" y="310" width="110" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.20)" stroke-width="1"/>
-        <text x="450" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#e84057">container</text>
-        <text x="450" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">per runtime unit</text>
-        <line x1="505" y1="332" x2="535" y2="332" stroke="#5a5a6a" stroke-width="1" marker-end="url(#ad)"/>
-
-        <rect x="535" y="310" width="110" height="44" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.30)" stroke-width="1.5"/>
-        <text x="590" y="328" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#e84057">component</text>
-        <text x="590" y="344" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">IF / DEP / BEH</text>
-
-        <!-- bracket down to APPROVE -->
-        <line x1="137" y1="354" x2="137" y2="378" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="297" y1="354" x2="297" y2="378" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="450" y1="354" x2="450" y2="378" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="590" y1="354" x2="590" y2="378" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="137" y1="378" x2="590" y2="378" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="378" x2="340" y2="390" stroke="#5a5a6a" stroke-width="1"/>
-
-        <!-- APPROVE gate (system-specs) -->
-        <rect x="276" y="390" width="128" height="18" rx="9" fill="rgba(232,64,87,0.15)"/>
-        <text x="340" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#e84057">APPROVE system-specs</text>
-
-        <!-- ═══ CONTEXT (derived) ═══ -->
-        <rect x="30" y="460" width="620" height="92" rx="12" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.08)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="480" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">CONTEXT — DERIVED, NOT APPROVED</text>
-
-        <line x1="340" y1="408" x2="340" y2="430" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="430" x2="125" y2="500" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="430" x2="270" y2="500" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="430" x2="415" y2="500" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="340" y1="430" x2="577" y2="500" stroke="#5a5a6a" stroke-width="1"/>
-
-        <rect x="60" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="125" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">pdr</text>
-
-        <rect x="205" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="270" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">adr</text>
-
-        <rect x="350" y="500" width="130" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="415" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">bdd</text>
-
-        <rect x="495" y="500" width="165" height="38" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.15)" stroke-width="1"/>
-        <text x="577" y="524" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="500" fill="#8a8a9a">configs</text>
-
-        <!-- ═══ IMPLEMENTATION ═══ -->
-        <rect x="30" y="568" width="620" height="72" rx="12" fill="rgba(232,64,87,0.03)" stroke="rgba(232,64,87,0.12)" stroke-width="1" stroke-dasharray="6,3"/>
-        <text x="50" y="588" font-family="Inter,sans-serif" font-size="10" font-weight="700" letter-spacing="0.06em" fill="#5a5a6a">IMPLEMENTATION</text>
-
-        <line x1="125" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="270" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="415" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
-        <line x1="577" y1="538" x2="340" y2="598" stroke="#5a5a6a" stroke-width="1"/>
-
-        <rect x="200" y="598" width="280" height="30" rx="8" fill="#16161f" stroke="rgba(232,64,87,0.40)" stroke-width="1.5"/>
-        <text x="340" y="618" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="600" fill="#e84057">Code + Tests</text>
-
-        <!-- ═══ EVAL arrow (right side, bottom-up) ═══ -->
-        <path d="M670,618 L670,46 L580,46" fill="none" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
-        <text x="684" y="340" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#e84057" opacity="0.4" transform="rotate(-90,684,340)">EVALS: structural (engine) + semantic (agent)</text>
-
-        <!-- ═══ LEGEND ═══ -->
-        <rect x="20" y="666" width="10" height="10" rx="2" fill="rgba(232,64,87,0.02)" stroke="rgba(232,64,87,0.10)"/>
-        <text x="36" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Tier group</text>
-        <rect x="120" y="666" width="10" height="10" rx="2" fill="#16161f" stroke="rgba(232,64,87,0.20)"/>
-        <text x="136" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Contract</text>
-        <rect x="210" y="666" width="10" height="10" rx="2" fill="rgba(232,64,87,0.15)"/>
-        <text x="226" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Approval gate</text>
-        <line x1="330" y1="671" x2="360" y2="671" stroke="#e84057" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.4"/>
-        <text x="366" y="676" font-family="Inter,sans-serif" font-size="9" fill="#5a5a6a">Eval (upstream check)</text>
-      </svg>
-    </div>
-  </div>
-
-  <!-- ═══ MODES ═══ -->
-  <div class="doc-section reveal" id="modes">
-    <span class="label">Scaling</span>
-    <h2>Four Modes</h2>
-    <p class="lead">VibeLoom offers four modes that pick the right level of ceremony for the project. Mode is chosen at <code>init</code>; you can upgrade from <code>vibe</code> to a full mode later.</p>
-
-    <div class="profile-grid profile-grid--quad">
-      <div class="profile-card">
-        <h3>vibe</h3>
-        <div class="subtitle">Compact, intent-centric</div>
-        <ul>
-          <li><span class="check">&#10003;</span> Single user gate: <code>intent-specs</code></li>
-          <li><span class="check">&#10003;</span> No <code>product-specs</code> tier</li>
-          <li><span class="check">&#10003;</span> Compact <code>system</code> auto-advances internally</li>
-          <li><span class="check">&#10003;</span> Heuristic eval (no explicit graph)</li>
-          <li><span class="check">&#10003;</span> Best for prototypes, solo work</li>
-        </ul>
-      </div>
-      <div class="profile-card">
-        <h3>pm</h3>
-        <div class="subtitle">Product-focused, delegated system</div>
-        <ul>
-          <li><span class="check">&#10003;</span> User gates: <code>intent</code> + <code>product-specs</code></li>
-          <li><span class="check">&#10003;</span> <code>system-specs</code> delegated with breaking-change escalation</li>
-          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
-          <li><span class="check">&#10003;</span> Parallel component waves</li>
-          <li><span class="check">&#10003;</span> Best for PM-led feature work</li>
-        </ul>
-      </div>
-      <div class="profile-card">
-        <h3>dev</h3>
-        <div class="subtitle">Dev-focused, delegated product</div>
-        <ul>
-          <li><span class="check">&#10003;</span> User gates: <code>intent</code> + <code>system-specs</code></li>
-          <li><span class="check">&#10003;</span> <code>product-specs</code> delegated with breaking-change escalation</li>
-          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
-          <li><span class="check">&#10003;</span> Parallel component waves</li>
-          <li><span class="check">&#10003;</span> Best for devs steering the system</li>
-        </ul>
-      </div>
-      <div class="profile-card">
-        <h3>expert</h3>
-        <div class="subtitle">Full gates, nothing delegated</div>
-        <ul>
-          <li><span class="check">&#10003;</span> User gates: <code>intent</code>, <code>product</code>, <code>system</code></li>
-          <li><span class="check">&#10003;</span> Nothing auto-advances</li>
-          <li><span class="check">&#10003;</span> Full graph-backed eval</li>
-          <li><span class="check">&#10003;</span> Maximal human oversight</li>
-          <li><span class="check">&#10003;</span> Best for regulated or critical systems</li>
-        </ul>
-      </div>
-    </div>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Delegated auto-advance + breaking-change escalation</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>In <code>pm</code> and <code>dev</code>, whichever tier is delegated auto-advances after structural eval passes <strong>and</strong> no breaking semantic change is detected against approved truth. A breaking change — item deleted, field changed, interface semantics changed, invariant weakened or strengthened — halts auto-advance and escalates to explicit user review.</p>
-        <p>In <code>vibe</code>, compact <code>system-specs</code> uses the same safety tests but never becomes its own public approval stop. Structural blockers halt downstream generation; non-blocking findings surface with an upgrade recommendation.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ EVALS ═══ -->
-  <div class="doc-section reveal" id="evals">
-    <span class="label">Quality</span>
-    <h2>Eval Framework</h2>
-    <p class="lead">Specs aren't documentation — they're verification contracts. Eval runs in two layers: a deterministic engine (structural, blocking) and an agent pass (semantic, breaking or advisory).</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Layer</th><th>Who</th><th>What it checks</th><th>Outcome</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tag tag-block">Structural</span></td><td>Engine</td><td>9 mechanical checks: reference integrity, coverage, stack order, schema, componentization fit, context sufficiency, etc.</td><td><strong>Blocking</strong></td></tr>
-          <tr><td><span class="tag tag-warn">Semantic</span></td><td>Agent</td><td>4 dimensions: faithful representation, naming consistency, implicit dependencies, capability gaps</td><td><code>breaking</code> or <code>advisory</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Engine structural checks (blocking)</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <ol>
-          <li><strong>Lifecycle consistency</strong> — <code>draft</code> / <code>approved</code> states align across the approval unit</li>
-          <li><strong>Reference integrity</strong> — every <code>derives_from</code> points at a real item</li>
-          <li><strong>Required fields</strong> — every artifact has the required frontmatter per template</li>
-          <li><strong>Declared relationships</strong> — items owned by correct artifact / scope / tier</li>
-          <li><strong>Stack integrity</strong> — tiers in correct dependency order</li>
-          <li><strong>Coverage</strong> — every non-terminal upstream item has ≥1 downstream <code>derives_from</code> reference</li>
-          <li><strong>Contradiction (structural)</strong> — no downstream item structurally conflicts with its derivation basis</li>
-          <li><strong>Componentization fit</strong> — each component maps to one bounded context; BCs fully contained in a container</li>
-          <li><strong>Context sufficiency</strong> — code-owning components have config; populated containers have container-level config</li>
-        </ol>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>Agent semantic checks (breaking / advisory)</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <ul>
-          <li><strong>Faithful representation</strong> — downstream neither narrows, widens, nor reverses upstream meaning. Interface semantics changed, invariant weakened or strengthened &rarr; <code>breaking</code></li>
-          <li><strong>Naming consistency</strong> — terminology aligns with the <code>TERM-####</code> items in the domain model</li>
-          <li><strong>Implicit dependencies</strong> — missing <code>derives_from</code> edges where the downstream clearly depends on an upstream item</li>
-          <li><strong>Capability gaps</strong> — <code>CAP-####</code> / <code>CST-####</code> items entirely unaddressed in the downstream stack</li>
-        </ul>
-        <p>Breaking findings block delegated auto-advance in <code>pm</code> and <code>dev</code> and escalate to explicit user review. Advisory findings surface in the report but do not block approval.</p>
-      </div>
-    </details>
-    <details class="expandable">
-      <summary class="expandable-header"><span>Behavioral scenarios (generated from contract)</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p><code>bdd</code> artifacts capture behavioral scenarios in the context tier, derived from approved <code>STORY-</code> / <code>ACC-</code> / <code>INV-</code> / <code>CMP-</code> items. They are regenerable from approved contract state and are not themselves an approval stop.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ DRIFT ═══ -->
-  <div class="doc-section reveal" id="drift">
-    <span class="label">Drift</span>
-    <h2>Three Forms of Drift</h2>
-    <p class="lead">Drift is any divergence between the current state of the stack and its approved-upstream basis. Three forms are recognized, each with its own detection mechanism.</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Form</th><th>Trigger</th><th>Detection</th><th>Remediation</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tag tag-block">Structural</span></td><td>Approved upstream item modified or removed since downstream was synchronized to it</td><td>Per-item canonical hash diff + forward DAG walk from changed upstream items</td><td><code>generate</code> (forward-only) or <code>reconcile</code> (preserves manual edits)</td></tr>
-          <tr><td><span class="tag tag-warn">Lifecycle</span></td><td>Approved contract artifact edited outside the skill's flow</td><td>Filesystem mtime fast-filter + per-item canonical hash confirmation</td><td>Auto-reopen to <code>draft</code> (lifecycle bookkeeping); semantic resolution follows</td></tr>
-          <tr><td><span class="tag tag-accent">Semantic</span></td><td>Downstream content no longer faithfully represents upstream meaning, even when structure matches</td><td>Agent-side semantic eval (4 dimensions above)</td><td>Surfaced as findings; <code>reconcile</code> for user-directed fixes</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p><code>reconcile</code> is the user-initiated remediation loop for all three forms. <code>generate</code> handles structural drift on the forward-only path. Lifecycle drift is handled automatically by reopening the edited artifact to <code>draft</code>.</p>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Staleness is computed, not stored</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Staleness is never written into artifact frontmatter. It is a view over current state, derived by comparing current content against the last-approved state of each upstream entity. If a user edits and then reverts, nothing persists incorrectly — the next staleness pass sees the reverted content and reports no drift.</p>
-        <p><strong>Invariant:</strong> false positives are acceptable; false negatives are not. An over-marked stale set causes unnecessary review; an under-marked set lets drift leak silently past approval gates. When in doubt, the system marks stale.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ COMPONENTS ═══ -->
-  <div class="doc-section reveal" id="components">
-    <span class="label">Multi-Agent</span>
-    <h2>Component Interface Contracts</h2>
-    <p class="lead">Components aren't just code organization — they are subagent boundaries. Each component fits in one context window with typed, stable interfaces.</p>
-
-    <details class="expandable" open>
-      <summary class="expandable-header"><span>Component spec example</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-<pre><span class="comment">## Component: CMP-0007 (orders)</span>
-
-<span class="keyword">### Owned interfaces</span>
-<span class="type">- IF-0012:</span> <span class="string">createOrder(items: CartItem[], customer: CustomerId) &rarr; OrderId</span>
-<span class="type">- IF-0013:</span> <span class="string">OrderPlaced { orderId, customerId, total, timestamp }</span>
-
-<span class="keyword">### Dependencies</span>
-<span class="comment">- DEP-0021 &rarr; CMP-0009 / IF-0034:</span> <span class="string">checkAvailability(sku) &rarr; AvailabilityResult</span>
-<span class="comment">- DEP-0022 &rarr; CMP-0012 / IF-0041:</span> <span class="string">chargePayment(customerId, amount) &rarr; PaymentResult</span>
-
-<span class="keyword">### Owned behaviors</span>
-<span class="type">- BEH-0009:</span> <span class="string">retries once on transient inventory failure, surfaces error otherwise</span></pre>
-      </div>
-    </details>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Dependency rules &amp; interface ownership</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <ul>
-          <li>The cross-component dependency graph must be a <strong>DAG</strong> (no cycles)</li>
-          <li>An interface is <strong>owned by exactly one component</strong>; only the owner can change its definition</li>
-          <li>Changing an interface's semantics is a breaking change — caught by both engine (structural diff) and agent (semantic diff against approved version)</li>
-          <li>New cross-component dependencies require a <code>component</code> spec amendment (approval-gated)</li>
-        </ul>
-        <p>When an interface changes: engine marks all downstream components structurally stale &rarr; agent evaluates semantic impact &rarr; specs regenerate &rarr; affected code is re-generated per component wave.</p>
-      </div>
-    </details>
-
-	    <details class="expandable">
-	      <summary class="expandable-header"><span>Subagent dispatch contract</span><span class="arrow">&#9654;</span></summary>
-	      <div class="expandable-body">
-	        <p>Each subagent runs in one of two modes with a fresh prompt built from a scoped load set:</p>
-	        <ul>
-	          <li><strong>read-only analysis</strong> — used for scoped <code>import</code> analysis, <code>eval</code>, advisory <code>review</code>, and drift analysis inside <code>reconcile</code>. No write scope.</li>
-	          <li><strong>write-capable generation / reconciliation</strong> — used for contract, context, and code generation, bounded-fix phases of <code>review</code>, and fix phases of <code>reconcile</code>. Explicit write scope.</li>
-	        </ul>
-	        <p>Subagents may not treat same-wave outputs as input. Same-wave outputs become eligible inputs only after the wave is accepted and the dispatch plan is recomputed. Late-fetch is capped at one re-invocation per task.</p>
-	      </div>
-    </details>
-  </div>
-
-  <!-- ═══ COMMANDS ═══ -->
-  <div class="doc-section reveal" id="commands">
-    <span class="label">Interface</span>
-    <h2>Command Reference</h2>
-    <p class="lead"><code>$vibeloom</code> is the state-aware entrypoint. Use explicit <code>/vibeloom</code> commands that follow the abstract model <code>&lt;action&gt; &lt;target&gt; &lt;context&gt;</code> when you want direct control.</p>
-
-	    <!-- Command table: keep in sync with v02/references/operations.md, v02/SKILL.md, and site/public/index.html#commands -->
-	    <div class="cmd-grid">
-	      <div class="cmd-row"><code>/vibeloom init --mode &lt;mode&gt; [seed]</code> <span>Bootstrap an ungoverned repo (<code>vibe</code> | <code>pm</code> | <code>dev</code> | <code>expert</code>)</span></div>
-	      <div class="cmd-row"><code>/vibeloom import --mode &lt;mode&gt; [repo]</code> <span>Reconstruct a candidate contract bottom-up from existing code</span></div>
-	      <div class="cmd-row"><code>/vibeloom generate [target]</code> <span>Forward-back pass generation of the next affected tier from approved upstream</span></div>
-	      <div class="cmd-row"><code>/vibeloom eval [target]</code> <span>Structural + semantic validation against approved upstream basis</span></div>
-	      <div class="cmd-row"><code>/vibeloom review [target]</code> <span>Interactive eval loop with bounded fixes within the target</span></div>
-	      <div class="cmd-row"><code>/vibeloom reconcile [target]</code> <span>User-initiated remediation loop for all three forms of drift</span></div>
-	      <div class="cmd-row"><code>/vibeloom approve [target]</code> <span>Advance a reviewed contract tier from <code>draft</code> to <code>approved</code></span></div>
-	      <div class="cmd-row"><code>/vibeloom status [scope]</code> <span>Lifecycle, freshness, coverage, affected scope, current mode</span></div>
-	    </div>
-
-    <details class="expandable" style="margin-top:16px">
-      <summary class="expandable-header"><span>Primitive vs interactive operations</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p><code>generate</code> and <code>eval</code> are the two primitives. <code>review</code> is an interactive shell on top of <code>eval</code>; <code>reconcile</code> is an interactive shell on top of <code>generate</code>. Each interactive cycle loops through detect &rarr; propose &rarr; fix &rarr; validate with explicit user exit choices (<code>Loop</code>, <code>Eval only</code>, <code>Proceed to approve</code> / <code>Accept</code>).</p>
-      </div>
-    </details>
-
-    <details class="expandable">
-      <summary class="expandable-header"><span>Reconciliation is asymmetric</span><span class="arrow">&#9654;</span></summary>
-      <div class="expandable-body">
-        <p>Approved upstream contract defines intended meaning. Downstream drift produces <strong>proposals, not silent rewrites</strong>. For each conflict, the agent offers direction options — amend upstream truth, preserve upstream and correct downstream, or a user-specified alternative — and the user chooses. In practice <code>generate code</code> is the 90% path; <code>reconcile</code> is the surgical review path for when you want to detect, inspect, and preserve manual edits.</p>
-      </div>
-    </details>
-  </div>
-
-  <!-- ═══ QUICKSTART ═══ -->
-  <div class="doc-section reveal" id="quickstart">
-    <span class="label">Get Started</span>
-    <h2>Get Started</h2>
-
-    <ol class="steps">
-      <li>
-        <strong>Open Claude Code or Codex in an empty folder</strong>
-        <span style="color:var(--text-tertiary)">Create a project directory and open your AI coding environment.</span>
-      </li>
-      <li>
-        <strong>Run <code>/vibeloom init</code></strong>
-        <span style="color:var(--text-tertiary)">The Agent scaffolds your project and interviews you about what you want to build.</span>
-      </li>
-      <li>
-        <strong>Follow the prompts</strong>
-        <span style="color:var(--text-tertiary)">Approve intent, review and approve the generated product batch, then move into spec and code. You're in control at every step.</span>
-      </li>
-    </ol>
-
-    <div style="text-align:center; margin-top:48px">
-      <p style="font-size:1.05rem; font-weight:600; margin-bottom:8px">No API keys. No subscription fees. No setup.</p>
-      <p style="color:var(--text-tertiary); margin-bottom:32px">VibeLoom runs as a skill inside your existing Claude Code or Codex environment.</p>
-      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; padding:14px 28px; background:var(--accent); color:#fff; border-radius:10px; font-weight:600; text-decoration:none; font-size:0.95rem;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        View on GitHub
-      </a>
-    </div>
-  </div>
-
-</div>
+</main>
 
 <footer>
-  <p>&copy; 2026 VibeLoom &mdash; Contract-driven vibe coding for production systems</p>
-  <p class="footer-links">
-    <a href="index.html">Home</a>
-    &middot;
-    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
-  </p>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="/"><img src="vibeloom-logo-loom.svg" alt="" width="22" height="22"> VibeLoom</a>
+      <div class="nav">
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="consulting.html">Consulting</a>
+        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="small">
+      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>v0.2 · MIT licensed · Built by <a href="consulting.html">Ilya Baimetov</a></span>
+    </div>
+  </div>
 </footer>
+
+<script>
+  // active TOC link based on scroll position
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length) return;
+    var sections = links.map(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (s) { return s.el; });
+    function set() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].el.offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      current.a.classList.add('is-active');
+    }
+    window.addEventListener('scroll', set, { passive: true });
+    set();
+  })();
+</script>
 </body>
 </html>

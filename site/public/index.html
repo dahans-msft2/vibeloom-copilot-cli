@@ -6,7 +6,7 @@
 <title>VibeLoom — Contract-Driven Agentic Engineering</title>
 
 <!-- ░░ SEO ░░ -->
-<meta name="description" content="Contract-driven agentic engineering. A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.">
+<meta name="description" content="VibeLoom is contract-driven agentic engineering — the next step beyond spec-driven development. A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve. Compare to GitHub Spec Kit, AWS Kiro, and Tessl.">
 <meta name="keywords" content="contract-driven agentic engineering, contract-driven development, agentic engineering, spec-driven development, AI coding, Claude Code, Codex, AI agent governance, drift detection, multi-agent coding, LLM code generation, GitHub Spec Kit alternative, Kiro, Tessl, Traycer, vibe coding">
 <meta name="author" content="Ilya Baimetov">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="VibeLoom">
 <meta property="og:url" content="https://vibeloom.ai/">
 <meta property="og:title" content="VibeLoom — Contract-Driven Agentic Engineering">
-<meta property="og:description" content="A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.">
+<meta property="og:description" content="The next step beyond spec-driven development. A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.">
 <meta property="og:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
 <meta property="og:image:alt" content="VibeLoom logo — woven threads">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VibeLoom — Contract-Driven Agentic Engineering">
-<meta name="twitter:description" content="A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.">
+<meta name="twitter:description" content="The next step beyond spec-driven development. A living contract stack that governs AI-coded systems as they evolve.">
 <meta name="twitter:image" content="https://vibeloom.ai/vibeloom-logo-loom.svg">
 <meta name="twitter:image:alt" content="VibeLoom logo — woven threads">
 
@@ -72,9 +72,10 @@
       "@type": "FAQPage",
       "mainEntity": [
         {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"For throwaway scripts, weekend demos, or single-file utilities, prompt-only generation is faster. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
-        {"@type":"Question","name":"How is VibeLoom different from GitHub Spec Kit, Kiro, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"Other tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle: derivation, eval, drift detection, reconciliation, traceability across components."}},
+        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the spec-driven development family but goes further: contract-driven, not just spec-driven. Other spec-driven tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle: derivation, eval, drift detection, reconciliation, traceability across components."}},
         {"@type":"Question","name":"Does VibeLoom work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill that loads automatically inside both. Zero install. Python 3.10+ is the only requirement for the deterministic engine."}},
-        {"@type":"Question","name":"What is contract-driven development?","acceptedAnswer":{"@type":"Answer","text":"Contract-driven development treats specifications as a tiered, version-controlled contract that actively governs generation, evaluation, and reconciliation across the lifecycle — not as one-off planning documents that decay after the first feature."}}
+        {"@type":"Question","name":"What is contract-driven development?","acceptedAnswer":{"@type":"Answer","text":"Contract-driven development treats specifications as a tiered, version-controlled contract that actively governs generation, evaluation, and reconciliation across the lifecycle — not as one-off planning documents that decay after the first feature."}},
+        {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern in which structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development by treating the entire spec stack as a living contract that governs the codebase across every change, not just the first generation pass."}}
       ]
     }
   ]
@@ -123,8 +124,8 @@
       v0.2 — Skill for Claude Code &amp; Codex, zero-install Python engine
     </div>
 
-    <h1>
-      <span class="accent">Contract-driven</span><br>
+    <h1 aria-label="Contract-driven agentic engineering">
+      <span class="accent" aria-hidden="true"><span class="word-cycle" data-from="Spec" data-to="Contract">Contract</span>-driven</span><br>
       agentic engineering.
     </h1>
 
@@ -754,14 +755,16 @@
     <div class="section-head">
       <div class="left">
         <span class="eyebrow">How it compares</span>
-        <h2>The bet,<br>in two axes.</h2>
+        <h2>Beyond <span class="ital">spec-driven<br>development</span>.</h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          Where each tool invests its complexity budget tells you what it's
-          betting on. Spec Kit and Kiro double down on directing implementation
-          per feature. Tessl already pivoted from per-file spec-as-source to
-          managing context. VibeLoom takes the next step up the same staircase:
+          VibeLoom positions against the leading <strong>spec-driven development</strong>
+          tools — GitHub Spec Kit, AWS Kiro, and Tessl. Each makes a different bet on
+          where engineering value will live as models keep improving. Spec Kit and Kiro
+          double down on directing implementation per feature. Tessl already pivoted
+          from per-file spec-as-source to managing context. VibeLoom takes the next
+          step up the same staircase: <strong>contract-driven, not just spec-driven</strong> —
           managing what the system <em>is supposed to be</em>.
         </p>
       </div>
@@ -859,11 +862,21 @@
 
       <details class="faq-item">
         <summary>
-          <span class="q">How is this different from GitHub Spec Kit, Kiro, or Tessl?</span>
+          <span class="q">How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, or Tessl?</span>
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p>Other tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle: derivation, eval, drift detection, reconciliation, traceability across components. Tessl wins inside one file; VibeLoom wins across files and tiers. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
+          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes one step further: <strong>contract-driven, not just spec-driven</strong>. Other spec-driven tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle — derivation, eval, drift detection, reconciliation, traceability across components. Tessl wins inside one file; VibeLoom wins across files and tiers. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="q">What is spec-driven development?</span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="a">
+          <p><strong>Spec-driven development</strong> is a workflow pattern where structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into <strong>contract-driven development</strong>: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass.</p>
         </div>
       </details>
 
@@ -960,6 +973,59 @@
 </footer>
 
 <script>
+  // H1 word-cycle: visually toggles "Spec" ↔ "Contract" using a typing
+  // caret. The semantic H1 (aria-label) stays "Contract-driven" for
+  // crawlers and screen readers; this is purely visual and respects
+  // prefers-reduced-motion.
+  (function () {
+    var el = document.querySelector('.word-cycle');
+    if (!el) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var FROM = el.dataset.from || 'Spec';
+    var TO   = el.dataset.to   || 'Contract';
+
+    var TYPE_MS    = 90;     // ms per char while typing
+    var DELETE_MS  = 55;     // ms per char while deleting
+    var HOLD_FROM  = 1500;   // ms to hold "Spec" before switching
+    var HOLD_TO    = 5000;   // ms to hold "Contract" before reset
+    var PAUSE      = 220;    // ms between delete and type
+
+    function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+    async function deleteWord(word) {
+      el.classList.add('is-typing');
+      for (var i = word.length; i >= 0; i--) {
+        el.firstChild ? (el.firstChild.nodeValue = word.slice(0, i)) : (el.textContent = word.slice(0, i));
+        await sleep(DELETE_MS);
+      }
+    }
+    async function typeWord(word) {
+      el.classList.add('is-typing');
+      for (var i = 1; i <= word.length; i++) {
+        el.textContent = word.slice(0, i);
+        await sleep(TYPE_MS);
+      }
+      el.classList.remove('is-typing');
+    }
+
+    // Start with the "Spec" framing so the visitor sees the transformation.
+    el.textContent = FROM;
+
+    (async function loop() {
+      while (true) {
+        await sleep(HOLD_FROM);
+        await deleteWord(FROM);
+        await sleep(PAUSE);
+        await typeWord(TO);
+        await sleep(HOLD_TO);
+        await deleteWord(TO);
+        await sleep(PAUSE);
+        await typeWord(FROM);
+      }
+    })();
+  })();
+
   // doc-toc scroll-spy (same handler as methodology/implementation)
   (function () {
     var toc = document.querySelector('.doc-toc');

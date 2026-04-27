@@ -331,6 +331,42 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
 .hero h1 { max-width: 18ch; margin-bottom: 24px; }
 .hero h1 .accent { color: var(--c-red); }
 .hero h1 .ital   { font-family: var(--f-serif); font-style: italic; font-weight: 500; letter-spacing: -0.02em; }
+
+/* ===== H1 word-cycle animation: Spec ↔ Contract =====
+   The visible word toggles between the (former) "Spec-driven" framing and
+   the brand's "Contract-driven" positioning. Semantically the H1 is always
+   "Contract-driven" (see aria-label); the cycle is purely visual. JS adds
+   .is-typing while characters change so the caret is solid; otherwise the
+   caret blinks. */
+.word-cycle {
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+}
+.word-cycle::after {
+  content: "";
+  display: inline-block;
+  width: 0.05em;
+  min-width: 3px;
+  height: 0.86em;
+  margin-left: 0.06em;
+  vertical-align: -0.08em;
+  background: currentColor;
+  border-radius: 1px;
+  animation: caret-blink 1.05s steps(2) infinite;
+  opacity: 0.85;
+}
+.word-cycle.is-typing::after {
+  animation: none;
+  opacity: 1;
+}
+@keyframes caret-blink {
+  0%,   49.99% { opacity: 0.85; }
+  50%, 100%    { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .word-cycle::after { display: none; animation: none; }
+}
 .hero .sub {
   font-size: clamp(1.08rem, 1.7vw, 1.22rem);
   color: var(--c-ink-3);

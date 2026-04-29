@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VibeLoom OG card source</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&family=JetBrains+Mono:wght@500;600&family=Fraunces:ital,wght@1,500;1,600&display=block">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+  }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #ffffff;
+    color: #0a0a0a;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  .stack-bg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 380px;
+    background-image:
+      linear-gradient(to right, rgba(232, 64, 87, 0.05), rgba(232, 64, 87, 0));
+    pointer-events: none;
+  }
+  .stack-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 70px,
+        rgba(232, 64, 87, 0.18) 70px,
+        rgba(232, 64, 87, 0.18) 71px,
+        transparent 71px,
+        transparent 130px
+      );
+  }
+
+  .top {
+    position: absolute;
+    top: 56px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 2;
+  }
+  .top svg { width: 56px; height: 56px; flex: 0 0 auto; }
+  .wordmark {
+    font-family: "Inter";
+    font-weight: 800;
+    font-size: 38px;
+    letter-spacing: -0.02em;
+    color: #0a0a0a;
+  }
+  .v-version {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 14px;
+    color: #7a7a7a;
+    letter-spacing: 0.04em;
+    margin-left: auto;
+  }
+
+  .center {
+    position: absolute;
+    top: 200px;
+    left: 64px;
+    right: 64px;
+    z-index: 2;
+  }
+  h1 {
+    font-family: "Inter";
+    font-weight: 800;
+    font-size: 80px;
+    line-height: 1.0;
+    letter-spacing: -0.035em;
+    color: #0a0a0a;
+    margin-bottom: 22px;
+    max-width: 900px;
+  }
+  h1 .accent { color: #e84057; }
+  .sub {
+    font-family: "Fraunces";
+    font-style: italic;
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.32;
+    letter-spacing: -0.015em;
+    color: #3a3a3a;
+    max-width: 780px;
+  }
+
+  .bottom {
+    position: absolute;
+    bottom: 50px;
+    left: 64px;
+    right: 64px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    z-index: 2;
+  }
+  .badges {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 14px;
+    color: #1a1a1a;
+    border: 1px solid #d6d3cd;
+    border-radius: 999px;
+    padding: 7px 14px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .badge .glyph {
+    color: #e84057;
+    margin-right: 6px;
+  }
+  .url {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: #0a0a0a;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .url::before {
+    content: "→ ";
+    color: #e84057;
+  }
+</style>
+</head>
+<body>
+  <div class="stack-bg" aria-hidden="true"></div>
+
+  <header class="top">
+    <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id="h-mask">
+          <rect width="30" height="30" fill="white"/>
+          <circle cx="14.2" cy="8" r="2.8" fill="black"/>
+          <circle cx="8" cy="15" r="2.8" fill="black"/>
+          <circle cx="22" cy="15" r="2.8" fill="black"/>
+          <circle cx="15.8" cy="22" r="2.8" fill="black"/>
+        </mask>
+      </defs>
+      <g stroke-linecap="round" fill="none" stroke-width="2.4">
+        <path d="M8,2 C5,10 11,20 8,28" stroke="#c43a50"/>
+        <path d="M15,2 C12,10 18,20 15,28" stroke="#c43a50"/>
+        <path d="M22,2 C19,10 25,20 22,28" stroke="#c43a50"/>
+        <g mask="url(#h-mask)">
+          <path d="M2,8 C10,5 20,11 28,8" stroke="#e84057"/>
+          <path d="M2,15 C10,12 20,18 28,15" stroke="#e84057"/>
+          <path d="M2,22 C10,19 20,25 28,22" stroke="#e84057"/>
+        </g>
+      </g>
+    </svg>
+    <span class="wordmark">VibeLoom</span>
+    <span class="v-version">v0.2 · MIT licensed</span>
+  </header>
+
+  <section class="center">
+    <h1><span class="accent">Contract</span>-driven<br>agentic engineering.</h1>
+    <p class="sub">The next step beyond spec-driven development. A living contract stack that governs AI-coded systems as they evolve.</p>
+  </section>
+
+  <footer class="bottom">
+    <div class="badges">
+      <span class="badge"><span class="glyph">▸</span>Claude Code</span>
+      <span class="badge"><span class="glyph">▸</span>Codex</span>
+      <span class="badge"><span class="glyph">▸</span>Zero install</span>
+      <span class="badge"><span class="glyph">▸</span>Drift detection</span>
+    </div>
+    <div class="url">vibeloom.ai</div>
+  </footer>
+
+  <script>
+    // Tell headless Chrome the page is ready by setting a flag once fonts load.
+    document.fonts.ready.then(() => {
+      document.documentElement.setAttribute('data-fonts-ready', '1');
+    });
+  </script>
+</body>
+</html>

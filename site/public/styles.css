@@ -3,7 +3,8 @@
    black + white + a single hue of red (#e84057)
    ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:wght@400;500;600;700;800;900&display=swap");
+/* Fonts: loaded via <link> in each page <head> for non-blocking,
+   parallel fetch. See HTML files for preconnect + stylesheet hints. */
 
 :root {
   /* monochrome scale */
@@ -2030,6 +2031,314 @@ footer .small a:hover { color: #fff; }
 }
 
 /* ============================================================
+   404 — not found
+   ============================================================ */
+.notfound {
+  padding: 120px 0 80px;
+  background: var(--c-bg);
+}
+.notfound .eyebrow {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.notfound h1 {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 18px;
+}
+.notfound .lead {
+  font-size: 1.08rem;
+  line-height: 1.6;
+  color: var(--c-ink-3);
+  max-width: 56ch;
+  margin-bottom: 28px;
+}
+.notfound-links {
+  list-style: none;
+  margin: 0 0 36px;
+  padding: 0;
+}
+.notfound-links li {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--c-ink-3);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--c-line);
+}
+.notfound-links li:last-child { border-bottom: 0; }
+.notfound-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================
+   contact engagement outcomes + rate hint
+   ============================================================ */
+.eng-tile .outcomes {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--c-line-2);
+}
+.eng-tile .outcomes-label {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-5);
+  margin-bottom: 10px;
+}
+.eng-tile .outcomes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.eng-tile .outcomes li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--c-ink-3);
+  margin-bottom: 8px;
+}
+.eng-tile .outcomes li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--c-red);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.engagements-rate {
+  margin-top: 32px;
+  font-size: 0.92rem;
+  color: var(--c-ink-4);
+  font-family: var(--f-mono);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+/* ============================================================
+   exec-summary callout (top of /implementation)
+   ============================================================ */
+.exec-summary {
+  margin: 0 0 36px;
+  padding: 22px 26px;
+  border: 1px solid var(--c-line);
+  border-left: 3px solid var(--c-red);
+  border-radius: 10px;
+  background: var(--c-bg-soft);
+}
+.exec-summary .eyebrow {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.exec-summary p {
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--c-ink-3);
+  margin: 0 0 8px;
+}
+.exec-summary p:last-child { margin-bottom: 0; }
+.exec-summary .exec-meta {
+  font-size: 0.88rem;
+  color: var(--c-ink-4);
+}
+
+/* ============================================================
+   2026 stats strip (in Problem section)
+   ============================================================ */
+.stats-strip {
+  margin: 56px 0 0;
+  padding: 28px 32px;
+  border: 1px solid var(--c-line);
+  border-left: 3px solid var(--c-red);
+  border-radius: 12px;
+  background: var(--c-bg-soft);
+}
+.stats-strip-head {
+  margin-bottom: 20px;
+}
+.stats-strip-head .eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  font-weight: 600;
+}
+.stats-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.stats-strip .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stats-strip .stat-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  line-height: 1.15;
+}
+.stats-strip .stat-label {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.stats-strip .stat-label em {
+  font-style: italic;
+  color: var(--c-ink-4);
+}
+.stats-strip .stat-src {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  color: var(--c-ink-5);
+  text-decoration: none;
+  margin-top: 4px;
+  border-bottom: 1px dotted var(--c-line-3);
+  align-self: flex-start;
+  padding-bottom: 1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.stats-strip .stat-src:hover {
+  color: var(--c-red);
+  border-color: var(--c-red);
+}
+
+/* ============================================================
+   vision-quote (academic pull quote in The Bet section)
+   ============================================================ */
+.vision-quote {
+  margin: 28px auto 32px;
+  padding: 24px 28px;
+  max-width: 64ch;
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid var(--c-red);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.vision-quote p {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.12rem;
+  letter-spacing: -0.005em;
+  line-height: 1.55;
+  color: #fff;
+  margin: 0 0 10px;
+}
+.vision-quote cite {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: #9a9a9a;
+  font-style: normal;
+}
+
+/* ============================================================
+   h-lead-note (small follow-up note under h-lead)
+   ============================================================ */
+.h-lead-note {
+  font-size: 0.92rem;
+  color: var(--c-ink-4);
+  margin-top: 14px;
+  line-height: 1.55;
+  max-width: 56ch;
+}
+.h-lead-note .linky {
+  color: var(--c-ink-3);
+  border-bottom-color: var(--c-line-3);
+}
+.h-lead-note .linky:hover {
+  color: var(--c-red);
+  border-bottom-color: var(--c-red);
+}
+
+/* ============================================================
+   deeper cards (replaces full Engine + Operations sections on index)
+   ============================================================ */
+.deeper {
+  padding: 96px 0;
+  background: var(--c-bg-soft);
+  border-top: 1px solid var(--c-line);
+  border-bottom: 1px solid var(--c-line);
+}
+.deeper-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.deeper-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px 32px 28px;
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+.deeper-card:hover {
+  border-color: var(--c-line-3);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+.deeper-card .eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red);
+  font-weight: 600;
+}
+.deeper-card h3 {
+  font-size: 1.18rem;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  color: var(--c-ink);
+  margin: 0;
+}
+.deeper-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--c-ink-3);
+  margin: 0;
+}
+.deeper-card .cta-line {
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--f-mono);
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+  color: var(--c-red);
+  font-weight: 600;
+}
+
+/* ============================================================
    responsive
    ============================================================ */
 
@@ -2070,6 +2379,9 @@ footer .small a:hover { color: #fff; }
   .problem .cell { border-right: 0; }
   .problem .cell:nth-last-child(-n+2) { border-bottom: 1px solid var(--c-line); }
   .problem .cell:last-child { border-bottom: 0; }
+
+  /* Deeper cards stack at tablet */
+  .deeper-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
@@ -2142,6 +2454,16 @@ footer .small a:hover { color: #fff; }
 
   /* Doc layout TOC: compact strip */
   .doc-toc ol { grid-template-columns: 1fr !important; }
+
+  /* 2026 stats strip stacks on mobile */
+  .stats-strip { padding: 22px 20px; }
+  .stats-strip-grid { grid-template-columns: 1fr; gap: 20px; }
+  .stats-strip .stat-num { font-size: 1.3rem; }
+
+  /* Deeper cards stack */
+  .deeper { padding: 64px 0; }
+  .deeper-grid { grid-template-columns: 1fr; }
+  .deeper-card { padding: 24px 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

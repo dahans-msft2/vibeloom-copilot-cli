@@ -15,7 +15,7 @@
   --c-ink-2:     #1a1a1a;
   --c-ink-3:     #3a3a3a;
   --c-ink-4:     #5a5a5a;
-  --c-ink-5:     #7a7a7a;
+  --c-ink-5:     #707070;
   --c-line:      #e6e4e0;
   --c-line-2:    #d6d3cd;
   --c-line-3:    #c0bdb6;
@@ -195,15 +195,15 @@ section.bare + section.bare { border-top: 0; }
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--c-red);
-  font-weight: 600;
+  color: var(--c-red-deep);
+  font-weight: 700;
   margin-bottom: 18px;
 }
 .eyebrow::before {
   content: "";
   width: 18px;
   height: 1px;
-  background: var(--c-red);
+  background: var(--c-red-deep);
 }
 .eyebrow.no-line::before { display: none; }
 
@@ -447,13 +447,15 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
   flex-direction: column;
   gap: 18px;
 }
-.hero-card h3 {
+.hero-card .hero-card-title {
   font-family: var(--f-serif);
   font-style: italic;
   font-weight: 600;
   font-size: 1.32rem;
   letter-spacing: -0.02em;
   color: var(--c-ink);
+  line-height: 1.25;
+  margin: 0;
 }
 .hero-card p { font-size: 0.94rem; line-height: 1.6; color: var(--c-ink-3); }
 .hero-card .stack-mini {
@@ -567,8 +569,8 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
 .problem .cell h3 .num {
   font-family: var(--f-mono);
   font-size: 0.78rem;
-  color: var(--c-red);
-  font-weight: 500;
+  color: var(--c-red-deep);
+  font-weight: 700;
   letter-spacing: 0.06em;
 }
 .problem .cell p { font-size: 0.96rem; line-height: 1.65; max-width: 50ch; }
@@ -1020,7 +1022,8 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
   background: var(--c-dark);
   color: #f0f0f0;
 }
-.drift .eyebrow { color: var(--c-red); }
+.drift .eyebrow { color: var(--c-red-deep); }
+.drift .eyebrow::before { background: var(--c-red-deep); }
 .drift h2 { color: #fff; }
 .drift .h-lead { color: #b8b8b8; }
 .drift .grid {
@@ -1617,14 +1620,19 @@ footer .small {
   padding-top: 24px;
   border-top: 1px solid #1f1f1f;
   font-size: 0.78rem;
-  color: #525252;
+  color: #8a8a8a;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
 }
-footer .small a { color: #6b7280; }
-footer .small a:hover { color: #fff; }
+footer .small a {
+  color: #d4d4d4;
+  text-decoration: underline;
+  text-decoration-color: #4a4a4a;
+  text-underline-offset: 3px;
+}
+footer .small a:hover { color: #fff; text-decoration-color: var(--c-red); }
 
 /* ============================================================
    content pages (methodology, implementation, contact)
@@ -1960,7 +1968,8 @@ footer .small a:hover { color: #fff; }
   background: var(--c-ink);
   color: #f0f0f0;
 }
-.process .eyebrow { color: var(--c-red); }
+.process .eyebrow { color: var(--c-red-deep); }
+.process .eyebrow::before { background: var(--c-red-deep); }
 .process h2 { color: #fff; }
 .process .h-lead { color: #b8b8b8; }
 .process-steps {
@@ -2043,7 +2052,7 @@ footer .small a:hover { color: #fff; }
   font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--c-red);
+  color: var(--c-red-deep);
   font-weight: 600;
   margin-bottom: 14px;
 }
@@ -2144,7 +2153,7 @@ footer .small a:hover { color: #fff; }
   font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--c-red);
+  color: var(--c-red-deep);
   font-weight: 600;
   margin-bottom: 8px;
 }
@@ -2179,7 +2188,7 @@ footer .small a:hover { color: #fff; }
   font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--c-red);
+  color: var(--c-red-deep);
   font-weight: 600;
 }
 .stats-strip-grid {
@@ -2312,8 +2321,8 @@ footer .small a:hover { color: #fff; }
   font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--c-red);
-  font-weight: 600;
+  color: var(--c-red-deep);
+  font-weight: 700;
 }
 .deeper-card h3 {
   font-size: 1.18rem;

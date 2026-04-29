@@ -37,7 +37,9 @@
 <!-- Fonts: non-blocking parallel fetch -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap"></noscript>
 
 <link rel="stylesheet" href="styles.css">
 
@@ -209,7 +211,7 @@
 
       <!-- side card -->
       <aside class="hero-card">
-        <h3>The contract stack, at a glance</h3>
+        <h2 class="hero-card-title">The contract stack, at a glance</h2>
         <p>Each tier is generated from the approved tier above. Structural and semantic eval bind every layer to its source of truth.</p>
         <div class="stack-mini" aria-hidden="true">
           <div class="row is-accent"><span class="lbl">tier 1</span><span class="v">intent + defaults</span></div>

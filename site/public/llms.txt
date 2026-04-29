@@ -1,0 +1,49 @@
+# VibeLoom
+
+> Contract-driven agentic engineering — an open-source Skill plus a deterministic Python engine that gives AI coding agents a living contract stack with drift detection, approval gates, and reconciliation across the lifecycle.
+
+VibeLoom is the next step beyond per-feature spec-driven development tools (GitHub Spec Kit, AWS Kiro, Tessl). Instead of treating specifications as one-off planning documents that decay after the first generation pass, VibeLoom maintains a tiered, version-controlled contract stack that doubles as the eval surface for every subsequent change.
+
+The methodology and engine are open source under MIT license. v0.2 ships as a Skill for Claude Code and Codex plus a deterministic Python 3.10+ engine with zero runtime dependencies.
+
+## Pages
+
+- [Overview](https://vibeloom.ai/): the bet, the model, the contract stack, drift detection, the comparison vs spec-driven tools.
+- [Methodology](https://vibeloom.ai/methodology): principles, the three-layer architecture, contract stack in detail, modes, operations, eval, drift, comparison, roadmap.
+- [Implementation](https://vibeloom.ai/implementation): the Skill, the deterministic engine, the CLI, the approved-state snapshot, the context graph, IDs and frontmatter, subagent dispatch, install, quickstart.
+- [Contact](https://vibeloom.ai/contact): independent advisory engagements (drift audit, bootstrap, custom governance) and `info@vibeloom.ai`.
+
+## Concepts
+
+- **Contract stack** — five tiers: intent-specs → product-specs → system-specs → context → code. Each tier derives from the approved tier above; upstream items are the eval basis for downstream work.
+- **Three layers** — contract (governed truth), context (execution truth, derived), code (executable result). The contract layer holds three of the five tiers.
+- **Three drift forms** detected by VibeLoom — *structural* (upstream changed), *lifecycle* (approved file edited outside the flow), *semantic* (downstream meaning shifted). Distinct from the multi-agent agent-drift triad (semantic/coordination/behavioral) named in arXiv 2601.04170.
+- **Four modes** — `vibe` (compact, one approval gate), `pm` (full, product-led), `dev` (full, architecture-led), `expert` (full, all gates explicit). Vibe → full upgrade is one-way.
+- **Eight operations** — `generate`, `eval`, `review`, `reconcile`, `approve`, `status`, `init`, `import`. Plus `$vibeloom` shorthand that triages by current state.
+- **Approved-state snapshot** — per-item SHA-256 canonical hash. Basis for staleness, direct-edit detection, and the entire drift-detection mechanism.
+- **Context graph** — directed acyclic graph of items connected by `derives_from` frontmatter declarations. Computed by the engine; persisted to `.vibeloom/state/context-graph.json`. Powers derivation order, affected-set computation, drift detection, scoped subagent dispatch, and traceability.
+- **Two-layer architecture** — the Skill (semantic judgment, orchestration, approval gates) plus the deterministic engine (parsing, schema validation, graph construction, eval, snapshot, drift detection). They cooperate through `.vibeloom/state/`; the engine never decides product meaning.
+- **Forward-back generation** — within a tier, the forward pass produces artifacts in dependency order; the back pass reopens upstream artifacts that downstream work made stale. Idempotent.
+
+## Repository
+
+- Source: https://github.com/ilya-baimetov/vibeloom
+- License: MIT
+- Engine version: `vibeloom-engine 0.2.0` — pure Python, zero runtime dependencies, 25 tests across parser, graph, eval, staleness, CLI.
+
+## Author
+
+Ilya Baimetov. Independent advisory available — see https://vibeloom.ai/contact. Long-form writing is moving to https://pragprod.com once that launches.
+
+## How VibeLoom compares to spec-driven development tools
+
+- **GitHub Spec Kit** — open-source spec-driven workflow with constitution + per-feature specify/plan/tasks. Strong durable layer at the constitution; per-feature artifacts decay post-merge. Source: https://github.com/github/spec-kit
+- **AWS Kiro** — IDE-bound feature spec workflow (requirements → design → tasks) plus steering files and hooks. Strong feature documentation; per-feature specs go static post-creation. Source: https://kiro.dev/docs/specs/feature-specs/
+- **Tessl** — package manager for agent skills, docs, rules, and evaluations. Strong per-skill knowledge distribution; no whole-system contract. Pivoted from per-file `spec-as-source` in early 2026. Source: https://docs.tessl.io/introduction-to-tessl/how-tessl-works
+- **VibeLoom** — whole-system contract for one codebase, graph-connected from intent down to component, with explicit drift detection and reconciliation across every change.
+
+## Honest limitations
+
+- v0.2 — public field evidence is still early. Adoption should begin in `vibe` mode or via brownfield `import` before a team commits to full governance.
+- DDD vocabulary in full modes (bounded contexts, ubiquitous language, aggregates) narrows the addressable market.
+- Contracts decay too if nobody maintains them. The context graph detects drift but does not prevent cultural neglect.

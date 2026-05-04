@@ -221,8 +221,8 @@
         <tbody>
           <tr><td><code>system</code></td><td>External actors, trust boundaries, system-wide NFRs</td><td><code>EXT</code>, <code>TB</code>, <code>SNFR</code></td></tr>
           <tr><td><code>containers</code></td><td>Runtime/deployment topology and container inventory</td><td><code>CONT</code></td></tr>
-          <tr><td><code>container.md</code></td><td>One runtime home and its component inventory</td><td><code>CMP</code></td></tr>
-          <tr><td><code>component.md</code></td><td>Terminal technical ownership boundary</td><td><code>IF</code>, <code>DEP</code>, <code>BEH</code></td></tr>
+          <tr><td><code>container</code></td><td>One runtime home and its component inventory</td><td><code>CMP</code></td></tr>
+          <tr><td><code>component</code></td><td>Terminal technical ownership boundary</td><td><code>IF</code>, <code>DEP</code>, <code>BEH</code></td></tr>
         </tbody>
       </table>
 
@@ -282,17 +282,17 @@
 
       <h2 id="lifecycle">Lifecycle + traces</h2>
       <p>Two lifecycle states: <code>draft</code> and <code>approved</code>. <code>draft</code> means "not yet trusted as upstream truth"; <code>approved</code> means "downstream may derive from this." An <strong>approval unit</strong> is one contract tier — affected artifacts within it advance together.</p>
-      <p>On approval, the engine emits an <strong>approval trace</strong>: a per-item content fingerprint plus approval metadata, written append-only to <code>.vibeloom/traces/approvals.jsonl</code>. The trace is what enables drift detection on subsequent passes.</p>
-      <p>Traces are organized into families, each with its own JSONL stream:</p>
+      <p>On approval, the engine records a durable <strong>approval trace</strong>: the approved item identities plus a content fingerprint. This trace is what enables drift detection on subsequent passes.</p>
+      <p>Traces are organized into families:</p>
       <ul>
         <li><strong>approval</strong> — who/what approved which contract basis.</li>
         <li><strong>generation</strong> — what task generated what artifact from which basis.</li>
         <li><strong>eval</strong> — what checks ran and what findings resulted.</li>
-        <li><strong>code-sync</strong> — source-map-like connection from code paths and file hashes to contract IDs.</li>
-        <li><strong>decision</strong> — single home for ADR/PDR-style decision history. Each entry carries a <code>load_bearing</code> flag; the active subset is a queried view, not a duplicated folder.</li>
+        <li><strong>code-sync</strong> — how generated code maps back to the contract items it realizes.</li>
+        <li><strong>decision</strong> — decision history: what was decided, when, why, and whether each decision still binds future generation.</li>
         <li><strong>import</strong> — evidence and confidence for brownfield inference.</li>
       </ul>
-      <p>Traces can propose improvements through mediated proposals; they cannot become contract truth without review and approval. Schemas and on-disk format: see <a class="linky" href="implementation.html#traces">Implementation · Traces</a>.</p>
+      <p>Traces are durable provenance. They can propose improvements through mediated proposals, but cannot become contract truth without review and approval. Concrete schemas and storage: see <a class="linky" href="implementation.html#traces">Implementation · Traces</a>.</p>
 
       <hr>
 
@@ -310,7 +310,7 @@
           <tr>
             <td><strong>Mechanical</strong></td>
             <td>Validation runners — project-defined commands the orchestrator runs against generated artifacts.</td>
-            <td>Declared in <code>validation-registry.md</code>. Standard families: typecheck, lint, unit/integration tests, contract conformance, generated BDD, smoke/deploy.</td>
+            <td>Declared in a project-level validation registry. Standard families: typecheck, lint, unit/integration tests, contract conformance, generated BDD, smoke/deploy.</td>
             <td>Grows as a runner library accumulates; some heuristic dimensions become mechanical when they can be expressed as runners.</td>
           </tr>
           <tr>
@@ -394,9 +394,9 @@
       <hr>
 
       <h2 id="roadmap">Roadmap</h2>
-      <p><strong>Shipping in v0.3:</strong> the contract stack with ux-specs as peer to product-specs; modes (vibe / pm / dev / ux / expert); the contract graph; drift detection across structural / lifecycle / semantic forms; status taxonomy; the verification ladder; append-only traces with canonical families; scoped subagent dispatch with wave assembly; brownfield <code>import</code>; the methodology + implementation specs.</p>
-      <p><strong>v0.4+:</strong> richer reconciliation with bounded auto-fix proposals (still always user-confirmed); <code>generate --dry-run</code>; contract REPL; contract debugger; cross-project contract pattern library; trace-derived learning. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/roadmap.md" target="_blank" rel="noopener">v03/roadmap.md</a> for the full feature brainstorm.</p>
-      <p><strong>v1.0 horizon:</strong> stable on-disk format for traces and graph; engine API as a versioned contract; named integrations beyond Claude Code and Codex.</p>
+      <p><strong>Shipping in v0.3:</strong> the contract stack with ux-specs as peer to product-specs; modes (vibe / pm / dev / ux / expert); the contract graph; drift detection across structural / lifecycle / semantic forms; status taxonomy; the verification ladder; durable trace records with canonical families; scoped subagent dispatch with wave assembly; brownfield import; the methodology + implementation specs.</p>
+      <p><strong>v0.4+:</strong> richer reconciliation with bounded auto-fix proposals (still always user-confirmed); dry-run generation; a contract REPL; a contract debugger; a cross-project contract pattern library; trace-derived learning. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/roadmap.md" target="_blank" rel="noopener">the v0.4+ roadmap</a> for the full feature brainstorm.</p>
+      <p><strong>v1.0 horizon:</strong> stable trace and graph interfaces; engine API as a versioned contract; named integrations beyond Claude Code and Codex.</p>
 
       <hr>
 

@@ -1,6 +1,8 @@
 # VibeLoom
 
-**Contract-driven governance for long-lived AI-coded projects.** VibeLoom generates a tiered stack of specifications (`intent-specs` → `product-specs` → `system-specs` → `context` → `code`), keeps every tier aligned with the approved tier above, and detects drift structurally, lifecycle-wise, and semantically as the project evolves. The user keeps approval authority at configurable gates; subagents do the scoped work in parallel waves.
+**Contract-driven governance for long-lived AI-coded projects.** VibeLoom generates a tiered stack of specifications (`intent-specs` → `product-specs` ↔ `ux-specs` → `system-specs` → `context` → `code`), keeps every tier aligned with the approved tier above, and detects drift structurally, lifecycle-wise, and semantically as the project evolves. The user keeps approval authority at configurable gates; subagents do the scoped work in parallel waves.
+
+VibeLoom is the reference instantiation of **codæ** — contract-driven agentic engineering. codæ is the paradigm; VibeLoom is one concrete realization of it.
 
 🌐 Website: [**vibeloom.ai**](https://vibeloom.ai) · Methodology: [vibeloom.ai/methodology](https://vibeloom.ai/methodology) · Implementation: [vibeloom.ai/implementation](https://vibeloom.ai/implementation)
 
@@ -8,18 +10,31 @@
 
 | Path | Status | Purpose |
 | --- | --- | --- |
-| [`v02/`](v02/) | **Active** | Current VibeLoom methodology, skill, artifact templates, and the deterministic `vibeloom-engine` Python substrate |
-| [`v01/`](v01/) | Archived | Earlier skill-only package; kept runnable but no longer the active methodology |
-| [`site/`](site/) | Active | Public website source for `vibeloom.ai` (Cloudflare Workers static assets) |
+| [`v03/`](v03/) | **Current spec** (May 2026) | codæ manifesto + VibeLoom v0.3 methodology, implementation, comparison, examples, getting-started, roadmap. Spec-only — engine catches up in a v0.3.x release. |
+| [`v02/`](v02/) | **Runnable** | v0.2 methodology, skill, artifact templates, and the deterministic `vibeloom-engine` Python substrate. Use this if you want to actually run the tool today. |
+| [`v01/`](v01/) | Archived | Earliest skill-only package; kept runnable but no longer the active methodology. |
+| [`site/`](site/) | Active | Public website source for `vibeloom.ai` (Cloudflare Workers static assets). |
 
-Everything new lives in `v02/`:
+### v03 — the codæ paradigm + VibeLoom v0.3 spec
+
+Read in this order:
+
+- **[v03/codæ-manifesto.html](v03/codæ-manifesto.html)** — the paradigm. The case, the cognitive-surface argument, the bet, the SDD positioning, the DbC hommage with aspires-toward-decidability framing.
+- **[v03/getting-started.md](v03/getting-started.md)** — 30-minute on-ramp. Install, bootstrap a vibe project, generate, ship, upgrade.
+- **[v03/vibeloom-methodology.md](v03/vibeloom-methodology.md)** — what VibeLoom is. Five modes, contract stack, 6 status categories, operations, verification ladder, review and reconciliation packets.
+- **[v03/vibeloom-implementation.md](v03/vibeloom-implementation.md)** — how it's built. Skill + engine + validation runners. Repo layout, IDs, six trace schemas, task templates, dispatch plan + wave assembly + parallel semantics + subagent task header.
+- **[v03/vibeloom-comparison.html](v03/vibeloom-comparison.html)** — methodology comparison. SDD with three flavors (Kiro, Spec Kit, BMAD) vs codæ. Tessl and Pythagora as sidebars.
+- **[v03/examples/](v03/examples/)** — five worked examples: greenfield vibe-mode, brownfield import, ux-led design, multi-component reconciliation, parallel dispatch.
+- **[v03/roadmap.md](v03/roadmap.md)** — features considered for v04+ (dry-run, contract REPL, contract debugger, contract pattern library, ContractDelta, DDD context maps, compliance mode, trace-derived learning).
+
+### v02 — the runnable substrate
 
 - **[v02/SKILL.md](v02/SKILL.md)** — the skill file Claude Code and Codex load (operation routing, guardrails, response shape)
-- **[v02/vibeloom-methodology.md](v02/vibeloom-methodology.md)** — authoritative WHY (tiers, modes, operations, approval model, drift, eval framework)
-- **[v02/vibeloom-implementation.md](v02/vibeloom-implementation.md)** — authoritative HOW (artifact layout, metadata, stable IDs, subagent dispatch, graph cache, snapshot lifecycle)
-- **[v02/references/](v02/references/)** — load-on-demand skill guides (operations, modes, runtime, artifacts, eval prompts, troubleshooting)
-- **[v02/assets/](v02/assets/)** — 17 artifact templates (intent, defaults, prd, usm, dm, system, containers, container, component, pdr, adr, bdd, configs)
-- **[v02/engine/](v02/engine/)** — deterministic Python engine (`vibeloom-engine` 0.2.0): parser, graph, hash-based drift detection, structural eval
+- **[v02/vibeloom-methodology.md](v02/vibeloom-methodology.md)** — v0.2 methodology
+- **[v02/vibeloom-implementation.md](v02/vibeloom-implementation.md)** — v0.2 implementation
+- **[v02/references/](v02/references/)** — load-on-demand skill guides
+- **[v02/assets/](v02/assets/)** — 17 artifact templates
+- **[v02/engine/](v02/engine/)** — deterministic Python engine (`vibeloom-engine` 0.2.0)
 
 ## Quick start
 
@@ -39,16 +54,23 @@ PYTHONPATH=v02/engine python3 -m vibeloom_engine --version
 
 The engine is pure Python — no `pip install` needed. The skill invokes it via `python -m` using the path to `v02/engine`.
 
-See [`v02/README.md`](v02/README.md) for a deeper walkthrough and [vibeloom.ai/implementation](https://vibeloom.ai/implementation) for how the skill + engine fit together.
+For the v0.3 first-30-minutes journey (spec-level, engine support pending), see **[v03/getting-started.md](v03/getting-started.md)**.
 
-## What's new in v2
+## What's new in v0.3
 
-- **Five-tier contract stack** — `intent-specs` → `product-specs` → `system-specs` → `context` → `code`, with typed `derives_from` edges forming a DAG between stable short IDs
-- **Four modes** — `vibe` (single user gate), `pm` (product-focused), `dev` (dev-focused), `expert` (full gates, nothing delegated)
-- **Eight operations** — `init`, `import`, `generate`, `eval`, `review`, `reconcile`, `approve`, `status`
-- **Deterministic engine** — `vibeloom-engine` handles parsing, graph construction, 9 structural eval checks, and hash-based drift detection; agent handles semantic judgment
-- **Three-form drift model** — structural (upstream changed), lifecycle (approved artifact directly edited), semantic (meaning shifted); each with its own detection mechanism
-- **Approved-state snapshots** — per-artifact mtime + per-item SHA-256 canonical hashes, captured at approval and preserved across rebuilds; enables precise direct-edit detection and node-level staleness
+- **codæ as the paradigm** — codæ (contract-driven agentic engineering) is the named paradigm; VibeLoom is one instantiation. SDD is the predecessor; codæ pushes SDD into lifecycle governance.
+- **Five modes** — `vibe` / `pm` / `dev` / **`ux`** / `expert`. ux mode makes the designer the primary contract author with PM as peer reviewer; mockups can drive product-spec generation directly.
+- **Six-tier contract stack** — `intent-specs` → `product-specs` ↔ `ux-specs` → `system-specs` → `context` → `code`. ux-specs is a peer to product-specs (not subordinate).
+- **Six status categories** — `current` / `stale` / `uncovered` / `dangling` / `drifted` / `obsolete`. Up from three forms of drift in v0.2.
+- **Verification ladder** — three explicit tiers: decidable (structural eval) / mechanical (validation runners) / heuristic (semantic eval). Trajectory is to promote checks upward.
+- **Six trace schemas** — `approval`, `code-sync`, `generation`, `eval`, `decision`, `import`. JSONL append-only; full learning-loop substrate. All carry `schema_version`.
+- **Cache vs traces split** — `.vibeloom/cache/` (regenerable graph + indices) and `.vibeloom/traces/` (durable JSONL). Approval traces replace approval snapshots.
+- **Code-sync as source-map-like evidence** — items ↔ code-paths, no deep code graph.
+- **Dispatch plan + wave assembly + parallel semantics + subagent task header** — parallel subagent generation is now buildable, not just gestured at.
+- **Item-count cognitive surface metric** — explicit per-tier item budgets; LOC is supporting evidence only.
+- **DbC framed honestly** — hommage to Bertrand Meyer, not equivalence; aspires toward decidability via the verification ladder.
+- **Dark factory** — framed as a 2-3 year trajectory, not a v0.3 promise.
+- **Vibe mode is genuinely minimal** — no graph, no code-sync. Upgrade is a feature.
 
 ## Deployment
 

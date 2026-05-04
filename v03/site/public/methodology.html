@@ -173,16 +173,16 @@
 
       <hr>
 
-      <h2 id="layers">Three layers — Contract · Context · Code</h2>
-      <p>VibeLoom organizes everything into three layers, plus a parallel trace stream.</p>
+      <h2 id="layers">Architecture</h2>
+      <p>Working layers stack top to bottom — Contract above Context above Code — and traces run alongside as durable provenance.</p>
       <ul>
         <li><strong>Contract</strong> — governed semantic truth. Has lifecycle state (<code>draft</code> or <code>approved</code>). Only approved items drive downstream generation.</li>
         <li><strong>Context</strong> — active generation guidance derived from approved contract. Not approved like contract; the fix path for bad context is to amend the upstream contract and regenerate.</li>
         <li><strong>Code</strong> — executable output: source, tests, runtime, deployment, migrations. Synchronized and validated, not approved.</li>
-        <li><strong>Traces</strong> — durable provenance running parallel to all three layers. Append-only; never silently regenerated from current state.</li>
+        <li><strong>Traces</strong> — durable provenance running parallel. Captures approvals, generation events, eval results, code-sync, decisions, imports. Never silently regenerated from current state.</li>
       </ul>
       <div class="callout">
-        <strong>Important.</strong> The <code>context</code> tier means generated execution truth (configs, decision records, BDD scenarios) — <em>not</em> the LLM's context window. Easy to confuse.
+        <strong>Important.</strong> The <code>context</code> tier means generated execution guidance (configs, behavioral scenarios) — <em>not</em> the LLM's context window. Easy to confuse.
       </div>
 
       <hr>

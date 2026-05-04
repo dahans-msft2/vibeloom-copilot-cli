@@ -229,6 +229,16 @@ h4 { font-size: 1.02rem; font-weight: 700; }
 p { color: var(--c-ink-3); }
 p strong { color: var(--c-ink); font-weight: 600; }
 
+/* ===== codæ wordmark ===== */
+/* Wraps the whole word: applies JetBrains Mono so the æ ligature
+   renders symmetrically; .ae on the æ glyph itself is the brand-red. */
+.codae {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.ae { color: var(--c-red); }
+
 code {
   font-family: var(--f-mono);
   font-size: 0.86em;

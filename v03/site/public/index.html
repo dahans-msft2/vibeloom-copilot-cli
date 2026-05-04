@@ -224,22 +224,16 @@
     <div class="section-head">
       <div class="left">
         <span class="eyebrow">The Problem</span>
-        <h2>AI agents generate local momentum.<br>They lose <span style="color:var(--c-red)">long-term coherence.</span></h2>
+        <h2>AI agents drift<br>from <span style="color:var(--c-red)">intent.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          The first generation pass can look impressive. The twentieth is where the
-          real cost appears: meaning shifts, old decisions disappear, and every new
-          agent has to rediscover what the software is supposed to be. The same
-          named failure modes show up again and again.
+          Drift compounds. Slop is the steady state.
         </p>
       </div>
     </div>
 
     <aside class="stats-strip" aria-label="Verified 2026 evidence on AI drift and slop in production">
-      <div class="stats-strip-head">
-        <span class="eyebrow">Why now · primary, verified 2026 evidence</span>
-      </div>
       <div class="stats-strip-grid">
         <div class="stat">
           <div class="stat-num">80% / 89.8%</div>
@@ -297,65 +291,10 @@
       </h2>
     </div>
 
-    <div class="vision-body">
-      <p>
-        <strong>Code is going dark factory</strong> — generated, regenerated, never
-        maintained by hand. The human's mendable surface moves up to the contract.
-      </p>
-      <p>
-        <strong>Spec-driven moved upstream, but per-feature only.</strong> AWS Kiro,
-        GitHub Spec Kit, and BMAD all elevated the load-bearing artifact above
-        code. Each spec drives one generation cycle, then ships and goes static.
-        That gets you through a sprint. It doesn't survive a year of evolution.
-      </p>
-      <p>
-        <strong>Contract-driven governs the lifecycle.</strong> A whole-system,
-        derivation-tracked, drift-detecting contract — approved upstream, verified
-        downstream, reconciled when things slip. The enabler the dark factory
-        needs.
-      </p>
-
-      <figure class="bet-figure" aria-label="Two diverging trajectories: contract-driven compounds with model improvement; per-feature spec-driven ages with the model.">
-        <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" role="img">
-          <!-- y-axis -->
-          <line x1="80" y1="40" x2="80" y2="300" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
-          <text x="68" y="170" text-anchor="middle" transform="rotate(-90 68,170)" font-family="JetBrains Mono, monospace" font-size="11" fill="rgba(255,255,255,0.55)" letter-spacing="0.04em">value to the team →</text>
-
-          <!-- x-axis -->
-          <line x1="80" y1="300" x2="680" y2="300" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
-          <text x="380" y="335" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="rgba(255,255,255,0.55)" letter-spacing="0.04em">model capability over time →</text>
-
-          <!-- threshold line -->
-          <line x1="80" y1="170" x2="680" y2="170" stroke="rgba(255,255,255,0.16)" stroke-width="1" stroke-dasharray="4 5"/>
-          <text x="86" y="164" font-family="JetBrains Mono, monospace" font-size="9" fill="rgba(255,255,255,0.4)" letter-spacing="0.05em">threshold of usefulness</text>
-
-          <!-- starting point (today) -->
-          <circle cx="130" cy="170" r="6" fill="#fff"/>
-          <circle cx="130" cy="170" r="11" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
-          <text x="130" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="rgba(255,255,255,0.7)" font-weight="600">today</text>
-
-          <!-- contract-driven curve (rises) -->
-          <path d="M 130 170 C 280 158, 420 110, 660 50" stroke="#e84057" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-          <text x="660" y="38" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#e84057" font-weight="800" letter-spacing="-0.01em">contract-driven</text>
-          <text x="660" y="54" text-anchor="end" font-family="Fraunces, serif" font-size="12" fill="rgba(232,64,87,0.85)" font-style="italic">compounds with the model</text>
-
-          <!-- per-feature curve (declines) -->
-          <path d="M 130 170 C 280 195, 420 250, 660 300" stroke="rgba(255,255,255,0.45)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-dasharray="0"/>
-          <text x="660" y="276" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="rgba(255,255,255,0.7)" font-weight="800" letter-spacing="-0.01em">per-feature spec-driven</text>
-          <text x="660" y="292" text-anchor="end" font-family="Fraunces, serif" font-size="12" fill="rgba(255,255,255,0.55)" font-style="italic">ages with the model</text>
-        </svg>
-        <figcaption>The crossover is the moment of decision. Spec-driven was the right step; contract-driven is the slope that compounds.</figcaption>
-      </figure>
-
-      <blockquote class="vision-quote">
-        <p>"An endless stream of AI slop... cheap to generate, expensive to review."</p>
-        <cite>— Baltes, Cheong, Treude · arXiv 2603.27249 · 2026</cite>
-      </blockquote>
-
-      <p class="vision-pull">
-        Contract is what the human holds.<br>Code is what the agent compiles
-        it into.
-      </p>
+    <div class="vision-body bet-tight">
+      <p><strong>Code is going dark factory.</strong></p>
+      <p><strong>Spec-driven moved upstream</strong> — per-feature only. Specs decay.</p>
+      <p><strong>Contract-driven governs the lifecycle.</strong> The dark-factory enabler.</p>
     </div>
   </div>
 </section>
@@ -436,29 +375,9 @@
 
     <div class="drift-body">
       <ul class="drift-bullets">
-        <li>
-          <strong>Detect</strong> — every approved item is hashed at approval. Edits
-          to upstream items, edits to approved files outside the flow, and
-          downstream content that no longer faithfully represents upstream meaning
-          all surface on the next pass.
-        </li>
-        <li>
-          <strong>Avoid</strong> — the contract graph determines derivation order, so
-          downstream tiers never generate from unreviewed truth. Approval gates
-          bracket every contract tier; auto-advance only happens when structural
-          eval is clean and no breaking semantic change is detected.
-        </li>
-        <li>
-          <strong>Reconcile</strong> — a defined remediation loop. Conflicts surface
-          with item IDs; you pick fix direction (preserve upstream and correct
-          downstream, amend upstream then recompute, or supply a custom direction);
-          affected scopes are regenerated and re-evaled.
-        </li>
-        <li>
-          <strong>Measure</strong> — every approval, generation, eval, and
-          reconciliation emits an append-only trace. The full history of what
-          changed, what was approved, and what drifted is queryable per-project.
-        </li>
+        <li><strong>Detect</strong> — every approved item is hashed; drift surfaces on the next pass.</li>
+        <li><strong>Avoid</strong> — the contract graph blocks generation from unreviewed truth.</li>
+        <li><strong>Reconcile</strong> — defined remediation loop with item-ID anchors and chosen fix direction.</li>
       </ul>
 
       <figure class="drift-flow" aria-label="Three-step drift handling: detect, reconcile, re-eval.">
@@ -468,14 +387,6 @@
         <span class="dflow-arrow" aria-hidden="true">→</span>
         <div class="dflow-step"><span class="dflow-label">re-eval</span></div>
       </figure>
-
-      <p class="drift-note">
-        The shape of the problem is independently confirmed:
-        <a class="linky" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU's Cursor AI study</a>
-        (MSR 2026) measures long-term complexity growth from AI-assisted code
-        directly; tech press has named the same pattern under
-        "<a class="linky" href="https://venturebeat.com/infrastructure/context-decay-orchestration-drift-and-the-rise-of-silent-failures-in-ai-systems" target="_blank" rel="noopener">context decay, orchestration drift, silent failures</a>."
-      </p>
     </div>
   </div>
 </section>
@@ -499,14 +410,13 @@
       </div>
     </div>
 
-    <div class="mode-grid">
+    <div class="mode-grid mode-grid-5">
       <article class="mode-card is-feature">
         <div class="top">
           <span class="name">vibe</span>
           <span class="tag">Compact</span>
         </div>
-        <p>A compact stack — intent + defaults + flat system. One approval gate at intent. Everything else auto-advances.</p>
-        <div class="who"><strong>Best for</strong>Solo dev · prototype · MVP · weekend project</div>
+        <p>Compact stack. One gate at intent. Auto-advances.</p>
       </article>
 
       <article class="mode-card">
@@ -514,8 +424,7 @@
           <span class="name">pm</span>
           <span class="tag">Product-led</span>
         </div>
-        <p>You own intent-specs and product-specs. System-specs auto-advance when the eval is clean and no semantic break is detected.</p>
-        <div class="who"><strong>Best for</strong>Product-led teams · PM driving requirements</div>
+        <p>You own intent + product. System auto-advances.</p>
       </article>
 
       <article class="mode-card">
@@ -523,8 +432,7 @@
           <span class="name">dev</span>
           <span class="tag">Tech-led</span>
         </div>
-        <p>You own intent-specs and system-specs. Product-specs auto-advance once intent is settled. Architecture-first orientation.</p>
-        <div class="who"><strong>Best for</strong>Tech-led teams · architecture-first work</div>
+        <p>You own intent + system. Product auto-advances.</p>
       </article>
 
       <article class="mode-card">
@@ -532,8 +440,7 @@
           <span class="name">ux</span>
           <span class="tag">Design-led</span>
         </div>
-        <p>Designer-led peer of <code>pm</code>. You own intent-specs and ux-specs; product-specs are PM-peer-reviewed. Mockups can drive product-spec generation directly.</p>
-        <div class="who"><strong>Best for</strong>Design-led products · designer drives discovery</div>
+        <p>You own intent + ux. Mockups can drive product-spec.</p>
       </article>
 
       <article class="mode-card">
@@ -541,8 +448,7 @@
           <span class="name">expert</span>
           <span class="tag">All-gated</span>
         </div>
-        <p>All contract tiers (intent, product, ux, system) gated for explicit user approval. Nothing auto-advances. Maximum traceability.</p>
-        <div class="who"><strong>Best for</strong>Architects · regulated systems · co-owned design</div>
+        <p>Every contract tier explicit. Nothing auto-advances.</p>
       </article>
     </div>
   </div>
@@ -554,26 +460,11 @@
     <div class="section-head">
       <div class="left">
         <span class="eyebrow">How it compares</span>
-        <h2>Beyond <span class="ital">spec-driven<br>development</span>.</h2>
+        <h2>From <span class="ital">spec-driven</span><br>to <span style="color:var(--c-red)">contract-driven.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          Different tools, different bets, one shared assumption: <em>the agent still
-          needs detailed instructions for the next feature.</em> We disagree. As code
-          generation goes <strong>dark factory</strong>, the only artifact a human
-          still needs to maintain is the <strong>blueprint</strong> — what the system
-          <em>is</em>, not how the next feature gets built.
-        </p>
-        <p class="h-lead">
-          Spec Kit, Kiro, and BMAD keep humans on the <em>factory floor</em>:
-          per-feature specs that drive one generation cycle, then ship and go static.
-          Their durable layers — constitution, steering files, persona checklists —
-          are thin. Tessl pivoted away from per-file spec-as-source because that
-          fight ages with the model; their bet is on per-skill context — the right
-          direction at the wrong scope. VibeLoom is the only one with a
-          <strong>whole-system, structured, human-verifiable contract</strong> that
-          survives every regeneration and is graph-connected from intent down to
-          component.
+          Spec-driven was the right step. Contract-driven is the next.
         </p>
       </div>
     </div>
@@ -758,8 +649,7 @@
 <!-- ░░ CTA ░░ -->
 <section class="cta" id="start">
   <div class="wrap cta-inner">
-    <span class="cta-kicker">Give your AI-coded system a source of truth.</span>
-    <h2>Try v0.3 in a few minutes.</h2>
+    <h2>Get started in 30 minutes.</h2>
     <p>Clone the repo, load it as a Skill in Claude Code or Codex, and run one command. Python 3.10+ is the only system requirement &mdash; the engine is pure Python with no runtime dependencies.</p>
     <div class="install" id="install">
       <span class="pmt">$</span>

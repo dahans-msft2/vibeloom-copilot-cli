@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Methodology — Contract-Driven Agentic Engineering · VibeLoom</title>
+<meta name="description" content="The VibeLoom methodology: a five-tier contract stack, five operating modes, six status categories. Contract-driven agentic engineering — the next step beyond spec-driven development.">
+<meta name="keywords" content="contract-driven methodology, spec-driven development, drift detection, contract stack, AI agent governance">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:locale" content="en_US">
+<link rel="canonical" href="https://vibeloom.ai/methodology">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="VibeLoom">
+<meta property="og:url" content="https://vibeloom.ai/methodology">
+<meta property="og:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta property="og:description" content="Five-tier contract stack, five operating modes, six status categories. Beyond spec-driven development.">
+<meta property="og:image" content="https://vibeloom.ai/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+<meta property="article:author" content="Ilya Baimetov">
+<meta property="article:published_time" content="2026-04-17T00:00:00Z">
+<meta property="article:modified_time" content="2026-04-28T00:00:00Z">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta name="twitter:description" content="Five-tier contract stack, five operating modes, six status categories. Beyond spec-driven development.">
+<meta name="twitter:image" content="https://vibeloom.ai/og-image.png">
+<meta name="twitter:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+
+<link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
+
+<!-- Fonts: non-blocking parallel fetch -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap"></noscript>
+
+<link rel="stylesheet" href="styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "VibeLoom Methodology",
+      "description": "The contract-driven methodology for long-lived AI-coded projects: principles, contract stack, modes, operations, drift detection.",
+      "author": {"@type":"Person","name":"Ilya Baimetov"},
+      "publisher": {"@type":"Organization","name":"VibeLoom","logo":{"@type":"ImageObject","url":"https://vibeloom.ai/vibeloom-logo-loom.svg"}},
+      "image": "https://vibeloom.ai/og-image.png",
+      "url": "https://vibeloom.ai/methodology",
+      "mainEntityOfPage": "https://vibeloom.ai/methodology",
+      "datePublished": "2026-04-17",
+      "dateModified": "2026-04-28",
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Overview","item":"https://vibeloom.ai/"},
+        {"@type":"ListItem","position":2,"name":"Methodology","item":"https://vibeloom.ai/methodology"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"What is the contract stack?","acceptedAnswer":{"@type":"Answer","text":"A tiered, version-controlled set of artifacts — intent-specs, product-specs, system-specs, plus derived context and code — where each tier derives from the approved tier above. The contract stack doubles as the eval stack: upstream items are both the basis for downstream work and the criterion against which it's checked."}},
+        {"@type":"Question","name":"What modes does VibeLoom support?","acceptedAnswer":{"@type":"Answer","text":"Five modes — vibe, pm, dev, ux, and expert. The mode controls which tiers the user explicitly co-authors and approves and which the agent handles autonomously. Vibe → full upgrade is one-way."}},
+        {"@type":"Question","name":"What forms of drift does VibeLoom detect?","acceptedAnswer":{"@type":"Answer","text":"Three: structural (upstream changed, detected by content diff against the approved snapshot), lifecycle (approved file edited outside the flow, auto-reopens to draft), and semantic (downstream meaning shifted, detected by agent eval). A parallel triad of multi-agent agent drift — semantic, coordination, behavioral — is named in arXiv 2601.04170 (Jan 2026); different framing, same family of failure modes."}},
+        {"@type":"Question","name":"How does VibeLoom compare to GitHub Spec Kit, Kiro, and Tessl?","acceptedAnswer":{"@type":"Answer","text":"Spec Kit and Kiro keep humans in the loop on the factory floor — per-feature specs that drive one generation cycle. Tessl pivoted from per-file spec-as-source to per-skill context. VibeLoom is the only one with a whole-system, structured, human-verifiable contract that survives every regeneration and is graph-connected from intent down to component."}}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="index.html" aria-label="VibeLoom home"><img src="vibeloom-logo-loom.svg" alt="" width="26" height="26"> VibeLoom</a>
+  <div class="links">
+    <a href="index.html">Overview</a>
+    <a href="codae.html">codæ</a>
+    <a href="methodology.html" class="is-active" aria-current="page">Methodology</a>
+    <a href="implementation.html">Implementation</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta" href="index.html#start">Get started</a>
+  </div>
+  <details class="menu">
+    <summary aria-label="Open menu">Menu
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="panel">
+      <a href="index.html">Overview</a>
+      <a href="codae.html">codæ</a>
+      <a href="methodology.html" class="is-active" aria-current="page">Methodology</a>
+      <a href="implementation.html">Implementation</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      <a class="cta" href="index.html#start">Get started</a>
+    </div>
+  </details>
+</nav>
+
+<main id="main">
+<header class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Methodology · v0.3</span>
+    <h1>The contract-driven methodology for AI-coded projects.</h1>
+    <p class="lead">VibeLoom turns intent into a tiered, version-controlled contract — durable, derivation-aware, and treated as both source of truth and eval system. This page explains the principles, the artifacts, the operations, and the invariants that hold the stack together.</p>
+    <aside class="thesis">
+      <span class="thesis-label">Core thesis</span>
+      AI-generated systems need a governed contract stack, not a longer prompt. The stack doubles as the eval surface that keeps downstream artifacts coherent across every generation, contributor, and revision.
+    </aside>
+    <div class="meta">
+      <span>~14 min read</span>
+      <span>Source: <code>vibeloom-methodology.md</code></span>
+      <span>Version 0.2</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="doc-layout">
+    <aside class="doc-toc" aria-label="Methodology table of contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#principles" class="is-active">Principles</a></li>
+        <li><a href="#problem">The problem</a></li>
+        <li><a href="#vision">The bet</a></li>
+        <li><a href="#architecture">Three-layer architecture</a></li>
+        <li><a href="#contract">The contract stack</a></li>
+        <li><a href="#graph">The context graph</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#operations">Operations</a></li>
+        <li><a href="#lifecycle">Generation, approval, lifecycle</a></li>
+        <li><a href="#evals">Eval, two layers</a></li>
+        <li><a href="#drift">Drift, three forms</a></li>
+        <li><a href="#whenuse">When to use it</a></li>
+        <li><a href="#compare">Vs spec-driven tools</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc-body">
+
+      <h2 id="principles">Principles</h2>
+      <p>VibeLoom rests on four load-bearing ideas. Everything else — the artifacts, the modes, the operations, the engine — is mechanism in service of these.</p>
+      <ol>
+        <li><strong>The system is defined as a contract stack, not a set of stale one-off specs.</strong> Specs are a graph of derived items, not a folder of documents.</li>
+        <li><strong>The contract stack doubles as the eval stack.</strong> Upstream items are the basis for downstream work and the criterion against which it's checked.</li>
+        <li><strong>Agents are responsible for generation and validation, gated by the user.</strong> Mode picks where the gates sit; everything between gates is the agent's job.</li>
+        <li><strong>Scoped context enables agent scaling.</strong> Subagents receive bounded load sets, not whole-repo dumps. The context graph makes this safe at scale.</li>
+      </ol>
+
+      <hr>
+
+      <h2 id="problem">The problem VibeLoom is designed for</h2>
+      <p>The four failure modes — <strong>semantic drift</strong>, <strong>invisible governance</strong>, <strong>context fragmentation</strong>, <strong>reconciliation failure</strong> — are <a class="linky" href="index.html#problem">walked through on the overview page</a>. Every artifact, mode, operation, and engine command in VibeLoom maps to mitigating one or more of them.</p>
+
+      <p>The 2026 evidence behind these failure modes is not subtle. <a class="linky" href="https://arxiv.org/pdf/2601.04170" target="_blank" rel="noopener">Agent Drift (arXiv 2601.04170, Jan 2026)</a> names a parallel triad — <em>semantic, coordination, behavioral</em> — for drift between <em>cooperating LLM agents</em>; VibeLoom's three forms target <em>contract-vs-code</em> drift instead, but the family of failure is the same. <a class="linky" href="https://arxiv.org/html/2604.16339" target="_blank" rel="noopener">arXiv 2604.16339 (March 2026)</a> identifies <em>semantic intent divergence</em> as <em>"a primary yet formally unaddressed root cause of multi-agent failure in enterprise settings,"</em> attributing it to <em>siloed context, absent process models, and unstructured inter-agent communication</em> — precisely the conditions VibeLoom's context graph and contract stack are designed to remove. Empirical work mining <strong>304,362 AI-authored commits across 6,275 GitHub repositories</strong> found that <strong>24.2% of tracked AI-introduced issues survived at the latest revision</strong> (<a class="linky" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">arXiv 2603.28592, Feb 2026</a>); Baltes et al. (<a class="linky" href="https://arxiv.org/html/2603.27249v1" target="_blank" rel="noopener">arXiv 2603.27249, 2026</a>) framed the cumulative cost of <em>AI slop</em> as a tragedy of the commons.</p>
+
+      <hr>
+
+      <h2 id="vision">The bet: implementation goes commodity, intent doesn't</h2>
+      <p>The full bet — <em>"implementation is becoming a commodity; intent isn't"</em> — is laid out on the <a class="linky" href="index.html#vision">overview Vision section</a>. This page picks up where it leaves off: <em>how</em> the methodology operationalizes that bet across artifacts, modes, operations, eval, and drift.</p>
+
+      <p>Two pieces of 2026 evidence anchor the position. First, <strong>Tessl</strong> — which launched as a per-file <em>spec-as-source</em> tool — visibly pivoted in early 2026 to a package manager for agent skills and context. The per-file implementation-control story didn't survive contact with smarter agents. Second, <a class="linky" href="https://venturebeat.com/infrastructure/context-decay-orchestration-drift-and-the-rise-of-silent-failures-in-ai-systems" target="_blank" rel="noopener">VentureBeat's April 26, 2026 piece</a> on <em>"context decay, orchestration drift, and silent failures"</em> is the freshest mainstream signal that the industry is now naming the problem VibeLoom built around.</p>
+
+      <div class="callout">
+        <strong>The bet, in one sentence.</strong> Implementation is becoming a commodity; intent isn't. The dark factory needs a blueprint, and the blueprint has to outlive the machinery.
+      </div>
+
+      <p>VibeLoom treats the <strong>contract</strong> — intent, product requirements, domain model, system architecture, component invariants — as the load-bearing artifact, governed by a context graph that detects when changes upstream make downstream specs stale. The model writes the code; the contract governs whether the code is <em>what you meant</em>. As models get better at code, the contract doesn't become less valuable — it becomes the only thing that's still uniquely yours. Every section that follows — the contract stack, the context graph, the modes, the operations, the eval and drift mechanisms — exists to make this bet operational.</p>
+
+      <hr>
+
+      <h2 id="architecture">Three-layer architecture: contract → context → code</h2>
+      <p>VibeLoom partitions a governed application into three layers.</p>
+      <p><strong><code>contract</code> — governed semantic truth.</strong> The user seeds the intent and retains approval-policy authority. Depending on mode, some tiers are explicit user stops while others may auto-advance under delegated rules. The agent generates, validates, and refines the tiered <code>intent-specs</code> → <code>product-specs</code> → <code>system-specs</code> stack. Each tier derives from and is checked against approved upstream truth.</p>
+      <p><strong><code>context</code> — definitive execution config for agents, plus read-only change records.</strong> These artifacts do not require approval. They are generated only from approved contract truth. Users may inspect, eval, review, and edit them when needed, but if context is wrong, the normal fix path is upstream in the contract.</p>
+      <p><strong><code>code</code> — the executable result.</strong> Users are not expected to edit code directly. The orchestrator agent reads contract and context, identifies affected scopes, and dispatches scoped worker agents. Each worker receives only the slice of context and contract pertinent to its scope.</p>
+
+      <div class="callout">
+        <strong>Important note on terminology:</strong> the <code>context</code> tier in VibeLoom means generated execution truth (configs, decision records, BDD scenarios) — <em>not</em> the LLM's context window. The two are easy to confuse.
+      </div>
+
+      <hr>
+
+      <h2 id="contract">The contract stack, in detail</h2>
+      <p>Three contract tiers, plus context and code. Each derives from the approved tier above. Every artifact is parsed into <strong>items</strong> — capabilities, requirements, stories, components, interfaces, behaviors. Each item carries a stable, prefixed ID, and each derivation between items is declared explicitly in artifact frontmatter as <code>derives_from</code>.</p>
+
+      <h3>Tier 1 · <code>intent-specs</code></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>intent</code></td><td>Prose-first description: capabilities and hard constraints</td><td>User request</td></tr>
+          <tr><td><code>defaults</code></td><td>Repo-wide constitution: binding global rules, tech baseline, quality guardrails</td><td><code>intent</code></td></tr>
+        </tbody>
+      </table>
+      <p>In <code>vibe</code> mode, <code>intent</code> also carries a product-summary section that seeds future product-specs if the project later upgrades.</p>
+
+      <h3>Tier 2 · <code>product-specs</code> <span style="font-weight:400;color:var(--c-ink-5);font-size:0.9rem">(absent in vibe mode)</span></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>prd</code></td><td>Objectives, key results, metrics, functional/non-functional requirements</td><td><code>intent</code></td></tr>
+          <tr><td><code>usm</code></td><td>Epics, flows, stories, acceptance criteria, milestones</td><td><code>intent</code> + <code>prd</code></td></tr>
+          <tr><td><code>dm</code></td><td>Domain model: bounded contexts, aggregates, entities, value objects, invariants, ubiquitous language</td><td><code>intent</code> + <code>prd</code> + <code>usm</code></td></tr>
+        </tbody>
+      </table>
+      <p>The domain model is the semantic anchor for the whole stack: components are derived from bounded contexts, not from folder shape.</p>
+
+      <h3>Tier 3 · <code>system-specs</code></h3>
+      <table>
+        <thead><tr><th>Spec</th><th>Purpose</th><th>Generated from</th></tr></thead>
+        <tbody>
+          <tr><td><code>system</code></td><td>External actors, trust boundaries, system-wide non-functional requirements</td><td>Approved product-specs</td></tr>
+          <tr><td><code>containers</code></td><td>Runtime topology: how the system is deployed</td><td><code>system</code></td></tr>
+          <tr><td><code>container.md</code></td><td>Per-container detail: components inside, internal dependencies</td><td><code>containers</code></td></tr>
+          <tr><td><code>component.md</code></td><td>Per-component spec: typed interfaces (IF-####), dependencies (DEP-####), behaviors (BEH-####), owned filesystem paths</td><td><code>container</code></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Tier 4 · <code>context</code> <span style="font-weight:400;color:var(--c-ink-5);font-size:0.9rem">(derived, no approval)</span></h3>
+      <p>Generated execution truth: <code>config</code> (CLAUDE.md / AGENTS.md at root, container, and component scope), <code>pdr</code> (product decision records), <code>adr</code> (architecture decision records), <code>bdd</code> (Gherkin scenarios per component).</p>
+
+      <h3>Tier 5 · <code>code</code></h3>
+      <p>Source organized by <code>&lt;container&gt;/&lt;component&gt;</code>, tests (unit, integration, BDD), and runtime (packaging, deployment, migrations). Code is judged against upstream — never approved as a separate tier.</p>
+
+      <hr>
+
+      <h2 id="graph">The context graph</h2>
+      <p>The contract stack is what you author. The <strong>context graph</strong> is what the engine builds from it — a single, queryable model of the system, assembled by parsing every artifact's items and following every <code>derives_from</code> edge. Almost every load-bearing operation in VibeLoom — derivation, affected-set computation, drift detection, scoped subagent dispatch — runs on this graph.</p>
+
+      <h3>Anatomy</h3>
+      <p>Items are the nodes; <code>derives_from</code> declarations are the edges. Together they form a <strong>directed acyclic graph</strong>: cycles are forbidden, and only capabilities and constraints are valid roots. Every other item, transitively, derives from one or more capabilities or constraints.</p>
+
+      <h3>Why it's load-bearing</h3>
+      <ul>
+        <li><strong>Derivation order.</strong> The graph determines what to generate next: never a downstream item before its upstream is approved.</li>
+        <li><strong>Affected-set computation.</strong> When an item changes, walking forward through <code>derives_from</code> yields every item that may need to follow.</li>
+        <li><strong>Drift detection.</strong> The graph is what makes drift <em>locatable</em> — a stale item maps back to its owning artifact, and forward to every artifact that depends on it.</li>
+        <li><strong>Scoped subagent dispatch.</strong> The graph makes it safe to run parallel subagents: each agent's load set is a precise slice of the graph; write scopes are disjoint by construction.</li>
+        <li><strong>Traceability.</strong> Any code, test, or context file can be traced back to the capabilities and constraints it implements.</li>
+      </ul>
+
+      <h3>How it relates to authoring</h3>
+      <p>You don't author the graph — you author artifacts. The graph is computed: parsed from frontmatter, validated for integrity, persisted as cache. If two artifacts disagree on a derivation edge, that's a structural finding the engine surfaces immediately. If you delete an upstream item, every downstream item that referenced it shows up as broken on the next pass.</p>
+      <p>This is what makes the methodology <em>enforceable</em> rather than aspirational. Without the graph, contract-driven would be a discipline. With it, it's a substrate.</p>
+
+      <hr>
+
+      <h2 id="modes">Five modes</h2>
+      <p>A mode controls three things: which tiers the user explicitly co-authors and approves, which are delegated to the agent, and whether the contract stack is full or compact.</p>
+
+      <table>
+        <thead><tr><th>Mode</th><th>Stack</th><th>User owns</th><th>Auto-advances</th></tr></thead>
+        <tbody>
+          <tr><td><code>vibe</code></td><td>Compact (intent + defaults + flat system)</td><td>intent-specs</td><td>system, code</td></tr>
+          <tr><td><code>pm</code></td><td>Full</td><td>intent-specs, product-specs</td><td>system-specs</td></tr>
+          <tr><td><code>dev</code></td><td>Full</td><td>intent-specs, system-specs</td><td>product-specs</td></tr>
+          <tr><td><code>expert</code></td><td>Full</td><td>all three contract tiers</td><td>nothing</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Vibe → full upgrade is one-way.</strong> Run <code>/vibeloom init --upgrade --mode pm|dev|expert</code> to promote a vibe repo to a full mode. Compact <code>intent</code> seeds full <code>prd</code>/<code>usm</code>/<code>dm</code>; flat <code>system</code> expands into the full <code>system</code> + <code>containers</code> + per-component layout. There is no downgrade.</p>
+
+      <p><strong>Delegated auto-advance is bounded.</strong> Even in <code>vibe</code>, <code>pm</code>, and <code>dev</code>, the agent only auto-advances when the structural eval passes <em>and</em> no breaking semantic change is detected. Breaking change means any mutation to an existing approved item; only adding new items consistent with approved truth is non-breaking.</p>
+
+      <hr>
+
+      <h2 id="operations">Eight operations</h2>
+      <p>The CLI surface is intentionally small. <code>generate</code> and <code>eval</code> are the two primitives; the others are interactive shells, lifecycle transitions, or read-only reports.</p>
+
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>/vibeloom init</code></td><td>Bootstrap an ungoverned repo. Picks a mode and an initial intent. A separate upgrade flow promotes a vibe repo to a full mode (one-way).</td></tr>
+          <tr><td><code>/vibeloom import</code></td><td>Reconstruct a candidate contract bottom-up from existing code.</td></tr>
+          <tr><td><code>/vibeloom generate</code></td><td>Forward-back-pass produce the next affected tier from approved upstream truth. Idempotent.</td></tr>
+          <tr><td><code>/vibeloom eval</code></td><td>Structural plus semantic validation; reports findings, modifies nothing.</td></tr>
+          <tr><td><code>/vibeloom review</code></td><td>Interactive shell on <code>eval</code> — surface findings, propose bounded fixes, loop until you proceed.</td></tr>
+          <tr><td><code>/vibeloom reconcile</code></td><td>User-initiated remediation loop for any of the three drift forms. Always user-initiated.</td></tr>
+          <tr><td><code>/vibeloom approve</code></td><td>Advance a reviewed contract approval unit from <code>draft</code> to <code>approved</code>.</td></tr>
+          <tr><td><code>/vibeloom status</code></td><td>Read-only report of lifecycle, freshness, coverage, affected scope, and current mode.</td></tr>
+        </tbody>
+      </table>
+
+      <p>Plus a <code>$vibeloom</code> shorthand that triages by current state and suggests the next operation. Full CLI syntax — flags, targets, scopes — lives in <a class="linky" href="implementation.html#cli">Implementation · Engine CLI</a>.</p>
+
+      <div class="callout">
+        <strong>Why this works at scale.</strong> Because the context graph maps each item to its owning artifact and each component to a disjoint slice of the filesystem, <code>generate</code> can dispatch parallel subagents safely — each with a precise, bounded load set, no cross-talk between writes. The orchestration mechanics live in <a class="linky" href="implementation.html#dispatch">Implementation · Subagent dispatch</a>.
+      </div>
+
+      <hr>
+
+      <h2 id="lifecycle">Generation, approval, lifecycle</h2>
+      <p>Every generation is <strong>forward-back</strong> within a tier. The forward pass produces artifacts in dependency order. The back pass checks whether later artifacts constrain earlier ones — if a story implies a requirement that wasn't in the PRD, the back pass reopens the PRD as draft and amends it. The loop terminates when nothing more reopens. Generation is idempotent: same approved upstream, same output.</p>
+
+      <p>The lifecycle itself is intentionally two states: <code>draft</code> and <code>approved</code>. No in-progress, no review-pending, no published. <code>draft</code> means "not yet trusted as upstream truth"; <code>approved</code> means "downstream tiers may derive from this."</p>
+
+      <p>An <strong>approval unit</strong> is one contract tier — the affected artifact set within it advances together. <code>approve intent-specs</code> moves both <code>intent.md</code> and <code>defaults.md</code> if they're coherent. Tier-level approval keeps related artifacts in sync.</p>
+
+      <p>On approval, the engine captures an <strong>approved-state snapshot</strong>: a per-item content fingerprint of every approved artifact. It's the basis for staleness and direct-edit detection, preserved across rebuilds and discarded only when an artifact returns to <code>draft</code>. (Algorithm and on-disk format: see <a class="linky" href="implementation.html#snapshot">Implementation · Approved-state snapshot</a>.)</p>
+
+      <hr>
+
+      <h2 id="evals">Eval, two layers</h2>
+      <p>VibeLoom has two stacked eval layers. The structural layer is deterministic (engine-side); the semantic layer is judgment-based (agent-side). Both run in <code>eval</code> and <code>review</code>.</p>
+
+      <h3>Structural — 9 checks (blocking on approval)</h3>
+      <ol>
+        <li><strong>Lifecycle consistency</strong> — every artifact's frontmatter status matches its tier rules.</li>
+        <li><strong>Reference integrity</strong> — every <code>derives_from</code> resolves to an existing item.</li>
+        <li><strong>Required fields</strong> — frontmatter completeness per artifact type.</li>
+        <li><strong>Declared relationships</strong> — items live in correct artifacts, scopes, and tiers.</li>
+        <li><strong>Stack integrity</strong> — tier order respected; no upward derivation.</li>
+        <li><strong>Coverage</strong> — every non-terminal upstream item has at least one downstream item.</li>
+        <li><strong>Contradiction</strong> — no downstream item directly conflicts with upstream meaning.</li>
+        <li><strong>Componentization fit</strong> <em>(full modes only)</em> — every component maps to exactly one bounded context; every BC sits in exactly one container.</li>
+        <li><strong>Context sufficiency</strong> <em>(full modes only)</em> — every code-owning component has the execution config it needs.</li>
+      </ol>
+
+      <h3>Semantic — 4 dimensions (breaking or advisory)</h3>
+      <ol>
+        <li><strong>Faithful representation</strong> — downstream content does not narrow, widen, or reverse upstream meaning.</li>
+        <li><strong>Naming consistency</strong> — terms align with the ubiquitous language (<code>TERM-####</code> in the domain model).</li>
+        <li><strong>Implicit dependencies</strong> — load-bearing references are explicit in <code>derives_from</code>, not hidden in prose.</li>
+        <li><strong>Capability gaps</strong> — every <code>CAP-####</code> capability and <code>CST-####</code> constraint is substantively addressed downstream.</li>
+      </ol>
+
+      <p>The principle behind both layers: <em>false positives are acceptable; false negatives are not</em>. An over-marked stale set causes unnecessary review. An under-marked set lets drift leak silently past approval gates.</p>
+
+      <hr>
+
+      <h2 id="drift">Drift, three named forms</h2>
+      <p>Drift is the central concern of v0.3. It comes in three forms, and each has its own detection mechanism.</p>
+      <p style="font-size:0.92rem;color:var(--c-ink-4);margin-top:-8px;margin-bottom:18px"><em>Related research:</em> a parallel triad — <strong>semantic</strong>, <strong>coordination</strong>, <strong>behavioral</strong> — is named for multi-agent LLM <em>agent</em> drift in <a class="linky" href="https://arxiv.org/pdf/2601.04170" target="_blank" rel="noopener">Agent Drift (arXiv 2601.04170, Jan 2026)</a>, which also proposes an Agent Stability Index across 12 behavioral dimensions. Different framing, same family of failure modes — VibeLoom's three forms are about <em>contract-vs-code</em> drift specifically.</p>
+
+      <table>
+        <thead><tr><th>Form</th><th>What it is</th><th>Detection</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Structural</strong></td>
+            <td>Approved upstream item modified or removed since downstream was last synchronized.</td>
+            <td>Engine: content diff against the approved snapshot, propagated forward through the derivation graph.</td>
+          </tr>
+          <tr>
+            <td><strong>Lifecycle</strong></td>
+            <td>Approved contract artifact edited outside the flow.</td>
+            <td>Engine: detects approved-file edits and auto-reopens them to <code>draft</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Semantic</strong></td>
+            <td>Downstream content no longer represents upstream meaning even when structure matches.</td>
+            <td>Agent: 4-dimension semantic eval. Findings are <em>breaking</em> or <em>advisory</em>.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><code>reconcile</code> handles all three. It is the user-initiated loop where conflicts are surfaced with item IDs, the user picks fix direction (amend upstream, preserve upstream and correct downstream, or alternative), and <code>generate</code> is invoked on the affected artifacts. The agent never auto-invokes reconcile.</p>
+
+      <hr>
+
+      <h2 id="whenuse">When to use VibeLoom</h2>
+      <p>VibeLoom is strongest where prompt-only generation stops being reliable. Use it when:</p>
+      <ul>
+        <li>The codebase must survive more than one generation step, more than one contributor, or more than one architectural revision</li>
+        <li>Multiple bounded contexts, non-trivial workflows, or meaningful technical boundaries are present</li>
+        <li>Multiple agents or users may work in parallel and need consistent context</li>
+        <li>Semantic coherence matters more than raw generation speed</li>
+      </ul>
+
+      <p>VibeLoom adds ceremony. For a weekend prototype, single-file utility, or throwaway script, prompt-only generation is likely faster and sufficient. For anything that will be maintained, extended, or shared, VibeLoom pays for itself through reduced drift and explicit traceability.</p>
+
+      <hr>
+
+      <h2 id="compare">How VibeLoom compares to spec-driven development tools</h2>
+      <p>Three tools, three bets, one shared assumption: <em>the agent still needs detailed instructions for the next feature.</em> We disagree. As code generation goes <strong>dark factory</strong>, the only artifact a human still needs to maintain is the <strong>blueprint</strong> — what the system <em>is</em>, not how the next feature gets built.</p>
+      <p>The differentiator is not <em>spec length</em>. Spec Kit's per-feature specs are full PRD-style with user stories and acceptance criteria; Kiro's spec/design/tasks pipeline produces detailed multi-document artifacts. They aren't short. The differentiator is <strong>scope and durability</strong>: per-feature ticket vs whole-system blueprint, single-cycle vs every-cycle.</p>
+      <p>The right way to compare these tools is to ask <em>where each one invests its complexity budget</em> — because that's where the value lives, and that's what determines whether the value compounds or ages as models improve. Five dimensions, four tools, honest comparison.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>VibeLoom</th>
+            <th>GitHub Spec Kit</th>
+            <th>Kiro</th>
+            <th>Tessl</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Where the complexity budget goes</strong></td>
+            <td>Contract graph + reconciliation</td>
+            <td>Per-feature workflow ceremony + constitution</td>
+            <td>IDE + per-feature spec pipeline</td>
+            <td>Reusable context packaging + registry</td>
+          </tr>
+          <tr>
+            <td><strong>Scope of governance</strong></td>
+            <td>Whole-system (context graph)</td>
+            <td>Per-feature + global constitution</td>
+            <td>Per-feature + global steering files</td>
+            <td>Per-skill (reusable, cross-project)</td>
+          </tr>
+          <tr>
+            <td><strong>What persists across generations</strong></td>
+            <td>Specs evolve, graph-tracked</td>
+            <td>Specs decay, branch-scoped</td>
+            <td>Specs go static post-creation</td>
+            <td>Skills evolve (semver-versioned)</td>
+          </tr>
+          <tr>
+            <td><strong>Coupling to current model capability</strong></td>
+            <td>Low — value grows with model quality</td>
+            <td>Medium-high — ceremony scaffolds the model</td>
+            <td>High — workflow keeps the model on rails</td>
+            <td>Low — better models use better context better</td>
+          </tr>
+          <tr>
+            <td><strong>Cross-cutting coherence</strong></td>
+            <td>Native (graph + DDD invariants)</td>
+            <td>Constitution only — features don't talk</td>
+            <td>Steering files only — specs are siloed</td>
+            <td>None at system level — skills are independent</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Where each tool lands relative to the bet.</strong> Spec Kit and Kiro double down on directing implementation per feature, with light global rules layered on top. As models improve, that ceremony becomes overhead. Tessl <em>already pivoted</em> in early 2026 — they walked away from per-file <code>DO NOT EDIT</code> spec-as-source and reorganized around versioned context skills. That move validates the bet from a different angle: managing what the agent <em>knows</em> beats managing what it <em>writes</em>. VibeLoom takes the next step up the same staircase: managing what the system <em>is supposed to be</em> beats managing what each agent invocation knows.</p>
+
+      <p><strong>Where each tool wins.</strong> Spec Kit is the strongest open-source starting point with the largest community and a genuinely durable constitution mechanism. Kiro is the cleanest auditable per-feature trail for regulated environments inside an integrated IDE. Tessl is the strongest per-skill knowledge distribution layer; if you want to make a single agent invocation 3× more accurate at using a specific library, Tessl is what you reach for. None of these are bad tools — they're betting on different ground.</p>
+
+      <p><strong>Where the bet is weakest.</strong> Contracts decay too if nobody maintains them; the context graph detects drift but doesn't prevent cultural neglect. The DDD vocabulary in full modes narrows the addressable market. And if Tessl extends upward into system-scope skills, they could occupy adjacent ground. The bet is asymmetric — bounded downside, scales with model improvement. That's a position worth taking.</p>
+
+      <hr>
+
+      <h2 id="roadmap">Roadmap</h2>
+      <p><strong>Shipping now (v0.3):</strong> the contract stack, five modes, three drift forms, eight operations, the deterministic engine with 9 structural checks, scoped subagent dispatch, the approved-state snapshot, the context graph, brownfield <code>import</code>.</p>
+      <p><strong>v0.3, in design:</strong> first-class telemetry — drift heatmaps over time, a contract-coverage report, derivation-graph visualization. Richer <code>reconcile</code> with bounded auto-fix proposals (still always user-confirmed). Lighter compact mode that drops further toward "intent + code only" for hackathons.</p>
+      <p><strong>v1.0, in shape:</strong> stable on-disk format for the snapshot and graph; engine API as a versioned contract; named integrations beyond Claude Code and Codex.</p>
+      <p>The methodology surface is intentionally small and is unlikely to grow. Most v0.x → v1.x work is making the engine sturdier under real workloads, not adding tiers or modes.</p>
+
+      <div class="callout">
+        <strong>Next:</strong> read the <a class="linky" href="implementation.html">Implementation page</a> for the engine internals, or jump straight to <a class="linky" href="index.html#start">getting started</a>.
+      </div>
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html"><img src="vibeloom-logo-loom.svg" alt="" width="22" height="22"> VibeLoom</a>
+      <div class="nav">
+        <a href="codae.html">codæ</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="small">
+      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>v0.3 · MIT licensed · Built by <a href="contact.html">Ilya Baimetov</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // active TOC link based on scroll position
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length) return;
+    var sections = links.map(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (s) { return s.el; });
+    function set() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].el.offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      current.a.classList.add('is-active');
+    }
+    window.addEventListener('scroll', set, { passive: true });
+    set();
+  })();
+</script>
+</body>
+</html>

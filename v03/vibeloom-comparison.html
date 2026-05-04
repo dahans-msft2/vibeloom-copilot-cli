@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>From spec-driven to contract-driven — SDD and codæ · Whitepaper</title>
+
+<meta name="description" content="A 2026 methodology-level comparison of three spec-driven development tools (AWS Kiro, GitHub Spec Kit, BMAD Method) and codæ — the contract-driven paradigm instantiated by VibeLoom. With sidebars on Tessl (now context/skills infrastructure) and Pythagora (app-generator lineage).">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="From spec-driven to contract-driven — SDD and codæ">
+<meta property="og:description" content="Methodology-level comparison of Kiro, Spec Kit, BMAD, and codæ. Tessl and Pythagora as sidebars.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From spec-driven to contract-driven — SDD and codæ">
+<meta name="twitter:description" content="Two families: SDD with three flavors, and codæ as the next level.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap"></noscript>
+
+<style>
+:root {
+  --c-bg:        #ffffff;
+  --c-bg-soft:   #f7f7f6;
+  --c-bg-mute:   #efeeec;
+  --c-ink:       #0a0a0a;
+  --c-ink-2:     #1a1a1a;
+  --c-ink-3:     #3a3a3a;
+  --c-ink-4:     #5a5a5a;
+  --c-ink-5:     #707070;
+  --c-line:      #e6e4e0;
+  --c-line-2:    #d6d3cd;
+
+  --c-red:       #e84057;
+  --c-red-deep:  #c43a50;
+  --c-red-soft:  #fbe6ea;
+  --c-red-tint:  rgba(232, 64, 87, 0.08);
+
+  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --f-serif:     "Fraunces", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif;
+
+  --w-site:      1200px;
+  --w-content:   780px;
+  --w-prose:     720px;
+  --nav-h:       64px;
+
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.02), 0 2px 8px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--f-sans);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection { background: var(--c-red); color: #fff; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  padding: 10px 16px;
+  background: var(--c-ink); color: #fff;
+  font-weight: 600; font-size: 0.88rem;
+  border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; outline: 2px solid var(--c-red); outline-offset: 2px; }
+
+nav.site-nav {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--c-line);
+}
+nav.site-nav .brand {
+  display: inline-block;
+  font-weight: 700; font-size: 1.04rem; letter-spacing: -0.025em;
+  color: var(--c-ink);
+}
+nav.site-nav .links {
+  display: flex; align-items: center; gap: 22px;
+  font-size: 0.88rem; font-weight: 500; color: var(--c-ink-3);
+}
+nav.site-nav .links a { transition: color 0.15s; }
+nav.site-nav .links a:hover { color: var(--c-ink); }
+nav.site-nav .badge {
+  font-family: var(--f-mono); font-size: 0.7rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid var(--c-red-soft);
+  border-radius: 100px;
+  background: var(--c-red-tint);
+  white-space: nowrap;
+}
+
+.wrap { max-width: var(--w-site); margin: 0 auto; padding: 0 32px; }
+
+h1, h2, h3, h4 {
+  font-family: var(--f-sans);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--c-ink);
+  font-weight: 800;
+}
+h2 { font-size: clamp(1.7rem, 2.8vw, 2.2rem); letter-spacing: -0.03em; }
+h3 { font-size: 1.18rem; font-weight: 700; }
+h4 { font-size: 0.98rem; font-weight: 700; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: ""; width: 18px; height: 1px; background: var(--c-red-deep);
+}
+
+p { color: var(--c-ink-3); }
+p strong { color: var(--c-ink); font-weight: 600; }
+em { font-style: italic; }
+
+code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+  background: var(--c-bg-mute);
+  color: var(--c-ink-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+}
+
+a.linky {
+  color: var(--c-ink);
+  border-bottom: 1px solid var(--c-line-2);
+  transition: border-color 0.15s, color 0.15s;
+}
+a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
+
+sup.cite {
+  font-family: var(--f-mono);
+  font-size: 0.62em;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  margin-left: 1px;
+  vertical-align: super;
+  line-height: 0;
+}
+sup.cite a {
+  border-bottom: 1px dotted var(--c-red-soft);
+  transition: border-color 0.15s;
+}
+sup.cite a:hover { border-color: var(--c-red); }
+
+.hero {
+  position: relative;
+  padding: 96px 0 72px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--c-line);
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(10,10,10,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10,10,10,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 920px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid var(--c-line-2);
+  border-radius: 100px;
+  background: #fff;
+  font-size: 0.78rem; font-weight: 500; color: var(--c-ink-3);
+  margin-bottom: 28px;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-red);
+  box-shadow: 0 0 0 4px rgba(232,64,87,0.18);
+}
+.hero h1 {
+  font-family: var(--f-serif);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 6vw, 4.4rem);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-bottom: 22px;
+  color: var(--c-ink);
+  max-width: 18ch;
+}
+.hero h1 .accent,
+nav.site-nav .brand .accent,
+footer .accent { color: var(--c-red); }
+.hero .sub {
+  font-family: var(--f-sans);
+  font-style: normal;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 1.6vw, 1.32rem);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  max-width: 56ch;
+  color: var(--c-ink-2);
+  margin-bottom: 24px;
+}
+.hero .lead {
+  font-size: clamp(1.04rem, 1.5vw, 1.16rem);
+  color: var(--c-ink-3);
+  line-height: 1.65;
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 12px 28px;
+  margin-top: 32px; padding-top: 22px;
+  border-top: 1px solid var(--c-line);
+  font-size: 0.82rem; color: var(--c-ink-4);
+  font-family: var(--f-mono);
+}
+.hero-meta span strong { color: var(--c-ink); font-weight: 600; }
+
+.doc-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+  padding-top: 64px;
+  padding-bottom: 96px;
+}
+.doc-toc {
+  position: sticky; top: calc(var(--nav-h) + 32px);
+  font-size: 0.86rem;
+}
+.doc-toc .label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--c-ink-5); font-weight: 700;
+  margin-bottom: 14px;
+}
+.doc-toc ol {
+  list-style: none;
+  display: grid; gap: 4px;
+  counter-reset: tocnum;
+}
+.doc-toc ol li { counter-increment: tocnum; }
+.doc-toc ol a {
+  display: block;
+  padding: 5px 0 5px 28px;
+  color: var(--c-ink-4);
+  border-left: 2px solid var(--c-line);
+  position: relative;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.35;
+}
+.doc-toc ol a::before {
+  content: "§" counter(tocnum);
+  position: absolute; left: 8px; top: 5px;
+  font-family: var(--f-mono); font-size: 0.7rem;
+  color: var(--c-ink-5); font-weight: 600;
+}
+.doc-toc ol a:hover { color: var(--c-ink); border-color: var(--c-ink-5); }
+.doc-toc ol a.is-active {
+  color: var(--c-ink); font-weight: 600;
+  border-left-color: var(--c-red);
+}
+
+.doc-body { max-width: var(--w-prose); }
+.doc-body section {
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--c-line);
+}
+.doc-body section:first-child {
+  border-top: 0;
+  padding-top: 8px;
+}
+.doc-body h2 {
+  margin-bottom: 22px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.doc-body h2 .num {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+.doc-body h3 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.doc-body h3 .tool-tag {
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  margin-right: 10px;
+  vertical-align: 2px;
+}
+.doc-body p {
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+.doc-body p + p { margin-top: 14px; }
+.doc-body ul, .doc-body ol {
+  padding-left: 22px;
+  margin: 18px 0;
+}
+.doc-body li {
+  color: var(--c-ink-3);
+  margin: 10px 0;
+  line-height: 1.65;
+  font-size: 1.02rem;
+}
+.doc-body li strong { color: var(--c-ink); font-weight: 600; }
+
+blockquote.pull {
+  margin: 30px 0;
+  padding: 14px 0 14px 24px;
+  border-left: 3px solid var(--c-red);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.18rem, 2vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+blockquote.pull p { color: var(--c-ink); margin: 0 0 10px 0; font-size: inherit; line-height: inherit; }
+blockquote.pull cite {
+  display: block;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--c-ink-4);
+  letter-spacing: 0.02em;
+  margin-top: 8px;
+}
+
+.cmp-wrap {
+  overflow-x: auto;
+  margin: 28px -8px 8px;
+  padding: 0 8px 4px;
+  -webkit-overflow-scrolling: touch;
+}
+.cmp-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cmp-table th,
+.cmp-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: top;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.cmp-table thead th {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-2);
+  font-weight: 700;
+  border-bottom: 2px solid var(--c-line-2);
+  background: var(--c-bg-soft);
+  white-space: nowrap;
+}
+.cmp-table thead th.col-self {
+  color: var(--c-red-deep);
+  background: var(--c-red-tint);
+}
+.cmp-table tbody th {
+  font-family: var(--f-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  white-space: nowrap;
+  background: var(--c-bg-soft);
+  border-right: 1px solid var(--c-line);
+}
+.cmp-table td.cell-self {
+  background: var(--c-red-tint);
+  color: var(--c-ink-2);
+}
+.cmp-table td strong { color: var(--c-ink); font-weight: 600; }
+.cmp-caption {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--c-ink-5);
+  margin-top: 8px;
+}
+
+.fig {
+  margin: 36px 0;
+  padding: 28px;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.fig svg { width: 100%; height: auto; }
+.fig-caption {
+  margin-top: 16px;
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-4);
+  line-height: 1.55;
+}
+.fig-caption strong { color: var(--c-ink); font-weight: 600; }
+
+.sidebar-block {
+  margin: 28px 0;
+  padding: 22px 24px;
+  background: var(--c-bg-soft);
+  border-left: 3px solid var(--c-line-3);
+  border-radius: 0 10px 10px 0;
+}
+.sidebar-block h3 {
+  margin-top: 0;
+  font-size: 1.08rem;
+}
+.sidebar-block p {
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+.sidebar-block .tool-tag {
+  font-family: var(--f-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-5);
+  margin-right: 10px;
+  vertical-align: 2px;
+}
+
+.refs ol {
+  list-style: none;
+  counter-reset: ref;
+  padding-left: 0;
+  display: grid; gap: 16px;
+}
+.refs ol li {
+  counter-increment: ref;
+  padding-left: 42px;
+  position: relative;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--c-ink-3);
+}
+.refs ol li::before {
+  content: counter(ref);
+  position: absolute; left: 0; top: 1px;
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--c-bg-mute);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--c-ink-2);
+}
+.refs ol li .meta {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-5);
+  margin-top: 2px;
+  display: block;
+}
+.refs ol li .title { font-weight: 600; color: var(--c-ink); }
+.refs ol li a {
+  color: var(--c-red-deep);
+  border-bottom: 1px dotted var(--c-red-soft);
+  word-break: break-all;
+}
+.refs ol li a:hover { border-color: var(--c-red); color: var(--c-red); }
+.refs-note {
+  margin-bottom: 24px;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--c-ink-3);
+}
+
+footer {
+  border-top: 1px solid var(--c-line);
+  padding: 32px 0 40px;
+  background: var(--c-bg-soft);
+  font-size: 0.82rem;
+  color: var(--c-ink-4);
+}
+footer .row {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+footer a {
+  color: var(--c-ink-3);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
+
+@media (max-width: 920px) {
+  .doc-layout { grid-template-columns: 1fr; gap: 28px; padding-top: 40px; padding-bottom: 56px; }
+  .doc-toc {
+    position: static;
+    margin-bottom: 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-bg-soft);
+  }
+  .doc-toc ol { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+  .doc-toc ol a {
+    padding: 6px 10px;
+    border-left: 0;
+    border: 1px solid var(--c-line);
+    border-radius: 100px;
+    background: #fff;
+    font-size: 0.82rem;
+  }
+  .doc-toc ol a::before { display: none; }
+  .doc-toc ol a.is-active {
+    border-color: var(--c-red);
+    color: var(--c-red-deep);
+  }
+  .hero { padding: 56px 0 44px; }
+  nav.site-nav { padding: 0 16px; }
+  nav.site-nav .links { gap: 14px; }
+  nav.site-nav .links a:not(.badge) { display: none; }
+  .wrap { padding: 0 20px; }
+}
+
+@media (max-width: 520px) {
+  .doc-body p { font-size: 1rem; line-height: 1.7; }
+  .doc-body li { font-size: 0.98rem; }
+  blockquote.pull { padding-left: 18px; font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="codæ-manifesto.html">cod<span class="accent">æ</span></a>
+  <div class="links">
+    <span class="badge">Methodology comparison · v0.3</span>
+  </div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <div class="wrap hero-inner">
+    <h1>From spec-driven to contract-driven.</h1>
+
+    <p class="sub">SDD has three flavors — Kiro, Spec Kit, BMAD. codæ is the next level.</p>
+
+    <p class="lead">
+      Spec-driven development (SDD) correctly moved AI coding away from
+      raw prompting. codæ pushes the same impulse further: the spec
+      stack should become a durable, traceable, approval-gated contract
+      that governs the lifecycle, not a one-off planning artifact.
+      This whitepaper compares the three main SDD tools at the
+      methodology level and positions codæ relative to them. Tessl and
+      Pythagora appear as sidebars rather than main comparators.
+    </p>
+
+    <div class="hero-meta">
+      <span><strong>Author</strong> Ilya Baimetov</span>
+      <span><strong>Published</strong> v0.3 · May 2026</span>
+      <span><strong>Read time</strong> ~12 min</span>
+      <span><strong>Sources</strong> primary, verified</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="doc-layout">
+
+    <aside class="doc-toc" aria-label="Contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#thesis">Two families</a></li>
+        <li><a href="#sdd">The SDD family</a></li>
+        <li><a href="#codae">codæ in the picture</a></li>
+        <li><a href="#matrix">Methodology matrix</a></li>
+        <li><a href="#surface">Cognitive surface</a></li>
+        <li><a href="#drift">Drift handling</a></li>
+        <li><a href="#bets">The bet each makes</a></li>
+        <li><a href="#ladder">SDD maturity ladder</a></li>
+        <li><a href="#sidebars">Sidebars</a></li>
+        <li><a href="#references">References</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc-body">
+
+      <section id="thesis">
+        <h2><span class="num">§1 — Two families</span>Spec-driven development, then contract-driven.</h2>
+
+        <p>
+          Spec-driven development has become a recognized family. AWS
+          Kiro<sup class="cite"><a href="#ref-1">1</a></sup> turns
+          natural prompts into structured requirements (in EARS
+          notation), design, and tasks, anchored in an IDE with steering
+          files and lifecycle hooks. GitHub Spec Kit<sup class="cite"><a href="#ref-3">3</a></sup>
+          makes specifications executable through a constitution +
+          spec/plan/tasks/implement workflow. BMAD Method<sup class="cite"><a href="#ref-5">5</a></sup>
+          organizes ideation through implementation around specialized
+          agents (analyst, PM, architect, developer, UX) and adaptive
+          workflows. All three address the same problem from different
+          angles.
+        </p>
+
+        <p>
+          codæ pushes the same impulse further. A spec is not enough if
+          it expires after one feature or only guides one generation
+          cycle. The specification stack must become a <strong>contract</strong>:
+          persistent, derivation-aware, approval-gated, traceable, and
+          used across the lifecycle as both memory and eval surface.
+          VibeLoom is one concrete instantiation of the codæ paradigm.
+        </p>
+
+        <blockquote class="pull">
+          <p>SDD asks: how do we make specs better inputs to generation? codæ asks: how do we make contracts the durable control surface of the lifecycle?</p>
+        </blockquote>
+
+        <p>
+          This piece compares the three SDD tools at the methodology
+          level — what each treats as source of truth, who governs
+          change, how drift is handled — and shows where codæ extends
+          the family. Tessl and Pythagora are real participants in the
+          broader landscape but not main SDD methodology comparators in
+          May 2026 — see the sidebars in §9.
+        </p>
+      </section>
+
+      <section id="sdd">
+        <h2><span class="num">§2 — The SDD family</span>Three flavors of the same impulse.</h2>
+
+        <h3 id="m-kiro"><span class="tool-tag">AWS Kiro</span>IDE-anchored SDD.</h3>
+
+        <p>
+          Kiro is an agentic AI development environment — IDE plus CLI
+          — built around three pillars: <strong>specs</strong>
+          (per-feature triplets of <code>requirements.md</code> in EARS
+          notation, <code>design.md</code>, <code>tasks.md</code>;
+          <code>bugfix.md</code> for fixes), <strong>steering</strong>
+          (persistent project/workspace knowledge in
+          <code>.kiro/steering/*.md</code> with always/conditional/
+          manual/auto inclusion modes; AGENTS.md is supported), and
+          <strong>hooks</strong> (event-driven agent prompts or shell
+          commands that fire on file save, prompt submission, tool use,
+          and spec task execution).<sup class="cite"><a href="#ref-1">1</a></sup>
+          <sup class="cite"><a href="#ref-2">2</a></sup>
+        </p>
+
+        <p>
+          The methodology bet underneath: developers will adopt spec
+          discipline when it is embedded in the IDE workflow they
+          already live in. Kiro's GA milestone added property-based
+          testing for spec correctness, checkpointing, CLI surfaces,
+          and team plans — extending the discipline toward more
+          rigorous validation while keeping the IDE as the home base.
+        </p>
+
+        <h3 id="m-speckit"><span class="tool-tag">GitHub Spec Kit</span>Constitution + per-feature artifact bundle.</h3>
+
+        <p>
+          Spec Kit's official documentation defines spec-driven
+          development as making specifications <em>executable</em>,
+          directly generating working implementation rather than only
+          guiding it.<sup class="cite"><a href="#ref-3">3</a></sup>
+          The core command flow is
+          <code>/speckit.constitution</code>,
+          <code>/speckit.specify</code>, <code>/speckit.plan</code>,
+          <code>/speckit.tasks</code>, and <code>/speckit.implement</code>,
+          with optional <code>/speckit.clarify</code>,
+          <code>/speckit.analyze</code>, and <code>/speckit.checklist</code>
+          to catch drift and ambiguity at the artifact layer before
+          code is generated. Spec Kit supports integrations,
+          extensions, presets, workflows, and project-local overrides.
+        </p>
+
+        <p>
+          The methodology bet underneath: a constitution plus per-feature
+          executable specs and extensible process machinery can make AI
+          generation more predictable. The structural gap is post-merge
+          spec persistence — branch-scoped feature artifacts do not
+          automatically compound into a system-level description, which
+          becomes a real problem on mature codebases.
+        </p>
+
+        <h3 id="m-bmad"><span class="tool-tag">BMAD Method</span>Agent-role / workflow SDD.</h3>
+
+        <p>
+          BMAD describes itself as an AI-driven development framework
+          spanning ideation and planning through agentic implementation.<sup class="cite"><a href="#ref-5">5</a></sup>
+          <sup class="cite"><a href="#ref-6">6</a></sup>
+          It provides specialized AI agents — Analyst, Product Manager,
+          Architect, Developer, UX Designer, and others — and guided
+          workflows that adapt to project complexity. BMad Builder
+          allows creating custom agents, workflows, and modules. The
+          framework is closer to codæ in spirit than the other SDD
+          tools because it governs a broader development lifecycle
+          rather than only single-feature workflow or per-file specs.
+        </p>
+
+        <p>
+          The methodology bet underneath: structured agent roles and
+          adaptive workflows can make AI-assisted development behave
+          more like a disciplined team process. The structural gap is
+          graph and audit formalism — BMAD organizes humans and agents
+          into roles and phases but does not (yet) materialize a
+          first-class derivation graph or trace substrate.
+        </p>
+      </section>
+
+      <section id="codae">
+        <h2><span class="num">§3 — codæ in the picture</span>Contract-driven lifecycle governance.</h2>
+
+        <p>
+          codæ — instantiated by VibeLoom — turns the specification
+          stack into a contract: <strong>persistent</strong>,
+          <strong>IDed</strong>, <strong>derivation-aware</strong>,
+          <strong>approval-gated</strong>, <strong>traceable</strong>,
+          and used as both <strong>memory</strong> and <strong>eval
+          surface</strong>. The artifact stack covers intent-specs,
+          product-specs, peer ux-specs, system-specs, context, code,
+          plus traces, review packets, reconciliation packets, and
+          code-sync evidence.
+        </p>
+
+        <p>
+          The methodology bet underneath: long-lived AI-generated
+          systems need a durable contract graph, not only better
+          feature specs or workflow prompts. The contract is the
+          artifact a human can comprehend; code is downstream.
+          Agent Behavioral Contracts research<sup class="cite"><a href="#ref-7">7</a></sup>
+          provides supporting evidence that contract-style enforcement
+          on agents produces measurable governance improvements (5.2–6.8
+          soft violations per session detected vs uncontracted
+          baselines; 88–100% hard-constraint compliance across 1,980
+          sessions on 7 models) — not yet a proof of full lifecycle
+          governance, but the right shape of mechanism.
+        </p>
+
+        <p>
+          codæ is an hommage to Bertrand Meyer's Design by
+          Contract.<sup class="cite"><a href="#ref-8">8</a></sup> The
+          inheritance is the discipline of explicit obligations between
+          software elements. The boundary moves upward — from
+          routine/class contracts to system-generation contracts. The
+          decidability gap is acknowledged honestly in the manifesto:
+          today's contracts are checked semantically, not boolean. The
+          trajectory is to push more of the contract toward
+          decidability via structural eval and validation runners.
+        </p>
+      </section>
+
+      <section id="matrix">
+        <h2><span class="num">§4 — Methodology matrix</span>Side by side, dimension by dimension.</h2>
+
+        <p>
+          Nine methodology dimensions across the three SDD comparators
+          and codæ. The codæ column is highlighted because this
+          whitepaper is published by us — bias is acknowledged.
+        </p>
+
+        <div class="cmp-wrap">
+          <table class="cmp-table" aria-label="Methodology comparison of Kiro, Spec Kit, BMAD, and codæ">
+            <thead>
+              <tr>
+                <th scope="col">Dimension</th>
+                <th scope="col">AWS Kiro</th>
+                <th scope="col">GitHub Spec Kit</th>
+                <th scope="col">BMAD Method</th>
+                <th scope="col" class="col-self">codæ / VibeLoom</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Family</th>
+                <td>IDE-anchored SDD</td>
+                <td>feature/artifact-bundle SDD</td>
+                <td>agent-role/workflow SDD</td>
+                <td class="cell-self">contract-driven agentic engineering</td>
+              </tr>
+              <tr>
+                <th scope="row">Primary unit</th>
+                <td>feature/bugfix spec triplet (req/design/tasks)</td>
+                <td>feature spec bundle + constitution</td>
+                <td>workflow phase, agent role, project artifact</td>
+                <td class="cell-self">contract tier and affected graph cut</td>
+              </tr>
+              <tr>
+                <th scope="row">Persistent knowledge</th>
+                <td>steering files, AGENTS.md, file references</td>
+                <td>constitution, memory, extensions/presets</td>
+                <td>progressively built project context and agent artifacts</td>
+                <td class="cell-self">approved contract graph + active decision context</td>
+              </tr>
+              <tr>
+                <th scope="row">Human review surface</th>
+                <td>requirements/design/tasks inside IDE</td>
+                <td>spec/plan/tasks/checklists</td>
+                <td>PRD, UX, architecture, stories, reviews</td>
+                <td class="cell-self">review/reconciliation packets over IDed items</td>
+              </tr>
+              <tr>
+                <th scope="row">Spec lifetime</th>
+                <td>feature/bugfix specs + persistent steering</td>
+                <td>feature artifacts + persistent constitution</td>
+                <td>project lifecycle artifacts across phases</td>
+                <td class="cell-self">permanent evolving contract graph</td>
+              </tr>
+              <tr>
+                <th scope="row">Drift handling</th>
+                <td>hooks, steering, reviews, property-based spec correctness</td>
+                <td>analyze/checklist; default remains feature-centric</td>
+                <td>correct-course, readiness checks, review workflows</td>
+                <td class="cell-self">stale/uncovered/dangling/drifted/obsolete categories + traces</td>
+              </tr>
+              <tr>
+                <th scope="row">Reconciliation</th>
+                <td>workflow convention through specs/tasks/hooks</td>
+                <td>phase-gate correction and extensions</td>
+                <td>workflow correction and re-planning</td>
+                <td class="cell-self">first-class <code>reconcile</code> operation</td>
+              </tr>
+              <tr>
+                <th scope="row">Code relation</th>
+                <td>agent implements spec tasks</td>
+                <td>agent implements plan/tasks</td>
+                <td>developer agent implements stories/tasks</td>
+                <td class="cell-self">code-sync traces map generated code to contract IDs + validation</td>
+              </tr>
+              <tr>
+                <th scope="row">Dark-factory readiness</th>
+                <td>partial: strong local workflow; code remains close review surface</td>
+                <td>partial: executable specs but default feature scope</td>
+                <td>partial: process scaffolding, less graph/audit formalism</td>
+                <td class="cell-self">explicit trajectory: contract as control surface, code as generated output</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="cmp-caption">Sources cited inline; full references in §10.</p>
+      </section>
+
+      <section id="surface">
+        <h2><span class="num">§5 — Cognitive surface</span>How big is the human-mendable surface?</h2>
+
+        <p>
+          The codæ manifesto's central claim is that the human-mendable
+          surface should be measured in <em>items</em>, not lines of
+          code. Each of the three SDD comparators answers what surface
+          a human is supposed to hold differently:
+        </p>
+
+        <ul>
+          <li><strong>Kiro</strong> — per-feature triplet (medium) plus
+          steering files (small, persistent). Mixed-scale; the steering
+          collection plays the role of standing knowledge that survives
+          between features.</li>
+          <li><strong>Spec Kit</strong> — small, persistent constitution
+          plus a series of medium-sized per-feature artifact bundles.
+          Mixed-scale; the global surface is what survives between
+          features.</li>
+          <li><strong>BMAD</strong> — phase-by-phase artifacts (PRD,
+          architecture, UX, stories) accumulating across the project
+          lifecycle. Larger total surface than the other two, organized
+          by role rather than by graph.</li>
+          <li><strong>codæ / VibeLoom</strong> — deliberate, structured
+          stack whose total size scales with mode. <code>vibe</code>
+          intentionally small (compact intent + flat system).
+          <code>expert</code> is the full multi-tier stack — larger,
+          but every tier covers a different abstraction so per-tier
+          cognitive load is bounded.</li>
+        </ul>
+
+        <p>
+          The right question isn't "which is smaller." It's <em>which
+          sizes for the team and codebase</em>. A team of two doesn't
+          need an expert-mode stack. A multi-team product can't comprehend
+          steering files alone. Cognitive surface is the dimension where
+          each tool implicitly picks a target user — and where codæ's
+          mode system explicitly tries to address more than one target
+          inside one methodology.
+        </p>
+      </section>
+
+      <section id="drift">
+        <h2><span class="num">§6 — Drift handling</span>What happens to coherence over time?</h2>
+
+        <p>
+          Drift is the question every spec-driven approach is built
+          around, and the dimension where the four diverge most
+          cleanly:
+        </p>
+
+        <ul>
+          <li><strong>Kiro.</strong> Hooks fire on file events to
+          cascade spec changes; property-based testing of specs is now
+          part of GA. Steering files carry standing knowledge that
+          outlasts a single feature. Post-completion spec lifetime is
+          mostly convention.<sup class="cite"><a href="#ref-1">1</a></sup>
+          <sup class="cite"><a href="#ref-2">2</a></sup></li>
+
+          <li><strong>Spec Kit.</strong> Artifact-layer drift detection
+          via <code>/speckit.analyze</code> and
+          <code>/speckit.checklist</code> catches inconsistencies
+          before code generation.<sup class="cite"><a href="#ref-3">3</a></sup>
+          <sup class="cite"><a href="#ref-4">4</a></sup>
+          The structural gap is post-merge: branch-scoped specs do not
+          compound into system-level documentation, so drift between
+          features is invisible at the spec layer.</li>
+
+          <li><strong>BMAD.</strong> Workflow correction, "correct
+          course," and readiness checks are built into the agent
+          orchestration; phases re-plan when an upstream artifact
+          changes.<sup class="cite"><a href="#ref-5">5</a></sup>
+          <sup class="cite"><a href="#ref-6">6</a></sup>
+          The framework does not yet materialize drift as a graph
+          property or expose status categories at item granularity.</li>
+
+          <li><strong>codæ.</strong> Five drift forms detected
+          explicitly: <em>stale</em> (downstream depended on changed
+          approved truth), <em>uncovered</em> (approved upstream lacks
+          required downstream realization), <em>dangling</em>
+          (downstream references removed upstream), <em>drifted</em>
+          (semantic mismatch or unflagged direct edit), <em>obsolete</em>
+          (upstream basis superseded conceptually). Reconciliation is
+          a first-class operation with a packet, not an emergent
+          practice.</li>
+        </ul>
+
+        <p>
+          The honest 2026 caveat: there is no peer-reviewed benchmark
+          comparing drift outcomes across these four tools. Each
+          mechanism is well-described in current docs and practitioner
+          reports; the empirical comparison the field needs hasn't
+          been published yet.
+        </p>
+      </section>
+
+      <section id="bets">
+        <h2><span class="num">§7 — The bet each makes</span>What each is wagering survives.</h2>
+
+        <p>
+          Underneath every methodology choice is a structural bet about
+          what's worth governing and what should evolve:
+        </p>
+
+        <ul>
+          <li>
+            <strong>Kiro bets</strong> that an IDE-enforced phase
+            workflow plus steering plus event-driven hooks gives
+            developers the right governance at the right moments.
+            Vindicated if developers want governance built into the
+            tool they already live in.
+          </li>
+          <li>
+            <strong>Spec Kit bets</strong> that a constitution plus
+            per-feature artifact bundles plus phase-gate analysis is
+            enough governance. Vindicated if most teams' system-level
+            coherence emerges from the constitution rather than from
+            a system-level spec.
+          </li>
+          <li>
+            <strong>BMAD bets</strong> that structured agent roles
+            plus adaptive workflows make AI-assisted development
+            behave like a disciplined team process. Vindicated if the
+            agent-role abstraction scales across project complexity
+            without needing a graph or audit formalism.
+          </li>
+          <li>
+            <strong>codæ bets</strong> that a tiered, mutually-derived
+            contract stack that survives the lifecycle is the only
+            structural answer to drift at scale. Vindicated when, at
+            the tail of a codebase's life — original team gone,
+            multiple agents in parallel, architecture revised — the
+            only artifact a human can still hold is the contract.
+            (See <a class="linky" href="codæ-manifesto.html">the
+            manifesto</a> for the case.)
+          </li>
+        </ul>
+      </section>
+
+      <section id="ladder">
+        <h2><span class="num">§8 — SDD maturity ladder</span>Where vibeloom fits.</h2>
+
+        <p>
+          The 2026 SDD taxonomy<sup class="cite"><a href="#ref-9">9</a></sup>
+          places existing approaches across three rigor levels:
+        </p>
+
+        <ul>
+          <li><strong>Spec-first</strong> — specs guide initial development, then drift away from the code that ships.</li>
+          <li><strong>Spec-anchored</strong> — specs and code co-evolve with explicit enforcement; the spec doesn't decay because something keeps checking it.</li>
+          <li><strong>Spec-as-source</strong> — specs alone are edited; code is regenerated; humans never touch generated code.</li>
+        </ul>
+
+        <p>
+          codæ argues for a fourth level: <strong>contract-driven</strong>.
+          The spec is not one source for one file or one feature; it is
+          the multi-tier, mutually-derived, drift-detecting contract
+          that governs the lifecycle. Same impulse as SDD; larger
+          surface; deeper governance.
+        </p>
+
+        <div class="fig">
+          <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SDD maturity ladder, four steps from bottom to top: spec-first, spec-anchored, spec-as-source, contract-driven. codæ is highlighted at the top tier in red.">
+            <g transform="translate(60, 260)">
+              <rect width="360" height="44" rx="6" fill="#efeeec" stroke="#d6d3cd"/>
+              <text x="20" y="20" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a">spec-first</text>
+              <text x="20" y="36" font-family="Inter, sans-serif" font-size="11" fill="#5a5a5a">specs guide initial dev, then drift</text>
+              <text x="350" y="28" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#5a5a5a" text-anchor="end">level 1</text>
+            </g>
+            <text x="440" y="286" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5a5a">— legacy doc-driven workflows</text>
+
+            <g transform="translate(85, 195)">
+              <rect width="360" height="44" rx="6" fill="#efeeec" stroke="#d6d3cd"/>
+              <text x="20" y="20" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a">spec-anchored</text>
+              <text x="20" y="36" font-family="Inter, sans-serif" font-size="11" fill="#5a5a5a">specs and code co-evolve with enforcement</text>
+              <text x="350" y="28" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#5a5a5a" text-anchor="end">level 2</text>
+            </g>
+            <text x="465" y="221" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5a5a">— Kiro, Spec Kit, BMAD</text>
+
+            <g transform="translate(110, 130)">
+              <rect width="360" height="44" rx="6" fill="#efeeec" stroke="#d6d3cd"/>
+              <text x="20" y="20" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a">spec-as-source</text>
+              <text x="20" y="36" font-family="Inter, sans-serif" font-size="11" fill="#5a5a5a">specs alone are edited; code is regenerated</text>
+              <text x="350" y="28" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#5a5a5a" text-anchor="end">level 3</text>
+            </g>
+            <text x="490" y="156" font-family="JetBrains Mono, monospace" font-size="11" fill="#5a5a5a">— Tessl (pre-pivot)</text>
+
+            <g transform="translate(135, 65)">
+              <rect width="360" height="50" rx="6" fill="#fbe6ea" stroke="#e84057" stroke-width="2"/>
+              <text x="20" y="22" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#c43a50">contract-driven</text>
+              <text x="20" y="40" font-family="Inter, sans-serif" font-size="11" fill="#3a3a3a">multi-tier, mutually-derived contract that governs the lifecycle</text>
+              <text x="350" y="28" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#c43a50" text-anchor="end">level 4</text>
+            </g>
+            <text x="515" y="94" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#c43a50">— codæ / VibeLoom</text>
+
+            <line x1="40" y1="318" x2="700" y2="318" stroke="#d6d3cd" stroke-width="1"/>
+            <text x="40" y="334" font-family="JetBrains Mono, monospace" font-size="10" fill="#707070">levels 1–3 from Piskala 2026 [9]; level 4 added.</text>
+          </svg>
+          <p class="fig-caption"><strong>SDD maturity ladder, extended.</strong> Levels 1–3 are the rigor tiers in Piskala's 2026 taxonomy. Kiro, Spec Kit, and BMAD all sit at level 2 (different mechanisms — IDE hooks vs phase gates vs role workflows — same family). Tessl was at level 3 pre-pivot; the January 2026 shift to skills-as-package-manager makes its current placement uncertain (see §9). codæ argues for a fourth level — contract-driven — distinguished by lifecycle governance and graph-based drift detection.</p>
+        </div>
+      </section>
+
+      <section id="sidebars">
+        <h2><span class="num">§9 — Sidebars</span>Tessl and Pythagora.</h2>
+
+        <p>
+          Two tools are sometimes grouped with SDD but are not, in May
+          2026, the right comparators for a codæ methodology
+          discussion:
+        </p>
+
+        <div class="sidebar-block">
+          <h3><span class="tool-tag">Tessl</span>Now context/skills package management.</h3>
+          <p>
+            Tessl pivoted in January 2026 away from per-file
+            spec-as-source toward "the package manager for agent
+            skills."<sup class="cite"><a href="#ref-10">10</a></sup>
+            <sup class="cite"><a href="#ref-11">11</a></sup> Current
+            Tessl positions itself as a versioned registry of
+            workflow-procedure skills, docs, rules, and other
+            agent-context bundles ("tiles"), with evaluation,
+            distribution, and lifecycle management for that context.
+            That is better understood as <em>skills/context
+            infrastructure</em> than as a feature-spec or contract-stack
+            methodology. Tessl remains relevant because it proves the
+            market is moving from one-off prompts toward evaluated,
+            versioned agent context. codæ agrees with that direction
+            but applies it to system-specific truth, not skill
+            distribution.
+          </p>
+        </div>
+
+        <div class="sidebar-block">
+          <h3><span class="tool-tag">Pythagora</span>App-generator / AI-developer lineage.</h3>
+          <p>
+            Pythagora describes itself as an AI teammate inside VS
+            Code or Cursor powered by specialized agents that plan,
+            code, review, test, debug, and deploy full-stack apps.<sup class="cite"><a href="#ref-12">12</a></sup>
+            GPT Pilot, its open-source lineage, is no longer maintained
+            as the primary product and redirects to Pythagora.ai.
+            Pythagora is relevant as app-generator / AI-developer
+            companion lineage but is not the best methodology
+            comparator for SDD vs codæ — the framing is closer to "AI
+            does the coding work for you" than to "structured
+            artifacts govern the system."
+          </p>
+        </div>
+      </section>
+
+      <section id="references" class="refs">
+        <h2><span class="num">References</span>Primary, verified.</h2>
+
+        <p class="refs-note">
+          References are primary sources where possible — official
+          docs, official repositories, official blogs — supplemented
+          with verified secondary coverage. Tool descriptions reflect
+          May 2026 official positioning. arXiv items are preprints
+          unless they name a peer-reviewed venue.
+        </p>
+
+        <ol>
+          <li id="ref-1">
+            <span class="title">Kiro homepage and docs.</span>
+            AWS Kiro.
+            <span class="meta">Verified May 2026 · <a href="https://kiro.dev/" target="_blank" rel="noopener">kiro.dev</a> · <a href="https://kiro.dev/docs/specs/" target="_blank" rel="noopener">specs</a> · <a href="https://kiro.dev/docs/steering/" target="_blank" rel="noopener">steering</a> · <a href="https://kiro.dev/docs/hooks/" target="_blank" rel="noopener">hooks</a></span>
+          </li>
+          <li id="ref-2">
+            <span class="title">Kiro general availability announcement.</span>
+            AWS / Kiro blog.
+            <span class="meta"><a href="https://kiro.dev/blog/general-availability/" target="_blank" rel="noopener">kiro.dev/blog/general-availability/</a></span>
+          </li>
+          <li id="ref-3">
+            <span class="title">GitHub Spec Kit official documentation.</span>
+            GitHub.
+            <span class="meta">Verified May 2026 · <a href="https://github.github.com/spec-kit/index.html" target="_blank" rel="noopener">github.github.com/spec-kit</a></span>
+          </li>
+          <li id="ref-4">
+            <span class="title">github/spec-kit repository.</span>
+            GitHub.
+            <span class="meta"><a href="https://github.com/github/spec-kit" target="_blank" rel="noopener">github.com/github/spec-kit</a></span>
+          </li>
+          <li id="ref-5">
+            <span class="title">BMAD Method documentation.</span>
+            BMAD.
+            <span class="meta">Verified May 2026 · <a href="https://docs.bmad-method.org/" target="_blank" rel="noopener">docs.bmad-method.org</a> · <a href="https://docs.bmad-method.org/reference/agents/" target="_blank" rel="noopener">agents</a> · <a href="https://docs.bmad-method.org/reference/modules/" target="_blank" rel="noopener">modules</a></span>
+          </li>
+          <li id="ref-6">
+            <span class="title">BMAD-METHOD repository.</span>
+            BMAD code organization.
+            <span class="meta"><a href="https://github.com/bmad-code-org/BMAD-METHOD" target="_blank" rel="noopener">github.com/bmad-code-org/BMAD-METHOD</a></span>
+          </li>
+          <li id="ref-7">
+            <span class="title">Agent Behavioral Contracts: Formal Specification and Runtime Enforcement for Reliable Autonomous AI Agents.</span>
+            Bhardwaj, V.P.
+            <span class="meta">arXiv:2602.22302 · 2026-02-25 · <a href="https://arxiv.org/abs/2602.22302" target="_blank" rel="noopener">arxiv.org/abs/2602.22302</a></span>
+          </li>
+          <li id="ref-8">
+            <span class="title">Design by Contract.</span>
+            Eiffel Software (Bertrand Meyer's foundational discipline).
+            <span class="meta"><a href="https://www.eiffel.com/values/design-by-contract/" target="_blank" rel="noopener">eiffel.com/values/design-by-contract</a></span>
+          </li>
+          <li id="ref-9">
+            <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
+            Piskala, D.B.
+            <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
+          </li>
+          <li id="ref-10">
+            <span class="title">Announcing skills on Tessl: the package manager for agent skills.</span>
+            Podjarny, G. (Tessl).
+            <span class="meta">2026-01-29 · <a href="https://tessl.io/blog/skills-are-software-and-they-need-a-lifecycle-introducing-skills-on-tessl" target="_blank" rel="noopener">tessl.io/blog/skills-are-software-and-they-need-a-lifecycle…</a></span>
+          </li>
+          <li id="ref-11">
+            <span class="title">Tessl docs — How Tessl works.</span>
+            Tessl Docs.
+            <span class="meta">Verified May 2026 · <a href="https://docs.tessl.io/introduction-to-tessl/how-tessl-works" target="_blank" rel="noopener">docs.tessl.io/introduction-to-tessl/how-tessl-works</a></span>
+          </li>
+          <li id="ref-12">
+            <span class="title">Pythagora.ai homepage.</span>
+            Pythagora.
+            <span class="meta"><a href="https://www.pythagora.ai/" target="_blank" rel="noopener">pythagora.ai</a> · <a href="https://github.com/Pythagora-io/gpt-pilot" target="_blank" rel="noopener">github.com/Pythagora-io/gpt-pilot</a></span>
+          </li>
+        </ol>
+      </section>
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© 2026 cod<span class="accent">æ</span> — methodology comparison · whitepaper v0.3</span>
+      <span>By <a href="mailto:info@vibeloom.ai">Ilya Baimetov</a> · <a href="codæ-manifesto.html">Manifesto</a> · <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var toc = document.querySelector('.doc-toc');
+  if (!toc) return;
+  var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+  var sections = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return { a: a, el: document.getElementById(id) };
+  }).filter(function (s) { return s.el; });
+  function update() {
+    var probe = window.scrollY + 140;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= probe) current = sections[i];
+    }
+    links.forEach(function (a) { a.classList.remove('is-active'); });
+    current && current.a.classList.add('is-active');
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
+
+</body>
+</html>

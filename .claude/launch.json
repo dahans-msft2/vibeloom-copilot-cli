@@ -6,6 +6,18 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["http-server", "site/public", "-p", "8123", "-c-1"],
       "port": 8123
+    },
+    {
+      "name": "v03",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "v03", "-p", "8126", "-c-1"],
+      "port": 8126
+    },
+    {
+      "name": "v03site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "v03/site/public", "-p", "8127", "-c-1"],
+      "port": 8127
     }
   ]
 }

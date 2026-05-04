@@ -1,0 +1,23 @@
+<svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="h-mask">
+      <rect width="30" height="30" fill="white"/>
+      <circle cx="14.2" cy="8" r="2.8" fill="black"/>
+      <circle cx="8" cy="15" r="2.8" fill="black"/>
+      <circle cx="22" cy="15" r="2.8" fill="black"/>
+      <circle cx="15.8" cy="22" r="2.8" fill="black"/>
+    </mask>
+  </defs>
+  <g stroke-linecap="round" fill="none" stroke-width="2.4">
+    <!-- Vertical warp threads -->
+    <path d="M8,2 C5,10 11,20 8,28" stroke="#c43a50"/>
+    <path d="M15,2 C12,10 18,20 15,28" stroke="#c43a50"/>
+    <path d="M22,2 C19,10 25,20 22,28" stroke="#c43a50"/>
+    <!-- Horizontal weft threads (masked at V-over-H crossings) -->
+    <g mask="url(#h-mask)">
+      <path d="M2,8 C10,5 20,11 28,8" stroke="#e84057"/>
+      <path d="M2,15 C10,12 20,18 28,15" stroke="#e84057"/>
+      <path d="M2,22 C10,19 20,25 28,22" stroke="#e84057"/>
+    </g>
+  </g>
+</svg>

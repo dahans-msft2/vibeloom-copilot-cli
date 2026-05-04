@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Implementation — Skill + Engine + Runtime · VibeLoom</title>
+<meta name="description" content="How VibeLoom is built: the Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate that ties them together.">
+<meta name="keywords" content="vibeloom-engine, Claude Code skill, deterministic substrate, context graph, approved-state snapshot">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:locale" content="en_US">
+<link rel="canonical" href="https://vibeloom.ai/implementation">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="VibeLoom">
+<meta property="og:url" content="https://vibeloom.ai/implementation">
+<meta property="og:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta property="og:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
+<meta property="og:image" content="https://vibeloom.ai/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+<meta property="article:author" content="Ilya Baimetov">
+<meta property="article:published_time" content="2026-04-17T00:00:00Z">
+<meta property="article:modified_time" content="2026-04-28T00:00:00Z">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta name="twitter:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
+<meta name="twitter:image" content="https://vibeloom.ai/og-image.png">
+<meta name="twitter:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+
+<link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
+
+<!-- Fonts: non-blocking parallel fetch -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap"></noscript>
+
+<link rel="stylesheet" href="styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "VibeLoom Implementation",
+      "description": "Skill + engine + runtime substrate for the VibeLoom methodology. Pure Python, zero runtime dependencies.",
+      "author": {"@type":"Person","name":"Ilya Baimetov"},
+      "publisher": {"@type":"Organization","name":"VibeLoom","logo":{"@type":"ImageObject","url":"https://vibeloom.ai/vibeloom-logo-loom.svg"}},
+      "image": "https://vibeloom.ai/og-image.png",
+      "url": "https://vibeloom.ai/implementation",
+      "mainEntityOfPage": "https://vibeloom.ai/implementation",
+      "datePublished": "2026-04-17",
+      "dateModified": "2026-04-28",
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Overview","item":"https://vibeloom.ai/"},
+        {"@type":"ListItem","position":2,"name":"Implementation","item":"https://vibeloom.ai/implementation"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="index.html" aria-label="VibeLoom home"><img src="vibeloom-logo-loom.svg" alt="" width="26" height="26"> VibeLoom</a>
+  <div class="links">
+    <a href="index.html">Overview</a>
+    <a href="codae.html">codæ</a>
+    <a href="methodology.html">Methodology</a>
+    <a href="implementation.html" class="is-active" aria-current="page">Implementation</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta" href="index.html#start">Get started</a>
+  </div>
+  <details class="menu">
+    <summary aria-label="Open menu">Menu
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="panel">
+      <a href="index.html">Overview</a>
+      <a href="codae.html">codæ</a>
+      <a href="methodology.html">Methodology</a>
+      <a href="implementation.html" class="is-active" aria-current="page">Implementation</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      <a class="cta" href="index.html#start">Get started</a>
+    </div>
+  </details>
+</nav>
+
+<main id="main">
+<header class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Implementation · v0.3</span>
+    <h1>Two layers: the Skill and the engine.</h1>
+    <p class="lead">The Skill handles natural language, orchestration, semantic judgment, approvals, and scoped subagent dispatch. The engine provides the deterministic substrate for parsing, graph construction, eval, staleness, affected sets, and status. Both ship together; both stay in their lane.</p>
+    <aside class="thesis">
+      <span class="thesis-label">Boundary</span>
+      The engine never decides product meaning or approval outcomes. It emits JSON facts; the Skill and the user make every semantic decision. Mixing the two produces software that's neither deterministic nor smart.
+    </aside>
+    <div class="meta">
+      <span>~10 min read</span>
+      <span>Engine: <code>vibeloom-engine 0.2.0</code></span>
+      <span>Python 3.10+</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="doc-layout">
+    <aside class="doc-toc" aria-label="Implementation table of contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#overview" class="is-active">Two layers, one substrate</a></li>
+        <li><a href="#skill">The Skill</a></li>
+        <li><a href="#engine">The engine</a></li>
+        <li><a href="#cli">Engine CLI</a></li>
+        <li><a href="#snapshot">Approved-state snapshot</a></li>
+        <li><a href="#graph">The context graph</a></li>
+        <li><a href="#ids">IDs and frontmatter</a></li>
+        <li><a href="#dispatch">Subagent dispatch</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
+        <li><a href="#layout">Source layout</a></li>
+        <li><a href="#testing">Testing</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc-body">
+
+      <aside class="exec-summary" aria-label="What this page tells you">
+        <span class="eyebrow">In 60 seconds</span>
+        <p>VibeLoom v0.3 is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through one shared substrate at <code>.vibeloom/state/</code>. Pure Python, zero runtime dependencies, 9 structural checks, 25 tests. This page covers the boundaries, the engine CLI, the snapshot algorithm, the context graph, IDs and frontmatter, subagent dispatch, and how to install + run.</p>
+        <p class="exec-meta">If you're new — start with the <a class="linky" href="methodology.html">methodology page</a> for the <em>why</em>, then come back here for the <em>how</em>.</p>
+      </aside>
+
+      <h2 id="overview">Two layers, one substrate</h2>
+      <p>VibeLoom v0.3 is delivered as two cooperating layers:</p>
+      <ul>
+        <li><strong>The Skill</strong> — a prompt-and-policy package that loads automatically inside Claude Code or Codex. It owns the natural-language interface, mode selection, approval pauses, semantic judgment, subagent orchestration, and template materialization.</li>
+        <li><strong>The engine</strong> — a deterministic Python package (<code>vibeloom-engine 0.2.0</code>) that parses artifacts, validates schemas, builds the derivation graph, computes affected sets, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
+      </ul>
+      <p>They cooperate through a single shared substrate: <code>.vibeloom/state/</code>. The engine writes <code>context-graph.json</code>, <code>status.json</code>, and <code>approved_snapshots/</code>. The Skill reads them, makes decisions, generates content, and invokes the engine again on the result. There is no other channel between them.</p>
+
+      <div class="callout">
+        <strong>Why split it.</strong> Anything load-bearing — hash diffs, derivation walks, schema validation — needs to be deterministic and auditable. Anything that requires judgment — semantic eval, mode selection, conflict resolution — needs a model. Mixing the two produces software that's neither.
+      </div>
+
+      <hr>
+
+      <h2 id="skill">The Skill</h2>
+      <p>The Skill is a single SKILL.md file plus a <code>references/</code> tree of load-on-demand guides. It's loaded automatically by Claude Code and Codex when you invoke <code>/vibeloom</code> or <code>$vibeloom</code>.</p>
+
+      <p>The Skill's responsibilities:</p>
+      <ul>
+        <li>Receive operations (<code>init</code>, <code>generate</code>, <code>review</code>, etc.) and parse them into a target tier and scope.</li>
+        <li>Load the correct subset of <code>references/</code> for the operation — never load everything.</li>
+        <li>Materialize templates from <code>assets/</code> when generating new artifacts.</li>
+        <li>Invoke the engine via <code>python -m vibeloom_engine</code> for parsing, eval, staleness, and status.</li>
+        <li>Run the four-dimension semantic eval against the items the engine flagged as in scope.</li>
+        <li>Dispatch scoped subagents in waves for code generation, with bounded load sets.</li>
+        <li>Pause at every approval gate the current mode requires; never bypass one.</li>
+      </ul>
+
+      <p>The Skill is intentionally short — most of the operational detail lives in the methodology and in narrowly scoped references that are loaded only when relevant. This keeps the always-resident context small.</p>
+
+      <hr>
+
+      <h2 id="engine">The engine</h2>
+      <p><code>vibeloom-engine 0.2.0</code> is a pure Python package. Including its custom-built minimal YAML frontmatter parser, it has <strong>zero runtime dependencies</strong> beyond Python 3.10+. No <code>pip install</code> is required to use it from the Skill — invoke via <code>python -m vibeloom_engine</code>.</p>
+
+      <p>The engine's responsibilities, in scope and out:</p>
+      <ul>
+        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the context graph; computing affected sets; capturing and comparing approved-state snapshots; emitting status snapshots.</li>
+        <li><strong>Out of scope:</strong> deciding what items <em>mean</em>; deciding which fix direction is correct; choosing modes; talking to users.</li>
+      </ul>
+
+      <p>All engine commands emit JSON on stdout. Non-zero exit codes indicate blocking findings or errors. The Skill consumes the JSON and renders human-facing output.</p>
+
+      <hr>
+
+      <h2 id="cli">Engine CLI</h2>
+      <p>Seven commands cover the deterministic surface.</p>
+      <pre><code>parse       --repo &lt;path&gt;                       # Parse all artifacts; emit JSON inventory
+graph       --repo &lt;path&gt;                       # Build + persist .vibeloom/state/context-graph.json
+eval        --repo &lt;path&gt; [--target &lt;tier&gt;]     # Run 9 structural checks; non-zero exit on blockers
+affected    --repo &lt;path&gt; --ids &lt;IDs...&gt;        # Compute affected set from changed item IDs
+staleness   --repo &lt;path&gt;                       # Per-item hash diff + forward DAG walk
+detect-edits --repo &lt;path&gt;                      # mtime fast-filter + per-item hash confirmation
+status      --repo &lt;path&gt;                       # Emit + persist status snapshot</code></pre>
+
+      <p>Without install, prefix every invocation with <code>PYTHONPATH=&lt;skill-root&gt;/engine</code>. With <code>pip install -e engine</code>, a shorter <code>vibeloom-engine</code> binary lands on PATH.</p>
+
+      <hr>
+
+      <h2 id="snapshot">Approved-state snapshot</h2>
+      <p>The snapshot is the single most important data structure in v0.3 — it's what makes drift detection enforceable rather than aspirational.</p>
+
+      <p>When the user (or the agent, in delegated mode) approves a contract tier, the engine captures, per artifact:</p>
+      <ul>
+        <li>The artifact's filesystem mtime.</li>
+        <li>For each item parsed out of the artifact, its <strong>SHA-256 canonical hash</strong> — normalized so renames surface as remove+add and non-semantic edits (whitespace, comment-only changes) don't churn.</li>
+      </ul>
+
+      <p>The snapshot is preserved across rebuilds. It is dropped only when the artifact transitions back to <code>draft</code>. This is what enables the staleness pass — the engine compares <em>current</em> per-item hashes against the snapshot, and the diff <em>is</em> the set of changed items.</p>
+
+      <p><strong>Direct-edit detection</strong> uses the same snapshot via a two-tier compare: filesystem mtime first (fast), then per-item hash (precise). If any item is added, removed, or modified, the artifact auto-reopens to <code>draft</code>. Whitespace-only edits leave the artifact <code>approved</code>.</p>
+
+      <hr>
+
+      <h2 id="graph">The context graph</h2>
+      <p>The graph is built by the engine from the entire artifact set. Nodes are items (with stable IDs); edges are typed derivation relationships read out of <code>derives_from</code> frontmatter. The graph is a DAG — cycles are forbidden, and only <code>capability</code> and <code>constraint</code> are valid roots.</p>
+
+      <p>Two operations compute on the graph:</p>
+      <ul>
+        <li><strong>Affected set</strong> — given a set of changed item IDs, walk forward through <code>derives_from</code> to collect every reachable downstream item. This is the unit of work for <code>generate</code> and <code>reconcile</code>.</li>
+        <li><strong>Stale set</strong> — combination of: items modified since the snapshot, items removed since the snapshot, and the affected-set walk forward from both. Stale items map back to their owning artifacts to produce the stale-artifact set.</li>
+      </ul>
+
+      <p>The graph is persisted to <code>.vibeloom/state/context-graph.json</code>. It's regenerated on demand and is safe to delete — the next pass rebuilds it.</p>
+
+      <hr>
+
+      <h2 id="ids">IDs and frontmatter</h2>
+      <p>Every first-class item carries a stable, prefixed, fixed-width ID. There are 30+ ID families covering the contract stack — a few examples:</p>
+
+      <table>
+        <thead><tr><th>Tier</th><th>Family</th><th>Item type</th></tr></thead>
+        <tbody>
+          <tr><td>intent-specs</td><td><code>CAP-####</code></td><td>capability</td></tr>
+          <tr><td>intent-specs</td><td><code>CST-####</code></td><td>constraint</td></tr>
+          <tr><td>product-specs</td><td><code>FR-####</code></td><td>functional requirement</td></tr>
+          <tr><td>product-specs</td><td><code>STORY-####</code></td><td>user story</td></tr>
+          <tr><td>product-specs</td><td><code>BC-####</code></td><td>bounded context</td></tr>
+          <tr><td>product-specs</td><td><code>TERM-####</code></td><td>ubiquitous-language term</td></tr>
+          <tr><td>system-specs</td><td><code>CMP-####</code></td><td>component</td></tr>
+          <tr><td>system-specs</td><td><code>IF-####</code></td><td>typed interface</td></tr>
+          <tr><td>system-specs</td><td><code>BEH-####</code></td><td>component behavior</td></tr>
+        </tbody>
+      </table>
+
+      <p>Each artifact carries YAML frontmatter recording lifecycle status, mode metadata, and per-item <code>derives_from</code> references. A typical component fragment:</p>
+
+      <pre><code>---
+type: component
+status: approved
+approval_mode: user
+container: api
+component: notes-search
+---
+
+## IF-0014 · search(query, tags) → results
+derives_from: [FR-0007, STORY-0023]
+behavior: Returns the top 50 results matching all tags AND any token in query, ranked by recency.
+
+## DEP-0002 · depends_on: index-store
+derives_from: [BC-0003]
+interface: IF-0011 (read)
+
+## BEH-0019 · empty-query short-circuit
+derives_from: [STORY-0023]
+expected: An empty query with no tags returns 0 results without touching the index.</code></pre>
+
+      <p>The frontmatter parser is strict — required fields are validated by the engine, and unknown fields are flagged. This keeps the graph buildable without ambiguity.</p>
+
+      <hr>
+
+      <h2 id="dispatch">Subagent dispatch</h2>
+      <p>Code generation runs as scoped subagent waves. The Skill computes the affected component set from the engine's affected-set output, then dispatches one subagent per component.</p>
+
+      <ul>
+        <li><strong>Wave</strong> — a set of subagent tasks whose prerequisites are satisfied and whose write scopes are mutually compatible. Writes are disjoint by directory ownership declared in <code>component.md</code>, so subagents within a wave cannot collide.</li>
+        <li><strong>Load set</strong> — what each subagent receives: baseline (root config + defaults) + owned scope + a referenced foreign slice (only the IF-#### contracts of dependencies, not their internals) + relevant context. Typical loads sit at 6-12K tokens.</li>
+        <li><strong>Late-fetch</strong> — a single approved task-local additional context slice that a subagent may request once if it discovers a narrow missing dependency. Cap is one re-invocation per task; exceeding it surfaces a finding and exits.</li>
+        <li><strong>Spot reads</strong> — read-only access to specific items outside the load set, for verification only. Never used to expand write scope.</li>
+      </ul>
+
+      <p>The orchestrator validates cross-scope consistency after each wave: do the IFs match? do the dependencies resolve? are the BDD scenarios still satisfied? Failures in this validation reopen the affected components for another pass.</p>
+
+      <hr>
+
+      <h2 id="install">Install</h2>
+      <p>Zero install. Python 3.10+ is the only system requirement. From the Skill's perspective, the engine is invoked via:</p>
+      <pre><code>PYTHONPATH=&lt;skill-root&gt;/engine python3 -m vibeloom_engine &lt;command&gt; --repo &lt;target-repo&gt;</code></pre>
+
+      <p>Optional, for CLI-only direct use:</p>
+      <pre><code>cd &lt;skill-root&gt;/engine
+pip install -e .
+vibeloom-engine --version
+# vibeloom-engine 0.2.0</code></pre>
+
+      <hr>
+
+      <h2 id="quickstart">Quickstart</h2>
+      <p>Open a project directory in Claude Code or Codex. The Skill is picked up automatically.</p>
+
+      <pre><code>$ /vibeloom init --mode vibe "a CLI for journaling with tags"
+
+✓ Created intent.md (draft, 5 capabilities, 2 constraints)
+✓ Created defaults.md (draft, 7 defaults derived from intent)
+✓ Eval intent-specs: 0 blocking, 0 advisory
+→ Next: /vibeloom approve intent-specs
+
+$ /vibeloom approve intent-specs
+✓ intent-specs approved (mode=user, snapshot captured)
+✓ Auto-advanced compact system-specs (3 components)
+✓ Generated context: AGENTS.md, CLAUDE.md
+✓ Generated code: 9 files in 1 dispatch wave
+
+$ /vibeloom status
+✅ intent-specs    approved (clean)
+✅ system-specs    approved (clean, delegated)
+✅ context         current
+✅ code            current — 9 files, 3 components</code></pre>
+
+      <hr>
+
+      <h2 id="layout">Source layout</h2>
+      <p>The repo is small and self-contained.</p>
+      <pre><code>v02/
+├── SKILL.md                      # the skill, loaded by Claude Code / Codex
+├── vibeloom-methodology.md       # WHY — tiers, modes, ops, drift, eval
+├── vibeloom-implementation.md    # HOW — metadata, IDs, snapshots
+├── references/                   # load-on-demand skill guides
+│   ├── operations.md
+│   ├── modes.md
+│   ├── runtime.md
+│   ├── artifacts.md
+│   ├── eval.md
+│   └── troubleshooting.md
+├── assets/                       # 17 artifact templates
+│   ├── intent-specs/
+│   ├── product-specs/
+│   ├── system-specs/
+│   └── context/
+└── engine/                       # the deterministic Python package
+    ├── pyproject.toml
+    ├── vibeloom_engine/
+    │   ├── parser.py
+    │   ├── graph.py
+    │   ├── eval_.py
+    │   ├── staleness.py
+    │   ├── affected.py
+    │   ├── status.py
+    │   ├── ids.py
+    │   ├── schema.py
+    │   └── cli.py
+    └── tests/                    # 25 tests across parser, graph, eval, staleness, CLI</code></pre>
+
+      <hr>
+
+      <h2 id="testing">Testing</h2>
+      <p>The engine has 25 tests covering parser, graph, eval, staleness, and CLI. <code>pytest</code> is the only dev dependency.</p>
+      <pre><code>cd engine
+python3 -m venv .venv
+.venv/bin/pip install -e '.[dev]'
+.venv/bin/pytest
+# 25 passed</code></pre>
+
+      <p>The Skill is, by nature, harder to unit-test — it runs inside an LLM. Behavior is verified end-to-end against the seven canonical operations on a set of seed projects.</p>
+
+      <div class="callout">
+        <strong>Next:</strong> read the <a class="linky" href="methodology.html">Methodology</a> for the WHY behind these mechanics, or jump to <a class="linky" href="index.html#start">getting started</a>.
+      </div>
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html"><img src="vibeloom-logo-loom.svg" alt="" width="22" height="22"> VibeLoom</a>
+      <div class="nav">
+        <a href="codae.html">codæ</a>
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="small">
+      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>v0.3 · MIT licensed · Built by <a href="contact.html">Ilya Baimetov</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length) return;
+    var sections = links.map(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (s) { return s.el; });
+    function set() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].el.offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      current.a.classList.add('is-active');
+    }
+    window.addEventListener('scroll', set, { passive: true });
+    set();
+  })();
+</script>
+</body>
+</html>

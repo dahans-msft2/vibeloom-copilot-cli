@@ -453,91 +453,6 @@ blockquote.pull cite {
 }
 .fig-caption strong { color: var(--c-ink); font-weight: 600; }
 
-/* ===== bet 2-band figure ===== */
-.bet-bands {
-  margin: 36px 0 8px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid var(--c-line);
-}
-.bet-bands .band {
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.bet-bands .band-above {
-  background: var(--c-bg-soft);
-  align-items: center;
-  text-align: center;
-}
-.bet-bands .band-below {
-  background: var(--c-ink);
-  color: #d4d4d4;
-  align-items: center;
-  text-align: center;
-}
-.bet-bands .band-label {
-  font-family: var(--f-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--c-ink-5);
-  font-weight: 600;
-}
-.bet-bands .band-below .band-label { color: #6b7280; }
-.bet-bands .band-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.bet-bands .band-title {
-  font-family: var(--f-sans);
-  font-weight: 800;
-  font-size: 1.1rem;
-  letter-spacing: 0.06em;
-  color: var(--c-ink);
-}
-.bet-bands .band-below .band-title { color: #fff; }
-.bet-bands .band-pills {
-  font-family: var(--f-mono);
-  font-size: 0.92rem;
-  color: var(--c-ink-3);
-  padding: 6px 14px;
-  background: #fff;
-  border: 1px solid var(--c-line);
-  border-radius: 100px;
-}
-.bet-bands .band-below .band-pills {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-  color: #d4d4d4;
-}
-.bet-bands .band-divider {
-  position: relative;
-  height: 1px;
-  background: var(--c-red);
-  border-top: 1px dashed var(--c-red);
-  border-bottom: 0;
-}
-.bet-bands .band-divider .divider-label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  padding: 4px 14px;
-  font-family: var(--f-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--c-red);
-  font-weight: 700;
-  border: 1px solid var(--c-red-soft);
-  border-radius: 100px;
-}
-
 /* ===== next links ===== */
 .next-grid {
   display: grid; grid-template-columns: 1fr 1fr;
@@ -1234,26 +1149,6 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           survives only if the human never has to touch the factory
           floor. Keep them upstairs. Give them a contract.
         </p>
-
-        <figure class="bet-bands" aria-label="Two-band diagram: above the contract surface, the human-mendable contract; below, the dark factory of generated context and code.">
-          <div class="band band-above">
-            <div class="band-label">Above the line — humans</div>
-            <div class="band-content">
-              <span class="band-title">CONTRACT — mendable</span>
-              <span class="band-pills">intent · product ⇄ ux · system</span>
-            </div>
-          </div>
-          <div class="band-divider" aria-hidden="true">
-            <span class="divider-label">the contract surface</span>
-          </div>
-          <div class="band band-below">
-            <div class="band-content">
-              <span class="band-title">CONTEXT · CODE</span>
-              <span class="band-pills">generated · regenerated</span>
-            </div>
-            <div class="band-label">Below the line — the dark factory</div>
-          </div>
-        </figure>
       </section>
 
       <!-- §7 THESIS -->

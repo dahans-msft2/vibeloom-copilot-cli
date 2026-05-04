@@ -1175,43 +1175,6 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           This whitepaper stops at the paradigm.)
         </p>
 
-        <h3>An hommage to Design by Contract</h3>
-
-        <p>
-          <span class="codae">cod<span class="ae">æ</span></span> is an hommage to Bertrand Meyer's Design by
-          Contract<sup class="cite"><a href="#ref-16">16</a></sup>, not
-          an equivalence. Meyer's discipline made obligations explicit
-          between software elements through preconditions,
-          postconditions, and invariants — and crucially made those
-          obligations <em>decidable</em>: boolean-checkable at runtime,
-          sound for the property they encoded. <span class="codae">cod<span class="ae">æ</span></span> inherits the
-          discipline of explicit obligations and the principle that
-          downstream artifacts must satisfy upstream contracts. It does
-          not yet inherit decidability — today's contract checks are
-          semantic (heuristic eval), not boolean.
-        </p>
-
-        <p>
-          The trajectory is concrete: vibeloom organizes eval on a
-          three-tier <em>verification ladder</em> (decidable structural
-          checks, mechanical validation runners, heuristic semantic
-          eval). v0.3 today has roughly 9 decidable checks plus
-          project-defined mechanical runners plus 7 heuristic
-          dimensions. Each release should promote checks upward —
-          heuristic dimensions become mechanical; mechanical become
-          structural. The decidable share grows as the engine matures.
-          See <a class="linky" href="methodology.html#evals">methodology
-          §14.3</a> for the ladder and the v0.3 inventory.
-        </p>
-
-        <p>
-          The destination is grandiose on purpose: agentic engineering
-          may make it realistic to resurface the long-standing dream of
-          formally verifiable software, this time at the contract scope
-          rather than the routine scope. That destination is years away.
-          The ladder is the climb.
-        </p>
-
         <h3>From spec-driven to contract-driven</h3>
 
         <p>
@@ -1345,11 +1308,6 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
             Piskala, D.B.
             <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
-          </li>
-          <li id="ref-16">
-            <span class="title">Design by Contract.</span>
-            Eiffel Software (Bertrand Meyer's foundational discipline).
-            <span class="meta"><a href="https://www.eiffel.com/values/design-by-contract/" target="_blank" rel="noopener">eiffel.com/values/design-by-contract</a></span>
           </li>
         </ol>
       </section>

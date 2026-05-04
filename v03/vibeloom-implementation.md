@@ -35,10 +35,6 @@ The engine never decides product meaning or approval outcome. The skill never ha
   AGENTS.md
   CLAUDE.md
   validation-registry.md
-  context/
-    decisions/
-      product.md
-      architecture.md
   ux-specs/
     mockups/
   <container>/
@@ -169,7 +165,6 @@ PREFIX-0001
 | `CONT`, `CMP` | container, component |
 | `IF`, `DEP`, `BEH`, `NOTE` | component structured content |
 | `BDD`, `SCN` | behavior, scenario |
-| `ADR`, `PDR` | active decision-context records when materialized |
 | `RUN`, `TASK`, `PLAN` | run, task, dispatch plan IDs |
 | `APPROVAL`, `SYNC`, `GEN`, `EVAL`, `DEC`, `IMP` | trace IDs (approval, code-sync, generation, eval, decision, import) |
 
@@ -429,11 +424,12 @@ Eval traces capture every read-only check that ran, with severity and item assoc
   "timestamp": "2026-05-02T15:00:00Z",
   "author": "ilya@vibeloom.ai",
   "topic": "tax-calculation-strategy",
+  "load_bearing": true,
   "payload": "Selected progressive bracket calculation over flat-rate. Rejected: flat-rate (oversimplifies state-level variance), per-jurisdiction lookup (too brittle to maintain).\nReferences: BC-0008, FR-0042."
 }
 ```
 
-Intentionally extensible: `payload` is freeform YAML or markdown. Decision traces are the historical record; active load-bearing decisions can be curated into `context/decisions/` (still not contract truth until promoted to IDed items).
+Intentionally extensible: `payload` is freeform YAML or markdown. Decision traces are the single home for ADR/PDR-style decision history; the `load_bearing` flag distinguishes the active subset that future packets surface as decision context (queried view, not a duplicated folder). Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable.
 
 ### 8.6 Import trace
 

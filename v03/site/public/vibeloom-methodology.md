@@ -22,17 +22,12 @@ What VibeLoom defines:
 - subagent loading and generation rules,
 - conformance evidence and code-sync.
 
-What VibeLoom inherits from codæ but does not own:
-
-- the philosophical framing (manifesto),
-- the lineage to Design by Contract,
-- the compiler analogy and the dark-factory trajectory.
 
 ---
 
 ## 2. Principles
 
-1. **Contract, not stale specs.** The system is defined by a living contract stack, not one-off planning documents that decay after the first feature.
+1. **Live contract, not stale specs.** The system is defined by a living contract stack, not one-off planning documents that decay after the first feature.
 2. **Contract as eval.** The same upstream items that drive generation also serve as the basis against which downstream output is checked.
 3. **Human-mendable review surface.** Humans review affected contract cuts, approval packets, and reconciliation choices — not full generated code.
 4. **Traceability by ID.** Every governed semantic item has a stable ID and an explicit derivation basis.
@@ -205,18 +200,8 @@ This is a VibeLoom governance choice. It is not a claim that DDD universally req
 | --- | --- |
 | `config` | active generation guidance for an agent scope, e.g. `AGENTS.md` / `CLAUDE.md` |
 | `bdd` / `scenarios` | non-executable behavioral scenarios; later usable for executable tests |
-| `decisions` | active curated decision context, only while load-bearing for generation |
 
-Decision context is **not** the full historical ADR/PDR log. Raw decision history lives in traces (§11).
-
-A decision is active context only if it answers, for a future agent, at least one of:
-
-1. What must I preserve?
-2. What must I avoid?
-3. Why is this design or product choice still binding?
-4. Which tempting alternative was rejected and should not be reintroduced?
-
-Once a decision is no longer load-bearing, it should be retired from active context (the trace remains).
+Context is purely active generation guidance. Decisions — including ADR/PDR-style records — live exclusively in traces (§11), with a `load_bearing` flag for the subset still informing future generation. Active "decision context" for a packet is a queried view over decision traces, not a separate folder. Binding decisions should be promoted to IDed contract items.
 
 ---
 
@@ -302,7 +287,7 @@ Canonical trace families:
 
 Traces can propose improvements through mediated proposals (see [roadmap §D](roadmap.md#d-trace-derived-learning)). They cannot become contract truth without review and approval.
 
-Raw ADR/PDR history belongs in `decision` traces. Active decision context may be curated into `context/decisions/` when still load-bearing for generation. Binding decisions should be promoted to IDed contract items.
+`decision` traces are the single home for ADR/PDR-style decision history. Each entry carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace, not a duplicated folder. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Binding decisions should be promoted to IDed contract items.
 
 ---
 

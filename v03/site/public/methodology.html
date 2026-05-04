@@ -289,7 +289,7 @@
         <li><strong>generation</strong> — what task generated what artifact from which basis.</li>
         <li><strong>eval</strong> — what checks ran and what findings resulted.</li>
         <li><strong>code-sync</strong> — source-map-like connection from code paths and file hashes to contract IDs.</li>
-        <li><strong>decision</strong> — raw decision event history (raw ADR/PDR log lives here, not in active context).</li>
+        <li><strong>decision</strong> — single home for ADR/PDR-style decision history. Each entry carries a <code>load_bearing</code> flag; the active subset is a queried view, not a duplicated folder.</li>
         <li><strong>import</strong> — evidence and confidence for brownfield inference.</li>
       </ul>
       <p>Traces can propose improvements through mediated proposals; they cannot become contract truth without review and approval. Schemas and on-disk format: see <a class="linky" href="implementation.html#traces">Implementation · Traces</a>.</p>

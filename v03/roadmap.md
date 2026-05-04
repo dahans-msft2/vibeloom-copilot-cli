@@ -120,7 +120,7 @@ The original methodology had a "Learning from traces" section as a wish list. v0
 
 ### D1. Late-fetch → context proposal
 
-**What it does.** Every late-fetch event (a subagent requesting a slice of context not in its initial load set) is a signal that the active context for that scope is missing something. The engine accumulates these signals, and when the same scope/topic is late-fetched N times across distinct generation runs, vibeloom proposes adding the relevant items to active context (or curating an active decision context entry). The proposal is shown to the user as a packet; nothing changes silently.
+**What it does.** Every late-fetch event (a subagent requesting a slice of context not in its initial load set) is a signal that the active context for that scope is missing something. The engine accumulates these signals, and when the same scope/topic is late-fetched N times across distinct generation runs, vibeloom proposes adding the relevant items to active context (or flagging a relevant decision trace as load-bearing so it surfaces in future packets). The proposal is shown to the user as a packet; nothing changes silently.
 
 **Justification.** Late-fetch is currently invisible signal. It tells you exactly where your active context is too thin. Capturing it turns operational friction into a contract-improvement loop.
 
@@ -131,16 +131,16 @@ The original methodology had a "Learning from traces" section as a wish list. v0
 
 ---
 
-### D2. Repeated reconcile choice → ADR proposal
+### D2. Repeated reconcile choice → load-bearing decision proposal
 
-**What it does.** When the user makes the same reconciliation direction choice (e.g., "preserve downstream behavior, amend contract") for the same kind of conflict more than N times, vibeloom proposes promoting the choice to an active decision context entry (a curated ADR) so future reconciliation flows can pre-suggest the same direction.
+**What it does.** When the user makes the same reconciliation direction choice (e.g., "preserve downstream behavior, amend contract") for the same kind of conflict more than N times, vibeloom proposes promoting the choice to a `load_bearing: true` decision trace so future reconciliation flows can pre-suggest the same direction. Sufficiently normative choices may be promoted further to IDed contract items.
 
 **Justification.** Reconciliation is friction. Repeated friction is signal. Capturing the pattern reduces future friction and surfaces decisions that are de facto policy.
 
 **With vs without.**
 
 - *Without.* User reconciles the same kind of UX-vs-product mismatch 6 times in three weeks, picking "amend product to match UX" each time. Future runs still surface the same packet, the user still has to click through.
-- *With.* After 4 such reconciliations, vibeloom proposes ADR-0007: "When UX evidence and product spec disagree on visual hierarchy, default to UX evidence and amend product." User reviews and approves. Future packets pre-recommend the choice.
+- *With.* After 4 such reconciliations, vibeloom proposes flagging `DEC-20260512-0007` as load-bearing: "When UX evidence and product spec disagree on visual hierarchy, default to UX evidence and amend product." User reviews and approves. Future packets pre-recommend the choice; the trace becomes a queried view in active decision context.
 
 ---
 

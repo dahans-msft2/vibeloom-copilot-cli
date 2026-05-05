@@ -123,7 +123,7 @@
     <aside class="doc-toc" aria-label="Implementation table of contents">
       <div class="label">Contents</div>
       <ol>
-        <li><a href="#overview" class="is-active">Two layers, one substrate</a></li>
+        <li><a href="#overview" class="is-active">Skill and engine, one substrate</a></li>
         <li><a href="#skill">The Skill</a></li>
         <li><a href="#engine">The engine</a></li>
         <li><a href="#cli">Engine CLI</a></li>
@@ -142,7 +142,7 @@
 
       <aside class="exec-summary" aria-label="What this page tells you">
         <span class="eyebrow">In 60 seconds</span>
-        <p>VibeLoom v0.3 is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through one shared substrate at <code>.vibeloom/state/</code>. Pure Python, zero runtime dependencies, 9 structural checks, 25 tests. This page covers the boundaries, the engine CLI, the snapshot algorithm, the context graph, IDs and frontmatter, subagent dispatch, and how to install + run.</p>
+        <p>VibeLoom v0.3 is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through one shared substrate at <code>.vibeloom/state/</code>. Pure Python, zero runtime dependencies, with structural checks and a tested engine surface. This page covers the boundaries, the engine CLI, the snapshot algorithm, the context graph, IDs and frontmatter, subagent dispatch, and how to install + run.</p>
         <p class="exec-meta">If you're new — start with the <a class="linky" href="methodology.html">methodology page</a> for the <em>why</em>, then come back here for the <em>how</em>.</p>
       </aside>
 
@@ -192,10 +192,10 @@
       <hr>
 
       <h2 id="cli">Engine CLI</h2>
-      <p>Seven commands cover the deterministic surface.</p>
+      <p>The deterministic surface is exposed through these CLI commands.</p>
       <pre><code>parse       --repo &lt;path&gt;                       # Parse all artifacts; emit JSON inventory
 graph       --repo &lt;path&gt;                       # Build + persist .vibeloom/state/context-graph.json
-eval        --repo &lt;path&gt; [--target &lt;tier&gt;]     # Run 9 structural checks; non-zero exit on blockers
+eval        --repo &lt;path&gt; [--target &lt;tier&gt;]     # Run structural checks; non-zero exit on blockers
 affected    --repo &lt;path&gt; --ids &lt;IDs...&gt;        # Compute affected set from changed item IDs
 staleness   --repo &lt;path&gt;                       # Per-item hash diff + forward DAG walk
 detect-edits --repo &lt;path&gt;                      # mtime fast-filter + per-item hash confirmation

@@ -2,7 +2,7 @@
 
 **Status:** brainstorm of features and capabilities considered for v04+. Each entry is a candidate, not a commitment. Format is consistent so entries can be picked up, refined, and promoted into a real specification when the time comes.
 
-Each entry has four sections:
+Each entry has these sections:
 
 1. **Name** — the short label for the feature.
 2. **What it does** — concrete description, one to three paragraphs.

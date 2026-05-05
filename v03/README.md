@@ -47,12 +47,12 @@ Significantly **extended** and **hardened** relative to v02:
 
 - codæ is the paradigm; vibeloom is one instantiation (not the whole paradigm).
 - Spec-driven development is the predecessor; codæ is SDD pushed into lifecycle governance.
-- **Five modes**: `vibe` / `pm` / `dev` / `ux` / `expert`. ux mode makes the designer the primary contract author with PM as peer reviewer.
+- **Modes**: `vibe` / `pm` / `dev` / `ux` / `expert`. ux mode makes the designer the primary contract author with PM as peer reviewer.
 - **Verification ladder** (decidable / mechanical / heuristic) makes "semi-formal verification" concrete and measurable.
 - Cache vs traces split; approval traces (JSONL append-only) replace approval snapshots.
-- **Six trace schemas** (approval, code-sync, generation, eval, decision, import) — full learning-loop substrate.
+- **Trace schemas** (approval, code-sync, generation, eval, decision, import) — full learning-loop substrate.
 - Code-sync as source-map-like evidence (no deep code graph).
-- Six status categories (current / stale / uncovered / dangling / drifted / obsolete).
+- **Status categories** (current / stale / uncovered / dangling / drifted / obsolete).
 - Operations finally orthogonal: review and reconcile have crisp roles.
 - UX-specs as peer to product-specs; mockups as evidence.
 - Item-count cognitive surface metric; LOC ratio is illustrative only.

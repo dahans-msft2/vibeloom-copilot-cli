@@ -34,7 +34,7 @@ What VibeLoom defines:
 5. **Scoped generation.** Agents work from bounded load sets derived from the graph, not from the whole repo.
 6. **Traces are evidence, not truth.** Trace data may propose improvements; it never silently mutates contract or context.
 7. **False positives beat false negatives.** Over-marking drift wastes work; under-marking lets incoherence leak through.
-8. **Contract aspires toward decidability.** Eval today operates on a three-tier verification ladder (§14.3): *decidable* structural checks, *mechanical* validation runners, *heuristic* semantic eval. The trajectory is to promote checks upward — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
+8. **Contract aspires toward decidability.** Eval operates on a verification ladder (§14.3) of *decidable* structural checks, *mechanical* validation runners, and *heuristic* semantic eval. The trajectory is to promote checks upward — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
 
 ---
 
@@ -59,9 +59,9 @@ A heuristic: if the generated code surface is under ~500 LOC and will not surviv
 
 ---
 
-## 4. Layers
+## 4. Layers and traces
 
-VibeLoom organizes everything into three layers plus a parallel trace stream.
+VibeLoom organizes everything into the contract / context / code stack plus a parallel trace stream.
 
 ### 4.1 Contract
 
@@ -77,7 +77,7 @@ Executable output: source, tests, runtime, deployment, migrations, operational w
 
 ### 4.4 Traces
 
-Durable provenance and learning data, parallel to the three layers above. Traces are not normal generation context. See §11.
+Durable provenance and learning data, running parallel to the contract / context / code stack above. Traces are not normal generation context. See §11.
 
 ```text
 intent-specs
@@ -115,7 +115,7 @@ A mode controls contract depth, approval gates, and UX surface.
 
 `vibe` is not a stripped-down version of the full mode. It is a different operating point. The compact stack is just `intent.md`, an inferred flat `system.md`, and an `AGENTS.md` for the model. There is no IDed graph, no code-sync trace, no formal status computation. A modern model is trusted to keep the small system coherent on its own.
 
-Vibe still produces traces (approvals are written to `.vibeloom/traces/approvals.jsonl`), but the heavyweight machinery is absent.
+Vibe still emits approval traces (approval provenance is preserved for the future upgrade), but the heavyweight machinery is absent.
 
 ### 5.2 Upgrade is a feature
 
@@ -201,7 +201,7 @@ This is a VibeLoom governance choice. It is not a claim that DDD universally req
 | `config` | active generation guidance for an agent scope, e.g. `AGENTS.md` / `CLAUDE.md` |
 | `bdd` / `scenarios` | non-executable behavioral scenarios; later usable for executable tests |
 
-Context is purely active generation guidance. Decisions — including ADR/PDR-style records — live exclusively in traces (§11), with a `load_bearing` flag for the subset still informing future generation. Active "decision context" for a packet is a queried view over decision traces, not a separate folder. Binding decisions should be promoted to IDed contract items.
+Context is purely active generation guidance. Decisions — including ADR/PDR-style records — live exclusively in traces (§11), with a `load_bearing` flag for the subset still informing future generation. Active "decision context" for a packet is a queried view over decision traces. Binding decisions should be promoted to IDed contract items.
 
 ---
 
@@ -287,13 +287,13 @@ Canonical trace families:
 
 Traces can propose improvements through mediated proposals (see [roadmap §D](roadmap.md#d-trace-derived-learning)). They cannot become contract truth without review and approval.
 
-`decision` traces are the single home for ADR/PDR-style decision history. Each entry carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace, not a duplicated folder. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Binding decisions should be promoted to IDed contract items.
+`decision` traces are the single home for ADR/PDR-style decision history. Each entry carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Binding decisions should be promoted to IDed contract items.
 
 ---
 
 ## 12. Operations
 
-VibeLoom defines eight operations. They are orthogonal: none does another's job.
+VibeLoom's operations are orthogonal: none does another's job.
 
 ### `init`
 
@@ -365,7 +365,7 @@ Packets are write-capable: the user can add a finding, modify a recommendation, 
 
 ## 14. Eval
 
-Eval has two layers.
+Eval has structural and semantic layers, organized on a verification ladder (§14.3).
 
 ### 14.1 Structural eval
 
@@ -398,13 +398,13 @@ Ambiguous semantic cases escalate. Findings are categorized as `blocking` or `ad
 
 ### 14.3 Verification ladder
 
-Eval operates on a three-tier ladder. Each tier is more rigorous and more expensive than the next; the codæ trajectory is to *promote* checks upward as the engine matures.
+Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Each tier is more rigorous and more expensive than the next; the codæ trajectory is to *promote* checks upward as the engine matures.
 
 | Tier | What it is | v0.3 today | Trajectory |
 | --- | --- | --- | --- |
-| **Decidable** | Structural eval — deterministic checks the engine performs without an LLM | ~9 checks: lifecycle consistency, required fields, ID validity & registry consistency, reference integrity, tier-order/DAG validity, coverage, dangling references, ownership rules, context sufficiency | grows as new structural rules are codified (e.g. `derives_from` multi-source rules, BC/component/container topology rules, code-sync invariants) |
+| **Decidable** | Structural eval — deterministic checks the engine performs without an LLM | Checks include: lifecycle consistency, required fields, ID validity & registry consistency, reference integrity, tier-order/DAG validity, coverage, dangling references, ownership rules, context sufficiency | grows as new structural rules are codified (e.g. `derives_from` multi-source rules, BC/component/container topology rules, code-sync invariants) |
 | **Mechanical** | Validation runners — project-defined commands the orchestrator runs against generated artifacts | declared in `validation-registry.md`. Standard families: typecheck, lint, unit/integration tests, contract conformance, generated BDD, security checks, smoke/deploy | grows as a runner library accumulates and as task templates emit expected runners; some heuristic dimensions become mechanical when they can be expressed as runners |
-| **Heuristic** | Semantic eval — agent-judged dimensions | 7 dimensions: faithful representation, naming consistency, implicit dependency detection, capability gaps, UX/product mismatch, mockup extraction gaps, target-platform mismatch | shrinks over time as dimensions are promoted into mechanical runners or structural rules; the residue (genuinely judgment-call cases) escalates to user |
+| **Heuristic** | Semantic eval — agent-judged dimensions | Dimensions include: faithful representation, naming consistency, implicit dependency detection, capability gaps, UX/product mismatch, mockup extraction gaps, target-platform mismatch | shrinks over time as dimensions are promoted into mechanical runners or structural rules; the residue (genuinely judgment-call cases) escalates to user |
 
 The ladder is the honest answer to "what does semi-formal verification mean in v0.3?" It is also the measurable trajectory: a future release ships when its decidable + mechanical share has grown.
 

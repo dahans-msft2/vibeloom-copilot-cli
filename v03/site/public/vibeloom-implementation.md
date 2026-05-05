@@ -429,7 +429,7 @@ Eval traces capture every read-only check that ran, with severity and item assoc
 }
 ```
 
-Intentionally extensible: `payload` is freeform YAML or markdown. Decision traces are the single home for ADR/PDR-style decision history; the `load_bearing` flag distinguishes the active subset that future packets surface as decision context (queried view, not a duplicated folder). Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable.
+Intentionally extensible: `payload` is freeform YAML or markdown. Decision traces are the single home for ADR/PDR-style decision history; the `load_bearing` flag distinguishes the active subset that future packets surface as decision context. Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable.
 
 ### 8.6 Import trace
 
@@ -1094,7 +1094,7 @@ Generated obligations must become IDed items (`VIEW`, `INT`, `UXC`, `STORY`, `AC
 - [ ] `.vibeloom/cache/` and `.vibeloom/traces/` are separated.
 - [ ] Approval baseline is trace-backed (JSONL append-only), not snapshot-backed.
 - [ ] ID registry persists retired IDs and next counters.
-- [ ] All six trace families have schemas with `schema_version` field (§8.1–§8.6).
+- [ ] Trace families (§8.1–§8.6) have schemas with `schema_version` field.
 - [ ] Code-sync traces connect contract IDs to file hashes and validation evidence.
 - [ ] Review and reconciliation packets exist with user-notes write capability.
 - [ ] Task templates use markdown structure (Inputs / Steps / Output / Constraints / Validation), not YAML wrappers.

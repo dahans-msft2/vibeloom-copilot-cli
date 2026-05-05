@@ -23,6 +23,14 @@ The four foundational documents:
 
 - [getting-started.md](getting-started.md) — the 30-minute on-ramp. Install, bootstrap a vibe project, generate, ship, upgrade. Read this first.
 
+## Templates (G-1: generation-ready spec)
+
+- [templates/](templates/) — the templates an agent uses to *generate* a working VibeLoom project from the v0.3 spec. Closes the gap between "spec" and "generation-ready spec":
+  - `templates/artifacts/` — per-artifact templates (intent, defaults with Tech Stack section per layer, prd, usm, dm, ux, system, containers, container with `layer` field + per-layer deployment guidance, component, decision-trace per record_type, bdd, configs, validation-registry)
+  - `templates/tasks/` — per-operation task templates following Inputs / Steps / Output / Constraints / Validation structure
+  - `templates/skill/` — `SKILL.md` + `subagent-prompt.md` + `references/` tree (operations, modes, runtime with dispatch plan + wave assembly + subagent task header, eval with verification ladder, artifacts, troubleshooting)
+  - See `templates/README.md` for the directory map and how an agent uses these.
+
 ## Roadmap and examples
 
 - [roadmap](roadmap.md) — features and capabilities considered for v04+. Each entry has name + explanation + justification (pain or gain) + with-vs-without example. Includes: toolchain (`generate --dry-run`, contract REPL, contract debugger), cross-project (contract pattern library), new artifacts (ContractDelta, DDD context maps, compliance mode), and trace-derived learning.

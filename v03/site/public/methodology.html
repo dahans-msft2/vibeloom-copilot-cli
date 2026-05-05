@@ -114,10 +114,10 @@
   <div class="wrap">
     <span class="eyebrow">Methodology · v0.3</span>
     <h1>The contract-driven methodology for AI-coded projects.</h1>
-    <p class="lead">VibeLoom turns intent into a tiered, version-controlled contract — durable, derivation-aware, and treated as both source of truth and eval system. This page explains the principles, the artifacts, the operations, and the invariants that hold the stack together.</p>
+    <p class="lead">VibeLoom turns intent into a tiered, version-controlled contract — durable, derivation-aware, source of truth and eval system at once. This page covers the principles, artifacts, operations, and invariants that hold the stack together.</p>
     <aside class="thesis">
       <span class="thesis-label">Core thesis</span>
-      AI-generated systems need a governed contract stack, not a longer prompt. The stack doubles as the eval surface that keeps downstream artifacts coherent across every generation, contributor, and revision.
+      AI-generated systems need a governed contract stack, not a longer prompt. The stack doubles as the eval surface that keeps downstream artifacts coherent across generations, contributors, revisions.
     </aside>
     <div class="meta">
       <span>~10 min read</span>
@@ -151,7 +151,7 @@
 
     <article class="doc-body">
       <h2 id="principles">Principles</h2>
-      <p>VibeLoom rests on a small set of load-bearing ideas. Everything else — artifacts, modes, operations, engine — is mechanism in service of these.</p>
+      <p>These principles are load-bearing. Everything else — artifacts, modes, operations, engine — serves them.</p>
       <ol>
         <li><strong>Live contract, not stale specs.</strong> The system is defined by a living contract stack; specs are graph-nodes with derivation edges, not one-off planning documents.</li>
         <li><strong>Contract is the eval surface.</strong> The same upstream items that drive generation also serve as the basis against which downstream output is checked.</li>
@@ -170,7 +170,7 @@
         <li>Drift would be expensive or dangerous.</li>
         <li>You need traceability from intent to implementation.</li>
       </ul>
-      <p>Don't use VibeLoom for throwaway prototypes, single-file utilities, or weekend demos. Heuristic: if the generated code surface is under ~500 LOC and won't survive past one cycle, prompt-only is faster.</p>
+      <p>Skip VibeLoom for throwaway prototypes, single-file utilities, or weekend demos. Heuristic: under ~500 LOC and not surviving past one cycle, prompt-only is faster.</p>
 
       <hr>
 
@@ -183,7 +183,7 @@
         <li><strong>Traces</strong> — durable provenance running parallel. Captures approvals, generation events, eval results, code-sync, decisions, imports. Never silently regenerated from current state.</li>
       </ul>
       <div class="callout">
-        <strong>Important.</strong> The <code>context</code> tier means generated execution guidance (configs, behavioral scenarios) — <em>not</em> the LLM's context window. Easy to confuse.
+        <strong>Heads-up.</strong> The <code>context</code> tier means generated execution guidance (configs, behavioral scenarios) — <em>not</em> the LLM's context window. Easy to confuse.
       </div>
 
       <hr>
@@ -244,7 +244,7 @@
 
       <h2 id="graph">The contract graph</h2>
       <p>The graph is the parsed, queryable model of approved and draft artifacts. Nodes are IDed semantic items (entities); edges are typed <code>derives_from</code> relations. The graph is a DAG.</p>
-      <p>In v0.3, the contract graph is shaped as a <strong>knowledge graph</strong>: it stores the instantiated ontology — entities and their typed relations as they currently are. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, designed to be sufficient for future graph promotion (see roadmap CGKG-B).</p>
+      <p>v0.3 ships the contract graph as a <strong>knowledge graph</strong>: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, with schemas sufficient for future graph promotion (roadmap CGKG-B).</p>
       <p>The graph answers:</p>
       <ul>
         <li>What derives from what.</li>
@@ -254,7 +254,7 @@
         <li>What code-sync evidence claims realization.</li>
         <li>What review or reconciliation packet to show.</li>
       </ul>
-      <p>This is what makes the methodology <em>enforceable</em> rather than aspirational.</p>
+      <p>That's what makes the methodology <em>enforceable</em> — not aspirational.</p>
 
       <hr>
 
@@ -337,7 +337,7 @@
         </tbody>
       </table>
       <p>The ladder is the honest answer to "what does semi-formal verification mean in v0.3?" — and the measurable trajectory: a future release ships when its decidable + mechanical share has grown.</p>
-      <p>Findings are categorized as <code>blocking</code> or <code>advisory</code>. Principle: false positives beat false negatives. Over-marking wastes work; under-marking lets incoherence leak past gates.</p>
+      <p>Findings are <code>blocking</code> or <code>advisory</code>. Principle: false positives beat false negatives — over-marking wastes work, under-marking lets incoherence leak through.</p>
 
       <hr>
 
@@ -345,14 +345,14 @@
       <p>VibeLoom uses two parallel taxonomies — drift forms (causes) and status categories (item states) — to make incoherence locatable rather than aspirational.</p>
       <p><strong>Drift forms</strong> describe how mismatches arise: <em>structural</em> (upstream item changed since downstream synchronized), <em>lifecycle</em> (approved file edited outside the flow), <em>semantic</em> (downstream meaning shifted even when structure passes). Each form maps to a different detection mechanism in the engine.</p>
       <p><strong>Status categories</strong> describe item lifecycle states at any moment: <code>current</code>, <code>stale</code>, <code>uncovered</code>, <code>dangling</code>, <code>drifted</code>, <code>obsolete</code>. <code>uncovered</code> is distinct from <code>stale</code> — newly approved upstream creates downstream obligations that no downstream item can yet depend on.</p>
-      <p>Both taxonomies are VibeLoom-specific classifications, not derived from external literature. Other framings exist (Rath's semantic/coordination/behavioral for agent-to-agent drift; VentureBeat's "context decay" narrative for the silent-failure pattern). VibeLoom's framework is targeted specifically at contract-vs-code drift.</p>
+      <p>Both taxonomies are VibeLoom-specific, not borrowed from external literature. Other framings exist (Rath's semantic/coordination/behavioral for agent-to-agent drift; VentureBeat's "context decay" narrative for silent-failure). VibeLoom's framework targets contract-vs-code drift specifically.</p>
       <p>Detection mechanism + state diagrams: see <a class="linky" href="implementation.html#snapshot">Implementation · Approval traces and drift detection</a>.</p>
 
       <hr>
 
       <h2 id="compare">VibeLoom vs spec-driven tools</h2>
       <p>Spec-driven development was the right step. Contract-driven is the next.</p>
-      <p>Spec Kit, Kiro, and BMAD all elevated the load-bearing artifact above code — but kept it per-feature: each spec drives one cycle, then ships and goes static. Their durable layers (constitutions, steering files, persona checklists) are thin. VibeLoom keeps the contract <em>load-bearing across the whole lifecycle</em>: derivation, eval, drift detection, reconciliation, traceability across components.</p>
+      <p>Spec Kit, Kiro, and BMAD all elevated the load-bearing artifact above code — but kept it per-feature: each spec drives one cycle, then ships and goes static. Their durable layers (constitutions, steering files, persona checklists) stay thin. VibeLoom keeps the contract <em>load-bearing across the whole lifecycle</em>: derivation, eval, drift detection, reconciliation, traceability across components.</p>
       <table>
         <thead>
           <tr>

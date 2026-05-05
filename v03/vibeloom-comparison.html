@@ -594,13 +594,13 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
     <p class="sub">SDD has three flavors — Kiro, Spec Kit, BMAD. codæ is the next level.</p>
 
     <p class="lead">
-      Spec-driven development (SDD) correctly moved AI coding away from
-      raw prompting. codæ pushes the same impulse further: the spec
-      stack should become a durable, traceable, approval-gated contract
-      that governs the lifecycle, not a one-off planning artifact.
-      This whitepaper compares the three main SDD tools at the
-      methodology level and positions codæ relative to them. Tessl and
-      Pythagora appear as sidebars rather than main comparators.
+      Spec-driven development (SDD) moved AI coding off raw prompting —
+      correctly. codæ pushes the same impulse further: the spec stack
+      becomes a durable, traceable, approval-gated contract that
+      governs the lifecycle, not a one-off planning artifact. This
+      whitepaper compares the three main SDD tools at the methodology
+      level and positions codæ against them. Tessl and Pythagora appear
+      as sidebars.
     </p>
 
     <div class="hero-meta">
@@ -637,26 +637,25 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         <h2><span class="num">§1 — Two families</span>Spec-driven development, then contract-driven.</h2>
 
         <p>
-          Spec-driven development has become a recognized family. AWS
+          Spec-driven development is now a recognized family. AWS
           Kiro<sup class="cite"><a href="#ref-1">1</a></sup> turns
-          natural prompts into structured requirements (in EARS
-          notation), design, and tasks, anchored in an IDE with steering
-          files and lifecycle hooks. GitHub Spec Kit<sup class="cite"><a href="#ref-3">3</a></sup>
+          natural prompts into structured requirements (EARS notation),
+          design, and tasks — anchored in an IDE with steering files
+          and lifecycle hooks. GitHub Spec Kit<sup class="cite"><a href="#ref-3">3</a></sup>
           makes specifications executable through a constitution +
           spec/plan/tasks/implement workflow. BMAD Method<sup class="cite"><a href="#ref-5">5</a></sup>
           organizes ideation through implementation around specialized
           agents (analyst, PM, architect, developer, UX) and adaptive
-          workflows. All three address the same problem from different
-          angles.
+          workflows. Three angles on the same problem.
         </p>
 
         <p>
-          codæ pushes the same impulse further. A spec is not enough if
-          it expires after one feature or only guides one generation
-          cycle. The specification stack must become a <strong>contract</strong>:
+          codæ pushes the same impulse further. A spec isn't enough if
+          it expires after one feature or guides only one generation
+          cycle. The specification stack must become a <strong>contract</strong> —
           persistent, derivation-aware, approval-gated, traceable, and
           used across the lifecycle as both memory and eval surface.
-          VibeLoom is one concrete instantiation of the codæ paradigm.
+          VibeLoom is one concrete instantiation.
         </p>
 
         <blockquote class="pull">
@@ -695,11 +694,11 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
         <p>
           The methodology bet underneath: developers will adopt spec
-          discipline when it is embedded in the IDE workflow they
-          already live in. Kiro's GA milestone added property-based
-          testing for spec correctness, checkpointing, CLI surfaces,
-          and team plans — extending the discipline toward more
-          rigorous validation while keeping the IDE as the home base.
+          discipline when it embeds in the IDE workflow they already
+          live in. Kiro's GA milestone added property-based testing for
+          spec correctness, checkpointing, CLI surfaces, and team
+          plans — extending validation rigor while keeping the IDE as
+          home base.
         </p>
 
         <h3 id="m-speckit"><span class="tool-tag">GitHub Spec Kit</span>Constitution + per-feature artifact bundle.</h3>
@@ -722,11 +721,11 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
         <p>
           The methodology bet underneath: a constitution plus per-feature
-          executable specs and extensible process machinery can make AI
+          executable specs plus extensible process machinery can make AI
           generation more predictable. The structural gap is post-merge
-          spec persistence — branch-scoped feature artifacts do not
-          automatically compound into a system-level description, which
-          becomes a real problem on mature codebases.
+          spec persistence — branch-scoped feature artifacts don't
+          compound into a system-level description, which bites on
+          mature codebases.
         </p>
 
         <h3 id="m-bmad"><span class="tool-tag">BMAD Method</span>Agent-role / workflow SDD.</h3>
@@ -771,16 +770,16 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
         <p>
           The methodology bet underneath: long-lived AI-generated
-          systems need a durable contract graph, not only better
-          feature specs or workflow prompts. The contract is the
-          artifact a human can comprehend; code is downstream.
-          Agent Behavioral Contracts research<sup class="cite"><a href="#ref-7">7</a></sup>
-          provides supporting evidence that contract-style enforcement
-          on agents produces measurable governance improvements (5.2–6.8
-          soft violations per session detected vs uncontracted
-          baselines; 88–100% hard-constraint compliance across 1,980
-          sessions on 7 models) — not yet a proof of full lifecycle
-          governance, but the right shape of mechanism.
+          systems need a durable contract graph, not just better
+          feature specs or workflow prompts. The contract is what a
+          human comprehends; code is downstream. Agent Behavioral
+          Contracts research<sup class="cite"><a href="#ref-7">7</a></sup>
+          backs this — contract-style enforcement on agents produces
+          measurable governance improvements (5.2–6.8 soft violations
+          per session detected vs uncontracted baselines; 88–100%
+          hard-constraint compliance across 1,980 sessions on 7
+          models). Not yet proof of full lifecycle governance, but the
+          right shape of mechanism.
         </p>
 
         <p>
@@ -920,11 +919,11 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         <p>
           The right question isn't "which is smaller." It's <em>which
           sizes for the team and codebase</em>. A team of two doesn't
-          need an expert-mode stack. A multi-team product can't comprehend
-          steering files alone. Cognitive surface is the dimension where
+          need an expert-mode stack; a multi-team product can't
+          comprehend steering files alone. Cognitive surface is where
           each tool implicitly picks a target user — and where codæ's
-          mode system explicitly tries to address more than one target
-          inside one methodology.
+          mode system addresses more than one target inside one
+          methodology.
         </p>
       </section>
 
@@ -974,11 +973,10 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </ul>
 
         <p>
-          The honest 2026 caveat: there is no peer-reviewed benchmark
-          comparing drift outcomes across these four tools. Each
-          mechanism is well-described in current docs and practitioner
-          reports; the empirical comparison the field needs hasn't
-          been published yet.
+          The honest 2026 caveat: no peer-reviewed benchmark compares
+          drift outcomes across these four tools. Each mechanism is
+          well-described in current docs and practitioner reports; the
+          empirical comparison the field needs hasn't shipped yet.
         </p>
       </section>
 

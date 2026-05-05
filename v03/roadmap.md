@@ -1,8 +1,8 @@
 # VibeLoom roadmap
 
-**Status:** brainstorm of features and capabilities considered for v04+. Each entry is a candidate, not a commitment. Format is consistent so entries can be picked up, refined, and promoted into a real specification when the time comes.
+**Status:** brainstorm of features and capabilities for v04+. Each entry is a candidate, not a commitment. The consistent format lets entries be picked up, refined, and promoted into a real specification when the time comes.
 
-Each entry has these sections:
+Entry sections:
 
 1. **Name** — the short label for the feature.
 2. **What it does** — concrete description, one to three paragraphs.
@@ -15,7 +15,7 @@ Entries are grouped by theme, not by priority.
 
 ## A. Toolchain capabilities (compiler-analogy debt)
 
-The compiler analogy in the manifesto creates an obligation: real compilers come with debuggers, dry-run modes, REPLs, and inspectors. codæ should grow the equivalent toolchain over time.
+The compiler analogy creates an obligation: real compilers come with debuggers, dry-run modes, REPLs, inspectors. codæ should grow the equivalent toolchain over time.
 
 ### A1. `generate --dry-run`
 
@@ -47,7 +47,7 @@ The compiler analogy in the manifesto creates an obligation: real compilers come
 
 **What it does.** Given a code-level symptom (a failing test, a runtime error trace, a user complaint with a stack pointer), the debugger walks back through code-sync traces to the contract item(s) the code claims to realize, then up the derivation graph to the contract basis. It surfaces: when each item in the chain was last approved, what eval findings have been recorded against it, what reconciliation history it has, what other code-sync traces realize the same items. The user can pivot from "what broke" to "where in the contract does it really live" in one or two steps.
 
-**Justification.** When generated code misbehaves, the natural human instinct is to fix the code. But codæ's premise is that code is downstream and the contract is the source of truth. Without a debugger that surfaces the contract chain, users will revert to inspecting code, which defeats the model. The debugger is what makes "fix it upstream" cheap enough to be the default.
+**Justification.** When generated code misbehaves, the natural instinct is to fix the code. But codæ's premise is that code is downstream — the contract is source of truth. Without a debugger that surfaces the contract chain, users revert to inspecting code, which defeats the model. The debugger makes "fix it upstream" cheap enough to be the default.
 
 **With vs without.**
 

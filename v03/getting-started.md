@@ -30,7 +30,7 @@ In an empty directory (or a folder you want to seed):
 > /vibeloom init --mode vibe "a personal note-taking app with full-text search and tags"
 ```
 
-vibeloom creates `intent.md`, `system.md` (compact), and `AGENTS.md`. It writes the one-line description into `intent.md` and asks you to expand. Open `intent.md` and add capabilities and constraints in plain English — that's the only real work this step requires.
+vibeloom creates `intent.md`, `system.md` (compact), and `AGENTS.md`. It writes your one-line description into `intent.md` and asks you to expand. Open it and add capabilities and constraints in plain English — that's the only real work here.
 
 ```text
 > /vibeloom approve intent-specs
@@ -113,4 +113,4 @@ vibeloom scans the existing code, infers a candidate contract with confidence sc
 
 ## When NOT to use vibeloom
 
-If your project is a throwaway prototype, a single-file utility, a weekend demo, or a hackathon submission — prompt-only generation is faster. The contract overhead pays back when the system has to survive past one development cycle and matters to more than one person. See manifesto §6 for the underlying argument.
+Throwaway prototype? Single-file utility? Weekend demo? Hackathon submission? Prompt-only is faster. The contract overhead pays back when the system has to survive past one development cycle and matter to more than one person. See manifesto §6 for the argument.

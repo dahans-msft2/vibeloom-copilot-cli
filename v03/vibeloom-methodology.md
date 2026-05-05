@@ -2,7 +2,7 @@
 
 **Status:** v03 draft. Subject to change. Companion: [`vibeloom-implementation.md`](vibeloom-implementation.md). Predecessor: [`codæ-manifesto.html`](codæ-manifesto.html).
 
-VibeLoom is a methodology for governing long-lived AI-generated software through a human-mendable contract stack — a traceable graph of mutually derived semantic items with stable IDs. Agents generate, evaluate, review, reconcile, and compile downstream artifacts from approved upstream truth. Humans retain control through approval gates and bounded review surfaces.
+VibeLoom governs long-lived AI-generated software through a human-mendable contract stack: a traceable graph of mutually derived semantic items with stable IDs. Agents generate, evaluate, review, reconcile, and compile downstream from approved upstream truth. Humans hold the wheel at approval gates and bounded review surfaces.
 
 This document defines **what VibeLoom is**. The case for the paradigm is in the manifesto; the technical realization is in the implementation doc.
 
@@ -35,7 +35,7 @@ What VibeLoom defines:
 6. **Traces are evidence, not truth.** Trace data may propose improvements; it never silently mutates contract or context.
 7. **False positives beat false negatives.** Over-marking drift wastes work; under-marking lets incoherence leak through.
 8. **Contract aspires toward decidability.** Eval operates on a verification ladder (§14.3) of *decidable* structural checks, *mechanical* validation runners, and *heuristic* semantic eval. The trajectory is to promote checks upward — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
-9. **Traces are sufficient for future graph promotion.** Each trace family carries the metadata needed to materialize the relationships it implies into graph form. v0.3 keeps the contract graph as a knowledge graph (instantiated ontology only); the trace schemas are designed so that decision provenance, code-sync mapping, and other contextual relationships can be promoted to graph nodes/edges in a future release without information loss (see roadmap CGKG-B).
+9. **Traces are sufficient for future graph promotion.** Each trace family carries the metadata to materialize its implied relationships into graph form. v0.3 ships the contract graph as a knowledge graph (instantiated ontology only); trace schemas let decision provenance, code-sync mapping, and other contextual relationships promote to graph nodes/edges later without information loss (see roadmap CGKG-B).
 
 ---
 
@@ -114,9 +114,9 @@ A mode controls contract depth, approval gates, and UX surface.
 
 ### 5.1 Vibe is intentionally minimal
 
-`vibe` is not a stripped-down version of the full mode. It is a different operating point. The compact stack is just `intent.md`, an inferred flat `system.md`, and an `AGENTS.md` for the model. There is no IDed graph, no code-sync trace, no formal status computation. A modern model is trusted to keep the small system coherent on its own.
+`vibe` is not a stripped-down full mode — it's a different operating point. The compact stack: `intent.md`, an inferred flat `system.md`, an `AGENTS.md` for the model. No IDed graph, no code-sync trace, no formal status. A modern model keeps the small system coherent on its own.
 
-Vibe still emits approval traces (approval provenance is preserved for the future upgrade), but the heavyweight machinery is absent.
+Vibe still emits approval traces — approval provenance survives for the future upgrade — but skips the heavyweight machinery.
 
 ### 5.2 Upgrade is a feature
 
@@ -241,7 +241,7 @@ The contract graph is the parsed, queryable model of approved and draft artifact
 
 Nodes are IDed semantic items (entities). Edges are `derives_from` relationships. The graph is a DAG.
 
-In v0.3, the contract graph is shaped as a **knowledge graph**: it stores the instantiated ontology — entities and their typed relations as they currently are. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, not in the graph itself. The trace schemas (§11) are designed to be sufficient for future promotion of these relationships into graph form (see roadmap CGKG-B).
+v0.3 ships the contract graph as a **knowledge graph**: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, not in the graph. Trace schemas (§11) carry enough metadata to promote those relationships to graph form later (roadmap CGKG-B).
 
 The graph answers:
 
@@ -279,7 +279,7 @@ Use distinct categories instead of overloading "stale":
 
 `uncovered` is distinct from `stale`: newly approved upstream items create downstream obligations even though no downstream item can yet depend on them.
 
-`obsolete` requires either explicit user marking or a heuristic signal (e.g., the only downstream consumers were themselves removed) and exists to keep ghost items from accumulating unflagged.
+`obsolete` requires explicit user marking or a heuristic signal (e.g., the only downstream consumers were themselves removed). It catches ghost items before they accumulate unflagged.
 
 ---
 
@@ -291,7 +291,7 @@ VibeLoom should measure review surface by item count, not primarily by token or 
 - **Code cognitive surface** = files + classes/types + methods/functions + endpoints/handlers + tests + integration points in the affected implementation cut.
 - **Review compression ratio** = affected code items / affected contract items.
 
-Until dogfood data exists, treat numerical ratios as measurement targets, not proof. The v03 claim is modest: humans review *tens* of contract items rather than *hundreds or thousands* of code items, and the ratio is a metric to be reported, not a rhetorical flourish.
+Until dogfood data lands, treat numerical ratios as targets, not proof. The v03 claim is modest: humans review *tens* of contract items, not *hundreds or thousands* of code items. Report the ratio; don't flourish it.
 
 Useful secondary metrics to collect during dogfooding:
 
@@ -317,7 +317,7 @@ Canonical trace families:
 | `import` | evidence and confidence for brownfield inference |
 | `id-registry` | allocation state and retired IDs |
 
-Traces can propose improvements through mediated proposals (see [roadmap §D](roadmap.md#d-trace-derived-learning)). They cannot become contract truth without review and approval.
+Traces can propose improvements via mediated proposals ([roadmap §D](roadmap.md#d-trace-derived-learning)) but never become contract truth without review and approval.
 
 ### 11.1 Decision trace classification
 
@@ -333,7 +333,7 @@ Traces can propose improvements through mediated proposals (see [roadmap §D](ro
 
 Classification by **primary** tier (not all tiers a decision ripples to). Multi-tier impact is captured in the trace's `affects: [item_ids]` field, not in the `record_type`.
 
-Each entry also carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Truly normative decisions should be promoted to IDed contract items.
+Each entry carries a `load_bearing` flag (default `false`); the active subset is a queried view. Flag a decision `load_bearing: true` only if it answers one of: what must be preserved, what must be avoided, why a design or product choice still binds, which tempting alternative was rejected. When it stops binding, flip to `false` (the entry remains immutable). Promote truly normative decisions to IDed contract items.
 
 `general` decisions don't change contract content — they record team conventions, methodology choices, operational choices. They typically have empty `affects` and remain `load_bearing: false`; they're preserved for human reference, not for graph promotion.
 
@@ -446,7 +446,7 @@ Ambiguous semantic cases escalate. Findings are categorized as `blocking` or `ad
 
 ### 14.3 Verification ladder
 
-Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Each tier is more rigorous and more expensive than the next; the codæ trajectory is to *promote* checks upward as the engine matures.
+Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Each tier is more rigorous and more expensive than the one below. The codæ trajectory: *promote* checks upward as the engine matures.
 
 | Tier | What it is | v0.3 today | Trajectory |
 | --- | --- | --- | --- |
@@ -454,9 +454,9 @@ Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Each ti
 | **Mechanical** | Validation runners — project-defined commands the orchestrator runs against generated artifacts | declared in `validation-registry.md`. Standard families: typecheck, lint, unit/integration tests, contract conformance, generated BDD, security checks, smoke/deploy | grows as a runner library accumulates and as task templates emit expected runners; some heuristic dimensions become mechanical when they can be expressed as runners |
 | **Heuristic** | Semantic eval — agent-judged dimensions | Dimensions include: faithful representation, naming consistency, implicit dependency detection, capability gaps, UX/product mismatch, mockup extraction gaps, target-platform mismatch | shrinks over time as dimensions are promoted into mechanical runners or structural rules; the residue (genuinely judgment-call cases) escalates to user |
 
-The ladder is the honest answer to "what does semi-formal verification mean in v0.3?" It is also the measurable trajectory: a future release ships when its decidable + mechanical share has grown.
+The ladder is the honest answer to "what does semi-formal verification mean in v0.3?" — and the measurable trajectory: a future release ships when its decidable + mechanical share has grown.
 
-This trajectory is conscious of an old dream: as agentic engineering matures and the decidable share grows, codæ contracts may become a path back to the long-standing aspiration of formally verifiable software at the system scope. That destination is years away. The ladder is the climb.
+The ladder is conscious of an old dream. As agentic engineering matures and the decidable share grows, codæ contracts may revive the long-standing aspiration of formally verifiable software at system scope. That destination is years away. The ladder is the climb.
 
 ---
 

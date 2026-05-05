@@ -105,10 +105,10 @@
   <div class="wrap">
     <span class="eyebrow">Implementation · v0.3</span>
     <h1>The Skill and the engine.</h1>
-    <p class="lead">The Skill handles natural language, orchestration, semantic judgment, approvals, and scoped subagent dispatch. The engine provides the deterministic substrate for parsing, graph construction, eval, staleness, affected sets, dispatch planning, and status. Both ship together; both stay in their lane.</p>
+    <p class="lead">The Skill handles natural language, orchestration, semantic judgment, approvals, scoped subagent dispatch. The engine provides the deterministic substrate: parsing, graph construction, eval, staleness, affected sets, dispatch planning, status. Both ship together; both stay in their lane.</p>
     <aside class="thesis">
       <span class="thesis-label">Boundary</span>
-      The engine never decides product meaning or approval outcomes. It emits JSON facts; the Skill and the user make every semantic decision. Mixing the two produces software that's neither deterministic nor smart.
+      The engine never decides product meaning or approval outcomes. It emits JSON facts; the Skill and user make every semantic decision. Mix the two and you get software that's neither deterministic nor smart.
     </aside>
     <div class="meta">
       <span>~10 min read</span>
@@ -143,7 +143,7 @@
     <article class="doc-body">
       <aside class="exec-summary" aria-label="What this page tells you">
         <span class="eyebrow">In 60 seconds</span>
-        <p>VibeLoom is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through a shared substrate split into a regenerable cache and durable append-only traces. Pure Python, zero runtime dependencies. This page covers the boundaries, the substrate, the engine CLI, approval traces, the contract graph, IDs and frontmatter, trace families, subagent dispatch, install + run, and source layout.</p>
+        <p>VibeLoom is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, detects drift. They cooperate through a shared substrate — a regenerable cache and durable append-only traces. Pure Python, zero runtime dependencies. This page covers boundaries, substrate, engine CLI, approval traces, contract graph, IDs and frontmatter, trace families, subagent dispatch, install + run, source layout.</p>
         <p class="exec-meta">If you're new — start with the <a class="linky" href="methodology.html">methodology page</a> for the <em>why</em>, then come back here for the <em>how</em>.</p>
       </aside>
 
@@ -153,9 +153,9 @@
         <li><strong>The Skill</strong> — a prompt-and-policy package that loads automatically inside Claude Code or Codex. It owns the natural-language interface, mode selection, approval pauses, semantic judgment, subagent orchestration, and template materialization.</li>
         <li><strong>The engine</strong> — a deterministic Python package that parses artifacts, validates schemas, builds the contract graph, computes affected sets, plans dispatch waves, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
       </ul>
-      <p>They cooperate through a shared substrate at <code>.vibeloom/</code>, split into a regenerable cache and durable append-only traces (next section). The engine writes state into both; the Skill reads them, makes decisions, generates content, and invokes the engine again on the result. There is no other channel between them.</p>
+      <p>They cooperate through a shared substrate at <code>.vibeloom/</code> — regenerable cache + durable append-only traces (next section). The engine writes state into both; the Skill reads them, decides, generates, invokes the engine again on the result. No other channel exists between them.</p>
       <div class="callout">
-        <strong>Why split it.</strong> Anything load-bearing — hash diffs, derivation walks, schema validation, dispatch planning — needs to be deterministic and auditable. Anything that requires judgment — semantic eval, mode selection, conflict resolution — needs a model. Mixing the two produces software that's neither.
+        <strong>Why split it.</strong> Load-bearing work — hash diffs, derivation walks, schema validation, dispatch planning — must be deterministic and auditable. Judgment work — semantic eval, mode selection, conflict resolution — needs a model. Mix them and you get neither.
       </div>
 
       <hr>
@@ -166,7 +166,7 @@
         <li><strong>Cache</strong> (<code>.vibeloom/cache/</code>) — regenerable state. The contract graph, status snapshots, indices. If deleted, the engine rebuilds from artifacts and traces.</li>
         <li><strong>Traces</strong> (<code>.vibeloom/traces/</code>) — durable provenance. Append-oriented JSONL streams (with the ID registry as a structured exception). Traces are never silently regenerated; missing traces degrade governance integrity and require explicit re-baselining.</li>
       </ul>
-      <p>This split is the key to drift detection: the cache is whatever the engine currently knows; the traces are the immutable record of what was approved, generated, evaluated, and decided. Drift is the gap between current state and the basis recorded in traces.</p>
+      <p>This split is the key to drift detection: the cache is what the engine currently knows; the traces are the immutable record of what was approved, generated, evaluated, decided. Drift is the gap between current state and the basis in traces.</p>
 
       <hr>
 
@@ -182,7 +182,7 @@
         <li>Dispatch scoped subagents in waves for code generation, with bounded load sets (see Subagent dispatch).</li>
         <li>Pause at every approval gate the current mode requires; never bypass one.</li>
       </ul>
-      <p>The Skill is intentionally short — most of the operational detail lives in the methodology and in narrowly scoped references that are loaded only when relevant. This keeps the always-resident context small.</p>
+      <p>The Skill stays intentionally short — most operational detail lives in the methodology and in narrowly scoped references loaded only when relevant. The always-resident context stays small.</p>
 
       <hr>
 
@@ -221,20 +221,20 @@ status       --repo &lt;path&gt;                       # Emit + persist status a
         <li>Approval mode (user or delegated), run ID, timestamp, author.</li>
       </ul>
       <p>The trace is append-only and never regenerated. Future passes compare current per-item hashes against the most recent approval trace; the diff <em>is</em> the set of changed items.</p>
-      <p><strong>Direct-edit detection</strong> uses the same trace via a two-tier compare: filesystem mtime first (fast), then per-item hash (precise). If any item is added, removed, or modified outside the normal flow, the artifact auto-reopens to <code>draft</code>. Whitespace-only edits leave the artifact <code>approved</code>.</p>
+      <p><strong>Direct-edit detection</strong> uses the same trace via a two-tier compare: filesystem mtime first (fast), per-item hash second (precise). Items added, removed, or modified outside the normal flow auto-reopen the artifact to <code>draft</code>. Whitespace-only edits leave it <code>approved</code>.</p>
       <p>Approval traces also enable upgrade migrations (vibe → full mode) and any future replays from history.</p>
 
       <hr>
 
       <h2 id="graph">The contract graph</h2>
       <p>The graph is built by the engine from the entire artifact set. Nodes are IDed semantic items (entities); edges are typed <code>derives_from</code> relations read out of artifact frontmatter. The graph is a DAG — cycles are forbidden, and only capability and constraint are valid roots.</p>
-      <p>In v0.3, the contract graph is shaped as a <strong>knowledge graph</strong>: instantiated ontology only. Provenance lives in traces (see Approval traces and Trace families); a future release may promote provenance into graph form (see roadmap CGKG-B).</p>
+      <p>v0.3 ships the contract graph as a <strong>knowledge graph</strong> — instantiated ontology only. Provenance lives in traces (see Approval traces and Trace families); a future release may promote it into graph form (roadmap CGKG-B).</p>
       <p>Two operations compute on the graph:</p>
       <ul>
         <li><strong>Affected set</strong> — given a set of changed item IDs, walk forward through <code>derives_from</code> to collect every reachable downstream item. Unit of work for <code>generate</code> and <code>reconcile</code>.</li>
         <li><strong>Stale set</strong> — combination of: items modified since the most recent approval trace, items removed since, and the affected-set walk forward from both. Stale items map back to their owning artifacts to produce the stale-artifact set.</li>
       </ul>
-      <p>The graph is persisted to <code>.vibeloom/cache/contract-graph.json</code>. It's regenerated on demand and is safe to delete — the next pass rebuilds it from artifacts.</p>
+      <p>The graph persists to <code>.vibeloom/cache/contract-graph.json</code>. It regenerates on demand and is safe to delete — the next pass rebuilds it from artifacts.</p>
 
       <hr>
 

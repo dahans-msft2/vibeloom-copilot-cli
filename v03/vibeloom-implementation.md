@@ -2,7 +2,7 @@
 
 **Status:** v03 draft. Subject to change. Companion: [`vibeloom-methodology.md`](vibeloom-methodology.md).
 
-The methodology defines what VibeLoom is. This document defines how to implement it as a skill + deterministic engine + artifact and template system.
+The methodology defines what VibeLoom is. This document specifies how to build it: a skill, a deterministic engine, an artifact and template system.
 
 ---
 
@@ -14,7 +14,7 @@ VibeLoom has three operational layers:
 2. **Engine** — deterministic substrate: parsing, schema validation, ID allocation, graph construction, affected-set computation, status, staleness, trace indexing.
 3. **Validation runners** — project-specific checks invoked by the skill: typecheck, tests, static analysis, contract tests, smoke checks, deployment checks. Configured via a per-project validation registry (§7).
 
-The engine never decides product meaning or approval outcome. The skill never hand-waves deterministic graph or state work that the engine can compute.
+The engine never judges product meaning or approval outcome. The skill never hand-waves graph or state work the engine can compute.
 
 ---
 
@@ -84,7 +84,7 @@ See [methodology §5.1](vibeloom-methodology.md#51-vibe-is-intentionally-minimal
       decisions.jsonl
 ```
 
-No `cache/`, no graph state, no code-sync trace. Approval traces remain because they are cheap and useful even at vibe scale, and they make the future upgrade migration possible.
+No `cache/`, no graph state, no code-sync trace. Approval traces remain — cheap and useful even at vibe scale, and the substrate the future upgrade migration runs on.
 
 ---
 
@@ -101,7 +101,7 @@ Regenerable state. If deleted, the engine rebuilds it from artifacts and traces.
 
 ### 3.2 Traces (`.vibeloom/traces/`)
 
-Durable provenance. Traces are append-oriented JSONL (with `id-registry.json` as the one structured exception). Traces must not be silently regenerated from current state. If traces are missing, governance integrity is degraded and the user must explicitly re-baseline.
+Durable provenance. Append-oriented JSONL (with `id-registry.json` as the one structured exception). Never silently regenerated from current state. Missing traces degrade governance integrity; the user must explicitly re-baseline.
 
 ```text
 .vibeloom/traces/approvals.jsonl
@@ -179,7 +179,7 @@ Allocation state lives at `.vibeloom/traces/id-registry.json`:
 }
 ```
 
-The registry is engine state, not LLM context. Subagents may **propose** new semantic items, but final ID allocation is orchestrator/engine mediated. Retired IDs are never reused.
+The registry is engine state, not LLM context. Subagents **propose** new semantic items; the orchestrator/engine allocates final IDs. Retired IDs are never reused.
 
 ---
 
@@ -323,7 +323,7 @@ Runner families to consider:
 - security checks,
 - smoke or deployment checks.
 
-VibeLoom is not a TDD methodology. It requires **contract-conformance evidence**. Tests are one form of evidence; static analysis is another; runtime contract checks are another.
+VibeLoom is not TDD. It requires **contract-conformance evidence** — and tests, static analysis, and runtime contract checks are all valid forms.
 
 ---
 
@@ -333,7 +333,7 @@ Trace families are defined in [methodology §11](vibeloom-methodology.md#11-trac
 
 Every trace also carries `trace_id`, `kind`, and `timestamp`. These are omitted from per-schema fields for brevity.
 
-**Reconstructability principle.** Each trace family is designed to carry the metadata needed to materialize its implied graph relationships into actual graph nodes/edges in a future release (see roadmap CGKG-B). Concretely: approval traces carry per-item content fingerprints; generation traces carry `basis_ids` + `output_item_ids`; code-sync traces are source-map-shaped already; eval traces carry per-finding `item_id`; decision traces carry `record_type` + `affects` + `load_bearing`; import traces summarize aggregates with per-candidate evidence in the resulting draft artifacts. v0.3 keeps the contract graph as a knowledge graph (instantiated ontology only); promotion is deferred but never blocked by lossy schemas.
+**Reconstructability principle.** Each trace family carries the metadata to promote its implied graph relationships into actual nodes/edges later (roadmap CGKG-B). Concretely: approval traces carry per-item content fingerprints; generation traces carry `basis_ids` + `output_item_ids`; code-sync traces are source-map-shaped; eval traces carry per-finding `item_id`; decision traces carry `record_type` + `affects` + `load_bearing`; import traces summarize aggregates, with per-candidate evidence living in the resulting draft artifacts. v0.3 keeps the contract graph as a knowledge graph (instantiated ontology only); promotion is deferred, never blocked by lossy schemas.
 
 ### 8.1 Approval trace
 
@@ -389,7 +389,7 @@ Approval traces are the non-regenerable approval baseline. They replace approval
 }
 ```
 
-Source-map-like: connects generated code to contract IDs, file hashes, and validation evidence. Code does **not** require deep function-level graph carriers in v03; this trace is the bridge.
+Source-map-shaped: connects generated code to contract IDs, file hashes, validation evidence. v03 doesn't require deep function-level graph carriers — this trace bridges them.
 
 ### 8.3 Generation trace
 
@@ -415,7 +415,7 @@ Source-map-like: connects generated code to contract IDs, file hashes, and valid
 }
 ```
 
-`basis_ids` + `output_artifact_ids` + `output_item_ids` together let any item be traced back to the generation event that produced it (and from there to the upstream basis). This closes the provenance loop for future graph promotion. Generation traces are also the substrate for the [late-fetch → context proposal](roadmap.md#d1-late-fetch--context-proposal) capability in roadmap, and for cost reporting.
+Together, `basis_ids` + `output_artifact_ids` + `output_item_ids` let any item trace back to the generation event that produced it — and from there to the upstream basis. This closes the provenance loop for future graph promotion. Generation traces also feed [late-fetch → context proposals](roadmap.md#d1-late-fetch--context-proposal) and cost reporting.
 
 ### 8.4 Eval trace
 
@@ -461,7 +461,7 @@ Schema fields:
 - `load_bearing` (default `false`) — flag for whether the decision still informs future generation. Active "decision context" is a queried view filtering decision traces by `load_bearing: true`.
 - `payload` — freeform YAML or markdown. Naturally accommodates the Nygard ADR template (Context / Decision / Consequences) or any equivalent.
 
-Decision traces are the single home for human-authored decision history (ADR/PDR/UDR/IDR/general). Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable. The schema captures `affects` and `record_type` so a future release (see roadmap CGKG-B) can promote load-bearing decisions to graph nodes without re-mining prose.
+Decision traces are the single home for human-authored decision history (ADR/PDR/UDR/IDR/general). Promote truly normative decisions to IDed contract items; the trace entry stays immutable. `affects` and `record_type` let a future release (roadmap CGKG-B) promote load-bearing decisions to graph nodes without re-mining prose.
 
 ### 8.6 Import trace
 
@@ -478,15 +478,15 @@ Decision traces are the single home for human-authored decision history (ADR/PDR
 }
 ```
 
-Import traces are emitted once per `import` invocation. The aggregate counts shown above are the *summary*; per-candidate evidence (which file paths supported inferring `BC-0003`, what confidence each inference had, etc.) lives in the resulting draft artifacts' frontmatter `derives_from` and free-form `evidence` fields. Together the import trace + the produced artifacts form a complete reconstructable record. Import traces also support audit ("how was this contract derived?") and the eventual import-quality learning capability.
+One import trace per `import` invocation. The aggregate counts above are the *summary*; per-candidate evidence (which files supported inferring `BC-0003`, what confidence each inference had) lives in the produced artifacts' frontmatter `derives_from` and free-form `evidence` fields. Trace + artifacts form a complete reconstructable record. Import traces also support audit ("how was this contract derived?") and the eventual import-quality learning capability.
 
 ### 8.7 Schema extension policy
 
 - Every trace carries `schema_version` (semver string).
 - New optional fields may be added in any minor version (`1.0` → `1.1`); existing parsers ignore unknown fields.
 - Required fields may only be added in a major version (`1.x` → `2.0`); parsers must explicitly opt into the new major.
-- Older traces remain readable forever — vibeloom never silently rewrites trace files.
-- Engine validates trace files on load and surfaces version mismatches as a status finding rather than crashing.
+- Older traces remain readable forever — vibeloom never silently rewrites them.
+- The engine validates trace files on load and surfaces version mismatches as a status finding instead of crashing.
 
 ### 8.8 Trace-derived learning (deferred)
 
@@ -807,7 +807,7 @@ budget:
   max_wall_ms: 60000
 ```
 
-Mendable means schema'd: changing how the orchestrator prompts subagents means versioning this header. Header schema versioning follows the same policy as trace schemas (§8.7).
+Mendable means schema'd. Changing how the orchestrator prompts subagents means versioning this header — same policy as trace schemas (§8.7).
 
 ### 13.5 No direct subagent communication
 

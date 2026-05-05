@@ -51,7 +51,7 @@ The four foundational documents:
 
 ## Direction
 
-Significantly **extended** and **hardened** relative to v02:
+**Extended** and **hardened** relative to v02:
 
 - codæ is the paradigm; vibeloom is one instantiation (not the whole paradigm).
 - Spec-driven development is the predecessor; codæ is SDD pushed into lifecycle governance.

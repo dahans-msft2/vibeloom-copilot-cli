@@ -75,7 +75,24 @@ The compiler analogy in the manifesto creates an obligation: real compilers come
 
 ## C. New artifacts and graph extensions
 
-### C0. Cross-layer interaction graph + stack-aware codegen
+### C0. Contract graph → context graph promotion (CGKG-B)
+
+**What it does.** v0.3 keeps the contract graph as a **knowledge graph**: instantiated ontology only (entities + `derives_from` relations). Provenance lives in traces. CGKG-B promotes the contract graph to a full **context graph** by materializing trace-implied relationships as graph nodes/edges:
+
+1. Load-bearing decision traces become `DEC-####` graph nodes with `affects` edges to the contract items they constrain
+2. Code-sync traces become `realized_by` edges from contract items to code paths
+3. Operations declare a *view* — `KG view` (instantiated ontology only; default for code generation, dispatch, status, structural eval) or `CG view` (full graph with provenance; default for reconciliation, review packets, audit, brownfield import). Subagent load sets respect the chosen view to control runtime context cost.
+
+**Justification.** The KG view answers "what" queries efficiently. The CG view answers "why" queries — "why is this BC the way it is", "what decisions need revisiting if we change this requirement", "show me all code that realizes this BC". v0.3 trace schemas are designed (per methodology principle 9) to be sufficient for this promotion without information loss; CGKG-B is the harvest.
+
+**With vs without.**
+
+- *Without.* Reviewer asks "why is this domain model the way it is?" Six months later, the answer requires walking trace files, cross-referencing decision history with generation events, and hoping the load_bearing flag was set correctly. Slow, manual.
+- *With.* From `BC-0008`, the reviewer queries reverse `affects` edges and gets `DEC-20260512-0007` "we chose strict consistency over eventual because of FR-0019". Reconciliation packets surface the decision automatically. Code-sync `realized_by` edges show every file implementing the BC. Graph-traversable explainability.
+
+---
+
+### C0a. Cross-layer interaction graph + stack-aware codegen
 
 **What it does.** v0.3 introduces the per-container `layer` field (presentation / application / domain / infrastructure) and per-layer Tech Stack choices in `defaults`. v0.4+ extends this with two follow-ons:
 1. A **cross-layer interaction graph**: explicit declarations of how presentation containers call application containers, how application containers call domain containers, and which infrastructure services each consumes. Surfaced as a new code-sync trace flavor: "presentation `X` calls application `Y` via interface `Z`."

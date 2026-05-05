@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Implementation — Skill + Engine + Runtime · VibeLoom</title>
 <meta name="description" content="How VibeLoom is built: the Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate that ties them together.">
-<meta name="keywords" content="vibeloom-engine, Claude Code skill, deterministic substrate, context graph, approved-state snapshot">
+<meta name="keywords" content="vibeloom-engine, Claude Code skill, deterministic substrate, contract graph, approved-state snapshot">
 <meta name="author" content="Ilya Baimetov">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#ffffff">
@@ -128,7 +128,7 @@
         <li><a href="#engine">The engine</a></li>
         <li><a href="#cli">Engine CLI</a></li>
         <li><a href="#snapshot">Approved-state snapshot</a></li>
-        <li><a href="#graph">The context graph</a></li>
+        <li><a href="#graph">The contract graph</a></li>
         <li><a href="#ids">IDs and frontmatter</a></li>
         <li><a href="#dispatch">Subagent dispatch</a></li>
         <li><a href="#install">Install</a></li>
@@ -142,7 +142,7 @@
 
       <aside class="exec-summary" aria-label="What this page tells you">
         <span class="eyebrow">In 60 seconds</span>
-        <p>VibeLoom v0.3 is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through one shared substrate at <code>.vibeloom/state/</code>. Pure Python, zero runtime dependencies, with structural checks and a tested engine surface. This page covers the boundaries, the engine CLI, the snapshot algorithm, the context graph, IDs and frontmatter, subagent dispatch, and how to install + run.</p>
+        <p>VibeLoom v0.3 is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, and detects drift. They cooperate through one shared substrate at <code>.vibeloom/state/</code>. Pure Python, zero runtime dependencies, with structural checks and a tested engine surface. This page covers the boundaries, the engine CLI, the snapshot algorithm, the contract graph, IDs and frontmatter, subagent dispatch, and how to install + run.</p>
         <p class="exec-meta">If you're new — start with the <a class="linky" href="methodology.html">methodology page</a> for the <em>why</em>, then come back here for the <em>how</em>.</p>
       </aside>
 
@@ -152,7 +152,7 @@
         <li><strong>The Skill</strong> — a prompt-and-policy package that loads automatically inside Claude Code or Codex. It owns the natural-language interface, mode selection, approval pauses, semantic judgment, subagent orchestration, and template materialization.</li>
         <li><strong>The engine</strong> — a deterministic Python package (<code>vibeloom-engine 0.2.0</code>) that parses artifacts, validates schemas, builds the derivation graph, computes affected sets, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
       </ul>
-      <p>They cooperate through a single shared substrate: <code>.vibeloom/state/</code>. The engine writes <code>context-graph.json</code>, <code>status.json</code>, and <code>approved_snapshots/</code>. The Skill reads them, makes decisions, generates content, and invokes the engine again on the result. There is no other channel between them.</p>
+      <p>They cooperate through a single shared substrate: <code>.vibeloom/state/</code>. The engine writes <code>contract-graph.json</code>, <code>status.json</code>, and <code>approved_snapshots/</code>. The Skill reads them, makes decisions, generates content, and invokes the engine again on the result. There is no other channel between them.</p>
 
       <div class="callout">
         <strong>Why split it.</strong> Anything load-bearing — hash diffs, derivation walks, schema validation — needs to be deterministic and auditable. Anything that requires judgment — semantic eval, mode selection, conflict resolution — needs a model. Mixing the two produces software that's neither.
@@ -183,7 +183,7 @@
 
       <p>The engine's responsibilities, in scope and out:</p>
       <ul>
-        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the context graph; computing affected sets; capturing and comparing approved-state snapshots; emitting status snapshots.</li>
+        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the contract graph; computing affected sets; capturing and comparing approved-state snapshots; emitting status snapshots.</li>
         <li><strong>Out of scope:</strong> deciding what items <em>mean</em>; deciding which fix direction is correct; choosing modes; talking to users.</li>
       </ul>
 
@@ -194,7 +194,7 @@
       <h2 id="cli">Engine CLI</h2>
       <p>The deterministic surface is exposed through these CLI commands.</p>
       <pre><code>parse       --repo &lt;path&gt;                       # Parse all artifacts; emit JSON inventory
-graph       --repo &lt;path&gt;                       # Build + persist .vibeloom/state/context-graph.json
+graph       --repo &lt;path&gt;                       # Build + persist .vibeloom/state/contract-graph.json
 eval        --repo &lt;path&gt; [--target &lt;tier&gt;]     # Run structural checks; non-zero exit on blockers
 affected    --repo &lt;path&gt; --ids &lt;IDs...&gt;        # Compute affected set from changed item IDs
 staleness   --repo &lt;path&gt;                       # Per-item hash diff + forward DAG walk
@@ -220,7 +220,7 @@ status      --repo &lt;path&gt;                       # Emit + persist status sn
 
       <hr>
 
-      <h2 id="graph">The context graph</h2>
+      <h2 id="graph">The contract graph</h2>
       <p>The graph is built by the engine from the entire artifact set. Nodes are items (with stable IDs); edges are typed derivation relationships read out of <code>derives_from</code> frontmatter. The graph is a DAG — cycles are forbidden, and only <code>capability</code> and <code>constraint</code> are valid roots.</p>
 
       <p>Two operations compute on the graph:</p>
@@ -229,7 +229,7 @@ status      --repo &lt;path&gt;                       # Emit + persist status sn
         <li><strong>Stale set</strong> — combination of: items modified since the snapshot, items removed since the snapshot, and the affected-set walk forward from both. Stale items map back to their owning artifacts to produce the stale-artifact set.</li>
       </ul>
 
-      <p>The graph is persisted to <code>.vibeloom/state/context-graph.json</code>. It's regenerated on demand and is safe to delete — the next pass rebuilds it.</p>
+      <p>The graph is persisted to <code>.vibeloom/state/contract-graph.json</code>. It's regenerated on demand and is safe to delete — the next pass rebuilds it.</p>
 
       <hr>
 

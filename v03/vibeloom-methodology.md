@@ -35,6 +35,7 @@ What VibeLoom defines:
 6. **Traces are evidence, not truth.** Trace data may propose improvements; it never silently mutates contract or context.
 7. **False positives beat false negatives.** Over-marking drift wastes work; under-marking lets incoherence leak through.
 8. **Contract aspires toward decidability.** Eval operates on a verification ladder (§14.3) of *decidable* structural checks, *mechanical* validation runners, and *heuristic* semantic eval. The trajectory is to promote checks upward — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
+9. **Traces are sufficient for future graph promotion.** Each trace family carries the metadata needed to materialize the relationships it implies into graph form. v0.3 keeps the contract graph as a knowledge graph (instantiated ontology only); the trace schemas are designed so that decision provenance, code-sync mapping, and other contextual relationships can be promoted to graph nodes/edges in a future release without information loss (see roadmap CGKG-B).
 
 ---
 
@@ -238,7 +239,9 @@ Context is purely active generation guidance. Decisions — including ADR/PDR-st
 
 The contract graph is the parsed, queryable model of approved and draft artifacts.
 
-Nodes are IDed semantic items. Edges are `derives_from` relationships. The graph is a DAG.
+Nodes are IDed semantic items (entities). Edges are `derives_from` relationships. The graph is a DAG.
+
+In v0.3, the contract graph is shaped as a **knowledge graph**: it stores the instantiated ontology — entities and their typed relations as they currently are. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, not in the graph itself. The trace schemas (§11) are designed to be sufficient for future promotion of these relationships into graph form (see roadmap CGKG-B).
 
 The graph answers:
 
@@ -300,7 +303,7 @@ Useful secondary metrics to collect during dogfooding:
 
 ## 11. Traces
 
-Traces are append-oriented provenance records. They are durable and not silently regenerated from current state.
+Traces are append-oriented provenance records. They are durable and not silently regenerated from current state. Schemas are designed so the relationships they capture can be promoted to graph form in a future release without information loss (see roadmap CGKG-B).
 
 Canonical trace families:
 
@@ -310,13 +313,29 @@ Canonical trace families:
 | `generation` | what task generated what artifact from which basis |
 | `eval` | what checks ran and what findings resulted |
 | `code-sync` | source-map-like connection from code paths/hashes to contract IDs and validation evidence |
-| `decision` | raw decision event history |
+| `decision` | human-authored decision history (ADR / PDR / UDR / IDR / general) |
 | `import` | evidence and confidence for brownfield inference |
 | `id-registry` | allocation state and retired IDs |
 
 Traces can propose improvements through mediated proposals (see [roadmap §D](roadmap.md#d-trace-derived-learning)). They cannot become contract truth without review and approval.
 
-`decision` traces are the single home for ADR/PDR-style decision history. Each entry carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Binding decisions should be promoted to IDed contract items.
+### 11.1 Decision trace classification
+
+`decision` traces are the single home for human-authored decision history. Every decision trace carries a `record_type` tag classifying which contract tier it primarily affects:
+
+| `record_type` | What it records | Primary tier |
+| --- | --- | --- |
+| `IDR` | Intent Decision Record | intent-specs (capabilities, constraints, defaults, Tech Stack) |
+| `PDR` | Product Decision Record | product-specs (requirements, stories, domain model) |
+| `UDR` | UX Decision Record | ux-specs (UI patterns, mockup choices, design tokens) |
+| `ADR` | Architecture Decision Record | system-specs (containers, components, layer/stack architecture) |
+| `general` | process, methodology, or operational decision | none — does not change contract content |
+
+Classification by **primary** tier (not all tiers a decision ripples to). Multi-tier impact is captured in the trace's `affects: [item_ids]` field, not in the `record_type`.
+
+Each entry also carries a `load_bearing` flag (default `false`); the active load-bearing subset is a queried view over the trace. A decision should be flagged `load_bearing: true` only if it answers at least one of: what must be preserved, what must be avoided, why a design or product choice is still binding, which tempting alternative was rejected. Once no longer load-bearing, the flag flips to `false` (the trace entry remains immutable). Truly normative decisions should be promoted to IDed contract items.
+
+`general` decisions don't change contract content — they record team conventions, methodology choices, operational choices. They typically have empty `affects` and remain `load_bearing: false`; they're preserved for human reference, not for graph promotion.
 
 ---
 

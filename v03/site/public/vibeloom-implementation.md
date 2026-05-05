@@ -49,7 +49,7 @@ The engine never decides product meaning or approval outcome. The skill never ha
         bdd/
   .vibeloom/
     cache/
-      context-graph.json
+      contract-graph.json
       status.json
     traces/
       approvals.jsonl
@@ -95,7 +95,7 @@ No `cache/`, no graph state, no code-sync trace. Approval traces remain because 
 Regenerable state. If deleted, the engine rebuilds it from artifacts and traces.
 
 ```text
-.vibeloom/cache/context-graph.json
+.vibeloom/cache/contract-graph.json
 .vibeloom/cache/status.json
 ```
 
@@ -333,6 +333,8 @@ Trace families are defined in [methodology §11](vibeloom-methodology.md#11-trac
 
 Every trace also carries `trace_id`, `kind`, and `timestamp`. These are omitted from per-schema fields for brevity.
 
+**Reconstructability principle.** Each trace family is designed to carry the metadata needed to materialize its implied graph relationships into actual graph nodes/edges in a future release (see roadmap CGKG-B). Concretely: approval traces carry per-item content fingerprints; generation traces carry `basis_ids` + `output_item_ids`; code-sync traces are source-map-shaped already; eval traces carry per-finding `item_id`; decision traces carry `record_type` + `affects` + `load_bearing`; import traces summarize aggregates with per-candidate evidence in the resulting draft artifacts. v0.3 keeps the contract graph as a knowledge graph (instantiated ontology only); promotion is deferred but never blocked by lossy schemas.
+
 ### 8.1 Approval trace
 
 ```json
@@ -402,6 +404,8 @@ Source-map-like: connects generated code to contract IDs, file hashes, and valid
   "task_template_version": "0.3.1",
   "scope": "root:product-specs",
   "basis_ids": ["CAP-0001", "CST-0002"],
+  "output_artifact_ids": ["prd", "usm", "dm"],
+  "output_item_ids": ["FR-0007", "FR-0008", "STORY-0019", "BC-0003"],
   "result_status": "ok",
   "late_fetch_events": [
     {"target_scope": "component:web/search", "kind": "interface", "ids": ["IF-0007"]}
@@ -411,7 +415,7 @@ Source-map-like: connects generated code to contract IDs, file hashes, and valid
 }
 ```
 
-Generation traces are the substrate for the [late-fetch → context proposal](roadmap.md#d1-late-fetch--context-proposal) capability in roadmap, and for cost reporting.
+`basis_ids` + `output_artifact_ids` + `output_item_ids` together let any item be traced back to the generation event that produced it (and from there to the upstream basis). This closes the provenance loop for future graph promotion. Generation traces are also the substrate for the [late-fetch → context proposal](roadmap.md#d1-late-fetch--context-proposal) capability in roadmap, and for cost reporting.
 
 ### 8.4 Eval trace
 
@@ -440,15 +444,24 @@ Eval traces capture every read-only check that ran, with severity and item assoc
   "schema_version": "1.0",
   "trace_id": "DEC-20260502-003",
   "kind": "decision",
+  "record_type": "ADR",
   "timestamp": "2026-05-02T15:00:00Z",
   "author": "ilya@vibeloom.ai",
   "topic": "tax-calculation-strategy",
   "load_bearing": true,
-  "payload": "Selected progressive bracket calculation over flat-rate. Rejected: flat-rate (oversimplifies state-level variance), per-jurisdiction lookup (too brittle to maintain).\nReferences: BC-0008, FR-0042."
+  "affects": ["BC-0008", "FR-0042"],
+  "payload": "Selected progressive bracket calculation over flat-rate. Rejected: flat-rate (oversimplifies state-level variance), per-jurisdiction lookup (too brittle to maintain)."
 }
 ```
 
-Intentionally extensible: `payload` is freeform YAML or markdown. Decision traces are the single home for ADR/PDR-style decision history; the `load_bearing` flag distinguishes the active subset that future packets surface as decision context. Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable.
+Schema fields:
+
+- `record_type` (optional, enum: `IDR | PDR | UDR | ADR | general`, default `general`) — classifies the decision by primary contract tier (intent-specs / product-specs / ux-specs / system-specs respectively). `general` is for process, methodology, or operational decisions that don't change the contract. See [methodology §11.1](vibeloom-methodology.md#111-decision-trace-classification).
+- `affects` (optional, recommended) — list of contract item IDs this decision constrains. Captures multi-tier impact regardless of `record_type`. For `general` decisions this is typically empty.
+- `load_bearing` (default `false`) — flag for whether the decision still informs future generation. Active "decision context" is a queried view filtering decision traces by `load_bearing: true`.
+- `payload` — freeform YAML or markdown. Naturally accommodates the Nygard ADR template (Context / Decision / Consequences) or any equivalent.
+
+Decision traces are the single home for human-authored decision history (ADR/PDR/UDR/IDR/general). Truly normative decisions should be promoted to IDed contract items; the trace entry remains immutable. The schema captures `affects` and `record_type` so a future release (see roadmap CGKG-B) can promote load-bearing decisions to graph nodes without re-mining prose.
 
 ### 8.6 Import trace
 
@@ -465,7 +478,7 @@ Intentionally extensible: `payload` is freeform YAML or markdown. Decision trace
 }
 ```
 
-Import traces are emitted once per `import` invocation. They support audit ("how was this contract derived?") and the eventual import-quality learning capability.
+Import traces are emitted once per `import` invocation. The aggregate counts shown above are the *summary*; per-candidate evidence (which file paths supported inferring `BC-0003`, what confidence each inference had, etc.) lives in the resulting draft artifacts' frontmatter `derives_from` and free-form `evidence` fields. Together the import trace + the produced artifacts form a complete reconstructable record. Import traces also support audit ("how was this contract derived?") and the eventual import-quality learning capability.
 
 ### 8.7 Schema extension policy
 
@@ -483,7 +496,7 @@ Trace-derived proposals (e.g., late-fetch frequency suggesting active-context ad
 
 ## 9. Graph cache
 
-`.vibeloom/cache/context-graph.json`:
+`.vibeloom/cache/contract-graph.json`:
 
 ```json
 {

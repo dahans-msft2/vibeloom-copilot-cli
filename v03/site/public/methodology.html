@@ -242,7 +242,8 @@
       <hr>
 
       <h2 id="graph">The contract graph</h2>
-      <p>The graph is the parsed, queryable model of approved and draft artifacts. Nodes are IDed semantic items; edges are <code>derives_from</code> relationships. The graph is a DAG.</p>
+      <p>The graph is the parsed, queryable model of approved and draft artifacts. Nodes are IDed semantic items (entities); edges are typed <code>derives_from</code> relations. The graph is a DAG.</p>
+      <p>In v0.3, the contract graph is shaped as a <strong>knowledge graph</strong>: it stores the instantiated ontology — entities and their typed relations as they currently are. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, designed to be sufficient for future graph promotion (see roadmap CGKG-B).</p>
       <p>The graph answers:</p>
       <ul>
         <li>What derives from what.</li>
@@ -302,7 +303,7 @@
         <li><strong>generation</strong> — what task generated what artifact from which basis.</li>
         <li><strong>eval</strong> — what checks ran and what findings resulted.</li>
         <li><strong>code-sync</strong> — how generated code maps back to the contract items it realizes.</li>
-        <li><strong>decision</strong> — decision history: what was decided, when, why, and whether each decision still binds future generation.</li>
+        <li><strong>decision</strong> — human-authored decision history, classified by <code>record_type</code>: <code>IDR</code> (intent-specs), <code>PDR</code> (product-specs), <code>UDR</code> (ux-specs), <code>ADR</code> (system-specs), or <code>general</code> (process / methodology / operational — doesn't change the contract). The <code>load_bearing</code> flag identifies the active subset still informing future generation.</li>
         <li><strong>import</strong> — evidence and confidence for brownfield inference.</li>
       </ul>
       <p>Traces are durable provenance. They can propose improvements through mediated proposals, but cannot become contract truth without review and approval. Concrete schemas and storage: see <a class="linky" href="implementation.html#traces">Implementation · Traces</a>.</p>

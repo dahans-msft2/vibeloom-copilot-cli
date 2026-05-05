@@ -251,13 +251,22 @@ status      --repo &lt;path&gt;                       # Emit + persist status sn
         </tbody>
       </table>
 
-      <p>Each artifact carries YAML frontmatter recording lifecycle status, mode metadata, and per-item <code>derives_from</code> references. A typical component fragment:</p>
+      <p>Each artifact carries YAML frontmatter recording lifecycle status, mode metadata, and per-item <code>derives_from</code> references. Containers carry a required <code>layer</code> field (presentation / application / domain / infrastructure) that drives layer-aware generation rules. A typical container fragment:</p>
+
+      <pre><code>---
+type: container
+status: approved
+container: notes-api
+layer: application
+---</code></pre>
+
+      <p>And a typical domain-layer component fragment:</p>
 
       <pre><code>---
 type: component
 status: approved
 approval_mode: user
-container: api
+container: search
 component: notes-search
 ---
 
@@ -273,7 +282,7 @@ interface: IF-0011 (read)
 derives_from: [STORY-0023]
 expected: An empty query with no tags returns 0 results without touching the index.</code></pre>
 
-      <p>The frontmatter parser is strict — required fields are validated by the engine, and unknown fields are flagged. This keeps the graph buildable without ambiguity.</p>
+      <p>The frontmatter parser is strict — required fields are validated by the engine, and unknown fields are flagged. This keeps the graph buildable without ambiguity. Layer-aware constraints (e.g. <code>hosted_bounded_contexts</code> must be empty in non-<code>domain</code> components) are checked structurally.</p>
 
       <hr>
 

@@ -191,12 +191,12 @@
       <p><code>intent → product ⇄ ux → system</code>. Each tier derives from the approved tier above. <code>product-specs</code> and <code>ux-specs</code> are peer co-informing tiers.</p>
 
       <h3>intent-specs</h3>
-      <p>Prose-first description of capabilities and hard constraints, plus repo-wide defaults derived from intent. Always user-owned.</p>
+      <p>Prose-first description of capabilities and hard constraints, plus repo-wide defaults derived from intent. Always user-owned. <code>defaults</code> includes a structured <strong>Tech Stack</strong> section organized per DDD layer (Presentation, Application, Domain, Infrastructure) — empty fields signal "agent decides reasonably given other constraints"; filled fields are binding.</p>
       <table>
         <thead><tr><th>Artifact</th><th>Purpose</th><th>Items</th></tr></thead>
         <tbody>
           <tr><td><code>intent</code></td><td>Capabilities, hard constraints, prose intent</td><td><code>CAP</code>, <code>CST</code></td></tr>
-          <tr><td><code>defaults</code></td><td>Always-on repo-wide rules normalized from intent</td><td><code>DEF</code></td></tr>
+          <tr><td><code>defaults</code></td><td>Repo-wide rules + Tech Stack (per layer)</td><td><code>DEF</code></td></tr>
         </tbody>
       </table>
 
@@ -215,16 +215,29 @@
       <p>Mockups are first-class input evidence. In <code>ux</code> mode, mockups can directly drive product-spec generation via the <code>generate-product-specs-from-ux</code> task variant. Mockups don't become normative truth until their extracted obligations are represented as IDed contract items.</p>
 
       <h3>system-specs</h3>
-      <p>System context, runtime topology, per-container component inventory, and per-component technical ownership.</p>
+      <p>System context, runtime topology, per-container component inventory, and per-component technical ownership. Each container carries a <strong><code>layer</code></strong> field (presentation / application / domain / infrastructure) that determines its rules and scope.</p>
       <table>
         <thead><tr><th>Artifact</th><th>Purpose</th><th>Items</th></tr></thead>
         <tbody>
           <tr><td><code>system</code></td><td>External actors, trust boundaries, system-wide NFRs</td><td><code>EXT</code>, <code>TB</code>, <code>SNFR</code></td></tr>
           <tr><td><code>containers</code></td><td>Runtime/deployment topology and container inventory</td><td><code>CONT</code></td></tr>
-          <tr><td><code>container</code></td><td>One runtime home and its component inventory</td><td><code>CMP</code></td></tr>
+          <tr><td><code>container</code></td><td>One runtime home and its component inventory; carries <code>layer</code></td><td><code>CMP</code></td></tr>
           <tr><td><code>component</code></td><td>Terminal technical ownership boundary</td><td><code>IF</code>, <code>DEP</code>, <code>BEH</code></td></tr>
         </tbody>
       </table>
+
+      <h4>Layered architecture</h4>
+      <p>The <code>layer</code> field on every container determines what it hosts and what rules apply. Stack choices declared in <code>defaults</code> (per layer) are inherited.</p>
+      <table>
+        <thead><tr><th>Layer</th><th>Hosts BCs?</th><th>Components are…</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><code>presentation</code></td><td>No</td><td>UI components — pages, layouts, widgets</td><td>Inherits Presentation stack. Typically one container; micro-frontends are minority.</td></tr>
+          <tr><td><code>application</code></td><td>No</td><td>API surfaces, orchestration handlers, BFF endpoints</td><td>Often one container per UI surface (web, mobile, admin); thin orchestration, not a "microservice" in the autonomous-capability sense.</td></tr>
+          <tr><td><code>domain</code></td><td><strong>Yes</strong></td><td>Service-shaped components hosting bounded contexts</td><td>Decomposition is <em>monolith</em> (all BCs in one container) or <em>multi-service</em> (one container per BC = canonical microservices).</td></tr>
+          <tr><td><code>infrastructure</code></td><td>No</td><td>No internal components — declares consumed platform services as dependencies</td><td>DB, cache, queue, storage, compute platform.</td></tr>
+        </tbody>
+      </table>
+      <p>Bounded contexts live exclusively in <code>domain</code> containers. The <code>presentation</code> and <code>application</code> layers have components but no BCs. The <code>infrastructure</code> layer declares dependencies, not internal components.</p>
 
       <hr>
 

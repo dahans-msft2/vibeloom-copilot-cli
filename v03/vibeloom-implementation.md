@@ -216,7 +216,25 @@ derives_from: [CMP-0012, IF-0042]
 
 Context artifacts do not carry `status` or `approval_mode`.
 
-### 6.3 Component frontmatter
+### 6.3 Container frontmatter
+
+```yaml
+---
+artifact_id: container.notes-api
+artifact_type: container
+tier: system-specs
+scope_kind: container
+scope_id: notes-api
+layer: application                # presentation | application | domain | infrastructure
+status: approved
+timestamp: 2026-05-02T00:00:00Z
+derives_from: [CONT-0002]
+---
+```
+
+The `layer` field is required and carries an enum from the DDD architectural layers. The orchestrator and eval use it to determine generation rules and per-layer constraints (see methodology §6.5).
+
+### 6.4 Component frontmatter
 
 ```yaml
 component_id: CMP-0012
@@ -234,8 +252,9 @@ Rules (see methodology §6.5):
 
 - container may host multiple components,
 - component belongs to exactly one container,
-- component may host multiple bounded contexts,
-- bounded context belongs to exactly one component.
+- component may host multiple bounded contexts (only in `domain`-layer containers),
+- bounded context belongs to exactly one component,
+- `hosted_bounded_contexts` must be empty for components in non-`domain` layers.
 
 ---
 

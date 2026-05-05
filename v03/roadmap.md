@@ -75,6 +75,21 @@ The compiler analogy in the manifesto creates an obligation: real compilers come
 
 ## C. New artifacts and graph extensions
 
+### C0. Cross-layer interaction graph + stack-aware codegen
+
+**What it does.** v0.3 introduces the per-container `layer` field (presentation / application / domain / infrastructure) and per-layer Tech Stack choices in `defaults`. v0.4+ extends this with two follow-ons:
+1. A **cross-layer interaction graph**: explicit declarations of how presentation containers call application containers, how application containers call domain containers, and which infrastructure services each consumes. Surfaced as a new code-sync trace flavor: "presentation `X` calls application `Y` via interface `Z`."
+2. **Stack-aware codegen**: per-framework task templates (`generate-react-component`, `generate-fastapi-handler`, `generate-postgres-aggregate-root`, etc.) selected by reading the inherited Tech Stack choices from `defaults`. Today, the agent infers the framework from prose; tomorrow, the template directly reflects the chosen stack.
+
+**Justification.** v0.3 makes the *what* (stack + layer) explicit and queryable. v0.4 makes the *interactions between layers* and the *per-framework idioms* explicit too — closing the loop from contract to code without losing the layered architecture.
+
+**With vs without.**
+
+- *Without.* Agent generates a presentation component that calls a domain microservice directly, bypassing the application layer. No structural eval flags it because there's no graph constraint between layers.
+- *With.* The cross-layer interaction graph declares "presentation may only call application; application may only call domain or infrastructure." Structural eval flags presentation→domain calls as violations. Stack-aware codegen produces React + React Query patterns when those are the chosen stack, FastAPI + Pydantic when those are.
+
+---
+
 ### C1. ContractDelta as first-class artifact
 
 **What it does.** When approved contract A becomes approved contract B, the diff between them is materialized as a `DELTA-####` artifact: a graph-resident record of which items were added, modified, removed, or moved; with hashes, semantic-eval summaries, and downstream impact. ContractDeltas can be reviewed in isolation, used as the unit for release notes, attached to git tags, fed to compliance audits, and rolled back.

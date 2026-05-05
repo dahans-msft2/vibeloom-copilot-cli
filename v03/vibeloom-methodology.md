@@ -143,9 +143,29 @@ In `ux` mode:
 | Artifact | Purpose | Principal entities |
 | --- | --- | --- |
 | `intent` | prose-first user intent: capabilities, hard constraints | `CAP-####`, `CST-####` |
-| `defaults` | always-on repo-wide rules normalized from intent | `DEF-####` (or `CST` depending on template) |
+| `defaults` | always-on repo-wide rules normalized from intent, including the **Tech Stack** section | `DEF-####` (or `CST` depending on template) |
 
 `intent` is the only root source of user-authored semantic intent. Free prose is allowed; structured capabilities and constraints are IDed.
+
+**Tech Stack section in `defaults`.** `defaults` includes a structured Tech Stack section organized by DDD architectural layer. Each sub-section names the binding choices for that layer; empty fields signal "agent decides reasonably given other constraints."
+
+```
+## Tech stack
+
+### Presentation
+- Framework, meta-framework, styling, state management, component library
+
+### Application
+- API style (REST / GraphQL / tRPC / RPC), backend framework, auth pattern, validation
+
+### Domain
+- Language, decomposition (monolith / multi-service), aggregate pattern, domain event style
+
+### Infrastructure
+- Cloud platform, database, cache, queue, storage, compute pattern
+```
+
+Stack choices made here are inherited by all containers in the matching layer; per-container overrides are allowed.
 
 ### 6.2 Product-specs
 
@@ -176,21 +196,30 @@ In `ux` mode (§5.3), mockups can drive product-spec generation directly via the
 | --- | --- | --- |
 | `system` | system context, external actors and systems, trust boundaries, global NFR boundaries | `EXT`, `TB`, `SNFR` |
 | `containers` | runtime/deployment topology and container inventory | `CONT` |
-| `container.md` (per container) | one runtime/deployment home and its resident component inventory | `CMP` |
+| `container.md` (per container) | one runtime/deployment home and its resident component inventory; carries a required `layer` field (see §6.5) | `CMP` |
 | `component.md` (per component) | terminal technical ownership boundary | `IF`, `DEP`, `BEH`, `NOTE` as structured content |
 
-### 6.5 Component, container, bounded-context rules
+### 6.5 Layered architecture
+
+Every container carries a `layer` field — a required enum drawn from the DDD architectural layers. The layer determines what the container hosts and what generation rules apply.
+
+| Layer | Hosts BCs? | Components are... | Notes |
+| --- | --- | --- | --- |
+| `presentation` | No | UI components (pages, layouts, widgets) | Inherits stack choices from `defaults` Presentation section. Typically one container; micro-frontends are a minority pattern. |
+| `application` | No | API surfaces, orchestration handlers, BFF endpoints | Inherits Application stack. Often one container per UI surface (web, mobile, admin); changes with screens, so not a "microservice" in the autonomous-business-capability sense — more a thin orchestration layer. |
+| `domain` | **Yes** | Service-shaped components hosting bounded contexts | Inherits Domain stack. Decomposition: `monolith` (all BCs in one container) or `multi-service` (one container per BC = canonical microservices). |
+| `infrastructure` | No | No internal components — declares consumed platform services as dependencies | Inherits Infrastructure stack. |
+
+**Component, container, bounded-context rules** (apply within the constraints above):
 
 - A container may host multiple components.
 - A component cannot span multiple containers.
-- A component may host multiple bounded contexts.
+- A component may host multiple bounded contexts (only in `domain` layer).
 - A bounded context cannot span multiple components.
 - Component is the smallest owned technical boundary for generation, communication, and change.
 - Bounded contexts are domain partitions inside components, not runtime deployment units.
 
-Note: presentation and application layers (DDD architecture) are hosted in their own containers. Presentation has no bounded contexts. Application may have components but they are not generally tied to bounded contexts. The rules above apply to components that *do* host bounded contexts.
-
-This is a VibeLoom governance choice. It is not a claim that DDD universally requires this topology. (Relationships between bounded contexts — Customer-Supplier, Conformist, Anti-Corruption Layer — are tracked in the [roadmap](roadmap.md#c2-ddd-context-maps) for a future version.)
+This is a VibeLoom governance choice. It is not a claim that DDD universally requires this topology. (Relationships between bounded contexts — Customer-Supplier, Conformist, Anti-Corruption Layer — are tracked in the [roadmap](roadmap.md#c2-ddd-context-maps) for a future version. Cross-layer interaction graphs are also a roadmap item.)
 
 ---
 

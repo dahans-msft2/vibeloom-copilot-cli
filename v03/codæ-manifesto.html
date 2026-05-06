@@ -360,46 +360,51 @@ footer .accent { color: var(--c-red); }
 /* ===== stats strip ===== */
 .stats-strip {
   margin: 28px 0 8px;
+  padding: 28px 32px;
   border: 1px solid var(--c-line);
-  border-radius: 16px;
+  border-left: 3px solid var(--c-red);
+  border-radius: 12px;
   background: var(--c-bg-soft);
-  padding: 28px;
 }
-.stats-strip-head {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 20px;
-}
-.stats-strip-head .eyebrow { margin-bottom: 0; }
 .stats-strip-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 24px 28px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.stats-strip .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 .stat-num {
   font-family: var(--f-serif);
   font-style: italic;
   font-weight: 600;
-  font-size: clamp(2rem, 3.4vw, 2.6rem);
-  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
   color: var(--c-ink);
-  line-height: 1;
-  margin-bottom: 10px;
+  line-height: 1.15;
 }
 .stat-label {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
   color: var(--c-ink-3);
-  line-height: 1.45;
-  margin-bottom: 10px;
 }
 .stat-label strong { color: var(--c-ink); font-weight: 600; }
 .stat-src {
   font-family: var(--f-mono);
-  font-size: 0.7rem;
-  color: var(--c-red-deep);
-  border-bottom: 1px dotted var(--c-red-soft);
-  font-weight: 600;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--c-red);
+  text-decoration: underline dotted var(--c-red);
+  text-underline-offset: 3px;
+  margin-top: auto;
+  padding-top: 12px;
+  align-self: flex-start;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
-.stat-src:hover { border-color: var(--c-red); }
+.stat-src:hover { color: var(--c-red-deep); text-decoration-color: var(--c-red-deep); }
 
 /* ===== pull quotes ===== */
 blockquote.pull {
@@ -582,12 +587,13 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
   nav.site-nav .links a:not(.badge) { display: none; }
   .wrap { padding: 0 20px; }
   .stats-strip { padding: 22px; }
+  .stats-strip-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 520px) {
   .doc-body p { font-size: 1rem; line-height: 1.7; }
   .doc-body li { font-size: 0.98rem; }
-  .stats-strip-grid { grid-template-columns: 1fr 1fr; }
+  .stats-strip-grid { grid-template-columns: 1fr; gap: 20px; }
   blockquote.pull { padding-left: 18px; font-size: 1.1rem; }
 }
 </style>
@@ -718,29 +724,26 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <aside class="stats-strip" aria-label="2026 evidence on AI drift and slop">
-          <div class="stats-strip-head">
-            <span class="eyebrow">Drift in production · primary sources</span>
-          </div>
           <div class="stats-strip-grid">
-            <div>
+            <div class="stat">
               <div class="stat-num">80% / 89.8%</div>
               <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
-              <a class="stat-src" href="#ref-3">SlopCodeBench, Mar 2026 ↗</a>
+              <a class="stat-src" href="#ref-3">SlopCodeBench<br>Mar 2026 ↗</a>
             </div>
-            <div>
+            <div class="stat">
               <div class="stat-num">22.7%</div>
               <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
-              <a class="stat-src" href="#ref-13">AI-debt in the wild ↗</a>
+              <a class="stat-src" href="#ref-13">AI-debt in the wild<br>Mar 2026 ↗</a>
             </div>
-            <div>
+            <div class="stat">
               <div class="stat-num">3–5×</div>
               <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
-              <a class="stat-src" href="#ref-5">CMU Cursor study, Jan 2026 ↗</a>
+              <a class="stat-src" href="#ref-5">CMU Cursor study<br>Jan 2026 ↗</a>
             </div>
-            <div>
+            <div class="stat">
               <div class="stat-num">17%</div>
-              <div class="stat-label">lower comprehension scores for AI-assisted developers; <strong>largest decline in debugging</strong></div>
-              <a class="stat-src" href="#ref-7">Osmani · O'Reilly · Apr 2026 ↗</a>
+              <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
+              <a class="stat-src" href="#ref-7">Osmani · O'Reilly<br>Apr 2026 ↗</a>
             </div>
           </div>
         </aside>

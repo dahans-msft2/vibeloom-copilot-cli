@@ -4,9 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VibeLoom — Pitch Deck · Pre-seed · May 2026</title>
-
-<meta name="description" content="VibeLoom pitch deck — the contract layer for agentic engineering. Pre-seed thesis, May 2026. Code becomes a dark factory; humans operate one level up.">
-<meta name="author" content="Ilya Baimetov">
+<meta name="description" content="VibeLoom pitch deck — code becomes a dark factory; we build the contract layer above it. Pre-seed thesis, May 2026.">
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,1488 +15,196 @@
 :root {
   --c-bg:        #ffffff;
   --c-bg-soft:   #f7f7f6;
-  --c-bg-mute:   #efeeec;
   --c-ink:       #0a0a0a;
-  --c-ink-2:     #1a1a1a;
   --c-ink-3:     #3a3a3a;
   --c-ink-4:     #5a5a5a;
   --c-ink-5:     #707070;
   --c-line:      #e6e4e0;
-  --c-line-2:    #d6d3cd;
-
   --c-red:       #e84057;
   --c-red-deep:  #c43a50;
   --c-red-soft:  #fbe6ea;
   --c-red-tint:  rgba(232, 64, 87, 0.08);
-
-  --c-dark:      #0a0a0a;
-
-  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
-  --f-serif:     "Fraunces", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif;
-
-  --slide-w:     1280px;
-  --slide-h:     720px;
+  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --f-serif:     "Fraunces", "Iowan Old Style", Georgia, serif;
 }
-
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--f-sans);
-  background: var(--c-bg-mute);
-  color: var(--c-ink);
-  line-height: 1.45;
-  font-feature-settings: "ss01", "cv11";
+  background: var(--c-ink);
+  color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
 }
 ::selection { background: var(--c-red); color: #fff; }
-img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
-em { font-style: italic; }
-strong { font-weight: 600; color: var(--c-ink); }
 
-/* ===== deck container ===== */
-.deck {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 40px 20px 60px;
-}
-
-/* ===== fixed-aspect 16:9 slide ===== */
-.slide {
-  width: var(--slide-w);
-  height: var(--slide-h);
-  background: var(--c-bg);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 44px 64px 36px;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08);
-  border-radius: 8px;
-}
-
-.slide-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--f-mono);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-ink-5);
-  font-weight: 600;
-}
-.slide-header .slide-num {
-  color: var(--c-red-deep);
-  font-weight: 700;
-}
-.slide-header .ae { color: var(--c-red); }
-
-.slide-body {
+main {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 28px;
-}
-.slide-body.top {
-  justify-content: flex-start;
-  padding-top: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8vh 6vw 6vh;
+  width: 100%;
 }
 
-.headline {
+.brand {
   font-family: var(--f-sans);
+  font-size: 1.1rem;
   font-weight: 800;
-  font-size: 2.6rem;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
-  color: var(--c-ink);
-  margin-bottom: 20px;
-  max-width: 32ch;
-}
-.headline em,
-.headline .accent {
-  font-style: italic;
-  font-family: var(--f-serif);
-  font-weight: 600;
-  color: var(--c-red);
-}
-.subhead {
-  font-family: var(--f-sans);
-  font-weight: 500;
-  font-size: 1.08rem;
-  color: var(--c-ink-3);
-  line-height: 1.5;
-  max-width: 82ch;
-  margin-bottom: 22px;
-}
-
-.slide-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-ink-5);
-  padding-top: 14px;
-  border-top: 1px solid var(--c-line);
-}
-
-code {
-  font-family: var(--f-mono);
-  font-size: 0.86em;
-  background: var(--c-bg-mute);
-  color: var(--c-ink-2);
-  padding: 1px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--c-line);
-}
-
-/* ===== print: each slide on its own 16:9 page ===== */
-@page { size: 13.333in 7.5in; margin: 0; }
-@media print {
-  body { background: #fff; }
-  .deck { display: block; padding: 0; gap: 0; }
-  .slide {
-    box-shadow: none;
-    border-radius: 0;
-    width: 13.333in;
-    height: 7.5in;
-    padding: 0.55in 0.75in 0.45in;
-    page-break-after: always;
-  }
-  .slide:last-child { page-break-after: auto; }
-}
-
-/* ===== responsive (screens narrower than 1280px) ===== */
-@media (max-width: 1320px) {
-  body { background: var(--c-bg); }
-  .deck { padding: 0; gap: 0; }
-  .slide {
-    width: 100vw;
-    height: auto;
-    min-height: 100vh;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 5vh 6vw 4vh;
-    border-bottom: 1px solid var(--c-line);
-  }
-  .headline { font-size: clamp(1.7rem, 4vw, 2.4rem); }
-  .subhead { font-size: clamp(0.96rem, 1.5vw, 1.1rem); }
-}
-
-/* =================================================
-   SLIDE 1 — TITLE
-   ================================================= */
-.title-slide {
-  background: var(--c-bg);
-  position: relative;
-}
-.title-slide::before {
-  content: "";
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(to right, rgba(10,10,10,0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(10,10,10,0.025) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 75%);
-  pointer-events: none;
-}
-.title-slide > * { position: relative; z-index: 1; }
-.title-mark {
-  font-family: var(--f-sans);
-  font-weight: 900;
-  font-size: 6rem;
-  letter-spacing: -0.05em;
-  line-height: 0.95;
-  color: var(--c-ink);
-  margin-bottom: 32px;
-}
-.title-mark .accent { color: var(--c-red); }
-.title-tagline {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 2rem;
-  color: var(--c-ink-2);
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-  margin-bottom: 24px;
-  max-width: 30ch;
-}
-.title-oneliner {
-  font-family: var(--f-sans);
-  font-weight: 500;
-  font-size: 1.18rem;
-  color: var(--c-ink-3);
-  line-height: 1.5;
-  max-width: 60ch;
+  letter-spacing: -0.025em;
   margin-bottom: 56px;
 }
-.title-oneliner strong { color: var(--c-ink); font-weight: 600; }
-.title-meta {
+.brand .ae { color: var(--c-red); }
+
+.headline {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(2.6rem, 7vw, 5.5rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--c-red);
+  margin-bottom: 32px;
+  max-width: 18ch;
+}
+
+.subhead {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 2.6vw, 2rem);
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 36px;
+  max-width: 28ch;
+}
+
+.tag {
+  font-family: var(--f-sans);
+  font-size: 0.96rem;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 56px;
+  max-width: 60ch;
+}
+.tag em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--c-red);
+}
+
+.cta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px 32px;
-  align-items: center;
-  font-family: var(--f-mono);
-  font-size: 0.84rem;
-  color: var(--c-ink-4);
+  gap: 14px;
+  margin-bottom: 64px;
 }
-.title-meta strong { color: var(--c-ink); font-weight: 600; }
-.title-badge {
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  padding: 4px 10px;
-  border: 1px solid var(--c-red-soft);
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
   border-radius: 100px;
-  background: var(--c-red-tint);
-}
-
-/* =================================================
-   BIG-NUMBER COMPONENT (used on Problem, Market)
-   ================================================= */
-.big-num-row {
-  display: flex;
-  gap: 36px;
-  align-items: stretch;
-  margin: 12px 0 0;
-}
-.big-num {
-  flex: 1;
-  padding: 14px 18px;
-  background: var(--c-bg-soft);
-  border-left: 3px solid var(--c-red);
-  border-radius: 6px;
-}
-.big-num .num {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 1.6rem;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--c-ink);
-  display: block;
-  margin-bottom: 4px;
-}
-.big-num .num-label {
-  font-size: 0.84rem;
-  line-height: 1.45;
-  color: var(--c-ink-3);
-}
-.big-num .num-label strong { color: var(--c-ink); }
-.big-num .num-src {
-  display: block;
   font-family: var(--f-mono);
-  font-size: 0.7rem;
-  color: var(--c-red-deep);
-  margin-top: 6px;
+  font-size: 0.86rem;
+  font-weight: 600;
   letter-spacing: 0.02em;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
-.hero-num {
-  display: flex;
-  align-items: baseline;
-  gap: 24px;
-  margin: 8px 0 16px;
-}
-.hero-num .num {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 4.6rem;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-  color: var(--c-red);
-}
-.hero-num .num-text {
-  font-family: var(--f-sans);
-  font-weight: 600;
-  font-size: 1.18rem;
-  color: var(--c-ink-2);
-  line-height: 1.35;
-  max-width: 50ch;
-}
-.hero-num .num-text strong { color: var(--c-red-deep); font-weight: 700; }
-.hero-num .num-text .src {
-  display: block;
-  font-family: var(--f-mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--c-ink-5);
-  margin-top: 8px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-/* =================================================
-   BEFORE/AFTER VISUAL (Solution)
-   ================================================= */
-.ba-grid {
-  display: grid;
-  grid-template-columns: 1fr 80px 1fr;
-  gap: 0;
-  align-items: stretch;
-  margin: 12px 0 24px;
-}
-.ba-col {
-  padding: 28px 28px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.ba-col.before { background: var(--c-bg-soft); border: 1px solid var(--c-line); }
-.ba-col.after  { background: var(--c-red-tint); border: 1px solid var(--c-red-soft); }
-.ba-col .label {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--c-ink-4);
-  display: block;
-}
-.ba-col.after .label { color: var(--c-red-deep); }
-.ba-col h3 {
-  font-family: var(--f-sans);
-  font-weight: 700;
-  font-size: 1.18rem;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  color: var(--c-ink);
-}
-.ba-col p {
-  font-size: 0.96rem;
-  line-height: 1.5;
-  color: var(--c-ink-3);
-}
-.ba-col .stat {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 1.6rem;
-  color: var(--c-ink-2);
-  line-height: 1.2;
-}
-.ba-col.after .stat { color: var(--c-red); }
-.ba-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 1.2rem;
-  color: var(--c-red);
-}
-.ba-tagline {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.2rem;
-  color: var(--c-ink-2);
-  text-align: center;
-  margin-top: 8px;
-}
-.ba-tagline .accent { color: var(--c-red); font-weight: 600; }
-
-/* =================================================
-   FORCES (Why now)
-   ================================================= */
-.forces-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-  margin-top: 12px;
-}
-.force-card {
-  padding: 18px 22px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  background: var(--c-bg);
-  display: flex;
-  gap: 16px;
-}
-.force-card .force-num {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 2rem;
-  color: var(--c-red);
-  line-height: 1;
-  min-width: 48px;
-}
-.force-card h3 {
-  font-family: var(--f-sans);
-  font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: -0.015em;
-  line-height: 1.3;
-  color: var(--c-ink);
-  margin-bottom: 6px;
-}
-.force-card p {
-  font-size: 0.88rem;
-  line-height: 1.45;
-  color: var(--c-ink-3);
-}
-.force-card p strong { color: var(--c-ink-2); }
-
-/* =================================================
-   PRODUCT (Slide 5)
-   ================================================= */
-.product-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 24px;
-  align-items: stretch;
-  margin-top: 4px;
-}
-.product-flow {
-  padding: 18px 22px;
-  background: var(--c-bg-soft);
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.flow-step {
-  padding: 10px 14px;
-  border: 1px solid var(--c-line);
-  border-radius: 6px;
-  background: var(--c-bg);
-  font-family: var(--f-mono);
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--c-ink-2);
-}
-.flow-step .what {
-  font-family: var(--f-sans);
-  font-weight: 400;
-  font-size: 0.78rem;
-  color: var(--c-ink-4);
-  display: block;
-  margin-top: 4px;
-  letter-spacing: 0;
-}
-.flow-step.intent { border-left: 3px solid var(--c-red); }
-.flow-step.derive { border-left: 3px solid var(--c-ink-3); }
-.flow-step.code { border-left: 3px solid var(--c-line-2); background: var(--c-bg-mute); color: var(--c-ink-4); }
-.flow-arrow {
-  font-family: var(--f-mono);
-  font-size: 0.78rem;
-  color: var(--c-ink-5);
-  text-align: center;
-  line-height: 1;
-}
-.product-modes {
-  padding: 14px 20px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  background: var(--c-bg);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.product-modes h3 {
-  font-family: var(--f-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.mode-row {
-  display: grid;
-  grid-template-columns: 60px 1fr;
-  gap: 10px;
-  font-size: 0.82rem;
-  line-height: 1.4;
-  color: var(--c-ink-3);
-  padding: 3px 0;
-  border-bottom: 1px dotted var(--c-line);
-}
-.mode-row:last-child { border-bottom: 0; }
-.mode-row .mode-name {
-  font-family: var(--f-mono);
-  font-weight: 700;
-  color: var(--c-red-deep);
-  font-size: 0.84rem;
-}
-.mode-row strong { color: var(--c-ink); font-weight: 600; }
-.product-foot {
-  margin-top: 8px;
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  color: var(--c-ink-4);
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-}
-
-/* =================================================
-   INSIGHT / COMPETITION (Slide 6)
-   ================================================= */
-.insight-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: start;
-  margin-top: 8px;
-}
-.insight-statement {
-  padding: 24px 26px;
-  background: var(--c-bg-soft);
-  border-left: 3px solid var(--c-red);
-  border-radius: 0 10px 10px 0;
-}
-.insight-statement .label {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.insight-statement p {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.18rem;
-  line-height: 1.45;
-  color: var(--c-ink);
-}
-.insight-statement p strong { font-style: normal; font-family: var(--f-sans); color: var(--c-red-deep); font-weight: 700; }
-.competitor-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.competitor-rows .label {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.comp-row {
-  padding: 12px 16px;
-  border: 1px solid var(--c-line);
-  border-radius: 8px;
-  background: var(--c-bg);
-}
-.comp-row.us {
-  border: 1px solid var(--c-red-soft);
-  background: var(--c-red-tint);
-}
-.comp-row .who {
-  font-family: var(--f-mono);
-  font-weight: 700;
-  font-size: 0.86rem;
-  color: var(--c-ink);
-  display: block;
-  margin-bottom: 2px;
-}
-.comp-row.us .who { color: var(--c-red-deep); }
-.comp-row .what {
-  font-size: 0.86rem;
-  line-height: 1.4;
-  color: var(--c-ink-3);
-}
-.comp-row.us .what { color: var(--c-ink-2); }
-
-/* =================================================
-   BUSINESS MODEL (Slide 7)
-   ================================================= */
-.bm-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: 8px;
-}
-.bm-card {
-  padding: 22px 24px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  background: var(--c-bg);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.bm-card.featured {
-  border: 1px solid var(--c-red-soft);
-  background: var(--c-red-tint);
-}
-.bm-card .tier {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--c-ink-4);
-}
-.bm-card.featured .tier { color: var(--c-red-deep); }
-.bm-card .price {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 1.8rem;
-  letter-spacing: -0.02em;
-  color: var(--c-ink);
-  line-height: 1;
-}
-.bm-card.featured .price { color: var(--c-red-deep); }
-.bm-card .price-unit {
-  font-family: var(--f-sans);
-  font-style: normal;
-  font-weight: 500;
-  font-size: 0.86rem;
-  color: var(--c-ink-4);
-}
-.bm-card .who-for {
-  font-family: var(--f-sans);
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--c-ink-2);
-}
-.bm-card ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 4px;
-}
-.bm-card li {
-  font-size: 0.84rem;
-  line-height: 1.45;
-  color: var(--c-ink-3);
-  padding-left: 14px;
-  position: relative;
-}
-.bm-card li::before {
-  content: "→";
-  position: absolute;
-  left: 0;
-  color: var(--c-red);
-  font-family: var(--f-mono);
-  font-weight: 700;
-}
-.bm-foot {
-  margin-top: 14px;
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--c-ink-3);
-  padding: 12px 16px;
-  background: var(--c-bg-soft);
-  border-left: 2px solid var(--c-line-2);
-  border-radius: 0 6px 6px 0;
-  line-height: 1.45;
-}
-.bm-foot strong { color: var(--c-ink); font-style: normal; font-family: var(--f-sans); }
-
-/* =================================================
-   MARKET SIZE (Slide 8)
-   ================================================= */
-.market-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-top: 8px;
-  align-items: start;
-}
-.market-calc {
-  padding: 18px 22px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  background: var(--c-bg-soft);
-}
-.market-calc h3 {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.calc-row {
-  display: grid;
-  grid-template-columns: 1fr 100px;
-  gap: 12px;
-  align-items: baseline;
-  padding: 6px 0;
-  border-bottom: 1px dotted var(--c-line-2);
-}
-.calc-row:last-of-type { border-bottom: 0; }
-.calc-row .calc-label {
-  font-family: var(--f-sans);
-  font-size: 0.92rem;
-  color: var(--c-ink-3);
-  line-height: 1.4;
-}
-.calc-row .calc-label strong { color: var(--c-ink); font-weight: 600; }
-.calc-row .calc-num {
-  font-family: var(--f-mono);
-  font-weight: 600;
-  font-size: 0.96rem;
-  color: var(--c-ink);
-  text-align: right;
-}
-.calc-row.total {
-  margin-top: 8px;
-  padding-top: 14px;
-  border-top: 2px solid var(--c-red);
-  border-bottom: 0;
-}
-.calc-row.total .calc-label {
-  font-family: var(--f-sans);
-  font-weight: 700;
-  color: var(--c-ink);
-  font-size: 0.96rem;
-}
-.calc-row.total .calc-num {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 700;
-  font-size: 1.6rem;
-  color: var(--c-red);
-}
-.market-narrative {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.market-headline {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-weight: 600;
-  font-size: 1.6rem;
-  color: var(--c-ink);
-  line-height: 1.3;
-}
-.market-headline .accent { color: var(--c-red); }
-.market-narrative p {
-  font-size: 0.96rem;
-  line-height: 1.55;
-  color: var(--c-ink-3);
-}
-.market-narrative p strong { color: var(--c-ink); font-weight: 600; }
-.market-adjacent {
-  margin-top: 4px;
-  padding: 12px 16px;
-  background: var(--c-bg-soft);
-  border-left: 2px solid var(--c-line-2);
-  border-radius: 0 6px 6px 0;
-  font-size: 0.86rem;
-  color: var(--c-ink-3);
-  line-height: 1.5;
-}
-
-/* =================================================
-   TEAM (Slide 9)
-   ================================================= */
-.team-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-top: 8px;
-  align-items: start;
-}
-.bio {
-  padding: 18px 22px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-  background: var(--c-bg);
-}
-.bio h3 {
-  font-family: var(--f-sans);
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--c-ink);
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
-}
-.bio .role {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  color: var(--c-red-deep);
-  letter-spacing: 0.04em;
-  display: block;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-.bio p {
-  font-size: 0.86rem;
-  line-height: 1.5;
-  color: var(--c-ink-3);
-  margin-bottom: 7px;
-}
-.bio p strong { color: var(--c-ink); font-weight: 600; }
-.todo {
-  display: inline-block;
-  padding: 1px 6px;
-  margin-left: 4px;
-  background: var(--c-red-tint);
-  color: var(--c-red-deep);
-  font-family: var(--f-mono);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-radius: 3px;
-  border: 1px solid var(--c-red-soft);
-}
-.todo-inline {
-  font-family: var(--f-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  background: var(--c-red-tint);
-  border: 1px solid var(--c-red-soft);
-  padding: 3px 8px;
-  margin-left: 12px;
-  border-radius: 4px;
-  vertical-align: middle;
-  font-style: normal;
-}
-.team-side {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.solo-acknowledge {
-  padding: 18px 22px;
-  background: var(--c-bg-soft);
-  border-left: 3px solid var(--c-ink-4);
-  border-radius: 0 10px 10px 0;
-}
-.solo-acknowledge h3 {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-ink-4);
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-.solo-acknowledge p {
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-size: 0.98rem;
-  line-height: 1.5;
-  color: var(--c-ink-2);
-}
-.solo-acknowledge p strong { font-style: normal; font-family: var(--f-sans); color: var(--c-ink); }
-.advisors-block {
-  padding: 18px 22px;
-  border: 1px solid var(--c-line);
-  border-radius: 10px;
-}
-.advisors-block h3 {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.advisors-block p {
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: var(--c-ink-3);
-}
-
-/* =================================================
-   ASK (Slide 10)
-   ================================================= */
-.ask-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 4px;
-}
-.ask-card {
-  padding: 22px 26px;
-  border-radius: 10px;
-  border: 1px solid var(--c-line);
-  background: var(--c-bg);
-}
-.ask-card.primary {
-  border-left: 3px solid var(--c-red);
-  background: var(--c-red-tint);
-}
-.ask-card h3 {
-  font-family: var(--f-mono);
-  font-size: 0.74rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--c-red-deep);
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-.ask-card ul {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.ask-card li {
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--c-ink-2);
-  padding-left: 16px;
-  position: relative;
-}
-.ask-card li::before {
-  content: "→";
-  position: absolute;
-  left: 0;
-  color: var(--c-red);
-  font-family: var(--f-mono);
-  font-weight: 700;
-}
-.ask-card li strong { color: var(--c-ink); font-weight: 700; }
-.ask-closer {
-  margin-top: 18px;
-  padding: 22px 28px;
-  background: var(--c-dark);
+.cta-primary {
+  background: var(--c-red);
   color: #fff;
-  border-radius: 10px;
+}
+.cta-primary:hover { background: var(--c-red-deep); transform: translateY(-1px); }
+.cta-secondary {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.cta-secondary:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.5); }
+
+.meta {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 18px;
-}
-.ask-closer .tag {
-  font-family: var(--f-sans);
-  font-weight: 700;
-  font-size: 1.18rem;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  max-width: 38ch;
-}
-.ask-closer .tag .accent {
-  font-style: italic;
-  font-family: var(--f-serif);
-  font-weight: 600;
-  color: var(--c-red);
-}
-.ask-closer .contact {
+  gap: 12px 28px;
   font-family: var(--f-mono);
-  font-size: 0.86rem;
-  color: rgba(255,255,255,0.85);
-  text-align: right;
-  line-height: 1.6;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
-.ask-closer .contact a {
-  color: #fff;
-  text-decoration: underline dotted rgba(255,255,255,0.5);
-  text-underline-offset: 3px;
-}
+.meta strong { color: #fff; font-weight: 600; }
 
-/* =================================================
-   PRINT-MODE OVERRIDES for the dark closer
-   ================================================= */
-@media print {
-  .ask-closer {
-    background: var(--c-bg-soft);
-    color: var(--c-ink);
-    border: 1px solid var(--c-line);
-  }
-  .ask-closer .contact { color: var(--c-ink-3); }
-  .ask-closer .contact a { color: var(--c-ink); }
-  .ask-closer .tag .accent { color: var(--c-red); }
+.note {
+  margin-top: 24px;
+  padding: 18px 22px;
+  background: rgba(255,255,255,0.04);
+  border-left: 2px solid var(--c-red);
+  border-radius: 0 6px 6px 0;
+  font-family: var(--f-sans);
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+  max-width: 70ch;
+}
+.note strong { color: #fff; font-weight: 700; }
+.note code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+  color: var(--c-red-soft);
+  background: rgba(232,64,87,0.12);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(232,64,87,0.3);
 }
 </style>
 </head>
 <body>
 
-<div class="deck">
+<main>
+  <div class="brand">Vibe<span class="ae">Loom</span></div>
 
-<!-- ============================================================
-     SLIDE 1 — TITLE
-     "What is this company?"
-     ============================================================ -->
-<section class="slide title-slide" id="s01">
-  <header class="slide-header">
-    <span class="slide-num">01 / 10</span>
-    <span class="title-badge">Pre-seed Thesis · May 2026</span>
-  </header>
+  <h1 class="headline">Code becomes a dark factory.</h1>
 
-  <div class="slide-body" style="justify-content: center;">
-    <div class="title-mark">Vibe<span class="accent">Loom</span></div>
+  <p class="subhead">We build the contract layer above it.</p>
 
-    <p class="title-tagline">The contract layer for <span style="color: var(--c-red);">agentic engineering.</span></p>
+  <p class="tag">
+    Cursor enabled <em>vibe coding.</em> &nbsp; VibeLoom enables <em>agentic engineering</em> — and the <em>dark factory</em> it requires.
+  </p>
 
-    <p class="title-oneliner"><strong>Code becomes a dark factory. Humans operate one level up.</strong> We build the contract substrate that keeps AI-generated code coherent across cycles — engineering teams approve intent and architecture; agents regenerate code from approved contract; drift is detected before it ships.</p>
-
-    <div class="title-meta">
-      <span><strong>Ilya Baimetov</strong>, Founder</span>
-      <span>ilya.baimetov@vibeloom.ai</span>
-      <span>vibeloom.ai</span>
-      <span>May 2026 · v0.3</span>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     SLIDE 2 — PROBLEM
-     "What problem exists?"
-     ============================================================ -->
-<section class="slide" id="s02">
-  <header class="slide-header">
-    <span class="slide-num">02 / 10</span>
-    <span>Problem</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">AI is shipping code <em>faster</em> than anyone can govern it.</h1>
-    <p class="subhead">Engineering teams running multi-agent code-gen in production are paying a measurable tax. Existing tooling — Cursor, Copilot, Spec Kit — optimizes the moment of generation. <strong>The drift between cycles is unsolved.</strong></p>
-
-    <div class="hero-num">
-      <span class="num">22.7%</span>
-      <span class="num-text">
-        of <strong>tracked AI-introduced issues survive</strong> at the latest revision — across <strong>302.6K commits</strong> in <strong>6,299 production repos</strong>.
-        <span class="src">Liu et al., "AI-debt in the wild" · Mar 2026</span>
-      </span>
-    </div>
-
-    <div class="big-num-row">
-      <div class="big-num">
-        <span class="num">3–5×</span>
-        <p class="num-label">short-term velocity gain from Cursor — <strong>dissipates in 2 months</strong>, leaving +30% warnings, +41% complexity</p>
-        <span class="num-src">CMU · MSR 2026</span>
-      </div>
-      <div class="big-num">
-        <span class="num">17%</span>
-        <p class="num-label">lower comprehension scores for AI-assisted developers — <strong>largest decline in debugging</strong></p>
-        <span class="num-src">Anthropic · O'Reilly · Apr 2026</span>
-      </div>
-      <div class="big-num">
-        <span class="num">60% / 0–20%</span>
-        <p class="num-label">share of work that uses AI / share of tasks teams can <strong>fully delegate</strong> without supervision</p>
-        <span class="num-src">Anthropic · Q1 2026</span>
-      </div>
-    </div>
+  <div class="cta-row">
+    <a class="cta cta-primary" href="https://github.com/ilya-baimetov/vibeloom/raw/main/v03/pitch-deck.pptx">
+      Download the deck (.pptx) →
+    </a>
+    <a class="cta cta-secondary" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/pitch-deck.md" target="_blank" rel="noopener">
+      Read the source (.md)
+    </a>
+    <a class="cta cta-secondary" href="https://vibeloom.ai/cod%C3%A6.html">
+      The codæ manifesto
+    </a>
   </div>
 
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>02 — problem</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 3 — SOLUTION (the bet)
-     "Code becomes a dark factory."
-     ============================================================ -->
-<section class="slide" id="s03">
-  <header class="slide-header">
-    <span class="slide-num">03 / 10</span>
-    <span>The bet · Solution</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Code becomes a <em>dark factory.</em> We build the <em>contract layer</em> above it.</h1>
-    <p class="subhead">Lights-out coding. Humans approve intent, product, and architecture. Our deterministic engine regenerates code from the approved contract every cycle. Code is machinery, not literature — generated, regenerated, never maintained by hand.</p>
-
-    <div class="ba-grid">
-      <div class="ba-col before">
-        <span class="label">Today · The Cursor era</span>
-        <h3>Humans maintain code.</h3>
-        <span class="stat">~100,000 LOC</span>
-        <p>Every cycle, every contributor, every agent. Drift compounds invisibly. 22.7% of issues ship.</p>
-      </div>
-
-      <div class="ba-arrow">→</div>
-
-      <div class="ba-col after">
-        <span class="label">Agentic engineering · Dark factory</span>
-        <h3>Humans approve contract; factory ships code.</h3>
-        <span class="stat">~30 contract items</span>
-        <p>One artifact governs many cycles. Code regenerates deterministically. Drift is detected before ship.</p>
-      </div>
-    </div>
-
-    <p class="ba-tagline">Cursor enabled <span class="accent">vibe coding.</span> VibeLoom enables <span class="accent">agentic engineering</span> — and the <span class="accent">dark factory</span> it requires.</p>
+  <div class="note">
+    <strong>What's inside:</strong> 10-slide VC pitch deck (16:9, brand-coherent). Pre-seed thesis, May 2026.
+    Open in PowerPoint, Google Slides, or Keynote — all work. To upload to Google Slides, drag the
+    <code>.pptx</code> into Drive (auto-converts).
+    <br><br>
+    Three placeholders to fill before submitting (slides 9 + 10): founder background, advisor list, target raise amount.
   </div>
 
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>03 — the bet</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 4 — WHY NOW
-     "Four forces converged"
-     ============================================================ -->
-<section class="slide" id="s04">
-  <header class="slide-header">
-    <span class="slide-num">04 / 10</span>
-    <span>Why now</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Four forces converged in the <em>same six-month window.</em></h1>
-    <p class="subhead">2026 is the year the contract layer is both buildable and necessary. None of these conditions held two years ago.</p>
-
-    <div class="forces-grid">
-      <div class="force-card">
-        <span class="force-num">01</span>
-        <div>
-          <h3>Cursor at $9B proves AI-dev-infra is a real market.</h3>
-          <p>Investors and buyers alike know AI coding tools are infrastructure now, not experiments. The <strong>layer above</strong> Cursor is the next category.</p>
-        </div>
-      </div>
-      <div class="force-card">
-        <span class="force-num">02</span>
-        <div>
-          <h3>Drift is now measurable, not anecdotal.</h3>
-          <p><strong>SlopCodeBench</strong> and <strong>"AI-debt in the wild"</strong> shipped in March 2026. For the first time, drift, erosion, and surviving defects are quantified across thousands of real repos.</p>
-        </div>
-      </div>
-      <div class="force-card">
-        <span class="force-num">03</span>
-        <div>
-          <h3>Frontier models cross the deterministic-regen threshold.</h3>
-          <p>Claude Opus 4.7, GPT-5, Gemini 3 are reliable enough that regenerating from approved contracts converges to equivalent output. <strong>Two years ago this didn't work.</strong></p>
-        </div>
-      </div>
-      <div class="force-card">
-        <span class="force-num">04</span>
-        <div>
-          <h3>The oversight bottleneck is the new constraint.</h3>
-          <p>Anthropic's 2026 Trends Report: developers use AI in <strong>60% of work</strong>, but can fully delegate only <strong>0–20%</strong>. Buyers know they need a governance layer; they don't know what it looks like.</p>
-        </div>
-      </div>
-    </div>
+  <div class="meta">
+    <span><strong>Founder</strong> Ilya Baimetov</span>
+    <span><strong>Contact</strong> ilya.baimetov@vibeloom.ai</span>
+    <span><strong>Status</strong> Pre-seed · May 2026 · v0.3</span>
+    <span><strong>Site</strong> vibeloom.ai</span>
   </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>04 — why now</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 5 — PRODUCT
-     "What did you build (specifically)?"
-     ============================================================ -->
-<section class="slide" id="s05">
-  <header class="slide-header">
-    <span class="slide-num">05 / 10</span>
-    <span>Product</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">A methodology, a Skill, and a deterministic engine.</h1>
-    <p class="subhead">Ships as a Claude Code / Codex Skill on day one — no install. Methodology is open source (MIT). Engine is pure Python with zero runtime dependencies. Five operating modes from solo hacker to enterprise.</p>
-
-    <div class="product-grid">
-      <div class="product-flow">
-        <div class="flow-step intent">1 · User edits <code>intent.md</code> + approves<span class="what">capabilities, constraints in plain English; approval trace recorded</span></div>
-        <div class="flow-arrow">↓</div>
-        <div class="flow-step derive">2 · Engine regenerates downstream<span class="what">product specs · UX · architecture · code · BDD scenarios</span></div>
-        <div class="flow-arrow">↓</div>
-        <div class="flow-step derive">3 · Eval ladder runs each cycle<span class="what">decidable structural · mechanical runners · heuristic semantic</span></div>
-        <div class="flow-arrow">↓</div>
-        <div class="flow-step code">4 · Code ships; code-sync trace closes the loop<span class="what">every code path traces back to its contract item</span></div>
-      </div>
-
-      <div class="product-modes">
-        <h3>Five modes — same engine, different surface</h3>
-        <div class="mode-row"><span class="mode-name">vibe</span><span><strong>Solo.</strong> Compact stack. No graph. One-way upgrade to full mode when you outgrow it.</span></div>
-        <div class="mode-row"><span class="mode-name">pm</span><span><strong>Product-led.</strong> PM owns intent + product specs.</span></div>
-        <div class="mode-row"><span class="mode-name">dev</span><span><strong>Tech-led.</strong> Dev owns intent + system specs.</span></div>
-        <div class="mode-row"><span class="mode-name">ux</span><span><strong>Design-led.</strong> Designer owns intent + UX. Mockups drive product specs.</span></div>
-        <div class="mode-row"><span class="mode-name">expert</span><span><strong>Regulated.</strong> Every approval gate explicit. Compliance-ready.</span></div>
-        <p class="product-foot">Open source: methodology, Skill, templates. Paid: hosted engine, audit, compliance, advisor seat.</p>
-      </div>
-    </div>
-  </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>05 — product</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 6 — INSIGHT / WHY WE WIN
-     "Why will this win?"
-     ============================================================ -->
-<section class="slide" id="s06">
-  <header class="slide-header">
-    <span class="slide-num">06 / 10</span>
-    <span>Insight</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Cursor solves <em>generation.</em> We solve <em>coherence between generations.</em></h1>
-    <p class="subhead">Every existing tool optimizes the moment of code production. The drift problem is structural: it happens between cycles. Solving it requires a different abstraction layer — and a different buyer.</p>
-
-    <div class="insight-grid">
-      <div class="insight-statement">
-        <span class="label">The non-obvious bet</span>
-        <p>We are <strong>not in the same fight as Cursor</strong>. Cursor sells productivity to individual developers. We sell <strong>governance</strong> to engineering leaders — at a different layer of the stack, to a different buyer, with a different metric (drift caught vs. lines shipped).</p>
-      </div>
-
-      <div class="competitor-rows">
-        <span class="label">Where the value chain sits</span>
-        <div class="comp-row">
-          <span class="who">Cursor / Copilot / Codeium</span>
-          <span class="what">Vibe coding — chat-driven, in the IDE. Optimizes per-edit velocity.</span>
-        </div>
-        <div class="comp-row">
-          <span class="who">Kiro / Spec Kit / BMAD</span>
-          <span class="what">Spec-driven — per-feature specs feed agent generation. Specs decay between features.</span>
-        </div>
-        <div class="comp-row us">
-          <span class="who">VibeLoom</span>
-          <span class="what">Contract-driven — system-level contracts govern many cycles. Drift detected at the contract layer, not in code.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>06 — insight</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 7 — BUSINESS MODEL
-     "How do you make money?"
-     ============================================================ -->
-<section class="slide" id="s07">
-  <header class="slide-header">
-    <span class="slide-num">07 / 10</span>
-    <span>Business model</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Open-source pull. <em>Tiered SaaS</em> capture.</h1>
-    <p class="subhead">Methodology + Skill open under MIT pulls developers in (PLG flywheel; Cursor's pattern). Paid tiers capture engineering teams that need audit, telemetry, compliance, and on-prem.</p>
-
-    <div class="bm-grid">
-      <div class="bm-card">
-        <span class="tier">Free</span>
-        <span class="price">$0<span class="price-unit"> · MIT</span></span>
-        <span class="who-for">Solo developers, OSS, hobbyists</span>
-        <ul>
-          <li>vibe + pm modes</li>
-          <li>Methodology + Skill</li>
-          <li>Self-hosted engine</li>
-          <li>100 generations / month</li>
-        </ul>
-      </div>
-      <div class="bm-card featured">
-        <span class="tier">Team · Recommended</span>
-        <span class="price">$30<span class="price-unit"> / seat / month</span></span>
-        <span class="who-for">Engineering teams of 5–50</span>
-        <ul>
-          <li>Full pm / dev / ux modes</li>
-          <li>Hosted engine</li>
-          <li>Audit logs + drift telemetry</li>
-          <li>Unlimited generations</li>
-          <li>Standard SLA</li>
-        </ul>
-      </div>
-      <div class="bm-card">
-        <span class="tier">Enterprise</span>
-        <span class="price">$50K+<span class="price-unit"> / year</span></span>
-        <span class="who-for">Mid-market &amp; enterprise (50+ eng)</span>
-        <ul>
-          <li>expert mode + compliance</li>
-          <li>On-prem engine</li>
-          <li>SOC2 / HIPAA bundles</li>
-          <li>Advisor seat (founder access)</li>
-          <li>SSO + audit-trail export</li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="bm-foot"><strong>GTM:</strong> land via individual devs (free Skill, Discord, GitHub). Expand to teams when drift becomes a P1 (after first reconciliation crisis). Enterprise via design-partner referrals after 6 months of dogfood telemetry.</p>
-  </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>07 — business model</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 8 — MARKET SIZE
-     "How big can it become?"
-     ============================================================ -->
-<section class="slide" id="s08">
-  <header class="slide-header">
-    <span class="slide-num">08 / 10</span>
-    <span>Market</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">$2.2B SAM at saturation. <em>Cursor's $9B</em> is the proof.</h1>
-    <p class="subhead">If Cursor's run-rate proves the demand for AI dev infrastructure, the contract layer above it is the natural follow-on category — sold to a different buyer (CTO/VPE) at a different ACV (per-team, not per-seat).</p>
-
-    <div class="market-grid">
-      <div class="market-calc">
-        <h3>Bottom-up SAM, transparent calc</h3>
-        <div class="calc-row">
-          <span class="calc-label">Developers worldwide<br><small style="color: var(--c-ink-5); font-family: var(--f-mono); font-size: 0.74rem;">Stack Overflow Dev Survey 2025</small></span>
-          <span class="calc-num">~30M</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">Using AI coding tools <strong>(33%)</strong><br><small style="color: var(--c-ink-5); font-family: var(--f-mono); font-size: 0.74rem;">JetBrains 2025; GitHub Octoverse 2025</small></span>
-          <span class="calc-num">~10M</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">Running multi-cycle agentic generation <strong>(30% of those)</strong><br><small style="color: var(--c-ink-5); font-family: var(--f-mono); font-size: 0.74rem;">— the cohort that hits the drift problem</small></span>
-          <span class="calc-num">~3M</span>
-        </div>
-        <div class="calc-row">
-          <span class="calc-label">Avg seat ACV (mid-tier B2B SaaS)</span>
-          <span class="calc-num">$720 / yr</span>
-        </div>
-        <div class="calc-row total">
-          <span class="calc-label">SAM at saturation</span>
-          <span class="calc-num">$2.2B</span>
-        </div>
-      </div>
-
-      <div class="market-narrative">
-        <p class="market-headline">A new category in <span class="accent">AI dev infrastructure.</span></p>
-        <p>Cursor's $9B revenue/valuation is the headline; Copilot, Codeium, Tabnine, Replit fill out the field. <strong>None of them sells to the buyer we sell to</strong> — the engineering leader responsible for codebase coherence over time.</p>
-        <div class="market-adjacent">
-          <strong>Adjacent expansion: $5B+.</strong> Methodology consulting, contract pattern marketplaces, audit + compliance bundles, training. Each unlocked once trace-derived learning is shipping (year 2).
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>08 — market</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 9 — TEAM
-     "Why are you the right team?"
-     ============================================================ -->
-<section class="slide" id="s09">
-  <header class="slide-header">
-    <span class="slide-num">09 / 10</span>
-    <span>Team</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Solo founder today. <em>Team-of-2</em> by month six.</h1>
-    <p class="subhead">VCs commonly flag solo founders. The concern is fair. We treat co-founder acquisition as a tracked Q1 milestone — not glossed over. The methodology, spec, and engine shipped solo are themselves the artifact that recruits the right co-founder.</p>
-
-    <div class="team-grid">
-      <div class="bio">
-        <h3>Ilya Baimetov</h3>
-        <span class="role">Founder · Author of cod<span class="ae">æ</span> &amp; VibeLoom</span>
-        <p><strong>Background.</strong> <span class="todo">TODO · Ilya</span> Prior roles, technical depth, shipped products. EWOR weights this heavily — fill before submission.</p>
-        <p><strong>Why me.</strong> Authored the cod<span class="ae">æ</span> paradigm and the v0.3 VibeLoom spec end-to-end: methodology, implementation, comparison whitepaper, 35 generation-ready templates, marketing site, examples. Built daily with frontier agents through 2025–2026; saw the slop pattern emerge in real codebases.</p>
-        <p><strong>Insight.</strong> Cursor proved chat-driven coding works at scale. The next layer is making the contract — not the chat — the durable surface humans operate on. <strong>Build the layer above.</strong></p>
-      </div>
-
-      <div class="team-side">
-        <div class="solo-acknowledge">
-          <h3>On being solo (the elephant)</h3>
-          <p><strong>Q1 milestone, tracked:</strong> technical co-founder onboarded by month 6. Profile: distributed-systems / dev-infra / ex-platform-engineering. The pre-seed round itself is the team-formation forcing function — not a workaround.</p>
-        </div>
-        <div class="advisors-block">
-          <h3>Advisors &amp; pipeline</h3>
-          <p><span class="todo">TODO · Ilya</span> Named advisor list (or "advisory list in formation, X conversations active"). Plus: design-partner pipeline of N teams currently scoping pilots.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="slide-footer">
-    <span>vibeloom.ai</span>
-    <span>09 — team</span>
-  </footer>
-</section>
-
-<!-- ============================================================
-     SLIDE 10 — ASK (VC-independent)
-     "How much are you raising?"
-     ============================================================ -->
-<section class="slide" id="s10">
-  <header class="slide-header">
-    <span class="slide-num">10 / 10</span>
-    <span>Ask</span>
-  </header>
-
-  <div class="slide-body top">
-    <h1 class="headline">Pre-seed: <em>$XXX</em> for 18 months of runway. <span class="todo-inline">TODO · Ilya: target $</span></h1>
-    <p class="subhead">Build the contract layer for the agentic era. Engine v0.4 → first 10 design partners → drift telemetry → Series A traction. Solo today; team-of-2 by month six.</p>
-
-    <div class="ask-grid">
-      <div class="ask-card primary">
-        <h3>Use of funds — 18 months</h3>
-        <ul>
-          <li><strong>Engineering — 55%</strong> · technical co-founder + 2 senior engineers (engine, infra)</li>
-          <li><strong>Design partners — 25%</strong> · dedicated success + onboarding + drift-telemetry tooling</li>
-          <li><strong>Legal / IP / compliance — 10%</strong> · entity, IP assignments, SOC2 prep</li>
-          <li><strong>Buffer + ops — 10%</strong> · cloud, tooling, contingency</li>
-        </ul>
-      </div>
-      <div class="ask-card">
-        <h3>Milestones to Series A</h3>
-        <ul>
-          <li><strong>Month 3</strong> · Engine v0.4 dogfood-ready (spec → runnable Python)</li>
-          <li><strong>Month 6</strong> · Technical co-founder onboarded + 5 design partners shipping</li>
-          <li><strong>Month 12</strong> · First paying teams + drift telemetry across 10+ codebases</li>
-          <li><strong>Month 18</strong> · Series A on the back of trace-derived learning evidence</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="ask-closer">
-      <div class="tag">
-        Cursor enabled <span class="accent">vibe coding.</span><br>
-        VibeLoom enables <span class="accent">agentic engineering</span> — and the <span class="accent">dark factory</span> it requires.
-      </div>
-      <div class="contact">
-        <strong>Ilya Baimetov</strong><br>
-        <a href="mailto:ilya.baimetov@vibeloom.ai">ilya.baimetov@vibeloom.ai</a><br>
-        <a href="https://vibeloom.ai" target="_blank" rel="noopener">vibeloom.ai</a> · <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">github.com/ilya-baimetov/vibeloom</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-</div>
+</main>
 
 </body>
 </html>

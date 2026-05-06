@@ -215,13 +215,13 @@ def build():
     add_slide_chrome(s, 1, 10, "Title")
 
     # Pre-seed badge top-right (red border pill — approximated)
-    badge_x = SLIDE_W - MARGIN_X - Inches(4.2)
+    badge_x = SLIDE_W - MARGIN_X - Inches(3.0)
     add_box(s, badge_x, MARGIN_Y_TOP - Inches(0.05),
-            Inches(4.2), Inches(0.36),
+            Inches(3.0), Inches(0.36),
             fill=RED_TINT, line=RED, line_width=Pt(0.75))
     add_text(s, badge_x, MARGIN_Y_TOP + Inches(0.02),
-             Inches(4.2), Inches(0.3),
-             "PRE-SEED · EWOR IDEATION APPLICATION",
+             Inches(3.0), Inches(0.3),
+             "PRE-SEED THESIS · MAY 2026",
              font=F_MONO, size=9, bold=True, color=RED_DEEP,
              align=PP_ALIGN.CENTER, line_spacing=1)
 
@@ -237,11 +237,11 @@ def build():
         {"text": "agentic engineering.", "font": F_SERIF, "size": 28, "italic": True, "color": RED},
     ], line_spacing=1.2)
 
-    # One-liner
-    add_runs(s, MARGIN_X, Inches(4.55), Inches(10.5), Inches(1.2), [
-        {"text": "We build a ", "size": 14, "color": INK_3},
-        {"text": "contract substrate", "size": 14, "bold": True, "color": INK},
-        {"text": " so AI-generated code stays coherent across cycles. Engineering teams approve intent and architecture; agents regenerate code from approved contract; drift is detected before it ships.",
+    # One-liner — leads with dark-factory framing
+    add_runs(s, MARGIN_X, Inches(4.55), Inches(10.5), Inches(1.4), [
+        {"text": "Code becomes a dark factory. Humans operate one level up.",
+         "size": 14, "bold": True, "color": INK},
+        {"text": " We build the contract substrate that keeps AI-generated code coherent across cycles — engineering teams approve intent and architecture; agents regenerate code from approved contract; drift is detected before it ships.",
          "size": 14, "color": INK_3},
     ], line_spacing=1.5)
 
@@ -329,19 +329,21 @@ def build():
                  src.upper(), font=F_MONO, size=8, color=RED_DEEP, line_spacing=1)
 
     # =========================================================================
-    # SLIDE 3 — SOLUTION
+    # SLIDE 3 — THE BET (dark factory)
     # =========================================================================
     s = prs.slides.add_slide(blank_layout)
-    add_slide_chrome(s, 3, 10, "Solution")
+    add_slide_chrome(s, 3, 10, "The bet")
 
     add_headline(s, MARGIN_X, Inches(0.95), Inches(12), Inches(1.4), [
-        ("Move the human review surface ", False),
-        ("up", True),
-        (" the stack — from code to contract.", False),
+        ("Code becomes a ", False),
+        ("dark factory.", True),
+        (" We build the ", False),
+        ("contract layer", True),
+        (" above it.", False),
     ])
 
-    add_subhead(s, MARGIN_X, Inches(2.55), Inches(11.5), Inches(0.7),
-                "Teams approve `intent`, `product`, and `architecture`. Our deterministic engine regenerates code from the approved contract every cycle. Drift surfaces in the eval ladder, not in production.")
+    add_subhead(s, MARGIN_X, Inches(2.55), Inches(11.5), Inches(0.85),
+                "Lights-out coding. Humans approve intent, product, and architecture. Our deterministic engine regenerates code from the approved contract every cycle. Code is machinery, not literature — generated, regenerated, never maintained by hand.")
 
     # Before / Arrow / After
     ba_y = Inches(3.6)
@@ -352,9 +354,9 @@ def build():
     bx = MARGIN_X
     add_box(s, bx, ba_y, col_w, ba_h, fill=BG_SOFT, line=LINE, line_width=Pt(0.75))
     add_text(s, bx + Inches(0.3), ba_y + Inches(0.18), col_w - Inches(0.6), Inches(0.3),
-             "TODAY", font=F_MONO, size=10, bold=True, color=INK_4, line_spacing=1)
+             "TODAY · THE CURSOR ERA", font=F_MONO, size=10, bold=True, color=INK_4, line_spacing=1)
     add_text(s, bx + Inches(0.3), ba_y + Inches(0.55), col_w - Inches(0.6), Inches(0.5),
-             "Humans review code.", font=F_SANS, size=18, bold=True, color=INK, line_spacing=1.2)
+             "Humans maintain code.", font=F_SANS, size=18, bold=True, color=INK, line_spacing=1.2)
     add_text(s, bx + Inches(0.3), ba_y + Inches(1.15), col_w - Inches(0.6), Inches(0.6),
              "~100,000 LOC", font=F_SERIF, size=22, italic=True, bold=True, color=INK_2, line_spacing=1.1)
     add_text(s, bx + Inches(0.3), ba_y + Inches(1.85), col_w - Inches(0.6), Inches(0.8),
@@ -367,26 +369,31 @@ def build():
              "→", font=F_SERIF, size=30, italic=True, bold=True, color=RED,
              align=PP_ALIGN.CENTER, line_spacing=1)
 
-    # After
+    # After (dark factory)
     ax = bx + col_w + Inches(0.6)
     add_box(s, ax, ba_y, col_w, ba_h, fill=RED_TINT, line=RED, line_width=Pt(0.75),
             line_left_color=RED)
     add_text(s, ax + Inches(0.3), ba_y + Inches(0.18), col_w - Inches(0.6), Inches(0.3),
-             "WITH VIBELOOM", font=F_MONO, size=10, bold=True, color=RED_DEEP, line_spacing=1)
+             "AGENTIC ENGINEERING · DARK FACTORY",
+             font=F_MONO, size=10, bold=True, color=RED_DEEP, line_spacing=1)
     add_text(s, ax + Inches(0.3), ba_y + Inches(0.55), col_w - Inches(0.6), Inches(0.5),
-             "Humans review the contract.", font=F_SANS, size=18, bold=True, color=INK, line_spacing=1.2)
+             "Humans approve contract; factory ships code.",
+             font=F_SANS, size=16, bold=True, color=INK, line_spacing=1.2)
     add_text(s, ax + Inches(0.3), ba_y + Inches(1.15), col_w - Inches(0.6), Inches(0.6),
              "~30 contract items", font=F_SERIF, size=22, italic=True, bold=True, color=RED, line_spacing=1.1)
     add_text(s, ax + Inches(0.3), ba_y + Inches(1.85), col_w - Inches(0.6), Inches(0.8),
              "One artifact governs many cycles. Code regenerates deterministically. Drift is detected before ship.",
              font=F_SANS, size=11, color=INK_2, line_spacing=1.45)
 
-    # Tagline at bottom
+    # Tagline at bottom — now includes the dark factory phrase
     add_runs(s, MARGIN_X, Inches(6.45), Inches(12), Inches(0.5), [
-        {"text": "Cursor enabled ", "font": F_SERIF, "size": 16, "italic": True, "color": INK_2},
-        {"text": "vibe coding.", "font": F_SERIF, "size": 16, "italic": True, "color": RED},
-        {"text": " VibeLoom enables ", "font": F_SERIF, "size": 16, "italic": True, "color": INK_2},
-        {"text": "agentic engineering.", "font": F_SERIF, "size": 16, "italic": True, "color": RED},
+        {"text": "Cursor enabled ", "font": F_SERIF, "size": 14, "italic": True, "color": INK_2},
+        {"text": "vibe coding.", "font": F_SERIF, "size": 14, "italic": True, "color": RED},
+        {"text": " VibeLoom enables ", "font": F_SERIF, "size": 14, "italic": True, "color": INK_2},
+        {"text": "agentic engineering", "font": F_SERIF, "size": 14, "italic": True, "color": RED},
+        {"text": " — and the ", "font": F_SERIF, "size": 14, "italic": True, "color": INK_2},
+        {"text": "dark factory", "font": F_SERIF, "size": 14, "italic": True, "color": RED},
+        {"text": " it requires.", "font": F_SERIF, "size": 14, "italic": True, "color": INK_2},
     ], align=PP_ALIGN.CENTER, line_spacing=1.4)
 
     # =========================================================================
@@ -769,7 +776,7 @@ def build():
     ])
 
     add_subhead(s, MARGIN_X, Inches(2.05), Inches(11.5), Inches(0.85),
-                "EWOR's stated concern about solo geniuses is fair. We treat co-founder acquisition as a tracked Q1 milestone — not glossed over. The methodology, spec, and engine shipped solo are themselves the artifact that recruits the right co-founder.")
+                "VCs commonly flag solo founders. The concern is fair. We treat co-founder acquisition as a tracked Q1 milestone — not glossed over. The methodology, spec, and engine shipped solo are themselves the artifact that recruits the right co-founder.")
 
     # Left: bio
     bio_x = MARGIN_X
@@ -818,7 +825,7 @@ def build():
              font=F_MONO, size=9, bold=True, color=INK_4, line_spacing=1)
     add_runs(s, sx + Inches(0.3), bio_y + Inches(0.6), sw - Inches(0.5), so_h - Inches(0.7), [
                 {"text": "Q1 milestone, tracked: ", "font": F_SANS, "size": 11, "bold": True, "color": INK},
-                {"text": "technical co-founder onboarded by month 6. Profile: distributed-systems / dev-infra / ex-platform-engineering. EWOR fellowship is the team-formation forcing function — not a workaround.",
+                {"text": "technical co-founder onboarded by month 6. Profile: distributed-systems / dev-infra / ex-platform-engineering. The pre-seed round itself is the team-formation forcing function — not a workaround.",
                  "font": F_SERIF, "size": 11, "italic": True, "color": INK_2},
             ], line_spacing=1.45)
 
@@ -836,91 +843,104 @@ def build():
             ], line_spacing=1.45)
 
     # =========================================================================
-    # SLIDE 10 — ASK
+    # SLIDE 10 — ASK (VC-independent)
     # =========================================================================
     s = prs.slides.add_slide(blank_layout)
     add_slide_chrome(s, 10, 10, "Ask")
 
-    add_headline(s, MARGIN_X, Inches(0.95), Inches(12.2), Inches(1.4), [
-        ("EWOR ", False),
-        ("Ideation Fellowship.", True),
-        (" Build the contract layer for the agentic era.", False),
+    add_headline(s, MARGIN_X, Inches(0.95), Inches(10.5), Inches(1.0), [
+        ("Pre-seed: ", False),
+        ("$XXX", True),
+        (" for 18 months of runway.", False),
     ])
 
-    add_subhead(s, MARGIN_X, Inches(2.4), Inches(11.5), Inches(0.7),
-                "No equity tuition, four-week intensive, mentor pairing. The right vehicle for the right stage. Parallel to YC W26 application and select-VC outreach (a16z, Project Europe, AI grants).")
+    # TODO badge inline near the headline
+    todo_x = MARGIN_X + Inches(10.6)
+    add_box(s, todo_x, Inches(1.05), Inches(2.0), Inches(0.32),
+            fill=RED_TINT, line=RED, line_width=Pt(0.6))
+    add_text(s, todo_x, Inches(1.1),
+             Inches(2.0), Inches(0.3),
+             "TODO · ILYA: TARGET $",
+             font=F_MONO, size=8, bold=True, color=RED_DEEP,
+             align=PP_ALIGN.CENTER, line_spacing=1)
 
-    # 2 ask cards
-    ask_y = Inches(3.4)
-    ask_h = Inches(2.2)
+    add_subhead(s, MARGIN_X, Inches(2.1), Inches(11.5), Inches(0.85),
+                "Build the contract layer for the agentic era. Engine v0.4 → first 10 design partners → drift telemetry → Series A traction. Solo today; team-of-2 by month six.")
+
+    # 2 cards
+    ask_y = Inches(3.35)
+    ask_h = Inches(2.4)
     ask_w = (SLIDE_W - 2 * MARGIN_X - Inches(0.3)) / 2
 
-    # Primary (red-tinted)
+    # Primary (red-tinted) — Use of Funds
     add_box(s, MARGIN_X, ask_y, ask_w, ask_h, fill=RED_TINT, line=RED, line_width=Pt(0.6),
             line_left_color=RED, line_left_width=Pt(2.5))
     add_text(s, MARGIN_X + Inches(0.3), ask_y + Inches(0.2),
              ask_w - Inches(0.5), Inches(0.3),
-             "ASKING FROM EWOR",
+             "USE OF FUNDS — 18 MONTHS",
              font=F_MONO, size=9, bold=True, color=RED_DEEP, line_spacing=1)
-    primary_items = [
-        ("Ideation Fellowship admission", " — 4-week intensive cohort"),
-        ("Mentor pairing", " — deeptech / dev-infra operator"),
-        ("Co-founder matching", " — distributed-systems background"),
-        ("Design-partner intros", " — eng teams running multi-agent code-gen in production"),
+    funds_items = [
+        ("Engineering — 55%", " · technical co-founder + 2 senior engineers (engine, infra)"),
+        ("Design partners — 25%", " · dedicated success + onboarding + drift-telemetry tooling"),
+        ("Legal / IP / compliance — 10%", " · entity, IP assignments, SOC2 prep"),
+        ("Buffer + ops — 10%", " · cloud, tooling, contingency"),
     ]
-    for i, (bold_part, rest) in enumerate(primary_items):
-        iy = ask_y + Inches(0.65) + i * Inches(0.36)
+    for i, (bold_part, rest) in enumerate(funds_items):
+        iy = ask_y + Inches(0.65) + i * Inches(0.42)
         add_text(s, MARGIN_X + Inches(0.3), iy, Inches(0.2), Inches(0.3),
                  "→", font=F_MONO, size=11, bold=True, color=RED, line_spacing=1)
-        add_runs(s, MARGIN_X + Inches(0.55), iy, ask_w - Inches(0.85), Inches(0.3), [
-                    {"text": bold_part, "size": 11, "bold": True, "color": INK},
-                    {"text": rest, "size": 11, "color": INK_2},
-                 ], line_spacing=1.3)
+        add_runs(s, MARGIN_X + Inches(0.55), iy, ask_w - Inches(0.85), Inches(0.4), [
+                    {"text": bold_part, "size": 10, "bold": True, "color": INK},
+                    {"text": rest, "size": 10, "color": INK_2},
+                 ], line_spacing=1.35)
 
-    # Right (white)
+    # Right (white) — Milestones to Series A
     rx = MARGIN_X + ask_w + Inches(0.3)
     add_box(s, rx, ask_y, ask_w, ask_h, fill=BG, line=LINE, line_width=Pt(0.6))
     add_text(s, rx + Inches(0.3), ask_y + Inches(0.2),
              ask_w - Inches(0.5), Inches(0.3),
-             "WHAT WE'LL PROVE IN 4 WEEKS",
+             "MILESTONES TO SERIES A",
              font=F_MONO, size=9, bold=True, color=RED_DEEP, line_spacing=1)
-    proof_items = [
-        ("Engine v0.4", " dogfood-ready (methodology spec → runnable Python)"),
-        ("3 design-partner LOIs", " from production engineering teams"),
-        ("Co-founder shortlist", " — 5+ strong candidates in conversation"),
-        ("First drift telemetry", " from real-world dogfood"),
+    milestones = [
+        ("Month 3", " · Engine v0.4 dogfood-ready (spec → runnable Python)"),
+        ("Month 6", " · Technical co-founder onboarded + 5 design partners shipping"),
+        ("Month 12", " · First paying teams + drift telemetry across 10+ codebases"),
+        ("Month 18", " · Series A on the back of trace-derived learning evidence"),
     ]
-    for i, (bold_part, rest) in enumerate(proof_items):
-        iy = ask_y + Inches(0.65) + i * Inches(0.36)
+    for i, (bold_part, rest) in enumerate(milestones):
+        iy = ask_y + Inches(0.65) + i * Inches(0.42)
         add_text(s, rx + Inches(0.3), iy, Inches(0.2), Inches(0.3),
                  "→", font=F_MONO, size=11, bold=True, color=RED, line_spacing=1)
-        add_runs(s, rx + Inches(0.55), iy, ask_w - Inches(0.85), Inches(0.3), [
-                    {"text": bold_part, "size": 11, "bold": True, "color": INK},
-                    {"text": rest, "size": 11, "color": INK_2},
-                 ], line_spacing=1.3)
+        add_runs(s, rx + Inches(0.55), iy, ask_w - Inches(0.85), Inches(0.4), [
+                    {"text": bold_part, "size": 10, "bold": True, "color": INK},
+                    {"text": rest, "size": 10, "color": INK_2},
+                 ], line_spacing=1.35)
 
     # Closer (dark band)
     close_y = ask_y + ask_h + Inches(0.2)
-    close_h = Inches(1.2)
+    close_h = Inches(1.0)
     add_simple_rect(s, MARGIN_X, close_y, SLIDE_W - 2 * MARGIN_X, close_h, fill=INK)
 
-    # Tag (left)
-    add_runs(s, MARGIN_X + Inches(0.4), close_y + Inches(0.22),
-             Inches(7), close_h - Inches(0.4), [
-                {"text": "Cursor enabled ", "size": 16, "bold": True, "color": BG},
-                {"text": "vibe coding.", "font": F_SERIF, "size": 16, "italic": True, "bold": True, "color": RED},
-                {"text": "\nVibeLoom enables ", "size": 16, "bold": True, "color": BG},
-                {"text": "agentic engineering.", "font": F_SERIF, "size": 16, "italic": True, "bold": True, "color": RED},
+    # Tag (left) — now mentions dark factory
+    add_runs(s, MARGIN_X + Inches(0.4), close_y + Inches(0.18),
+             Inches(7.5), close_h - Inches(0.3), [
+                {"text": "Cursor enabled ", "size": 14, "bold": True, "color": BG},
+                {"text": "vibe coding.", "font": F_SERIF, "size": 14, "italic": True, "bold": True, "color": RED},
+                {"text": "\nVibeLoom enables ", "size": 14, "bold": True, "color": BG},
+                {"text": "agentic engineering", "font": F_SERIF, "size": 14, "italic": True, "bold": True, "color": RED},
+                {"text": " — and the ", "size": 14, "bold": True, "color": BG},
+                {"text": "dark factory", "font": F_SERIF, "size": 14, "italic": True, "bold": True, "color": RED},
+                {"text": " it requires.", "size": 14, "bold": True, "color": BG},
             ], line_spacing=1.3)
 
     # Contact (right)
     ctx_x = MARGIN_X + Inches(8.0)
     ctx_w = SLIDE_W - 2 * MARGIN_X - Inches(8.0) - Inches(0.4)
-    add_runs(s, ctx_x, close_y + Inches(0.22),
-             ctx_w, close_h - Inches(0.4), [
-                {"text": "Ilya Baimetov\n", "font": F_MONO, "size": 11, "bold": True, "color": BG},
-                {"text": "ilya.baimetov@vibeloom.ai\n", "font": F_MONO, "size": 10, "color": BG},
-                {"text": "vibeloom.ai · github.com/ilya-baimetov/vibeloom", "font": F_MONO, "size": 10, "color": BG},
+    add_runs(s, ctx_x, close_y + Inches(0.18),
+             ctx_w, close_h - Inches(0.3), [
+                {"text": "Ilya Baimetov\n", "font": F_MONO, "size": 10, "bold": True, "color": BG},
+                {"text": "ilya.baimetov@vibeloom.ai\n", "font": F_MONO, "size": 9, "color": BG},
+                {"text": "vibeloom.ai · github.com/ilya-baimetov/vibeloom", "font": F_MONO, "size": 9, "color": BG},
             ], align=PP_ALIGN.RIGHT, line_spacing=1.5)
 
     # =========================================================================

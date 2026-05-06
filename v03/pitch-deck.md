@@ -1,12 +1,15 @@
 # VibeLoom — Pitch Deck (Source)
 
-**Status:** Pre-seed thesis · May 2026 · For EWOR Ideation Fellowship + parallel VC submissions (a16z, YC W26, Project Europe).
+**Status:** Pre-seed thesis · May 2026. **VC-independent** — works for any pre-seed audience (EWOR, YC, a16z, Project Europe, AI grants, angel rounds).
 
-This is the **content source** for the pitch deck. The rendered version lives at `v03/pitch-deck.html` (10 slides, 16:9 fixed, brand-coherent with the codæ manifesto). A blank Google Slides file is in Ilya's Drive at *VibeLoom — Pitch Deck — Pre-seed (May 2026)*.
+This is the **content source** for the pitch deck. The rendered version lives at `v03/pitch-deck.html` (10 slides, 16:9 fixed, brand-coherent with the codæ manifesto). A blank Google Slides file is in Ilya's Drive at *VibeLoom — Pitch Deck — Pre-seed (May 2026)*; populate by uploading `v03/pitch-deck.pptx` (Drive auto-converts).
 
 Hand this Markdown to a designer or paste slide-by-slide into Google Slides / PowerPoint / Pitch.com. Structure follows the YC seed-round 10-slide pattern.
 
-> **Two TODO·Ilya placeholders** on slide 9 (founder bio + advisors) — Ilya fills before submitting. Everything else is final.
+> **Three TODO·Ilya placeholders** before submitting:
+> - Slide 9 — founder bio
+> - Slide 9 — advisors / pipeline
+> - Slide 10 — target raise amount (defaults to `$XXX`; pick per VC conversation)
 
 ---
 
@@ -16,14 +19,14 @@ Hand this Markdown to a designer or paste slide-by-slide into Google Slides / Po
 
 **Tagline:** *The contract layer for agentic engineering.*
 
-**One-liner:** We build a **contract substrate** so AI-generated code stays coherent across cycles. Engineering teams approve intent and architecture; agents regenerate code from approved contract; drift is detected before it ships.
+**One-liner:** **Code becomes a dark factory. Humans operate one level up.** We build the contract substrate that keeps AI-generated code coherent across cycles — engineering teams approve intent and architecture; agents regenerate code from approved contract; drift is detected before it ships.
 
 **Footer meta:**
 - Ilya Baimetov, Founder
 - ilya.baimetov@vibeloom.ai
 - vibeloom.ai
 - May 2026 · v0.3
-- Badge: Pre-seed · EWOR Ideation Application
+- Badge: Pre-seed Thesis · May 2026
 
 ---
 
@@ -44,21 +47,21 @@ Hand this Markdown to a designer or paste slide-by-slide into Google Slides / Po
 
 ---
 
-## Slide 3 — Solution
+## Slide 3 — The Bet · Solution
 
-**Headline:** Move the human review surface *up* the stack — from code to contract.
+**Headline:** Code becomes a *dark factory.* We build the *contract layer* above it.
 
-**Subhead:** Teams approve `intent`, `product`, and `architecture`. Our deterministic engine regenerates code from the approved contract every cycle. Drift surfaces in the eval ladder, not in production.
+**Subhead:** Lights-out coding. Humans approve intent, product, and architecture. Our deterministic engine regenerates code from the approved contract every cycle. Code is machinery, not literature — generated, regenerated, never maintained by hand.
 
 **Before/After visual:**
 
-| Today | → | With VibeLoom |
+| Today · The Cursor era | → | Agentic engineering · Dark factory |
 |---|---|---|
-| **Humans review code.** | | **Humans review the contract.** |
+| **Humans maintain code.** | | **Humans approve contract; factory ships code.** |
 | ~100,000 LOC | | ~30 contract items |
 | Every cycle, every contributor, every agent. Drift compounds invisibly. 22.7% of issues ship. | | One artifact governs many cycles. Code regenerates deterministically. Drift is detected before ship. |
 
-**Tagline (centered, italic):** Cursor enabled *vibe coding.* VibeLoom enables *agentic engineering.*
+**Tagline (centered, italic):** Cursor enabled *vibe coding.* VibeLoom enables *agentic engineering* — and the *dark factory* it requires.
 
 ---
 
@@ -180,7 +183,7 @@ Hand this Markdown to a designer or paste slide-by-slide into Google Slides / Po
 
 **Headline:** Solo founder today. *Team-of-2* by month six.
 
-**Subhead:** EWOR's stated concern about solo geniuses is fair. We treat co-founder acquisition as a tracked Q1 milestone — not glossed over. The methodology, spec, and engine shipped solo are themselves the artifact that recruits the right co-founder.
+**Subhead:** VCs commonly flag solo founders. The concern is fair. We treat co-founder acquisition as a tracked Q1 milestone — not glossed over. The methodology, spec, and engine shipped solo are themselves the artifact that recruits the right co-founder.
 
 **Bio block — Ilya Baimetov, Founder · Author of codæ & VibeLoom:**
 
@@ -189,7 +192,7 @@ Hand this Markdown to a designer or paste slide-by-slide into Google Slides / Po
 - **Insight.** Cursor proved chat-driven coding works at scale. The next layer is making the contract — not the chat — the durable surface humans operate on. **Build the layer above.**
 
 **Solo-acknowledge callout:**
-> **Q1 milestone, tracked:** technical co-founder onboarded by month 6. Profile: distributed-systems / dev-infra / ex-platform-engineering. EWOR fellowship is the team-formation forcing function — not a workaround.
+> **Q1 milestone, tracked:** technical co-founder onboarded by month 6. Profile: distributed-systems / dev-infra / ex-platform-engineering. The pre-seed round itself is the team-formation forcing function — not a workaround.
 
 **Advisors & pipeline block:**
 - *[TODO · Ilya]* Named advisor list (or "advisory list in formation, X conversations active"). Plus: design-partner pipeline of N teams currently scoping pilots.
@@ -198,30 +201,32 @@ Hand this Markdown to a designer or paste slide-by-slide into Google Slides / Po
 
 ## Slide 10 — Ask
 
-**Headline:** EWOR *Ideation Fellowship.* Build the contract layer for the agentic era.
+**Headline:** Pre-seed: *$XXX* for 18 months of runway. *[TODO · Ilya: target $]*
 
-**Subhead:** No equity tuition, four-week intensive, mentor pairing. The right vehicle for the right stage. Parallel to YC W26 application and select-VC outreach (a16z, Project Europe, AI grants).
+**Subhead:** Build the contract layer for the agentic era. Engine v0.4 → first 10 design partners → drift telemetry → Series A traction. Solo today; team-of-2 by month six.
 
-**Left card — Asking from EWOR (primary, red-tinted):**
-- → **Ideation Fellowship admission** — 4-week intensive cohort
-- → **Mentor pairing** — deeptech / dev-infra operator
-- → **Co-founder matching** — distributed-systems background
-- → **Design-partner intros** — eng teams running multi-agent code-gen in production
+**Left card — Use of funds, 18 months (primary, red-tinted):**
+- → **Engineering — 55%** · technical co-founder + 2 senior engineers (engine, infra)
+- → **Design partners — 25%** · dedicated success + onboarding + drift-telemetry tooling
+- → **Legal / IP / compliance — 10%** · entity, IP assignments, SOC2 prep
+- → **Buffer + ops — 10%** · cloud, tooling, contingency
 
-**Right card — What we'll prove in 4 weeks:**
-- → **Engine v0.4** dogfood-ready (methodology spec → runnable Python)
-- → **3 design-partner LOIs** from production engineering teams
-- → **Co-founder shortlist** — 5+ strong candidates in conversation
-- → **First drift telemetry** from real-world dogfood
+**Right card — Milestones to Series A:**
+- → **Month 3** · Engine v0.4 dogfood-ready (spec → runnable Python)
+- → **Month 6** · Technical co-founder onboarded + 5 design partners shipping
+- → **Month 12** · First paying teams + drift telemetry across 10+ codebases
+- → **Month 18** · Series A on the back of trace-derived learning evidence
 
 **Closer (dark band):**
 > Cursor enabled *vibe coding.*
-> VibeLoom enables *agentic engineering.*
+> VibeLoom enables *agentic engineering* — and the *dark factory* it requires.
 
 **Contact:**
 - **Ilya Baimetov**
 - ilya.baimetov@vibeloom.ai
 - vibeloom.ai · github.com/ilya-baimetov/vibeloom
+
+> **Note for the presenter:** target raise dollar amount (`$XXX`) is intentionally a placeholder — pick per VC conversation. Common pre-seed bands for solo deeptech AI infra in 2026: **$500K (lean US/EU pre-seed)** to **$1M (priced round w/ runway buffer)**.
 
 ---
 

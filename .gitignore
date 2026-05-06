@@ -1,2 +1,9 @@
 .DS_Store
 .wrangler/
+
+# Local agent outputs (one-off pitch / artifact runs that don't belong in git)
+outputs/
+
+# Python build artifacts
+__pycache__/
+*.pyc

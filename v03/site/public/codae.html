@@ -403,17 +403,16 @@ footer .accent { color: var(--c-red); }
   font-family: var(--f-mono);
   font-size: 0.76rem;
   letter-spacing: 0.02em;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--c-red);
-  text-decoration: none;
+  text-decoration: underline dotted var(--c-red);
+  text-underline-offset: 3px;
   margin-top: auto;
   padding-top: 12px;
-  padding-bottom: 1px;
-  border-bottom: 1px dotted var(--c-red);
   align-self: flex-start;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
-.stat-src:hover { color: var(--c-red-deep); border-color: var(--c-red-deep); }
+.stat-src:hover { color: var(--c-red-deep); text-decoration-color: var(--c-red-deep); }
 
 /* ===== pull quotes ===== */
 blockquote.pull {
@@ -708,22 +707,22 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             <div class="stat">
               <div class="stat-num">80% / 89.8%</div>
               <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
-              <a class="stat-src" href="#ref-3">SlopCodeBench · Mar 2026 ↗</a>
+              <a class="stat-src" href="#ref-3">SlopCodeBench<br>Mar 2026 ↗</a>
             </div>
             <div class="stat">
               <div class="stat-num">22.7%</div>
               <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
-              <a class="stat-src" href="#ref-13">AI-debt in the wild · 2026 ↗</a>
+              <a class="stat-src" href="#ref-13">AI-debt in the wild<br>Mar 2026 ↗</a>
             </div>
             <div class="stat">
-              <div class="stat-num">~5,000</div>
-              <div class="stat-label">DORA respondents: AI <strong>amplifies</strong> the engineering system; negative correlation with delivery stability</div>
-              <a class="stat-src" href="#ref-6">DORA 2025 report ↗</a>
+              <div class="stat-num">3–5×</div>
+              <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
+              <a class="stat-src" href="#ref-5">CMU Cursor study<br>Jan 2026 ↗</a>
             </div>
             <div class="stat">
               <div class="stat-num">17%</div>
               <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
-              <a class="stat-src" href="#ref-7">Osmani · O'Reilly · Apr 2026 ↗</a>
+              <a class="stat-src" href="#ref-7">Osmani · O'Reilly<br>Apr 2026 ↗</a>
             </div>
           </div>
         </aside>

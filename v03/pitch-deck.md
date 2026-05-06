@@ -2,11 +2,11 @@
 
 **Status:** Pre-seed thesis · May 2026. **VC-independent** — works for any pre-seed audience (EWOR, YC, a16z, Project Europe, AI grants, angel rounds).
 
-This is the **content source** for the pitch deck. The shippable artifact is `v03/pitch-deck.pptx` (16:9, 10 slides, brand-coherent, opens in PowerPoint / Google Slides / Keynote). A blank companion Google Slides file is in Ilya's Drive at *VibeLoom — Pitch Deck — Pre-seed (May 2026)* — populate by uploading the .pptx (Drive auto-converts).
+This is the **content source** for the pitch deck. The shippable artifact is `v03/pitch-deck.html` — a 10-slide 16:9 fixed-layout HTML deck, brand-coherent with the codæ manifesto. View in a browser (any modern browser); print to PDF for sharing (`File → Print → Save as PDF`, the @page rule emits a clean 13.333"×7.5" 16:9 PDF, one slide per page).
 
-Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
+The blank companion Google Slides file in Ilya's Drive at *VibeLoom — Pitch Deck — Pre-seed (May 2026)* is now optional — fill it manually from this MD source if a Slides version is needed for a specific VC.
 
-> **Three TODO·Ilya placeholders** before submitting:
+> **Three placeholders** to fill in `v03/pitch-deck.html` before submitting:
 > - Slide 9 — *Background:* prior roles, technical depth, shipped products
 > - Slide 9 — *Advisors:* named advisor list or design-partner pipeline
 > - Slide 10 — *target raise dollar amount* (the deck shows `$XXX`; pick per VC conversation; common pre-seed bands for solo deeptech AI infra in 2026: $500K lean → $1M priced)
@@ -19,14 +19,14 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
 |---|---|---|---|
 | 1  | Purpose         | **Hearts** | *Coding becomes a dark factory.* |
 | 2  | Problem         | **Hearts** | AI ships slop. |
-| 3  | Solution        | **Hearts** | Lights out for coding. |
+| 3  | Solution        | **Hearts** | Above the *dark factory*. |
 | 4  | Why Now         | **Minds**  | Four forces. Same six months. |
 | 5  | Market Size     | **Minds**  | $2.2B SAM. Cursor proves it. |
 | 6  | Competition     | **Minds**  | Not Cursor's fight. |
 | 7  | Product         | **Minds**  | The contract layer. |
 | 8  | Business Model  | **Wallets**| Open core. Tiered SaaS. |
 | 9  | Team            | **Wallets**| Solo today. Two by month six. |
-| 10 | Financials/Ask  | **Wallets**| $XXX. 18 months. Build the dark factory. |
+| 10 | Financials/Ask  | **Wallets**| $XXX. 18 months. *Build the dark factory.* |
 
 ---
 
@@ -76,7 +76,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
 
 ## Slide 3 — Solution  *(Hearts)*
 
-**Headline:** Lights out for coding.
+**Headline:** Above the *dark factory*.
 
 **Sub:** Code is generated, regenerated, never maintained by hand. Humans operate one level up — at the contract.
 
@@ -89,6 +89,8 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
 | Reviewed every cycle. Drift compounds invisibly. | | Approved once. Code regenerates. Drift detected before ship. |
 
 **Tagline:** Cursor *vibe coding*. VibeLoom *agentic engineering* — and the *dark factory* it requires.
+
+> Three loud mentions of "dark factory" on this slide alone: the headline, the After-card eyebrow, and the tagline.
 
 ---
 
@@ -218,7 +220,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
 
 **Headline (stacked, 2 lines, huge):**
 > *$XXX.*  18 months.
-> Ship the *dark factory.*
+> Build the *dark factory.*
 
 **Sub:** Engine v0.4 → 10 design partners → drift telemetry → Series A traction.
 
@@ -244,8 +246,8 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
   - **Hearts (1–3):** the dark factory thesis lands. Emotional hook + customer pain + the bet.
   - **Minds (4–7):** rational case. Why now + market + why we win + product.
   - **Wallets (8–10):** business case. How we make money + who runs it + what we need.
-- **Dark factory bookends.** Slide 1 opens with "Coding becomes a dark factory." Slide 10 closes with "Ship the dark factory." Slide 3 carries it through the middle. Three loud mentions.
+- **Dark factory bookends.** Slide 1 opens with "Coding becomes a dark factory." Slide 3 carries it ("Above the dark factory."). Slide 10 closes with "Build the dark factory." Plus reinforcement on slide 3's After card eyebrow ("DARK FACTORY") and tagline. The idiom is used directly throughout — not paraphrased as "lights out" or anything else.
 - **"Coding" vs "code"** — the activity (coding) is what becomes lights-out / machine-tended. Code is the artifact the dark factory produces. Same parallelism as "vibe coding → agentic engineering."
-- **Print-to-PDF:** open the .pptx in PowerPoint / Slides / Keynote → File → Export → PDF.
+- **Print-to-PDF:** open `v03/pitch-deck.html` in a browser → File → Print → Save as PDF. The @page rule emits a clean 13.333"×7.5" 16:9 PDF, one slide per page.
 - **Stat sources:** all numbers trace to the canonical manifesto's references (refs 3, 5, 7, 10, 13 in `v03/codæ-manifesto.html`). No invented stats.
 - **Not in this deck (intentionally):** financial projections, detailed cap table, exit scenarios. These come at term-sheet stage.

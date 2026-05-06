@@ -7,7 +7,3 @@ outputs/
 # Python build artifacts
 __pycache__/
 *.pyc
-
-# Node build artifacts (pptxgenjs is installed locally for v03/build-pitch-deck.js)
-v03/node_modules/
-v03/package-lock.json

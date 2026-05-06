@@ -2254,17 +2254,19 @@ footer .small a:hover { color: #fff; text-decoration-color: var(--c-red); }
   font-family: var(--f-mono);
   font-size: 0.76rem;
   letter-spacing: 0.02em;
-  color: var(--c-ink-5);
+  line-height: 1.4;
+  color: var(--c-red);
   text-decoration: none;
-  margin-top: 4px;
-  border-bottom: 1px dotted var(--c-line-3);
+  margin-top: auto;
+  padding-top: 12px;
+  border-bottom: 1px dotted var(--c-red);
   align-self: flex-start;
   padding-bottom: 1px;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 .stats-strip .stat-src:hover {
-  color: var(--c-red);
-  border-color: var(--c-red);
+  color: var(--c-red-deep);
+  border-color: var(--c-red-deep);
 }
 
 /* ============================================================

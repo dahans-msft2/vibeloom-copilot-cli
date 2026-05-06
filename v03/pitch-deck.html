@@ -1,0 +1,1591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VibeLoom — Pitch Deck · v0.3</title>
+
+<meta name="description" content="VibeLoom pitch deck — Cursor enabled vibe coding. VibeLoom enables agentic engineering. The contract layer for the agentic era. EWOR Ideation Fellowship application, May 2026.">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&display=swap">
+
+<style>
+:root {
+  --c-bg:        #ffffff;
+  --c-bg-soft:   #f7f7f6;
+  --c-bg-mute:   #efeeec;
+  --c-ink:       #0a0a0a;
+  --c-ink-2:     #1a1a1a;
+  --c-ink-3:     #3a3a3a;
+  --c-ink-4:     #5a5a5a;
+  --c-ink-5:     #707070;
+  --c-line:      #e6e4e0;
+  --c-line-2:    #d6d3cd;
+
+  --c-red:       #e84057;
+  --c-red-deep:  #c43a50;
+  --c-red-soft:  #fbe6ea;
+  --c-red-tint:  rgba(232, 64, 87, 0.08);
+
+  --c-dark:      #0a0a0a;
+
+  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --f-serif:     "Fraunces", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: var(--f-sans);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+::selection { background: var(--c-red); color: #fff; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+em { font-style: italic; }
+strong { font-weight: 600; color: var(--c-ink); }
+
+/* ===== slide skeleton ===== */
+.slide {
+  min-height: 100vh;
+  padding: 4vh 6vw 3vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-bottom: 1px solid var(--c-line);
+}
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-5);
+  margin-bottom: clamp(20px, 3vh, 36px);
+}
+.slide-num {
+  color: var(--c-red-deep);
+  font-weight: 700;
+}
+.slide-eyebrow {
+  font-weight: 600;
+}
+.slide-eyebrow .ae { color: var(--c-red); font-family: var(--f-mono); }
+.slide-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 1180px;
+  width: 100%;
+  margin: 0 auto;
+}
+.slide-headline {
+  font-family: var(--f-sans);
+  font-weight: 800;
+  font-size: clamp(1.7rem, 3.4vw, 2.8rem);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  color: var(--c-ink);
+  margin-bottom: 14px;
+  max-width: 24ch;
+}
+.slide-headline em,
+.slide-headline .accent {
+  font-style: italic;
+  font-family: var(--f-serif);
+  font-weight: 600;
+  color: var(--c-red);
+}
+.slide-subhead {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  color: var(--c-ink-3);
+  line-height: 1.4;
+  margin-bottom: clamp(18px, 2.8vh, 32px);
+  max-width: 64ch;
+}
+.slide-content {
+  flex: 0 1 auto;
+}
+.slide-footer {
+  margin-top: clamp(20px, 4vh, 36px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-5);
+  padding-top: 18px;
+  border-top: 1px solid var(--c-line);
+}
+
+/* ===== codæ wordmark ===== */
+.codae {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.ae { color: var(--c-red); }
+.ae-serif {
+  color: var(--c-red);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+}
+
+code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+  background: var(--c-bg-mute);
+  color: var(--c-ink-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+}
+
+/* =================================================
+   SLIDE 1 — TITLE
+   ================================================= */
+.slide-title {
+  background: var(--c-bg);
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+.slide-title::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(10,10,10,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10,10,10,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000, transparent 75%);
+  pointer-events: none;
+}
+.slide-title-inner {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6vh 7vw 5vh;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+.title-mark {
+  font-family: var(--f-sans);
+  font-weight: 900;
+  font-size: clamp(4.5rem, 11vw, 9rem);
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+  color: var(--c-ink);
+  margin-bottom: 24px;
+}
+.title-mark .accent { color: var(--c-red); }
+.title-tag {
+  font-family: var(--f-sans);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+  letter-spacing: -0.03em;
+  line-height: 1.18;
+  color: var(--c-ink);
+  max-width: 26ch;
+  margin-bottom: 16px;
+}
+.title-tag .accent {
+  font-style: italic;
+  font-family: var(--f-serif);
+  font-weight: 600;
+  color: var(--c-red);
+}
+.title-sub {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  color: var(--c-ink-3);
+  margin-bottom: 56px;
+  max-width: 50ch;
+}
+.title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--c-line);
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  color: var(--c-ink-4);
+  align-items: center;
+}
+.title-meta strong {
+  color: var(--c-ink);
+  font-weight: 600;
+}
+.title-badge {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid var(--c-red-soft);
+  border-radius: 100px;
+  background: var(--c-red-tint);
+  white-space: nowrap;
+}
+
+/* =================================================
+   SLIDE 2 — Drift card (mirrors site/manifesto)
+   ================================================= */
+.stats-strip {
+  margin: 12px 0 0;
+  padding: 28px 32px;
+  border: 1px solid var(--c-line);
+  border-left: 3px solid var(--c-red);
+  border-radius: 12px;
+  background: var(--c-bg-soft);
+}
+.stats-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.stats-strip .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  line-height: 1.15;
+}
+.stat-label {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.stat-label strong { color: var(--c-ink); font-weight: 600; }
+.stat-src {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--c-red);
+  text-decoration: underline dotted var(--c-red);
+  text-underline-offset: 3px;
+  margin-top: auto;
+  padding-top: 12px;
+  align-self: flex-start;
+}
+
+/* =================================================
+   SLIDE 3 — Why prompts don't scale
+   ================================================= */
+.point-stack {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 0 0 18px;
+}
+.point {
+  padding: 16px 18px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+.point .point-num {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 10px;
+}
+.point h3 {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.96rem;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+}
+.point p {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.pull-quote {
+  margin: 0;
+  padding: 16px 22px;
+  border-left: 3px solid var(--c-red);
+  background: var(--c-bg-soft);
+  border-radius: 0 10px 10px 0;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--c-ink);
+  max-width: 70ch;
+}
+.pull-quote cite {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-size: 0.78rem;
+  color: var(--c-ink-4);
+  letter-spacing: 0.02em;
+}
+
+/* =================================================
+   SLIDE 4 — Cognitive surface SVG
+   ================================================= */
+.fig {
+  margin: 0 auto 14px;
+  max-width: 760px;
+  width: 100%;
+  padding: 16px 20px 10px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg-soft);
+}
+.fig svg { width: 100%; height: auto; max-height: 280px; }
+.fig-caption {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--c-ink-4);
+  margin-top: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+.dark-callout {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 14px 22px;
+  background: var(--c-dark);
+  color: #fff;
+  border-radius: 8px;
+  font-family: var(--f-mono);
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
+  font-weight: 500;
+}
+.dark-callout strong { color: var(--c-red); }
+
+/* =================================================
+   SLIDE 5 — Solution (contract stack + modes)
+   ================================================= */
+.solution-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 32px;
+  align-items: start;
+}
+.stack-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+.stack-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stack-tier {
+  flex: 1;
+  padding: 8px 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  background: var(--c-bg);
+  font-family: var(--f-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--c-ink-2);
+}
+.stack-tier .desc {
+  display: block;
+  font-family: var(--f-sans);
+  font-weight: 400;
+  font-size: 0.74rem;
+  color: var(--c-ink-4);
+  margin-top: 2px;
+  letter-spacing: 0;
+}
+.stack-tier.intent { border-left: 3px solid var(--c-red); }
+.stack-tier.product { border-left: 3px solid var(--c-ink); }
+.stack-tier.ux { border-left: 3px solid var(--c-ink-3); }
+.stack-tier.system { border-left: 3px solid var(--c-ink-4); }
+.stack-tier.context { border-left: 3px solid var(--c-ink-5); }
+.stack-tier.code { border-left: 3px solid var(--c-line-2); background: var(--c-bg-soft); color: var(--c-ink-4); }
+.stack-arrow {
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  color: var(--c-ink-5);
+  text-align: center;
+  margin: -2px 0;
+  line-height: 1;
+}
+.stack-traces {
+  margin-top: 6px;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  color: var(--c-ink-4);
+  padding: 6px 10px;
+  border-left: 2px dotted var(--c-line-2);
+  background: var(--c-bg-soft);
+  border-radius: 0 6px 6px 0;
+}
+.modes-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.modes-label {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.mode-chip {
+  padding: 10px 14px;
+  border: 1px solid var(--c-line);
+  border-radius: 8px;
+  background: var(--c-bg);
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+.mode-chip .name {
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--c-red-deep);
+}
+.mode-chip .desc-line {
+  font-family: var(--f-sans);
+  font-size: 0.82rem;
+  color: var(--c-ink-3);
+  line-height: 1.4;
+}
+.mode-chip .desc-line strong { color: var(--c-ink); font-weight: 600; }
+.tagline {
+  margin-top: 14px;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--c-ink-3);
+  line-height: 1.5;
+}
+
+/* =================================================
+   SLIDE 6 — Why now
+   ================================================= */
+.force-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin: 8px 0 0;
+}
+.force {
+  padding: 16px 20px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.force .force-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--c-red);
+  line-height: 1;
+}
+.force h3 {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--c-ink);
+}
+.force p {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--c-ink-3);
+}
+.force .src {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--c-red-deep);
+  letter-spacing: 0.02em;
+  margin-top: auto;
+}
+
+/* =================================================
+   SLIDE 7 — The wedge (matrix)
+   ================================================= */
+.cmp-wrap {
+  overflow-x: auto;
+  margin: 4px 0 8px;
+  padding: 0 0 4px;
+}
+.cmp-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+.cmp-table th,
+.cmp-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: top;
+  line-height: 1.4;
+  color: var(--c-ink-3);
+  font-size: 0.82rem;
+}
+.cmp-table thead th {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-2);
+  font-weight: 700;
+  border-bottom: 2px solid var(--c-line-2);
+  background: var(--c-bg-soft);
+  white-space: nowrap;
+}
+.cmp-table thead th.col-self {
+  color: var(--c-red-deep);
+  background: var(--c-red-tint);
+}
+.cmp-table tbody th {
+  font-family: var(--f-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--c-ink);
+  white-space: nowrap;
+  background: var(--c-bg-soft);
+  border-right: 1px solid var(--c-line);
+}
+.cmp-table td.cell-self {
+  background: var(--c-red-tint);
+  color: var(--c-ink-2);
+}
+.cmp-caption {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--c-ink-5);
+  margin-top: 8px;
+}
+
+/* =================================================
+   SLIDE 8 — Moat
+   ================================================= */
+.moat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin: 8px 0 18px;
+}
+.moat-card {
+  padding: 16px 20px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+.moat-card .moat-name {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  display: block;
+  margin-bottom: 6px;
+}
+.moat-card h3 {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: -0.015em;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.moat-card p {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--c-ink-3);
+}
+.moat-closer {
+  margin-top: 0;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--c-ink);
+  text-align: center;
+  padding: 12px 16px;
+  background: var(--c-bg-soft);
+  border-radius: 8px;
+  border-left: 3px solid var(--c-red);
+  line-height: 1.5;
+}
+.moat-closer strong { color: var(--c-red-deep); font-weight: 600; font-style: normal; font-family: var(--f-sans); }
+
+/* =================================================
+   SLIDE 9 — Status
+   ================================================= */
+.status-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 0;
+}
+.status-col {
+  padding: 18px 20px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+}
+.status-col.shipped { border-left: 3px solid var(--c-red); background: var(--c-bg); }
+.status-col.next { border-left: 3px solid var(--c-ink-4); background: var(--c-bg-soft); }
+.status-col h3 {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.status-col.next h3 { color: var(--c-ink-4); }
+.status-col ul {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.status-col li {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--c-ink-3);
+  padding-left: 20px;
+  position: relative;
+}
+.status-col li::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+.status-col.shipped li::before { content: "✓"; color: var(--c-red); }
+.status-col.next li::before { content: "→"; color: var(--c-ink-5); }
+.status-col li strong { color: var(--c-ink); font-weight: 600; }
+.status-honesty {
+  margin-top: 14px;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--c-ink-3);
+  padding-left: 14px;
+  border-left: 2px solid var(--c-line);
+  line-height: 1.5;
+}
+
+/* =================================================
+   SLIDE 10 — Founder + plan
+   ================================================= */
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 0;
+}
+.founder-bio {
+  padding: 18px 22px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+.founder-bio h3 {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 1.08rem;
+  letter-spacing: -0.02em;
+  color: var(--c-ink);
+  margin-bottom: 4px;
+}
+.founder-bio .role {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  color: var(--c-red-deep);
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  display: block;
+}
+.founder-bio p {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+  margin-bottom: 9px;
+}
+.founder-bio p strong { color: var(--c-ink); }
+.todo-marker {
+  display: inline-block;
+  padding: 1px 6px;
+  margin-left: 4px;
+  background: var(--c-red-tint);
+  color: var(--c-red-deep);
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  border: 1px solid var(--c-red-soft);
+}
+.solo-callout {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: var(--c-bg-soft);
+  border-radius: 8px;
+  border-left: 2px solid var(--c-ink-4);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 0.86rem;
+  color: var(--c-ink-3);
+  line-height: 1.45;
+}
+.solo-callout strong { font-style: normal; font-family: var(--f-sans); }
+.milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.milestones h3 {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.milestone {
+  display: flex;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+.milestone .when {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.04rem;
+  color: var(--c-red);
+  white-space: nowrap;
+  min-width: 78px;
+  line-height: 1.3;
+}
+.milestone .what {
+  font-family: var(--f-sans);
+  font-size: 0.88rem;
+  color: var(--c-ink-2);
+  line-height: 1.5;
+}
+.milestone .what strong { color: var(--c-ink); }
+
+/* =================================================
+   SLIDE 11 — The ask
+   ================================================= */
+.ask-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin: 0 0 16px;
+}
+.ask-card {
+  padding: 18px 22px;
+  border: 1px solid var(--c-line);
+  border-radius: 10px;
+  background: var(--c-bg);
+}
+.ask-card.primary {
+  border-left: 3px solid var(--c-red);
+  background: var(--c-red-tint);
+}
+.ask-card h3 {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.ask-card ul {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.ask-card li {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--c-ink-2);
+  padding-left: 18px;
+  position: relative;
+}
+.ask-card li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--c-red);
+  font-weight: 700;
+  font-family: var(--f-mono);
+}
+.ask-card li strong { color: var(--c-ink); font-weight: 600; }
+.ask-closer {
+  margin-top: 8px;
+  padding: 26px 28px;
+  background: var(--c-dark);
+  color: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.ask-closer .tag {
+  font-family: var(--f-sans);
+  font-weight: 700;
+  font-size: 1.18rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  max-width: 38ch;
+}
+.ask-closer .tag .accent {
+  font-style: italic;
+  font-family: var(--f-serif);
+  font-weight: 600;
+  color: var(--c-red);
+}
+.ask-closer .contact {
+  font-family: var(--f-mono);
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.85);
+  text-align: right;
+}
+.ask-closer .contact a {
+  color: #fff;
+  text-decoration: underline dotted rgba(255,255,255,0.5);
+  text-underline-offset: 3px;
+}
+
+/* =================================================
+   RESPONSIVE
+   ================================================= */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 6vw 3vh; }
+  .stats-strip-grid { grid-template-columns: repeat(2, 1fr); }
+  .point-stack { grid-template-columns: 1fr; }
+  .modes-row { grid-template-columns: repeat(2, 1fr); }
+  .force-grid { grid-template-columns: 1fr; }
+  .moat-grid { grid-template-columns: 1fr; }
+  .status-cols { grid-template-columns: 1fr; }
+  .founder-grid { grid-template-columns: 1fr; }
+  .ask-grid { grid-template-columns: 1fr; }
+  .ask-closer { flex-direction: column; align-items: flex-start; }
+  .ask-closer .contact { text-align: left; }
+}
+@media (max-width: 540px) {
+  .slide { padding: 4vh 5vw 3vh; }
+  .stats-strip { padding: 22px 18px; }
+  .stats-strip-grid { grid-template-columns: 1fr; gap: 20px; }
+  .modes-row { grid-template-columns: 1fr; }
+  .stack-diagram { max-width: 100%; }
+  .title-mark { font-size: clamp(3.2rem, 14vw, 5rem); }
+  .slide-headline { font-size: clamp(1.6rem, 6vw, 2.2rem); }
+  .cmp-table { font-size: 0.82rem; }
+}
+
+/* =================================================
+   PRINT — one slide per page
+   ================================================= */
+@media print {
+  html, body { scroll-snap-type: none; background: #fff; }
+  .slide {
+    min-height: auto;
+    height: 100vh;
+    page-break-after: always;
+    border-bottom: none;
+    padding: 24mm 18mm 16mm;
+  }
+  .slide:last-child { page-break-after: auto; }
+  .slide-title { padding: 0; }
+  .slide-title-inner { padding: 24mm 18mm 16mm; }
+  a { color: inherit; }
+  .ask-closer { background: var(--c-bg-soft) !important; color: var(--c-ink) !important; }
+  .ask-closer .contact { color: var(--c-ink-3) !important; }
+  .ask-closer .contact a { color: var(--c-ink) !important; }
+  .ask-closer .tag .accent { color: var(--c-red) !important; }
+  .dark-callout { background: var(--c-bg-soft) !important; color: var(--c-ink) !important; border: 1px solid var(--c-line); }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SLIDE 1 — TITLE
+     ============================================================ -->
+<section class="slide slide-title" id="s01">
+  <div class="slide-title-inner">
+    <div class="slide-header" style="margin-bottom: 0;">
+      <span class="slide-num">01 / 11</span>
+      <span class="slide-eyebrow">cod<span class="ae">æ</span> · pre-seed thesis · may 2026</span>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+      <div class="title-mark">Vibe<span class="accent">Loom</span></div>
+
+      <p class="title-tag">Cursor enabled <span class="accent">vibe coding.</span><br>
+      VibeLoom enables <span class="accent">agentic engineering.</span></p>
+
+      <p class="title-sub">The contract layer for the agentic era. Code becomes a dark factory; humans operate one level up.</p>
+
+      <div class="title-meta">
+        <span class="title-badge">EWOR · Ideation Fellowship · Application</span>
+        <span><strong>Founder</strong> Ilya Baimetov</span>
+        <span><strong>Whitepaper</strong> v0.3 · May 2026</span>
+        <span><strong>Site</strong> vibeloom.ai</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SLIDE 2 — THE SLOP PROBLEM
+     ============================================================ -->
+<section class="slide" id="s02">
+  <header class="slide-header">
+    <span class="slide-num">02 / 11</span>
+    <span class="slide-eyebrow">The problem</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Agents now write code <em>faster</em> than humans can integrate it.</h1>
+    <p class="slide-subhead">Drift is no longer an aberration. It's the equilibrium. Four 2026 studies, all pointing the same direction.</p>
+
+    <div class="slide-content">
+      <aside class="stats-strip" aria-label="2026 evidence on AI drift and slop">
+        <div class="stats-strip-grid">
+          <div class="stat">
+            <div class="stat-num">80% / 89.8%</div>
+            <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
+            <a class="stat-src" href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">SlopCodeBench<br>Mar 2026 ↗</a>
+          </div>
+          <div class="stat">
+            <div class="stat-num">22.7%</div>
+            <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
+            <a class="stat-src" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">AI-debt in the wild<br>Mar 2026 ↗</a>
+          </div>
+          <div class="stat">
+            <div class="stat-num">3–5×</div>
+            <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
+            <a class="stat-src" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU Cursor study<br>Jan 2026 ↗</a>
+          </div>
+          <div class="stat">
+            <div class="stat-num">17%</div>
+            <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
+            <a class="stat-src" href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">Osmani · O'Reilly<br>Apr 2026 ↗</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>02 — the problem</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 3 — WHY PROMPTS DON'T SCALE
+     ============================================================ -->
+<section class="slide" id="s03">
+  <header class="slide-header">
+    <span class="slide-num">03 / 11</span>
+    <span class="slide-eyebrow">Why prompts don't scale</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Chat history isn't memory. The next agent starts <em>cold.</em></h1>
+    <p class="slide-subhead">Prompts are a tactical fix for a structural problem. The structural fix has to live somewhere more durable than the chat window.</p>
+
+    <div class="slide-content">
+      <div class="point-stack">
+        <div class="point">
+          <span class="point-num">A · Prompts decay</span>
+          <h3>Better prompts solve one run, not the next.</h3>
+          <p>Steering files, sharper instructions, stricter rules — works for one session. Dies on the next agent, the next contributor, the next branch.</p>
+        </div>
+        <div class="point">
+          <span class="point-num">B · Comprehension debt compounds</span>
+          <h3>17% lower comprehension on AI-assisted work.</h3>
+          <p>Anthropic's research, surfaced via O'Reilly. Largest drop in debugging — exactly where you need to understand the system. The reckoning arrives quietly.</p>
+        </div>
+        <div class="point">
+          <span class="point-num">C · The codebase is the only artifact</span>
+          <h3>And by 2026, it's too large to internalize.</h3>
+          <p>Every cycle starts cold. The codebase is the only durable artifact — and it's already past any single human or agent's working-memory ceiling.</p>
+        </div>
+      </div>
+
+      <blockquote class="pull-quote">
+        "Making code cheap to generate doesn't make understanding cheap to skip. The comprehension work is the job."
+        <cite>— Addy Osmani, O'Reilly Radar · Apr 2026</cite>
+      </blockquote>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>03 — why prompts don't scale</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 4 — THE BET (DARK FACTORY)
+     ============================================================ -->
+<section class="slide" id="s04">
+  <header class="slide-header">
+    <span class="slide-num">04 / 11</span>
+    <span class="slide-eyebrow">The bet</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Code becomes a <em>dark factory.</em> Generated, regenerated, never maintained by hand.</h1>
+    <p class="slide-subhead">The human's mendable surface moves up the stack — from the code to the contract above it. Compare cognitive surfaces to scale.</p>
+
+    <div class="slide-content">
+      <div class="fig">
+        <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cognitive surface comparison: a tall code mountain versus a short, structured spec stack; a horizontal red dashed line marks the human comprehension ceiling, well below the top of the code column.">
+          <line x1="20" y1="80" x2="600" y2="80" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="608" y="84" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#c43a50" text-anchor="end">human comprehension ceiling</text>
+
+          <g transform="translate(40, 30)">
+            <text x="100" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Code</text>
+            <g fill="#3a3a3a">
+              <rect x="20" y="0" width="160" height="3" rx="1"/>
+              <rect x="20" y="6" width="140" height="3" rx="1"/>
+              <rect x="20" y="12" width="170" height="3" rx="1"/>
+              <rect x="20" y="18" width="130" height="3" rx="1"/>
+              <rect x="20" y="24" width="155" height="3" rx="1"/>
+              <rect x="20" y="30" width="145" height="3" rx="1"/>
+              <rect x="20" y="36" width="170" height="3" rx="1"/>
+              <rect x="20" y="42" width="120" height="3" rx="1"/>
+              <rect x="20" y="48" width="160" height="3" rx="1"/>
+              <rect x="20" y="54" width="135" height="3" rx="1"/>
+              <rect x="20" y="60" width="150" height="3" rx="1"/>
+              <rect x="20" y="66" width="170" height="3" rx="1"/>
+              <rect x="20" y="72" width="125" height="3" rx="1"/>
+              <rect x="20" y="78" width="155" height="3" rx="1"/>
+              <rect x="20" y="84" width="140" height="3" rx="1"/>
+              <rect x="20" y="90" width="160" height="3" rx="1"/>
+              <rect x="20" y="96" width="135" height="3" rx="1"/>
+              <rect x="20" y="102" width="170" height="3" rx="1"/>
+              <rect x="20" y="108" width="145" height="3" rx="1"/>
+              <rect x="20" y="114" width="150" height="3" rx="1"/>
+              <rect x="20" y="120" width="160" height="3" rx="1"/>
+              <rect x="20" y="126" width="130" height="3" rx="1"/>
+              <rect x="20" y="132" width="170" height="3" rx="1"/>
+              <rect x="20" y="138" width="155" height="3" rx="1"/>
+              <rect x="20" y="144" width="140" height="3" rx="1"/>
+              <rect x="20" y="150" width="160" height="3" rx="1"/>
+              <rect x="20" y="156" width="135" height="3" rx="1"/>
+              <rect x="20" y="162" width="170" height="3" rx="1"/>
+              <rect x="20" y="168" width="145" height="3" rx="1"/>
+              <rect x="20" y="174" width="160" height="3" rx="1"/>
+              <rect x="20" y="180" width="135" height="3" rx="1"/>
+              <rect x="20" y="186" width="170" height="3" rx="1"/>
+            </g>
+            <text x="100" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~108K LOC · all branches</text>
+          </g>
+
+          <g transform="translate(380, 30)">
+            <text x="120" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Contract stack</text>
+            <g>
+              <rect x="40" y="0" width="200" height="14" rx="2" fill="#e84057"/>
+              <text x="50" y="11" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#fff">intent</text>
+
+              <rect x="40" y="20" width="200" height="20" rx="2" fill="#1a1a1a"/>
+              <text x="50" y="33" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">requirements / domain</text>
+
+              <rect x="40" y="46" width="200" height="20" rx="2" fill="#3a3a3a"/>
+              <text x="50" y="59" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">structure / interfaces</text>
+
+              <rect x="40" y="72" width="200" height="14" rx="2" fill="#5a5a5a"/>
+              <text x="50" y="83" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">behavior / decisions</text>
+
+              <rect x="40" y="92" width="200" height="14" rx="2" fill="#707070"/>
+              <text x="50" y="103" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">execution config</text>
+            </g>
+            <text x="140" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~16K lines · ~24% of code</text>
+          </g>
+
+          <text x="320" y="265" font-family="JetBrains Mono, monospace" font-size="9" fill="#707070" text-anchor="middle">empirical ratio from a real 108K-line system, Vasilopoulos 2026</text>
+        </svg>
+        <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> Humans hold the right side. Agents extend the left. The contract is the bridge. The 10–100× speedup survives only if the human never touches the factory floor.</p>
+      </div>
+
+      <div style="text-align: center;">
+        <span class="dark-callout">Lights-out coding. <strong>Code is machinery, not literature.</strong></span>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>04 — the bet</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 5 — THE SOLUTION
+     ============================================================ -->
+<section class="slide" id="s05">
+  <header class="slide-header">
+    <span class="slide-num">05 / 11</span>
+    <span class="slide-eyebrow">The solution</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">A <em>contract layer</em> agents compile down to.</h1>
+    <p class="slide-subhead">Methodology + skill + deterministic engine. Five operating modes, one paradigm. Zero runtime dependencies; ships as a Skill for Claude Code and Codex.</p>
+
+    <div class="slide-content">
+      <div class="solution-grid">
+        <div class="stack-diagram">
+          <div class="stack-row">
+            <div class="stack-tier intent">intent-specs<span class="desc">capabilities, constraints, defaults — user-owned</span></div>
+          </div>
+          <div class="stack-arrow">↓</div>
+          <div class="stack-row">
+            <div class="stack-tier product">product-specs<span class="desc">PRD · user-story map · domain model</span></div>
+            <div class="stack-tier ux">ux-specs<span class="desc">views · interactions · mockups</span></div>
+          </div>
+          <div class="stack-arrow">↓</div>
+          <div class="stack-row">
+            <div class="stack-tier system">system-specs<span class="desc">containers · components · layered architecture</span></div>
+          </div>
+          <div class="stack-arrow">↓</div>
+          <div class="stack-row">
+            <div class="stack-tier context">context<span class="desc">AGENTS.md · BDD scenarios · execution guidance</span></div>
+          </div>
+          <div class="stack-arrow">↓</div>
+          <div class="stack-row">
+            <div class="stack-tier code">code<span class="desc">generated · regenerated · code-sync traces to contract IDs</span></div>
+          </div>
+          <div class="stack-traces">traces alongside · approval · generation · eval · code-sync · decision · import</div>
+        </div>
+
+        <div>
+          <div class="modes-label">Five operating modes</div>
+          <div class="modes-row">
+            <div class="mode-chip"><span class="name">vibe</span><span class="desc-line"><strong>Solo.</strong> Compact stack — no graph, no code-sync. Upgrade is one-way.</span></div>
+            <div class="mode-chip"><span class="name">pm</span><span class="desc-line"><strong>Product-led.</strong> Full stack. PM owns intent + product specs.</span></div>
+            <div class="mode-chip"><span class="name">dev</span><span class="desc-line"><strong>Tech-led.</strong> Full stack. Dev owns intent + system specs.</span></div>
+            <div class="mode-chip"><span class="name">ux</span><span class="desc-line"><strong>Design-led.</strong> Designer owns intent + UX. Mockups drive product specs.</span></div>
+            <div class="mode-chip"><span class="name">expert</span><span class="desc-line"><strong>All gates.</strong> Every approval explicit. Regulated systems.</span></div>
+          </div>
+          <p class="tagline">One paradigm, five entry points — covering solo hackers to multi-team products without forking the methodology.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>05 — the solution</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 6 — WHY NOW
+     ============================================================ -->
+<section class="slide" id="s06">
+  <header class="slide-header">
+    <span class="slide-num">06 / 11</span>
+    <span class="slide-eyebrow">Why now</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Four forces converge in the <em>same six-month window.</em></h1>
+    <p class="slide-subhead">Agentic coding, drift evidence, market validation, and model reliability all crossed their threshold in Q1 2026. The contract layer is buildable now — and necessary now.</p>
+
+    <div class="slide-content">
+      <div class="force-grid">
+        <div class="force">
+          <span class="force-num">01</span>
+          <h3>Agentic coding crossed the production threshold.</h3>
+          <p>Anthropic's 2026 Trends Report: developers use AI in <strong>~60% of work</strong> but can fully delegate only <strong>0–20%</strong>. The bottleneck has moved from model capability to oversight bandwidth.</p>
+          <span class="src">Anthropic Trends · Q1 2026</span>
+        </div>
+        <div class="force">
+          <span class="force-num">02</span>
+          <h3>Slop is now measurable, not anecdotal.</h3>
+          <p><strong>SlopCodeBench</strong> and <strong>"AI-debt in the wild"</strong> both shipped in March. For the first time, drift, erosion, and surviving defects are quantified across thousands of real repos.</p>
+          <span class="src">SlopCodeBench · AI-debt · Mar 2026</span>
+        </div>
+        <div class="force">
+          <span class="force-num">03</span>
+          <h3>Cursor proves the AI-dev-infra demand.</h3>
+          <p>Cursor at <strong>$9B+</strong> shows VCs how big the AI-coding-tools market is. We are the layer above: the contract substrate Cursor's outputs need to remain coherent across cycles.</p>
+          <span class="src">Public reporting · 2026</span>
+        </div>
+        <div class="force">
+          <span class="force-num">04</span>
+          <h3>Frontier models now reliable for deterministic regen.</h3>
+          <p>Claude Opus 4.7, GPT-5, and Gemini 3 are reliable enough that regenerating from approved contracts converges to equivalent output. Two years ago, this didn't exist.</p>
+          <span class="src">2026 model releases</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>06 — why now</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 7 — THE WEDGE
+     ============================================================ -->
+<section class="slide" id="s07">
+  <header class="slide-header">
+    <span class="slide-num">07 / 11</span>
+    <span class="slide-eyebrow">The wedge</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Spec-driven was the right step. <em>Contract-driven</em> is the next.</h1>
+    <p class="slide-subhead">Kiro, Spec Kit, and BMAD all elevated specs above code — but kept them per-feature. Their durable layers stay thin. VibeLoom keeps the contract load-bearing across the whole lifecycle.</p>
+
+    <div class="slide-content">
+      <div class="cmp-wrap">
+        <table class="cmp-table" aria-label="Methodology comparison">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th>AWS Kiro</th>
+              <th>GitHub Spec Kit</th>
+              <th>BMAD</th>
+              <th class="col-self">VibeLoom (cod<span class="ae">æ</span>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Family</th>
+              <td>IDE-anchored SDD</td>
+              <td>feature-bundle SDD</td>
+              <td>agent-role SDD</td>
+              <td class="cell-self">contract-driven agentic engineering</td>
+            </tr>
+            <tr>
+              <th>Primary unit</th>
+              <td>feature spec triplet</td>
+              <td>feature bundle + constitution</td>
+              <td>workflow phase + agent role</td>
+              <td class="cell-self">contract tier + affected graph cut</td>
+            </tr>
+            <tr>
+              <th>Spec lifetime</th>
+              <td>per-feature + steering</td>
+              <td>per-feature + constitution</td>
+              <td>per-project lifecycle</td>
+              <td class="cell-self">permanent evolving graph</td>
+            </tr>
+            <tr>
+              <th>Drift handling</th>
+              <td>hooks, steering, reviews</td>
+              <td>analyze / checklist (pre-merge)</td>
+              <td>correct-course, readiness</td>
+              <td class="cell-self">stale / uncovered / dangling / drifted / obsolete + traces</td>
+            </tr>
+            <tr>
+              <th>Reconciliation</th>
+              <td>workflow convention</td>
+              <td>phase-gate correction</td>
+              <td>workflow re-planning</td>
+              <td class="cell-self">first-class <code>reconcile</code> operation</td>
+            </tr>
+            <tr>
+              <th>Code → contract link</th>
+              <td>spec tasks → code</td>
+              <td>plan/tasks → code</td>
+              <td>stories → code</td>
+              <td class="cell-self">code-sync traces map code paths to contract IDs + validation</td>
+            </tr>
+            <tr>
+              <th>Dark-factory readiness</th>
+              <td>partial</td>
+              <td>partial</td>
+              <td>partial</td>
+              <td class="cell-self">explicit trajectory: contract as control surface, code as output</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cmp-caption">Same impulse as SDD. Larger surface, longer lifetime, deterministic substrate. Tessl &amp; Pythagora addressed in the manifesto sidebars.</p>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>07 — the wedge</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 8 — THE MOAT
+     ============================================================ -->
+<section class="slide" id="s08">
+  <header class="slide-header">
+    <span class="slide-num">08 / 11</span>
+    <span class="slide-eyebrow">The moat</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">A <em>deterministic engine.</em> Not a prompt template.</h1>
+    <p class="slide-subhead">Anyone can write a clever prompt. Almost no one is building the deterministic substrate that makes contract-driven generation auditable, reproducible, and learning-loop-ready.</p>
+
+    <div class="slide-content">
+      <div class="moat-grid">
+        <div class="moat-card">
+          <span class="moat-name">01 · Engine</span>
+          <h3>Deterministic Python, zero runtime deps.</h3>
+          <p>Parse, validate, build the contract graph, compute affected sets, plan dispatch, detect drift — all without an LLM call. Auditable, reproducible, fast.</p>
+        </div>
+        <div class="moat-card">
+          <span class="moat-name">02 · Traces</span>
+          <h3>Six trace families, append-only JSONL.</h3>
+          <p><code>approval</code> · <code>generation</code> · <code>eval</code> · <code>code-sync</code> · <code>decision</code> · <code>import</code>. Every run leaves provenance. Substrate for a future learning loop and for graph promotion.</p>
+        </div>
+        <div class="moat-card">
+          <span class="moat-name">03 · Verification ladder</span>
+          <h3>Decidable → mechanical → heuristic.</h3>
+          <p>Honest answer to "what does semi-formal verification mean in 2026?" Trajectory is to <em>promote</em> heuristic checks to mechanical, mechanical to decidable, as the engine matures.</p>
+        </div>
+        <div class="moat-card">
+          <span class="moat-name">04 · Parallel dispatch</span>
+          <h3>Wave assembly + scoped subagents.</h3>
+          <p>Multi-component regeneration in parallel, with bounded load sets and validation contracts per task. Code-sync traces close the loop back to contract IDs.</p>
+        </div>
+      </div>
+
+      <p class="moat-closer">Defensible because it's an <strong>operating model</strong>, not just code. The methodology, the trace schemas, and the ladder compound over time. A wrapper around an LLM doesn't.</p>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>08 — the moat</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 9 — STATUS
+     ============================================================ -->
+<section class="slide" id="s09">
+  <header class="slide-header">
+    <span class="slide-num">09 / 11</span>
+    <span class="slide-eyebrow">Status</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">v0.3 ships the paradigm. The <em>factory floor</em> is next.</h1>
+    <p class="slide-subhead">Methodology, implementation spec, Skill, and 35 generation-ready templates are live today. Dogfood in progress. The next 12 months is design partners, runnable engine v0.4, and the toolchain.</p>
+
+    <div class="slide-content">
+      <div class="status-cols">
+        <div class="status-col shipped">
+          <h3>Shipped today (v0.3, May 2026)</h3>
+          <ul>
+            <li><strong>Methodology spec</strong> — contract stack, modes, operations, status taxonomy</li>
+            <li><strong>Implementation spec</strong> — engine boundaries, trace schemas, dispatch protocol</li>
+            <li><strong>Skill</strong> — Claude Code &amp; Codex integration, mode-aware orchestration</li>
+            <li><strong>Templates</strong> — 35 files: artifacts, tasks, references, validation registry</li>
+            <li><strong>Five operating modes</strong> — vibe, pm, dev, ux, expert</li>
+            <li><strong>Six trace schemas</strong> — append-only, schema-versioned, graph-promotion-ready</li>
+            <li><strong>Dispatch + wave assembly</strong> — parallel subagent generation, validation contracts</li>
+            <li><strong>Marketing site</strong> — vibeloom.ai (Overview / cod<span class="ae">æ</span> / Methodology / Implementation)</li>
+            <li><strong>Worked examples</strong> — greenfield, brownfield import, UX-led, multi-component reconcile</li>
+          </ul>
+        </div>
+        <div class="status-col next">
+          <h3>Next 12 months</h3>
+          <ul>
+            <li><strong>Engine v0.4</strong> — runnable Python implementation of the v0.3 spec</li>
+            <li><strong>First 10 design partners</strong> — production teams, mixed modes, drift telemetry</li>
+            <li><strong>Contract REPL</strong> — interactive contract authoring + dry-run propagation</li>
+            <li><strong>Contract debugger</strong> — trace-walk from failing test back to load-bearing contract item</li>
+            <li><strong>Trace-derived learning</strong> — late-fetch + reconcile-pattern proposals back to templates</li>
+            <li><strong>Technical co-founder + first 2 hires</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="status-honesty">Honest pre-seed: no paying users yet, no revenue, no LOIs. Dogfood (using VibeLoom to build VibeLoom) starts with engine v0.4. Raising for design partners + co-founder, not for headcount.</p>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>09 — status</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 10 — FOUNDER + PLAN
+     ============================================================ -->
+<section class="slide" id="s10">
+  <header class="slide-header">
+    <span class="slide-num">10 / 11</span>
+    <span class="slide-eyebrow">Founder &amp; plan</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">Solo founder. Team-of-2 by month six. <em>Here's how.</em></h1>
+    <p class="slide-subhead">EWOR's stated concern about solo geniuses is fair. The plan addresses it head-on — not by hand-waving, but by treating co-founder acquisition as a tracked first-quarter milestone.</p>
+
+    <div class="slide-content">
+      <div class="founder-grid">
+        <div class="founder-bio">
+          <h3>Ilya Baimetov</h3>
+          <span class="role">Founder · Author of cod<span class="ae">æ</span> &amp; VibeLoom</span>
+
+          <p><strong>Background.</strong> <span class="todo-marker">TODO · Ilya</span> Prior roles, technical depth, shipped products, ages-and-stages story. EWOR weights this heavily — fill before submission.</p>
+
+          <p><strong>Why me.</strong> Authored the cod<span class="ae">æ</span> paradigm and the v0.3 VibeLoom spec end-to-end (methodology, implementation, comparison whitepaper, 35 generation-ready templates, marketing site, examples). Working with frontier models daily; saw the slop pattern emerge in real codebases through 2025–2026.</p>
+
+          <p><strong>Insight.</strong> Cursor proved chat-driven coding works. The next step is making the contract — not the chat — the durable surface humans operate on. Build the layer above.</p>
+
+          <div class="solo-callout">
+            <strong>On being solo today.</strong> Actively recruiting a technical co-founder (engine + dev-infra background). Advisor list <span class="todo-marker">TODO</span> in formation. EWOR fellowship itself is the team-formation forcing function — month-6 milestone below.
+          </div>
+        </div>
+
+        <div class="milestones">
+          <h3>12-month plan</h3>
+          <div class="milestone">
+            <div class="when">Month 3</div>
+            <div class="what"><strong>Engine v0.4 runnable.</strong> Spec → working Python. Dogfood VibeLoom-on-VibeLoom begins. First public demo + Loom.</div>
+          </div>
+          <div class="milestone">
+            <div class="when">Month 6</div>
+            <div class="what"><strong>Technical co-founder onboarded.</strong> Five design-partner teams using VibeLoom on production codebases. Drift telemetry feeding back to templates.</div>
+          </div>
+          <div class="milestone">
+            <div class="when">Month 9</div>
+            <div class="what"><strong>Contract REPL + debugger.</strong> Toolchain compiler-analogy debt closed. First three signed pilots converting to paid.</div>
+          </div>
+          <div class="milestone">
+            <div class="when">Month 12</div>
+            <div class="what"><strong>First paying teams.</strong> Tiered SaaS pricing live, design-partner pricing for the first ten. Seed round opened on the back of trace-derived learning evidence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-footer">
+    <span>vibeloom.ai</span>
+    <span>10 — founder &amp; plan</span>
+  </footer>
+</section>
+
+<!-- ============================================================
+     SLIDE 11 — THE ASK
+     ============================================================ -->
+<section class="slide" id="s11">
+  <header class="slide-header">
+    <span class="slide-num">11 / 11</span>
+    <span class="slide-eyebrow">The ask</span>
+  </header>
+  <div class="slide-body">
+    <h1 class="slide-headline">EWOR <em>Ideation Fellowship.</em> Build the contract layer for the agentic era.</h1>
+    <p class="slide-subhead">No equity tuition, four-week intensive, mentor pairing. The right vehicle for the right stage — and EWOR's fit thesis is exactly the kind of deeptech B2B infrastructure VibeLoom is.</p>
+
+    <div class="slide-content">
+      <div class="ask-grid">
+        <div class="ask-card primary">
+          <h3>Asking EWOR for</h3>
+          <ul>
+            <li><strong>Ideation Fellowship admission</strong> — four-week intensive cohort</li>
+            <li><strong>Mentor pairing</strong> with a deeptech / dev-infra operator</li>
+            <li><strong>Intro to first design-partner network</strong> — engineering teams running multi-agent code-gen in production</li>
+            <li><strong>Co-founder matching</strong> — technical, engine + distributed-systems background</li>
+          </ul>
+        </div>
+        <div class="ask-card">
+          <h3>What we'll prove in the 4 weeks</h3>
+          <ul>
+            <li><strong>Engine v0.4</strong> dogfood-ready — methodology spec → runnable</li>
+            <li><strong>Three design-partner LOIs</strong> from production teams</li>
+            <li><strong>Co-founder pipeline</strong> — at least 5 strong candidates in conversation</li>
+            <li><strong>Drift-telemetry validation</strong> — first measurable cognitive-surface ratio in real code</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ask-closer">
+        <div class="tag">
+          Cursor enabled <span class="accent">vibe coding.</span><br>
+          VibeLoom enables <span class="accent">agentic engineering.</span>
+        </div>
+        <div class="contact">
+          <div><strong>Ilya Baimetov</strong></div>
+          <div><a href="mailto:ilya.baimetov@vibeloom.ai">ilya.baimetov@vibeloom.ai</a></div>
+          <div><a href="https://vibeloom.ai" target="_blank" rel="noopener">vibeloom.ai</a> · <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">github.com/ilya-baimetov/vibeloom</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

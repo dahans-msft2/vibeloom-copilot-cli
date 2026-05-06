@@ -78,9 +78,9 @@ const MX = 0.65;                    // x-margin
   });
 
   // THE HEADLINE — huge italic Fraunces in red, single line, sized to fit width
-  s.addText("Code becomes a dark factory.", {
+  s.addText("Coding becomes a dark factory.", {
     x: MX, y: 2.5, w: W - 2 * MX, h: 1.6,
-    fontSize: 64, fontFace: F.serif, italic: true, bold: true,
+    fontSize: 60, fontFace: F.serif, italic: true, bold: true,
     color: C.red, align: "left", valign: "top", margin: 0,
     charSpacing: -2,
   });
@@ -203,13 +203,13 @@ const MX = 0.65;                    // x-margin
     x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
     color: C.redDeep, charSpacing: 1, margin: 0,
   });
-  s.addText("THE BET", {
+  s.addText("SOLUTION · THE BET", {
     x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
     color: C.ink5, align: "right", charSpacing: 1, margin: 0,
   });
 
   // Headline — 4 words
-  s.addText("Lights out for code.", {
+  s.addText("Lights out for coding.", {
     x: MX, y: 1.0, w: W - 2 * MX, h: 1.1,
     fontSize: 64, fontFace: F.sans, bold: true,
     color: C.ink, charSpacing: -2, margin: 0,
@@ -305,14 +305,230 @@ const MX = 0.65;                    // x-margin
 }
 
 // =============================================================================
-// SLIDE 4 — SOLUTION (product)
-// "The contract layer." — the actual product
+// SLIDE 4 — WHY NOW
+// "Four forces. Same six months."
 // =============================================================================
 {
   const s = pres.addSlide();
   s.background = { color: C.bg };
 
   s.addText("04 / 10", {
+    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.redDeep, charSpacing: 1, margin: 0,
+  });
+  s.addText("WHY NOW", {
+    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
+  });
+
+  s.addText([
+    { text: "Four forces.", options: { color: C.ink, bold: true, fontFace: F.sans, breakLine: true } },
+    { text: "Same six months.", options: { color: C.red, italic: true, bold: true, fontFace: F.serif } },
+  ], {
+    x: MX, y: 0.95, w: W - 2 * MX, h: 1.95,
+    fontSize: 56, charSpacing: -2, margin: 0, valign: "top",
+  });
+
+  s.addText("None of these conditions held two years ago. All four crossed their threshold in Q1 2026.", {
+    x: MX, y: 3.05, w: W - 2 * MX, h: 0.6,
+    fontSize: 16, fontFace: F.sans, color: C.ink3, margin: 0,
+  });
+
+  // 2x2 grid of forces — each with a big number + 2-line takeaway
+  const gy = 3.85, gh = 1.55, gap = 0.25;
+  const gw = (W - 2 * MX - gap) / 2;
+  const forces = [
+    ["$9B", "Cursor proves AI-dev-infra is a real market.\nThe layer above is the next category."],
+    ["Mar '26", "SlopCodeBench + AI-debt papers shipped.\nDrift quantified for the first time."],
+    ["GPT-5", "Frontier models finally reliable for deterministic regen.\nSame prompt, same output, every cycle."],
+    ["60% / 0–20%", "Devs use AI in 60% of work; can fully delegate 0–20%.\nGovernance is the new bottleneck."],
+  ];
+  forces.forEach(([num, txt], i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const cx = MX + col * (gw + gap);
+    const cy = gy + row * (gh + gap);
+    s.addShape(pres.shapes.RECTANGLE, {
+      x: cx, y: cy, w: gw, h: gh,
+      fill: { color: C.bg }, line: { color: C.line, width: 0.75 },
+    });
+    s.addText(num, {
+      x: cx + 0.3, y: cy + 0.2, w: 4, h: 0.65,
+      fontSize: 26, fontFace: F.serif, italic: true, bold: true,
+      color: C.red, margin: 0, charSpacing: -1,
+    });
+    s.addText(txt, {
+      x: cx + 0.3, y: cy + 0.8, w: gw - 0.6, h: 0.7,
+      fontSize: 12, fontFace: F.sans, color: C.ink2, margin: 0,
+    });
+  });
+}
+
+// =============================================================================
+// SLIDE 5 — MARKET
+// "$2.2B SAM." with funnel calc
+// =============================================================================
+{
+  const s = pres.addSlide();
+  s.background = { color: C.bg };
+
+  s.addText("05 / 10", {
+    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.redDeep, charSpacing: 1, margin: 0,
+  });
+  s.addText("MARKET", {
+    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
+  });
+
+  s.addText([
+    { text: "$2.2B SAM.", options: { color: C.ink, bold: true, fontFace: F.sans, breakLine: true } },
+    { text: "Cursor proves it.", options: { color: C.red, italic: true, bold: true, fontFace: F.serif } },
+  ], {
+    x: MX, y: 0.95, w: W - 2 * MX, h: 1.95,
+    fontSize: 56, charSpacing: -2, margin: 0, valign: "top",
+  });
+
+  s.addText("Cursor at $9B revenue/valuation proves AI-dev-infra is a real market. We sell the layer above it — to a different buyer, at a different ACV (per-team, not per-seat).", {
+    x: MX, y: 3.05, w: W - 2 * MX, h: 0.85,
+    fontSize: 15, fontFace: F.sans, color: C.ink3, margin: 0,
+  });
+
+  // Funnel-style left, big number right
+  const fy = 4.05;
+  const funnel = [
+    ["Developers worldwide",                  "30M",   "Stack Overflow Dev Survey 2025"],
+    ["Using AI coding tools (~33%)",          "10M",   "JetBrains 2025; GitHub Octoverse"],
+    ["Multi-cycle agentic generation (~30%)", "3M",    "the cohort that hits drift"],
+    ["× $720 / yr (mid-tier B2B SaaS)",       "$720",  ""],
+  ];
+  funnel.forEach(([label, num, src], i) => {
+    const ry = fy + i * 0.55;
+    s.addText(label, {
+      x: MX, y: ry, w: 6.5, h: 0.4,
+      fontSize: 14, fontFace: F.sans, color: C.ink2, margin: 0,
+    });
+    if (src) {
+      s.addText(src, {
+        x: MX, y: ry + 0.32, w: 6.5, h: 0.2,
+        fontSize: 9, fontFace: F.mono, color: C.ink5, margin: 0,
+      });
+    }
+    s.addText(num, {
+      x: 6.8, y: ry, w: 1.5, h: 0.4,
+      fontSize: 20, fontFace: F.mono, bold: true,
+      color: C.ink, align: "right", margin: 0,
+    });
+  });
+
+  // SAM total at bottom of funnel — red bar accent
+  s.addShape(pres.shapes.LINE, {
+    x: MX, y: fy + 2.35, w: 7.65, h: 0,
+    line: { color: C.red, width: 2 },
+  });
+  s.addText("SAM at saturation", {
+    x: MX, y: fy + 2.45, w: 6.5, h: 0.5,
+    fontSize: 16, fontFace: F.sans, bold: true, color: C.ink, margin: 0,
+  });
+  s.addText("$2.2B", {
+    x: 6.8, y: fy + 2.4, w: 1.5, h: 0.6,
+    fontSize: 28, fontFace: F.serif, italic: true, bold: true,
+    color: C.red, align: "right", margin: 0, charSpacing: -1,
+  });
+
+  // Right side: BIG callout
+  s.addText("$2.2B", {
+    x: 9.0, y: fy, w: W - MX - 9.0, h: 1.3,
+    fontSize: 88, fontFace: F.serif, italic: true, bold: true,
+    color: C.red, align: "left", margin: 0, charSpacing: -3,
+  });
+  s.addText("at saturation, B2B SaaS only", {
+    x: 9.0, y: fy + 1.35, w: W - MX - 9.0, h: 0.35,
+    fontSize: 12, fontFace: F.mono, color: C.ink5, margin: 0,
+  });
+  s.addText([
+    { text: "+ $5B adjacent: ", options: { bold: true, color: C.ink } },
+    { text: "methodology consulting, contract pattern marketplaces, audit + compliance bundles, training.", options: { color: C.ink3 } },
+  ], {
+    x: 9.0, y: fy + 1.85, w: W - MX - 9.0, h: 1.3,
+    fontSize: 12, fontFace: F.sans, margin: 0,
+  });
+}
+
+// =============================================================================
+// SLIDE 6 — INSIGHT (why we win)
+// "Not Cursor's fight." — the value-chain wedge
+// =============================================================================
+{
+  const s = pres.addSlide();
+  s.background = { color: C.bg };
+
+  s.addText("06 / 10", {
+    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.redDeep, charSpacing: 1, margin: 0,
+  });
+  s.addText("COMPETITION", {
+    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
+    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
+  });
+
+  s.addText("Not Cursor's fight.", {
+    x: MX, y: 1.0, w: W - 2 * MX, h: 1.1,
+    fontSize: 64, fontFace: F.sans, bold: true,
+    color: C.ink, charSpacing: -2, margin: 0,
+  });
+
+  s.addText("Cursor sells productivity to individual developers. We sell governance to engineering leaders. Different layer, different buyer, different metric.", {
+    x: MX, y: 2.25, w: W - 2 * MX, h: 0.7,
+    fontSize: 16, fontFace: F.sans, color: C.ink3, margin: 0,
+  });
+
+  // 3 horizontal layer rows — value chain (compressed to leave room for kicker)
+  const ry = 3.25, rh = 0.9, rgap = 0.15;
+  const rows = [
+    ["Cursor / Copilot / Codeium", "Vibe coding — chat-driven, in the IDE. Per-edit velocity.", false],
+    ["Kiro / Spec Kit / BMAD", "Spec-driven — per-feature specs. Decay between features.", false],
+    ["VibeLoom", "Contract-driven — system-level contracts govern many cycles. Drift detected at the contract layer.", true],
+  ];
+  rows.forEach(([who, what, us], i) => {
+    const cy = ry + i * (rh + rgap);
+    s.addShape(pres.shapes.RECTANGLE, {
+      x: MX, y: cy, w: W - 2 * MX, h: rh,
+      fill: { color: us ? C.redSoft : C.bg },
+      line: { color: us ? C.red : C.line, width: us ? 1 : 0.5 },
+    });
+    if (us) {
+      s.addShape(pres.shapes.RECTANGLE, {
+        x: MX, y: cy, w: 0.06, h: rh,
+        fill: { color: C.red }, line: { type: "none" },
+      });
+    }
+    s.addText(who, {
+      x: MX + 0.3, y: cy + 0.15, w: 3.8, h: 0.55,
+      fontSize: 15, fontFace: F.mono, bold: true,
+      color: us ? C.redDeep : C.ink, margin: 0, charSpacing: -0.5,
+    });
+    s.addText(what, {
+      x: 4.5, y: cy + 0.2, w: W - MX - 4.5 - 0.3, h: 0.55,
+      fontSize: 13, fontFace: F.sans, color: us ? C.ink2 : C.ink3, margin: 0,
+    });
+  });
+
+  s.addText("We are not in the same fight as Cursor. We win by being one abstraction level up.", {
+    x: MX, y: ry + 3 * (rh + rgap) + 0.05, w: W - 2 * MX, h: 0.5,
+    fontSize: 15, fontFace: F.serif, italic: true, color: C.ink2,
+    align: "center", margin: 0,
+  });
+}
+
+// =============================================================================
+// SLIDE 7 — SOLUTION (product)
+// "The contract layer." — the actual product
+// =============================================================================
+{
+  const s = pres.addSlide();
+  s.background = { color: C.bg };
+
+  s.addText("07 / 10", {
     x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
     color: C.redDeep, charSpacing: 1, margin: 0,
   });
@@ -397,139 +613,14 @@ const MX = 0.65;                    // x-margin
 }
 
 // =============================================================================
-// SLIDE 5 — WHY NOW
-// "Four forces. Same six months."
-// =============================================================================
-{
-  const s = pres.addSlide();
-  s.background = { color: C.bg };
-
-  s.addText("05 / 10", {
-    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.redDeep, charSpacing: 1, margin: 0,
-  });
-  s.addText("WHY NOW", {
-    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
-  });
-
-  s.addText([
-    { text: "Four forces.", options: { color: C.ink, bold: true, fontFace: F.sans, breakLine: true } },
-    { text: "Same six months.", options: { color: C.red, italic: true, bold: true, fontFace: F.serif } },
-  ], {
-    x: MX, y: 0.95, w: W - 2 * MX, h: 1.95,
-    fontSize: 56, charSpacing: -2, margin: 0, valign: "top",
-  });
-
-  s.addText("None of these conditions held two years ago. All four crossed their threshold in Q1 2026.", {
-    x: MX, y: 3.05, w: W - 2 * MX, h: 0.6,
-    fontSize: 16, fontFace: F.sans, color: C.ink3, margin: 0,
-  });
-
-  // 2x2 grid of forces — each with a big number + 2-line takeaway
-  const gy = 3.85, gh = 1.55, gap = 0.25;
-  const gw = (W - 2 * MX - gap) / 2;
-  const forces = [
-    ["$9B", "Cursor proves AI-dev-infra is a real market.\nThe layer above is the next category."],
-    ["Mar '26", "SlopCodeBench + AI-debt papers shipped.\nDrift quantified for the first time."],
-    ["GPT-5", "Frontier models finally reliable for deterministic regen.\nSame prompt, same output, every cycle."],
-    ["60% / 0–20%", "Devs use AI in 60% of work; can fully delegate 0–20%.\nGovernance is the new bottleneck."],
-  ];
-  forces.forEach(([num, txt], i) => {
-    const col = i % 2, row = Math.floor(i / 2);
-    const cx = MX + col * (gw + gap);
-    const cy = gy + row * (gh + gap);
-    s.addShape(pres.shapes.RECTANGLE, {
-      x: cx, y: cy, w: gw, h: gh,
-      fill: { color: C.bg }, line: { color: C.line, width: 0.75 },
-    });
-    s.addText(num, {
-      x: cx + 0.3, y: cy + 0.2, w: 4, h: 0.65,
-      fontSize: 26, fontFace: F.serif, italic: true, bold: true,
-      color: C.red, margin: 0, charSpacing: -1,
-    });
-    s.addText(txt, {
-      x: cx + 0.3, y: cy + 0.8, w: gw - 0.6, h: 0.7,
-      fontSize: 12, fontFace: F.sans, color: C.ink2, margin: 0,
-    });
-  });
-}
-
-// =============================================================================
-// SLIDE 6 — INSIGHT (why we win)
-// "Not Cursor's fight." — the value-chain wedge
-// =============================================================================
-{
-  const s = pres.addSlide();
-  s.background = { color: C.bg };
-
-  s.addText("06 / 10", {
-    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.redDeep, charSpacing: 1, margin: 0,
-  });
-  s.addText("INSIGHT", {
-    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
-  });
-
-  s.addText("Not Cursor's fight.", {
-    x: MX, y: 1.0, w: W - 2 * MX, h: 1.1,
-    fontSize: 64, fontFace: F.sans, bold: true,
-    color: C.ink, charSpacing: -2, margin: 0,
-  });
-
-  s.addText("Cursor sells productivity to individual developers. We sell governance to engineering leaders. Different layer, different buyer, different metric.", {
-    x: MX, y: 2.25, w: W - 2 * MX, h: 0.7,
-    fontSize: 16, fontFace: F.sans, color: C.ink3, margin: 0,
-  });
-
-  // 3 horizontal layer rows — value chain (compressed to leave room for kicker)
-  const ry = 3.25, rh = 0.9, rgap = 0.15;
-  const rows = [
-    ["Cursor / Copilot / Codeium", "Vibe coding — chat-driven, in the IDE. Per-edit velocity.", false],
-    ["Kiro / Spec Kit / BMAD", "Spec-driven — per-feature specs. Decay between features.", false],
-    ["VibeLoom", "Contract-driven — system-level contracts govern many cycles. Drift detected at the contract layer.", true],
-  ];
-  rows.forEach(([who, what, us], i) => {
-    const cy = ry + i * (rh + rgap);
-    s.addShape(pres.shapes.RECTANGLE, {
-      x: MX, y: cy, w: W - 2 * MX, h: rh,
-      fill: { color: us ? C.redSoft : C.bg },
-      line: { color: us ? C.red : C.line, width: us ? 1 : 0.5 },
-    });
-    if (us) {
-      s.addShape(pres.shapes.RECTANGLE, {
-        x: MX, y: cy, w: 0.06, h: rh,
-        fill: { color: C.red }, line: { type: "none" },
-      });
-    }
-    s.addText(who, {
-      x: MX + 0.3, y: cy + 0.15, w: 3.8, h: 0.55,
-      fontSize: 15, fontFace: F.mono, bold: true,
-      color: us ? C.redDeep : C.ink, margin: 0, charSpacing: -0.5,
-    });
-    s.addText(what, {
-      x: 4.5, y: cy + 0.2, w: W - MX - 4.5 - 0.3, h: 0.55,
-      fontSize: 13, fontFace: F.sans, color: us ? C.ink2 : C.ink3, margin: 0,
-    });
-  });
-
-  s.addText("We are not in the same fight as Cursor. We win by being one abstraction level up.", {
-    x: MX, y: ry + 3 * (rh + rgap) + 0.05, w: W - 2 * MX, h: 0.5,
-    fontSize: 15, fontFace: F.serif, italic: true, color: C.ink2,
-    align: "center", margin: 0,
-  });
-}
-
-// =============================================================================
-// SLIDE 7 — BUSINESS MODEL
+// SLIDE 8 — BUSINESS MODEL
 // "Open core. Tiered SaaS."
 // =============================================================================
 {
   const s = pres.addSlide();
   s.background = { color: C.bg };
 
-  s.addText("07 / 10", {
+  s.addText("08 / 10", {
     x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
     color: C.redDeep, charSpacing: 1, margin: 0,
   });
@@ -617,97 +708,6 @@ const MX = 0.65;                    // x-margin
     x: MX, y: py + ph + 0.2, w: W - 2 * MX, h: 0.4,
     fontSize: 12, fontFace: F.serif, italic: true, color: C.ink3,
     margin: 0,
-  });
-}
-
-// =============================================================================
-// SLIDE 8 — MARKET
-// "$2.2B SAM." with funnel calc
-// =============================================================================
-{
-  const s = pres.addSlide();
-  s.background = { color: C.bg };
-
-  s.addText("08 / 10", {
-    x: MX, y: 0.45, w: 2, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.redDeep, charSpacing: 1, margin: 0,
-  });
-  s.addText("MARKET", {
-    x: W - MX - 4, y: 0.45, w: 4, h: 0.3, fontSize: 10, fontFace: F.mono, bold: true,
-    color: C.ink5, align: "right", charSpacing: 1, margin: 0,
-  });
-
-  s.addText([
-    { text: "$2.2B SAM.", options: { color: C.ink, bold: true, fontFace: F.sans, breakLine: true } },
-    { text: "Cursor proves it.", options: { color: C.red, italic: true, bold: true, fontFace: F.serif } },
-  ], {
-    x: MX, y: 0.95, w: W - 2 * MX, h: 1.95,
-    fontSize: 56, charSpacing: -2, margin: 0, valign: "top",
-  });
-
-  s.addText("Cursor at $9B revenue/valuation proves AI-dev-infra is a real market. We sell the layer above it — to a different buyer, at a different ACV (per-team, not per-seat).", {
-    x: MX, y: 3.05, w: W - 2 * MX, h: 0.85,
-    fontSize: 15, fontFace: F.sans, color: C.ink3, margin: 0,
-  });
-
-  // Funnel-style left, big number right
-  const fy = 4.05;
-  const funnel = [
-    ["Developers worldwide",                  "30M",   "Stack Overflow Dev Survey 2025"],
-    ["Using AI coding tools (~33%)",          "10M",   "JetBrains 2025; GitHub Octoverse"],
-    ["Multi-cycle agentic generation (~30%)", "3M",    "the cohort that hits drift"],
-    ["× $720 / yr (mid-tier B2B SaaS)",       "$720",  ""],
-  ];
-  funnel.forEach(([label, num, src], i) => {
-    const ry = fy + i * 0.55;
-    s.addText(label, {
-      x: MX, y: ry, w: 6.5, h: 0.4,
-      fontSize: 14, fontFace: F.sans, color: C.ink2, margin: 0,
-    });
-    if (src) {
-      s.addText(src, {
-        x: MX, y: ry + 0.32, w: 6.5, h: 0.2,
-        fontSize: 9, fontFace: F.mono, color: C.ink5, margin: 0,
-      });
-    }
-    s.addText(num, {
-      x: 6.8, y: ry, w: 1.5, h: 0.4,
-      fontSize: 20, fontFace: F.mono, bold: true,
-      color: C.ink, align: "right", margin: 0,
-    });
-  });
-
-  // SAM total at bottom of funnel — red bar accent
-  s.addShape(pres.shapes.LINE, {
-    x: MX, y: fy + 2.35, w: 7.65, h: 0,
-    line: { color: C.red, width: 2 },
-  });
-  s.addText("SAM at saturation", {
-    x: MX, y: fy + 2.45, w: 6.5, h: 0.5,
-    fontSize: 16, fontFace: F.sans, bold: true, color: C.ink, margin: 0,
-  });
-  s.addText("$2.2B", {
-    x: 6.8, y: fy + 2.4, w: 1.5, h: 0.6,
-    fontSize: 28, fontFace: F.serif, italic: true, bold: true,
-    color: C.red, align: "right", margin: 0, charSpacing: -1,
-  });
-
-  // Right side: BIG callout
-  s.addText("$2.2B", {
-    x: 9.0, y: fy, w: W - MX - 9.0, h: 1.3,
-    fontSize: 88, fontFace: F.serif, italic: true, bold: true,
-    color: C.red, align: "left", margin: 0, charSpacing: -3,
-  });
-  s.addText("at saturation, B2B SaaS only", {
-    x: 9.0, y: fy + 1.35, w: W - MX - 9.0, h: 0.35,
-    fontSize: 12, fontFace: F.mono, color: C.ink5, margin: 0,
-  });
-  s.addText([
-    { text: "+ $5B adjacent: ", options: { bold: true, color: C.ink } },
-    { text: "methodology consulting, contract pattern marketplaces, audit + compliance bundles, training.", options: { color: C.ink3 } },
-  ], {
-    x: 9.0, y: fy + 1.85, w: W - MX - 9.0, h: 1.3,
-    fontSize: 12, fontFace: F.sans, margin: 0,
   });
 }
 

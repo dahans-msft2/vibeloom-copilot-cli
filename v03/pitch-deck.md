@@ -4,31 +4,48 @@
 
 This is the **content source** for the pitch deck. The shippable artifact is `v03/pitch-deck.pptx` (16:9, 10 slides, brand-coherent, opens in PowerPoint / Google Slides / Keynote). A blank companion Google Slides file is in Ilya's Drive at *VibeLoom — Pitch Deck — Pre-seed (May 2026)* — populate by uploading the .pptx (Drive auto-converts).
 
-Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the source content here.
+Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx.
 
-> **Two TODO·Ilya placeholders** before submitting:
+> **Three TODO·Ilya placeholders** before submitting:
 > - Slide 9 — *Background:* prior roles, technical depth, shipped products
 > - Slide 9 — *Advisors:* named advisor list or design-partner pipeline
 > - Slide 10 — *target raise dollar amount* (the deck shows `$XXX`; pick per VC conversation; common pre-seed bands for solo deeptech AI infra in 2026: $500K lean → $1M priced)
 
 ---
 
-## Design system
+## Structure: Sequoia 10-slide format + Hearts/Minds/Wallets arc
 
-- Inter (sans), JetBrains Mono (mono), Fraunces (italic serif)
-- Signature red `#e84057`; ink `#0a0a0a`; white background; dark `#0a0a0a` backgrounds for title + ask slides ("dark sandwich")
-- One visual centerpiece per slide, headlines 3–8 words, body 14–16pt
-- The "dark factory" framing is loud: appears on slide 1 (title), slide 3 (the bet), and slide 10 (ask) — bookending the deck
+| # | Section | Hearts → Minds → Wallets | One-line thesis |
+|---|---|---|---|
+| 1  | Purpose         | **Hearts** | *Coding becomes a dark factory.* |
+| 2  | Problem         | **Hearts** | AI ships slop. |
+| 3  | Solution        | **Hearts** | Lights out for coding. |
+| 4  | Why Now         | **Minds**  | Four forces. Same six months. |
+| 5  | Market Size     | **Minds**  | $2.2B SAM. Cursor proves it. |
+| 6  | Competition     | **Minds**  | Not Cursor's fight. |
+| 7  | Product         | **Minds**  | The contract layer. |
+| 8  | Business Model  | **Wallets**| Open core. Tiered SaaS. |
+| 9  | Team            | **Wallets**| Solo today. Two by month six. |
+| 10 | Financials/Ask  | **Wallets**| $XXX. 18 months. Build the dark factory. |
 
 ---
 
-## Slide 1 — Title  *(dark background)*
+## Design system
+
+- Inter (sans), JetBrains Mono (mono), Fraunces (italic serif)
+- Signature red `#e84057`; ink `#0a0a0a`; white background; **dark sandwich** (slide 1 + 10 dark; 2–9 light) signals open/close
+- One visual centerpiece per slide, headlines 3–8 words, body 14–16pt
+- The "dark factory" framing bookends the deck: slide 1 (loud open), slide 3 (the bet), slide 10 (close)
+
+---
+
+## Slide 1 — Purpose  *(Hearts · dark background)*
 
 **Mark:** Vibe**Loom** (top-left, small)
 **Badge:** PRE-SEED · MAY 2026 (top-right, mono)
 
 **HEADLINE (huge italic-serif red, single line):**
-> *Code becomes a dark factory.*
+> *Coding becomes a dark factory.*
 
 **Sub-thesis (bold sans white):**
 > We build the contract layer above it.
@@ -40,7 +57,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 2 — Problem
+## Slide 2 — Problem  *(Hearts)*
 
 **Headline:** AI ships slop.
 
@@ -57,9 +74,9 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 3 — The Bet
+## Slide 3 — Solution  *(Hearts)*
 
-**Headline:** Lights out for code.
+**Headline:** Lights out for coding.
 
 **Sub:** Code is generated, regenerated, never maintained by hand. Humans operate one level up — at the contract.
 
@@ -75,26 +92,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 4 — Product
-
-**Headline:** The contract layer.
-
-**Sub:** Methodology + Skill + deterministic engine. Ships as a Claude Code / Codex Skill. Open source under MIT.
-
-**4-step horizontal flow:**
-
-1. `intent.md` — User edits intent + approves
-2. `regenerate` — Engine produces architecture, code, tests
-3. `eval` — Decidable + mechanical + heuristic checks
-4. `ship` — Code-sync trace closes the loop
-
-**Five modes (single line):** `vibe` (solo) · `pm` (product) · `dev` (tech) · `ux` (design) · `expert` (regulated)
-
-**Footer:** Open source: methodology, Skill, templates. Paid: hosted engine, audit, compliance.
-
----
-
-## Slide 5 — Why now
+## Slide 4 — Why now  *(Minds)*
 
 **Headline (stacked, 2 lines):**
 > Four forces.
@@ -114,7 +112,31 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 6 — Insight
+## Slide 5 — Market  *(Minds)*
+
+**Headline (stacked, 2 lines):**
+> $2.2B SAM.
+> *Cursor proves it.*
+
+**Sub:** Cursor at $9B revenue/valuation proves AI-dev-infra is a real market. We sell the layer above it — to a different buyer (CTO/VPE), at a different ACV (per-team, not per-seat).
+
+**Funnel calc (left column):**
+
+| | |
+|---|---:|
+| Developers worldwide *(Stack Overflow Dev Survey 2025)* | 30M |
+| Using AI coding tools (~33%) *(JetBrains 2025; GitHub Octoverse)* | 10M |
+| Multi-cycle agentic generation (~30% of those) — the cohort that hits drift | 3M |
+| × $720 / yr (mid-tier B2B SaaS) | $720 |
+| **SAM at saturation** | **$2.2B** |
+
+**Right callout (huge italic-serif red):** *$2.2B* at saturation, B2B SaaS only
+
+**Adjacent:** + $5B adjacent — methodology consulting, contract pattern marketplaces, audit + compliance bundles, training.
+
+---
+
+## Slide 6 — Competition  *(Minds)*
 
 **Headline:** Not Cursor's fight.
 
@@ -130,7 +152,26 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 7 — Business model
+## Slide 7 — Product  *(Minds)*
+
+**Headline:** The contract layer.
+
+**Sub:** Methodology + Skill + deterministic engine. Ships as a Claude Code / Codex Skill. Open source under MIT.
+
+**4-step horizontal flow:**
+
+1. `intent.md` — User edits intent + approves
+2. `regenerate` — Engine produces architecture, code, tests
+3. `eval` — Decidable + mechanical + heuristic checks
+4. `ship` — Code-sync trace closes the loop
+
+**Five modes (single line):** `vibe` (solo) · `pm` (product) · `dev` (tech) · `ux` (design) · `expert` (regulated)
+
+**Footer:** Open source: methodology, Skill, templates. Paid: hosted engine, audit, compliance.
+
+---
+
+## Slide 8 — Business model  *(Wallets)*
 
 **Headline:** Open core. Tiered SaaS.
 
@@ -151,31 +192,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 8 — Market
-
-**Headline (stacked, 2 lines):**
-> $2.2B SAM.
-> *Cursor proves it.*
-
-**Sub:** Cursor at $9B revenue/valuation proves AI-dev-infra is a real market. We sell the layer above it — to a different buyer, at a different ACV (per-team, not per-seat).
-
-**Funnel calc (left column):**
-
-| | |
-|---|---:|
-| Developers worldwide *(Stack Overflow Dev Survey 2025)* | 30M |
-| Using AI coding tools (~33%) *(JetBrains 2025; GitHub Octoverse)* | 10M |
-| Multi-cycle agentic generation (~30% of those) — the cohort that hits drift | 3M |
-| × $720 / yr (mid-tier B2B SaaS) | $720 |
-| **SAM at saturation** | **$2.2B** |
-
-**Right callout (huge italic-serif red):** *$2.2B* at saturation, B2B SaaS only
-
-**Adjacent:** + $5B adjacent — methodology consulting, contract pattern marketplaces, audit + compliance bundles, training.
-
----
-
-## Slide 9 — Team
+## Slide 9 — Team  *(Wallets)*
 
 **Headline (stacked, 2 lines):**
 > Solo today.
@@ -197,7 +214,7 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ---
 
-## Slide 10 — Ask  *(dark background)*
+## Slide 10 — Financials / The Ask  *(Wallets · dark background)*
 
 **Headline (stacked, 2 lines, huge):**
 > *$XXX.*  18 months.
@@ -223,7 +240,12 @@ Reproducible: `node v03/build-pitch-deck.js` → regenerates the .pptx from the 
 
 ## Notes for the presenter
 
-- **Dark factory bookends.** Slide 1 opens with "Code becomes a dark factory." Slide 10 closes with "Ship the dark factory." Slide 3 carries it through the middle. Three loud mentions.
-- **Print-to-PDF:** open the .pptx in PowerPoint / Slides / Keynote and File → Export → PDF.
+- **Sequoia order ↔ Hearts/Minds/Wallets** — the deck's structural arc:
+  - **Hearts (1–3):** the dark factory thesis lands. Emotional hook + customer pain + the bet.
+  - **Minds (4–7):** rational case. Why now + market + why we win + product.
+  - **Wallets (8–10):** business case. How we make money + who runs it + what we need.
+- **Dark factory bookends.** Slide 1 opens with "Coding becomes a dark factory." Slide 10 closes with "Ship the dark factory." Slide 3 carries it through the middle. Three loud mentions.
+- **"Coding" vs "code"** — the activity (coding) is what becomes lights-out / machine-tended. Code is the artifact the dark factory produces. Same parallelism as "vibe coding → agentic engineering."
+- **Print-to-PDF:** open the .pptx in PowerPoint / Slides / Keynote → File → Export → PDF.
 - **Stat sources:** all numbers trace to the canonical manifesto's references (refs 3, 5, 7, 10, 13 in `v03/codæ-manifesto.html`). No invented stats.
-- **Not in this deck (intentionally):** financial projections, detailed cap table, exit scenarios. These come at the term-sheet stage if the conversation gets that far.
+- **Not in this deck (intentionally):** financial projections, detailed cap table, exit scenarios. These come at term-sheet stage.

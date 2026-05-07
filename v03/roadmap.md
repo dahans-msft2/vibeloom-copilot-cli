@@ -216,7 +216,7 @@ Show estimated cost (tokens, dollars, wall-time) for each generate/eval/review/r
 
 A shared library of common validation runners (TypeScript strict, Python mypy, Rust clippy, OWASP top-10 for web, SOC 2 for storage). Pairs with the validation-registry pattern in the v03 implementation.
 
-### E4. Codæ for non-code artifacts
+### E4. codæ for non-code artifacts
 
 The same paradigm could govern non-code artifacts: API specs (OpenAPI), infrastructure (Terraform), documentation (technical writing). Most of the methodology generalizes; the templates and validation runners change.
 

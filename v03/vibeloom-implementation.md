@@ -146,27 +146,61 @@ The engine does not own:
 
 ## 5. Stable IDs and registry
 
-### 5.1 ID families
+### 5.1 ID prefix registry
 
-```text
-PREFIX-0001
-```
+Every governed semantic item carries a stable ID of the form `PREFIX-NNNN` (zero-padded 4-digit, fixed width). Globally unique by prefix across the repo, append-only within each family, retired IDs never reused.
 
-| Prefix | Meaning |
-| --- | --- |
-| `CAP` | capability |
-| `CST`, `DEF` | constraint, default |
-| `OBJ`, `KR`, `MET` | product objective, key result, metric |
-| `FR`, `NFR` | functional, non-functional requirement |
-| `EPIC`, `FLOW`, `STORY`, `ACC`, `MS` | user story map |
-| `TERM`, `BC`, `AGG`, `ENT`, `VO`, `INV` | domain model |
-| `VIEW`, `INT`, `UXC`, `MOCK` | UX specs |
-| `EXT`, `TB`, `SNFR` | system context |
-| `CONT`, `CMP` | container, component |
-| `IF`, `DEP`, `BEH`, `NOTE` | component structured content |
-| `BDD`, `SCN` | behavior, scenario |
-| `RUN`, `TASK`, `PLAN` | run, task, dispatch plan IDs |
-| `APPROVAL`, `SYNC`, `GEN`, `EVAL`, `DEC`, `IMP` | trace IDs (approval, code-sync, generation, eval, decision, import) |
+The table below is the **canonical** ID prefix registry. It defines every prefix VibeLoom recognizes, its tier, where it is materialized, its scope, and any layer or derivation constraints. Skill references (the `skill/references/artifacts.md` template inside `vibeloom-templates.md`) and templates derive from this table; if any of them disagree, this table wins.
+
+| Prefix | Name | Tier | Source artifact | Scope | Notes (constraints, derivation) |
+| --- | --- | --- | --- | --- | --- |
+| `CAP` | capability | intent-specs | `intent.md` | root | Root entity; no upstream basis. |
+| `CST` | hard constraint | intent-specs | `intent.md` or `defaults.md` | root | Root entity; no upstream basis. |
+| `DEF` | repo-wide default | intent-specs | `defaults.md` | root | Universally binding once derived; downstream may reference without an explicit typed edge. Tech Stack entries also use `DEF`. |
+| `OBJ` | objective | product-specs | `prd.md` | root | Derives from `CAP`. |
+| `KR` | key result | product-specs | `prd.md` | root | Derives from `OBJ`. |
+| `MET` | metric | product-specs | `prd.md` | root | Derives from `KR`, `FR`, or `NFR`. |
+| `FR` | functional requirement | product-specs | `prd.md` | root | Derives from `CAP`; optionally from `OBJ`/`STORY`. EARS allowed as structured field. |
+| `NFR` | non-functional requirement | product-specs | `prd.md` | root | Derives from `CST` or `OBJ`. EARS allowed. |
+| `EPIC` | epic | product-specs | `usm.md` | root | Derives from `CAP`/`OBJ`. |
+| `FLOW` | workflow / journey | product-specs | `usm.md` | root | Derives from `EPIC`. |
+| `STORY` | story | product-specs | `usm.md` | root | Derives from `EPIC`/`FLOW`. |
+| `ACC` | acceptance criterion | product-specs | `usm.md` | per-`STORY` | Derives from `STORY`. EARS allowed. |
+| `MS` | milestone | product-specs | `usm.md` | root | Groups `STORY`s for delivery. |
+| `TERM` | ubiquitous-language term | product-specs | `dm.md` | root | Domain vocabulary; consumed by `BC`/`AGG`/`ENT`. |
+| `BC` | bounded context | product-specs | `dm.md` | root | **Hosted only by `domain`-layer components.** Derives from `CAP`/`STORY`. |
+| `AGG` | aggregate | product-specs | `dm.md` | per-`BC` | Lives inside one `BC`. |
+| `ENT` | entity | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
+| `VO` | value object | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
+| `INV` | invariant | product-specs | `dm.md` | per-`AGG` | Domain rule scoped to an `AGG`. |
+| `VIEW` | UX view | ux-specs | `ux.md` | root | Optionally cites `MOCK`. |
+| `INT` | UX interaction | ux-specs | `ux.md` | per-`VIEW` | Per-view interaction. |
+| `UXC` | UX constraint | ux-specs | `ux.md` | root | Cross-view design constraint. |
+| `MOCK` | mockup reference | ux-specs | `ux.md` | root | Pointer to file under `ux-specs/mockups/`. |
+| `EXT` | external actor / system | system-specs | `system.md` | root | System context; outside trust boundaries. |
+| `TB` | trust boundary | system-specs | `system.md` | root | Crosses one or more `CONT`s. |
+| `SNFR` | system-wide NFR boundary | system-specs | `system.md` | root | Global cross-cutting NFR. |
+| `CONT` | container | system-specs | `containers.md` (inventory) + per-container `container.md` | root + per-container | Carries required `layer` field (`presentation` / `application` / `domain` / `infrastructure`). |
+| `CMP` | component | system-specs | `container.md` (inventory) + per-component `component.md` | per-`CONT` | Belongs to exactly one `CONT`. Layer inherited from parent `CONT`. |
+| `IF` | owned interface | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content; not an independent graph node in v0.3. |
+| `DEP` | component dependency | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content. |
+| `BEH` | local technical behavior | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content. |
+| `NOTE` | local test/runtime note | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content. |
+| `BDD` | behavioral-scenario artifact | context | `bdd.md` (one file per behavior) | per-`CMP` | One file per behavior; lives under `<container>/<component>/context/bdd/`. |
+| `SCN` | Gherkin scenario | context | `bdd.md` body | per-`BDD` | Inside a `BDD` artifact. |
+| `RUN` | run | runtime | `.vibeloom/runs/RUN-.../` | per-invocation | Append-only ID family; one per `generate`/`reconcile` invocation. |
+| `TASK` | subagent task | runtime | `.vibeloom/runs/RUN-.../tasks/TASK-.../` | per-task | Append-only. |
+| `PLAN` | dispatch plan | runtime | `.vibeloom/runs/RUN-.../plan.yaml` | per-`RUN` | Append-only. |
+| `APPROVAL` | approval trace | trace | `.vibeloom/traces/approvals.jsonl` | append-only | One entry per `approval_unit` flip from `draft` → `approved`. Schema §8.1. |
+| `SYNC` | code-sync trace | trace | `.vibeloom/traces/code-sync.jsonl` | append-only | Source-map-shaped. Schema §8.2. |
+| `GEN` | generation trace | trace | `.vibeloom/traces/generations.jsonl` | append-only | One per task result (success or failure). Schema §8.3. |
+| `EVAL` | eval trace | trace | `.vibeloom/traces/evals.jsonl` | append-only | Per-eval-run. Schema §8.4. |
+| `DEC` | decision trace | trace | `.vibeloom/traces/decisions.jsonl` | append-only | Carries `record_type` (`IDR` / `PDR` / `UDR` / `ADR` / `general`). Schema §8.5. |
+| `IMP` | import trace | trace | `.vibeloom/traces/imports.jsonl` | append-only | One per `import` invocation. Schema §8.6. |
+
+`IDR`, `PDR`, `UDR`, `ADR` are **not** independent ID prefixes — they are `record_type` values inside the unified `DEC-` family. See methodology §11.1.
+
+`IF` / `DEP` / `BEH` / `NOTE` are structured content within `component.md` rather than independent graph nodes; the engine indexes them but does not require them to carry their own derivation edges.
 
 ### 5.2 Registry
 
@@ -192,6 +226,7 @@ The registry is engine state, not LLM context. Subagents **propose** new semanti
 artifact_id: prd
 artifact_type: prd
 tier: product-specs
+approval_unit: product-specs       # which bundle this artifact participates in
 scope_kind: root
 scope_id: root
 status: draft
@@ -199,6 +234,8 @@ timestamp: 2026-05-02T00:00:00Z
 derives_from: [CAP-0001, CST-0002]
 ---
 ```
+
+`approval_unit` is structural — it names the bundle in which this artifact is approved as a single transaction (e.g. `prd.md`, `usm.md`, and `dm.md` all share `approval_unit: product-specs`, so they are reviewed and approved together). `approval_mode` (`user` | `delegated`) is event-level and lives on the approval trace (§8.1), not on the artifact — the orchestrator computes the required mode from the current methodology mode + tier (§5).
 
 ### 6.2 Context artifact
 
@@ -223,6 +260,7 @@ Context artifacts do not carry `status` or `approval_mode`.
 artifact_id: container.notes-api
 artifact_type: container
 tier: system-specs
+approval_unit: system-specs       # containers/components share the system-specs bundle
 scope_kind: container
 scope_id: notes-api
 layer: application                # presentation | application | domain | infrastructure
@@ -262,55 +300,48 @@ Rules (see methodology §6.5):
 
 Each project declares its validation runners once, at the root, in `validation-registry.md`. Code-sync traces reference registered runners by ID.
 
-```yaml
+The file is a markdown document with YAML frontmatter and a fenced YAML body. Concretely:
+
+````markdown
 ---
 artifact_type: validation-registry
 tier: meta
 ---
 
-# typecheck
+# Validation registry
+
+Project-specific validation runners. The orchestrator invokes these by `runner_id` during `eval` and after task patches are staged.
+
+```yaml
 - runner_id: typecheck
   command: tsc --noEmit
   scope: workspace
-  inputs:
-    - src/**
-  outputs:
-    - status
-    - logs
+  inputs:  [src/**]
+  outputs: [status, logs]
 
-# unit tests
 - runner_id: unit
   command: npm test --workspace ${component}
   scope: component
-  inputs:
-    - owned_paths
-    - generated_tests
-  outputs:
-    - status
-    - logs
-    - evidence_refs
+  inputs:  [owned_paths, generated_tests]
+  outputs: [status, logs, evidence_refs]
 
-# contract conformance
 - runner_id: contract-conformance
   command: vibeloom contract-test --component ${component}
   scope: component
-  inputs:
-    - generated_bdd
-    - owned_paths
-  outputs:
-    - status
-    - logs
+  inputs:  [generated_bdd, owned_paths]
+  outputs: [status, logs]
 
-# generated BDD
 - runner_id: bdd
   command: cucumber-js component/${component}/context/bdd
   scope: component
 
-# lint / static analysis
 - runner_id: lint
   command: eslint
   scope: workspace
 ```
+````
+
+Parser: frontmatter is parsed as YAML; the body's first ```yaml fence is parsed as a list of runner records. Subsequent fenced blocks (e.g. usage notes or per-runner explanations) are ignored by the engine and serve human readers only.
 
 Runner families to consider:
 
@@ -357,7 +388,7 @@ Every trace also carries `trace_id`, `kind`, and `timestamp`. These are omitted 
 }
 ```
 
-Approval traces are the non-regenerable approval baseline. They replace approval snapshots from v02.
+Approval traces are the non-regenerable approval baseline — durable across schema versions, never silently rebuilt from current state.
 
 ### 8.2 Code-sync trace
 
@@ -463,6 +494,43 @@ Schema fields:
 
 Decision traces are the single home for human-authored decision history (ADR/PDR/UDR/IDR/general). Promote truly normative decisions to IDed contract items; the trace entry stays immutable. `affects` and `record_type` let a future release (roadmap CGKG-B) promote load-bearing decisions to graph nodes without re-mining prose.
 
+#### 8.5.1 Per-record markdown rendering
+
+The JSONL stream above is canonical. Each entry is also materialized as a per-record markdown file under `/decisions/<record_type>/<TRACE_ID>-<slug>.md` (e.g. `/decisions/adr/ADR-20260502-003-tax-calculation-strategy.md`). The markdown is a **derived view** — the engine regenerates it from the JSONL whenever the trace is appended.
+
+Why two presentations: the JSONL is the append-only event log (machine-parseable, schema-versioned); the markdown is git-friendly (per-decision blame), human-readable (open in any editor), and ecosystem-compatible (`adr-tools`, `log4brains`, Structurizr ADR plugins all expect a folder of markdown files).
+
+File frontmatter mirrors a subset of the JSONL fields:
+
+```yaml
+---
+trace_id: DEC-20260502-003
+kind: decision
+record_type: ADR
+timestamp: 2026-05-02T15:00:00Z
+author: ilya@vibeloom.ai
+topic: tax-calculation-strategy
+load_bearing: true
+affects: [BC-0008, FR-0042]
+---
+
+# ADR-20260502-003 — Tax calculation strategy
+
+## Context
+...
+
+## Decision
+Selected progressive bracket calculation over flat-rate.
+
+## Consequences
+- Rejected: flat-rate (oversimplifies state-level variance)
+- Rejected: per-jurisdiction lookup (too brittle to maintain)
+```
+
+Body shape is the Nygard ADR template (Context / Decision / Consequences) by default; users may amend the body for human readability without affecting the JSONL trace (the JSONL `payload` carries the raw decision content; body prose is regenerated from `payload` on first materialization, then preserved on subsequent regenerations of *other* fields). When `load_bearing` flips to `false`, the file remains on disk with frontmatter updated.
+
+The markdown files are regenerable: `vibeloom decisions render` rebuilds the entire `/decisions/` tree from `decisions.jsonl`. Drop the tree, run the command, identical files come back.
+
 ### 8.6 Import trace
 
 ```json
@@ -537,7 +605,7 @@ Computation rules:
 | `current` | item's `derives_from` hashes match the latest approval trace for its basis, AND no eval finding exists |
 | `stale` | item's `derives_from` hashes do not match the latest approval trace for its basis (basis was reapproved with changes) |
 | `uncovered` | a downstream artifact is required by template/derivation rules but does not exist; OR an upstream item has no downstream realization where one is mandated |
-| `dangling` | item's `derives_from` references an ID not present in the registry (item was retired) |
+| `dangling` | item's `derives_from` references an ID that is no longer live — the ID is retired in the registry, or was never allocated |
 | `drifted` | item's content hash differs from its expected hash given basis (semantic mismatch flagged by eval), OR a direct edit was detected (file mtime + hash diff without a generation trace) |
 | `obsolete` | user-marked, OR all downstream consumers are themselves obsolete or absent (heuristic) |
 
@@ -622,28 +690,43 @@ assets/tasks/
 
 ### 12.1 Structure
 
-Every task template has:
+Every task template follows the canonical Design-by-Contract structure (an hommage to Meyer, consistent with the codæ manifesto §7):
 
 ```text
 # <task name>
 
+## Purpose
+One-paragraph statement of what this task does and why it exists.
+
 ## Inputs
 Concrete list of inputs the orchestrator must provide before invoking this task.
+
+## Preconditions
+What must be true about the world before this task runs (caller's responsibility — the orchestrator gates on these).
 
 ## Steps
 Numbered, prose-form steps the agent should follow.
 
 ## Output
-The shape and required fields of the result the agent must return.
+The shape and required fields of the result the agent must return (data structure).
+
+## Postconditions
+State-of-the-world guarantees after the task succeeds (callee's responsibility — what the task promises).
 
 ## Constraints
-Hard rules the orchestrator will enforce on the result.
+Hard rules the agent must follow during the task; the orchestrator will enforce on the result.
+
+## Invariants
+Properties that must hold both before and after the task (often task-specific; system-wide invariants from §13.4 also apply).
 
 ## Validation
 What the orchestrator runs against the result before accepting it.
+
+## Failure modes
+Known failure modes and recovery handoffs (typically points to `references/troubleshooting.md`).
 ```
 
-The orchestrator validates the result against the constraints and validation rules. The template itself is an artifact — versioned, mendable, and tracked in `.vibeloom/traces/` when changed.
+The orchestrator validates the result against the constraints, invariants, and validation rules. Postconditions are the structural-eval target — when the orchestrator can deterministically check a postcondition, it promotes it from heuristic to mechanical to structural per the verification ladder (§14.3). The template itself is an artifact — versioned, mendable, and tracked in `.vibeloom/traces/generations.jsonl` via `task_template_version` when changed.
 
 ### 12.2 Example: `generate-product-specs.md`
 
@@ -748,28 +831,45 @@ The engine assembles waves deterministically from the affected set:
 4. **Reconciliation singletons.** Reconciliation tasks always go in singleton waves (one subagent per wave). Reconciliation may need to read state the orchestrator just applied; isolating it prevents read/write surprises.
 5. **Eval ordering.** Read-only eval tasks may run alongside generation tasks in the same wave only if they target a different scope. Otherwise eval runs as a separate wave after.
 
-### 13.3 Parallel semantics
+### 13.3 Parallel semantics: `execute_plan(plan)`
+
+`execute_plan(plan)` is the single primitive that turns a dispatch plan into committed work and traces. `generate` and `reconcile` both invoke it; nothing else in the engine touches subagents directly.
 
 ```pseudo
-for wave in plan.waves:
-  tasks = []
-  for scope in wave.scopes:
-    header = build_subagent_header(scope, wave, run, plan)
-    tasks.append(subagent.spawn(header))   # returns a future; runs concurrently
+execute_plan(plan):
+  for wave in plan.waves:
+    pending = []
+    for scope in wave.scopes:
+      template = task_template_for(scope.kind)
+      header   = build_subagent_header(scope, wave, run, plan)
+      future   = subagent.spawn(header)              # runs concurrently
+      pending.append({"future": future, "scope": scope, "template": template})
 
-  # all tasks in this wave run in parallel
-  results = await all(tasks)
+    # all tasks in this wave run in parallel
+    completed = await all([p["future"] for p in pending])
 
-  # process results in scope_id order to make patch application deterministic
-  for r in sorted(results, key=lambda r: r.scope_id):
-    orchestrator.apply_atomic(r)           # see §14
+    # process results in deterministic scope_id order — reproducible run-to-run
+    for p, r in sorted(zip(pending, completed), key=lambda x: x[1].scope_id):
+      scope, template = p["scope"], p["template"]
+      orchestrator.validate_summary(r, template)   # against template.output_shape
+      orchestrator.validate_scope(r.patch, scope.allowed_paths)
+      orchestrator.stage(r.patch)
+      validation = orchestrator.run_validators(scope, r)
+      if not validation.passed:
+        traces.write("generations", FAILED, r, validation)
+        continue                                     # peers in this wave still apply
+      orchestrator.apply_atomic(r.patch)             # see §14
+      traces.write("generations", OK, r, validation)
+      if scope.is_code:
+        traces.write("code-sync", build_sync_record(r, validation))
 ```
 
 Key properties:
-- `subagent.spawn(header)` returns a future. The runtime concurrency is bounded by `max_wave_size`.
-- Results are processed in deterministic `scope_id` order even though they completed in arbitrary order. This makes the resulting working-tree state reproducible run-to-run for the same plan.
-- Validation runners per task run inside the subagent's staging dir (`.vibeloom/runs/RUN-.../tasks/TASK-.../`) before the orchestrator applies the patch to the working tree. A failed task does not block the wave — successful peers in the wave still apply.
-- Same-wave outputs are not input to other same-wave tasks. Cross-wave handoff happens only between waves (orchestrator commits W1's patches before assembling W2's load sets).
+- `subagent.spawn(header)` returns a future. Runtime concurrency is bounded by `max_wave_size`.
+- Each result is paired with the `scope` and `template` that produced it (via `pending`); validation, trace writing, and code-sync emission all use that pair, never values from a different scope.
+- Results are processed in deterministic `scope_id` order even though they completed in arbitrary order, so the working-tree state is reproducible run-to-run for the same plan.
+- A failed task does not block the wave — successful peers still apply atomically. Failure is recorded in the generation trace.
+- Same-wave outputs are not input to other same-wave tasks. Cross-wave handoff happens only between waves (W1's patches are committed before W2's load sets are assembled).
 
 ### 13.4 Subagent task header schema
 
@@ -806,6 +906,8 @@ budget:
   max_tokens: 50000
   max_wall_ms: 60000
 ```
+
+`result_shape_id` references the task template's `## Output` section by name (matching the template's `task_template_id` plus a result-kind suffix, e.g. `ux-generation-summary` for `generate-ux-specs`). The orchestrator's `validate_summary(r, template)` checks that the returned result matches the field structure and required fields specified there. When a task template's `## Output` changes incompatibly, bump `template_version` (§12.3) — `result_shape_id` is stable across compatible changes.
 
 Mendable means schema'd. Changing how the orchestrator prompts subagents means versioning this header — same policy as trace schemas (§8.7).
 
@@ -849,26 +951,8 @@ This section gives brief pseudocode for each operation. Algorithms are intention
 ```pseudo
 generate(target_or_scope):
   affected = engine.affected_set(target_or_scope, include=["stale", "uncovered"])
-  plan = engine.dispatch_plan(affected)
-  for wave in plan.waves:
-    tasks = []
-    for scope in wave.scopes:
-      template = task_template_for(scope.kind)
-      load_set = engine.load_set(scope, template.inputs)
-      tasks.append(subagent.spawn(template, load_set, scope))
-    results = await all(tasks)
-    for r in results:
-      orchestrator.validate_summary(r, template)
-      orchestrator.validate_scope(r.patch, scope.allowed_paths)
-      orchestrator.stage(r.patch)
-      validation = orchestrator.run_validators(scope, r)
-      if not validation.passed:
-        traces.write("generations", FAILED, r, validation)
-        continue
-      orchestrator.apply_atomic(r.patch)
-      traces.write("generations", OK, r, validation)
-      if scope.is_code:
-        traces.write("code-sync", build_sync_record(r, validation))
+  plan     = engine.dispatch_plan(affected)
+  execute_plan(plan)        # §13.3 — wave assembly, validation, traces, failure handling
   status.recompute()
 ```
 
@@ -895,15 +979,15 @@ eval(target):
 review(target):
   loop:
     findings = eval(target)
-    packet = engine.build_review_packet(target, findings)
-    decision = user.show(packet)  # may add notes, accept, reject, edit
-    if decision is approve:
+    packet   = engine.build_review_packet(target, findings)
+    decision = user.show(packet)                    # may add notes, accept, reject, edit
+    if decision.action == "approve":
       return packet
-    if decision is exit:
-      return packet  # findings remain
-    # decision is propose_fix(es)
+    if decision.action == "exit":
+      return packet                                 # findings remain
+    # decision.action == "propose_fix"
     for fix in decision.fixes:
-      subagent.apply_bounded_fix(target, fix)  # only edits target; no propagation
+      subagent.apply_bounded_fix(target, fix)       # only edits target; no propagation
     # loop re-evaluates
 ```
 
@@ -1141,12 +1225,74 @@ Generated obligations must become IDed items (`VIEW`, `INT`, `UXC`, `STORY`, `AC
 - [ ] `status` distinguishes `current`, `stale`, `uncovered`, `dangling`, `drifted`, and `obsolete`.
 - [ ] Each operation has explicit, traceable execution semantics (§15.1–§15.8).
 - [ ] Vibe layout is genuinely minimal (no graph cache, no code-sync trace) — not a stripped full mode.
+- [ ] Templates exist only as fenced blocks in `vibeloom-templates.md`; the on-disk template tree (`templates/`, gitignored) is a build artifact materialized on demand by `extract-templates.py`. CI runs `--check` to confirm round-trip parses.
 
 ---
 
-## 19. See also
+## 19. Templates
+
+Every template, skill reference, and skill manifest is specified canonically in [`vibeloom-templates.md`](vibeloom-templates.md). **Templates do not exist as source files.** The on-disk template tree is a build artifact, materialized on demand by [`extract-templates.py`](extract-templates.py) into `templates/` (gitignored). The repo's source tree contains only the canonical markdown source plus the extractor.
+
+### 19.1 Build-time workflow
+
+```
+edit vibeloom-templates.md          ← only canonical source
+       │
+       ▼
+python3 extract-templates.py        ← materializes templates/ on demand
+       │
+       ▼
+templates/  (gitignored)            ← consumed by the skill at runtime;
+                                      regenerable, never committed
+```
+
+There is no on-disk template tree to keep in sync. All template edits go directly into `vibeloom-templates.md`. Skill bundling at release time (or any local development pass that needs the materialized tree) runs the extractor.
+
+CI runs `python3 extract-templates.py --check` against a freshly extracted tree to confirm that the source is parseable and round-trip-clean. There is no "drift" to detect at the spec level — the canonical source is a single file by construction.
+
+### 19.2 Extractor protocol
+
+A template block opens with **four** backticks immediately followed by `template:<relative-path>` and closes with a line of exactly four backticks. Four (not three) so that ordinary 3-backtick fences inside the body — `​`​`​`yaml`, `​`​`​`text`, etc. — do not prematurely close the outer block.
+
+````markdown
+````template:tasks/init.md
+# Initialize
+
+```yaml
+inputs: ...
+```
+````
+````
+
+The extractor writes everything between the opener and closer, verbatim, to `<dest>/<relative-path>` (default `templates/<relative-path>`). Idempotent. `--check` mode diffs and exits non-zero on drift.
+
+### 19.3 Inventory and contracts
+
+`vibeloom-templates.md` defines 41 templates in five families. Each family has a contract: a set of structural rules every template in that family must satisfy. Templates may add prose, examples, and craft beyond the contract; they may not omit what the contract requires.
+
+| Family | Path prefix (in extracted tree) | Count | Contract (every template in this family must…) |
+| --- | --- | --- | --- |
+| Skill manifest | `skill/SKILL.md` | 1 | YAML frontmatter with `name: vibeloom`, `description`, `argument-hint`. Body lists when-to-use, authoritative sources, runtime references, templates, command routing, guardrails. |
+| Subagent prompt | `skill/subagent-prompt.md` | 1 | Body shape that wraps the canonical subagent task header (§13.4) into a working prompt; includes load-set, allowed-paths, validation-contract sections. |
+| Skill references | `skill/references/*.md` | 6 | Load-on-demand condensations of methodology + implementation. Each is self-contained for its operation; canonical-source pointer in the header. Files: `operations.md`, `modes.md`, `runtime.md`, `artifacts.md`, `eval.md`, `troubleshooting.md`. |
+| Task templates | `tasks/*.md` | 14 | Canonical Design-by-Contract structure (10 sections): `## Purpose`, `## Inputs`, `## Preconditions`, `## Steps` (numbered), `## Output` (named result shape with required fields), `## Postconditions`, `## Constraints`, `## Invariants`, `## Validation`, `## Failure modes`. See §12.1. Trailer carries `task-template-version`. |
+| Artifact templates | `artifacts/**/*.md` | 18 | YAML frontmatter (`artifact_type`, `tier`, `scope_kind`, `scope_id`, `derives_from`, plus contract-artifact-only `status` and `approval_unit`). Body uses the prefix families defined in §5.1. Tables for IDed items use canonical column conventions (see the `skill/references/artifacts.md` template). |
+| Project-level meta | `artifacts/validation-registry.md`, plus README | 2 | Validation registry per §7. README documents the directory layout. |
+
+When adding a new template:
+1. Add the body inside a fenced block in `vibeloom-templates.md` (with a TOC entry up top).
+2. Run `python3 extract-templates.py` to verify the source parses and the new file extracts cleanly.
+3. Verify the new template satisfies its family contract above.
+4. Update §19.3's count.
+
+When changing a template's family contract, the structural change should be reflected in the relevant implementation section first (§5, §6, §7, §12, etc.); the template body in `vibeloom-templates.md` is then updated to match.
+
+---
+
+## 20. See also
 
 - [`vibeloom-methodology.md`](vibeloom-methodology.md) — what VibeLoom is
+- [`vibeloom-templates.md`](vibeloom-templates.md) — canonical source for every template (extracted to `templates/` on demand via `extract-templates.py`; never committed)
 - [`codæ-manifesto.html`](codæ-manifesto.html) — the case for contract-driven agentic engineering
 - [`vibeloom-comparison.html`](vibeloom-comparison.html) — VibeLoom vs Kiro, Spec Kit, BMAD
 - [`getting-started.md`](getting-started.md) — 30-minute on-ramp for new users

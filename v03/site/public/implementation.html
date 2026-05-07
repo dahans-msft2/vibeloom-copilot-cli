@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
 <meta property="article:author" content="Ilya Baimetov">
 <meta property="article:published_time" content="2026-04-17T00:00:00Z">
-<meta property="article:modified_time" content="2026-04-28T00:00:00Z">
+<meta property="article:modified_time" content="2026-05-06T00:00:00Z">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
@@ -56,7 +56,7 @@
       "url": "https://vibeloom.ai/implementation",
       "mainEntityOfPage": "https://vibeloom.ai/implementation",
       "datePublished": "2026-04-17",
-      "dateModified": "2026-04-28",
+      "dateModified": "2026-05-06",
       "inLanguage": "en-US"
     },
     {
@@ -176,7 +176,7 @@
       <ul>
         <li>Receive operations (<code>init</code>, <code>generate</code>, <code>review</code>, etc.) and parse them into a target tier and scope.</li>
         <li>Load the correct subset of <code>references/</code> for the operation — never load everything.</li>
-        <li>Materialize templates from <code>assets/</code> when generating new artifacts.</li>
+        <li>Materialize templates by extracting from <code>vibeloom-templates.md</code> at skill-build time.</li>
         <li>Invoke the engine for parsing, eval, staleness, dispatch planning, and status.</li>
         <li>Run heuristic semantic eval (the verification ladder's top tier — see methodology) against items the engine flagged as in scope.</li>
         <li>Dispatch scoped subagents in waves for code generation, with bounded load sets (see Subagent dispatch).</li>
@@ -256,19 +256,30 @@ status       --repo &lt;path&gt;                       # Emit + persist status a
 
       <p>A typical container fragment:</p>
       <pre><code>---
-type: container
-status: approved
-container: notes-api
+artifact_id: container.notes-api
+artifact_type: container
+tier: system-specs
+approval_unit: system-specs
+scope_kind: container
+scope_id: notes-api
 layer: application
+status: approved
+derives_from: [CONT-0002]
 ---</code></pre>
 
       <p>A typical domain-layer component fragment:</p>
       <pre><code>---
-type: component
+artifact_id: component.search.notes-search
+artifact_type: component
+tier: system-specs
+approval_unit: system-specs
+scope_kind: component
+scope_id: search/notes-search
+container_id: CONT-0007
+component_id: CMP-0019
+hosted_bounded_contexts: [BC-0003]
 status: approved
-approval_mode: user
-container: search
-component: notes-search
+derives_from: [CMP-0019]
 ---
 
 ## IF-0014 · search(query, tags) → results
@@ -412,7 +423,7 @@ python3 -m venv .venv
       <p>The Skill is, by nature, harder to unit-test — it runs inside an LLM. Behavior is verified end-to-end against the canonical operations on a set of seed projects.</p>
 
       <div class="callout">
-        <strong>Generation-ready templates:</strong> the concrete artifact templates, task templates, SKILL.md, and references that materialize this implementation into a working Skill live at <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/templates" target="_blank" rel="noopener">v03/templates/</a>. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/templates#readme" target="_blank" rel="noopener">templates/README.md</a> for the directory map.
+        <strong>Generation-ready templates:</strong> every artifact template, task template, SKILL.md, and skill reference that materializes this implementation into a working Skill is specified canonically in <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/vibeloom-templates.md" target="_blank" rel="noopener">vibeloom-templates.md</a>. Templates do not exist as source files — run <code>python3 extract-templates.py</code> to materialize them into <code>templates/</code> (gitignored) on demand.
       </div>
 
       <hr>

@@ -2,7 +2,7 @@
 
 A solo developer wants a personal note-taking app with full-text search, tags, and offline support. This example shows VibeLoom in `vibe` mode end-to-end (with actual artifact contents), then the upgrade trigger when the app outgrows it.
 
-The artifact contents below are exactly what the templates in `v03/templates/` materialize into. The intent of this example is to show that the templates produce real, usable artifacts — not just diagrams of what could be.
+The artifact contents below are exactly what the templates in `v03/vibeloom-templates.md` (extracted to `templates/` at build time) materialize into. The intent of this example is to show that the templates produce real, usable artifacts — not just diagrams of what could be.
 
 ---
 
@@ -346,7 +346,7 @@ Existing code is import-analyzed against the freshly generated full contract; mo
 ## What this example illustrates
 
 - **Vibe is genuinely minimal** — no graph cache, no code-sync trace folder beyond the basics. Just intent + defaults + flat system + approvals.jsonl.
-- **Templates produce real artifacts** — every code block above is what the templates in `v03/templates/artifacts/` materialize into. Frontmatter, sections, item IDs, `derives_from` edges all match the spec.
+- **Templates produce real artifacts** — every code block above is what the templates in `v03/vibeloom-templates.md` (extracted to `templates/artifacts/` at build time) materialize into. Frontmatter, sections, item IDs, `derives_from` edges all match the spec.
 - **Tech Stack section is structured** — per DDD layer, fields filled or empty signal binding-vs-agent-decides, choices have DEF ids and derives_from links.
 - **Conflict is the test, not clean cascade** — the value of the contract shows up when the agent's generation contradicts an upstream constraint. The reconciliation produces a load-bearing decision trace.
 - **Decision traces have classification** — the FTS5 choice is an `ADR` (architecture decision) with explicit `affects` (CMP-0003, DEF-0006). Future eval queries can answer "why is search using FTS5?" by walking the trace.

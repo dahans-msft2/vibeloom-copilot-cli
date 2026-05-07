@@ -72,7 +72,7 @@
       "operatingSystem": "Cross-platform",
       "url": "https://vibeloom.ai/",
       "description": "Contract-driven agentic engineering. A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.",
-      "softwareVersion": "0.2",
+      "softwareVersion": "0.3",
       "author": {"@type":"Person","name":"Ilya Baimetov","url":"https://vibeloom.ai/contact"},
       "publisher": {"@id":"https://vibeloom.ai/#org"},
       "offers": {"@type":"Offer","price":"0","priceCurrency":"USD"},
@@ -81,12 +81,14 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"For throwaway scripts, weekend demos, or single-file utilities, prompt-only generation is faster. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
+        {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"Throwaway scripts, weekend demos, single-file utilities, hackathon work. Prompt-only generation is faster and sufficient. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
         {"@type":"Question","name":"What is codæ and how does it relate to VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"codæ — contract-driven agentic engineering — is the paradigm. VibeLoom is one concrete instantiation. codæ makes the case (in the manifesto); VibeLoom delivers it as an open-source Skill + engine for Claude Code and Codex."}},
-        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the spec-driven development family but goes a step further: contract-driven, not just spec-driven. Other spec-driven tools — GitHub Spec Kit, Kiro, BMAD — generate specs that decay after one feature. Tessl pivoted to per-skill context management. VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation."}},
-        {"@type":"Question","name":"Does VibeLoom work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill — clone the repo from GitHub and point Claude Code or Codex at it as a Skill source. Python 3.10+ is the only system requirement for the deterministic engine; no pip install, no runtime dependencies."}},
-        {"@type":"Question","name":"What is contract-driven development?","acceptedAnswer":{"@type":"Answer","text":"Contract-driven development treats specifications as a tiered, version-controlled contract that actively governs generation, evaluation, and reconciliation across the lifecycle — not as one-off planning documents that decay after the first feature."}},
-        {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern in which structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development by treating the entire spec stack as a living contract that governs the codebase across every change, not just the first generation pass."}}
+        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the broader spec-driven development family but goes a step further: contract-driven, not just spec-driven. Other spec-driven tools — GitHub Spec Kit, Kiro, BMAD — generate specs that decay after one feature. Tessl pivoted to per-skill context management. VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation."}},
+        {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern where structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass."}},
+        {"@type":"Question","name":"Won't another prompt cycle just fix the drift?","acceptedAnswer":{"@type":"Answer","text":"Better prompts help one run. A contract stack helps future runs inherit approved meaning, scoped context, and known boundaries — without relying on chat memory. Drift is a structural problem; prompts are a tactical fix. Baltes et al. (arXiv 2603.27249, 2026) frame the cumulative cost of AI slop as a tragedy of the commons: individual prompt-level wins externalize onto reviewers, maintainers, and the codebase. Better prompts don't survive the next chat. A graph-connected contract does."}},
+        {"@type":"Question","name":"Does it work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill — clone the repo from GitHub and point Claude Code or Codex at it as a Skill source. Python 3.10+ is the only system requirement for the deterministic engine — no pip install, no runtime dependencies. (A discoverable Skill registry entry is on the v0.3 roadmap.)"}},
+        {"@type":"Question","name":"Can I adopt it on an existing AI-coded codebase?","acceptedAnswer":{"@type":"Answer","text":"Yes. /vibeloom import --mode <mode> reconstructs a candidate contract bottom-up from existing code. You still review and approve top-down. Brownfield is a first-class path, not an afterthought."}},
+        {"@type":"Question","name":"Do I need DDD experience to use it?","acceptedAnswer":{"@type":"Answer","text":"For vibe mode, no — it skips the domain-model formalism entirely. For pm, dev, and expert modes, vocabulary like bounded contexts and ubiquitous language matters. Start in vibe; upgrade when the project earns the ceremony."}}
       ]
     },
     {
@@ -292,7 +294,7 @@
     </div>
 
     <div class="vision-body bet-tight">
-      <p><strong>Code is going dark factory.</strong></p>
+      <p><strong>Coding is going dark factory.</strong></p>
       <p><strong>Spec-driven moved upstream</strong> — per-feature only. Specs decay.</p>
       <p><strong>Contract-driven governs the lifecycle.</strong> The dark-factory enabler.</p>
     </div>

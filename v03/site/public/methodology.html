@@ -23,7 +23,7 @@
 <meta property="og:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
 <meta property="article:author" content="Ilya Baimetov">
 <meta property="article:published_time" content="2026-04-17T00:00:00Z">
-<meta property="article:modified_time" content="2026-04-28T00:00:00Z">
+<meta property="article:modified_time" content="2026-05-06T00:00:00Z">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
@@ -56,7 +56,7 @@
       "url": "https://vibeloom.ai/methodology",
       "mainEntityOfPage": "https://vibeloom.ai/methodology",
       "datePublished": "2026-04-17",
-      "dateModified": "2026-04-28",
+      "dateModified": "2026-05-06",
       "inLanguage": "en-US"
     },
     {
@@ -170,7 +170,7 @@
         <li>Drift would be expensive or dangerous.</li>
         <li>You need traceability from intent to implementation.</li>
       </ul>
-      <p>Skip VibeLoom for throwaway prototypes, single-file utilities, or weekend demos. Heuristic: under ~500 LOC and not surviving past one cycle, prompt-only is faster.</p>
+      <p>Skip VibeLoom for throwaway prototypes, single-file utilities, or weekend demos. Heuristic: if the system is single-author, single-cycle, and small enough that re-reading it end-to-end before each change is faster than maintaining a contract about it, prompt-only is faster. Once any of those breaks — second contributor, second iteration, or the cost-of-rereading exceeds the cost-of-governing — the contract overhead pays back.</p>
 
       <hr>
 
@@ -419,7 +419,7 @@
       <ul>
         <li><a class="linky" href="codae.html"><span class="codae">cod<span class="ae">æ</span></span> — the manifesto</a> — the case for the paradigm</li>
         <li><a class="linky" href="implementation.html">VibeLoom Implementation</a> — how it's built (engine, layout, schemas, dispatch)</li>
-        <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/templates" target="_blank" rel="noopener">v03/templates/ on GitHub</a> — concrete artifact templates, task templates, SKILL.md, references that materialize this methodology into a working Skill</li>
+        <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/vibeloom-templates.md" target="_blank" rel="noopener">vibeloom-templates.md on GitHub</a> — canonical source for every artifact template, task template, SKILL.md, and skill reference that materializes this methodology into a working Skill (extracted to <code>templates/</code> on demand)</li>
         <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/examples" target="_blank" rel="noopener">Examples on GitHub</a> — worked scenarios (greenfield-note-search has embedded artifact contents demonstrating the templates)</li>
         <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/getting-started.md" target="_blank" rel="noopener">Getting started</a> — 30-minute on-ramp</li>
       </ul>

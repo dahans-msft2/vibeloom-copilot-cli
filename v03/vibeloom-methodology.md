@@ -35,7 +35,6 @@ What VibeLoom defines:
 6. **Traces are evidence, not truth.** Trace data may propose improvements; it never silently mutates contract or context.
 7. **False positives beat false negatives.** Over-marking drift wastes work; under-marking lets incoherence leak through.
 8. **Contract aspires toward decidability.** Eval operates on a verification ladder (§14.3) of *decidable* structural checks, *mechanical* validation runners, and *heuristic* semantic eval. The trajectory is to promote checks upward — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
-9. **Traces are sufficient for future graph promotion.** Each trace family carries the metadata to materialize its implied relationships into graph form. v0.3 ships the contract graph as a knowledge graph (instantiated ontology only); trace schemas let decision provenance, code-sync mapping, and other contextual relationships promote to graph nodes/edges later without information loss (see roadmap CGKG-B).
 
 ---
 
@@ -56,7 +55,7 @@ Do not use VibeLoom for:
 - weekend demos,
 - tasks where reviewing the generated code is plainly faster than governing a contract.
 
-A heuristic: if the generated code surface is under ~500 LOC and will not survive past one development cycle, prompt-only is faster. Above that threshold, or for multi-cycle work, the contract overhead pays back.
+A heuristic: if the system is single-author, single-cycle, and small enough that re-reading it end-to-end before each change is faster than maintaining a contract about it, prompt-only is faster. Once any of those breaks — second contributor, second iteration, or the cost-of-rereading exceeds the cost-of-governing — the contract overhead pays back.
 
 ---
 
@@ -102,27 +101,27 @@ traces run alongside as durable provenance.
 
 A mode controls contract depth, approval gates, and UX surface.
 
-| Mode | Stack | Lead | User-owned approval stops | Delegated tiers | Internal structure |
-| --- | --- | --- | --- | --- | --- |
-| `vibe` | compact | solo | `intent-specs` | system + code | minimal — no graph, no code-sync, no formal status |
-| `pm` | full | product | `intent-specs`, `product-specs`, optionally `ux-specs` | `system-specs` | full graph + traces |
-| `dev` | full | tech | `intent-specs`, `system-specs` | `product-specs`, optionally `ux-specs` | full graph + traces |
-| `ux` | full | design | `intent-specs`, `ux-specs`, optionally `product-specs` | `system-specs` | full graph + traces |
-| `expert` | full | architect | all contract tiers | none | full graph + traces |
+| Mode | Lead | User-owned approval stops | Delegated tiers | Internal structure |
+| --- | --- | --- | --- | --- |
+| `vibe` | solo | `intent-specs` | system + code | minimal — no graph, no code-sync, no formal status |
+| `pm` | product | `intent-specs`, `product-specs`, optionally `ux-specs` | `system-specs` | full graph + traces |
+| `dev` | tech | `intent-specs`, `system-specs` | `product-specs`, optionally `ux-specs` | full graph + traces |
+| `ux` | design | `intent-specs`, `ux-specs`, optionally `product-specs` | `system-specs` | full graph + traces |
+| `expert` | architect | all contract tiers | none | full graph + traces |
 
 `intent-specs` are always user-owned. Delegated auto-advance is allowed only when structural eval passes and no semantic judgment requires escalation.
 
-### 5.1 Vibe is intentionally minimal
+### 5.1 vibe is intentionally minimal
 
 `vibe` is not a stripped-down full mode — it's a different operating point. The compact stack: `intent.md`, an inferred flat `system.md`, an `AGENTS.md` for the model. No IDed graph, no code-sync trace, no formal status. A modern model keeps the small system coherent on its own.
 
-Vibe still emits approval traces — approval provenance survives for the future upgrade — but skips the heavyweight machinery.
+vibe still emits approval traces — approval provenance survives for the future upgrade — but skips the heavyweight machinery.
 
 ### 5.2 Upgrade is a feature
 
-Vibeloom watches lightweight heuristics during a vibe project — number of components emerging, approximate LOC, number of contributors, frequency of reconciliation pain — and recommends upgrade when the system has clearly outgrown vibe. Upgrade (`init --upgrade --mode <pm|dev|ux|expert>`) is one-way and produces an explicit migration trace. The compact stack expands into the full graph; existing code is import-analyzed against the freshly generated full contract.
+VibeLoom watches lightweight heuristics during a vibe project — number of components emerging, approximate LOC, number of contributors, frequency of reconciliation pain — and recommends upgrade when the system has clearly outgrown vibe. Upgrade (`init --upgrade --mode <pm|dev|ux|expert>`) is one-way and produces an explicit migration trace. The compact stack expands into the full graph; existing code is import-analyzed against the freshly generated full contract.
 
-### 5.3 UX mode is designer-led + PM peer
+### 5.3 ux mode is designer-led + PM peer
 
 `ux` is the design-led counterpart to `pm` (product-led) and `dev` (tech-led). It exists for products where the designer drives discovery — where mockups, flows, and user-visible behavior are authored *first* and product specs follow.
 
@@ -211,16 +210,9 @@ Every container carries a `layer` field — a required enum drawn from the DDD a
 | `domain` | **Yes** | Service-shaped components hosting bounded contexts | Inherits Domain stack. Decomposition: `monolith` (all BCs in one container) or `multi-service` (one container per BC = canonical microservices). |
 | `infrastructure` | No | No internal components — declares consumed platform services as dependencies | Inherits Infrastructure stack. |
 
-**Component, container, bounded-context rules** (apply within the constraints above):
+**Key invariants.** Component is the smallest owned technical boundary for generation, communication, and change. Bounded contexts are domain partitions inside components, not runtime deployment units. (Containment chain: container ⊇ component ⊇ bounded context, with BCs only inside `domain`-layer components.)
 
-- A container may host multiple components.
-- A component cannot span multiple containers.
-- A component may host multiple bounded contexts (only in `domain` layer).
-- A bounded context cannot span multiple components.
-- Component is the smallest owned technical boundary for generation, communication, and change.
-- Bounded contexts are domain partitions inside components, not runtime deployment units.
-
-This is a VibeLoom governance choice. It is not a claim that DDD universally requires this topology. (Relationships between bounded contexts — Customer-Supplier, Conformist, Anti-Corruption Layer — are tracked in the [roadmap](roadmap.md#c2-ddd-context-maps) for a future version. Cross-layer interaction graphs are also a roadmap item.)
+Bounded-context relationships (Customer-Supplier, Conformist, Anti-Corruption Layer) and cross-layer interaction graphs are tracked in the [roadmap](roadmap.md#c2-ddd-context-maps) for a future version.
 
 ---
 
@@ -231,7 +223,7 @@ This is a VibeLoom governance choice. It is not a claim that DDD universally req
 | `config` | active generation guidance for an agent scope, e.g. `AGENTS.md` / `CLAUDE.md` |
 | `bdd` / `scenarios` | non-executable behavioral scenarios; later usable for executable tests |
 
-Context is purely active generation guidance. Decisions — including ADR/PDR-style records — live exclusively in traces (§11), with a `load_bearing` flag for the subset still informing future generation. Active "decision context" for a packet is a queried view over decision traces. Binding decisions should be promoted to IDed contract items.
+Context is purely active generation guidance. Decisions — including ADR/PDR-style records — are anchored in append-only traces (§11), with per-record markdown renderings under `/decisions/<record_type>/` as derived views (see implementation §8.5.1). The active "decision context" for a packet is a queried view over decision traces filtered by `load_bearing: true`. Binding decisions should be promoted to IDed contract items.
 
 ---
 
@@ -303,7 +295,7 @@ Useful secondary metrics to collect during dogfooding:
 
 ## 11. Traces
 
-Traces are append-oriented provenance records. They are durable and not silently regenerated from current state. Schemas are designed so the relationships they capture can be promoted to graph form in a future release without information loss (see roadmap CGKG-B).
+Traces are append-oriented provenance records. They are durable and not silently regenerated from current state. Schemas are designed so the relationships they capture — decision provenance, code-sync mapping, generation lineage, and others — can be promoted to graph form in a future release without information loss (see roadmap CGKG-B).
 
 Canonical trace families:
 
@@ -478,53 +470,19 @@ Ambiguous mutations escalate as breaking by default.
 
 ---
 
-## 16. Workflows
+## 16. Workflow shapes
 
-### 16.1 New project
+Operations compose into a small set of recurring chains. The table summarizes the shapes; full worked examples with embedded artifact content live in [`examples/`](examples/).
 
-1. `init --mode <mode>` creates draft `intent-specs`.
-2. `review intent-specs` prepares the first approval.
-3. `approve intent-specs` captures the approval trace.
-4. `generate` follows mode-specific stops to produce downstream contract, context, and code.
-5. `status` reports current, uncovered, stale, dangling, drifted, and obsolete scope.
+| Workflow | Operation chain |
+| --- | --- |
+| New project | `init --mode <mode>` → `review intent-specs` → `approve intent-specs` → `generate` → `status` |
+| Brownfield import | `import --mode <mode>` → `review` (top-down) → `approve` (top-down) → `generate` (uncovered) → `reconcile` (drifted code) → `status` |
+| Product + UX co-synthesis (`pm` or `ux` mode) | `approve intent-specs` → `generate product-specs ⇄ ux-specs` (iterative, mockups + prose as evidence) → `approve` both → `generate system-specs` |
+| ux-led project | `init --mode ux` → drop mockups into `ux-specs/mockups/` → `approve intent-specs` + `approve ux-specs` → `generate product-specs --from ux` → PM peer-reviews + approves → `system-specs` auto-advances → `generate code` |
+| Reconciliation | `status` (detect drift) → `reconcile` (user chooses direction per case) → bounded `generate`/patch → `eval` → traces |
 
-### 16.2 Brownfield import
-
-1. `import --mode <mode>` analyzes existing code and evidence.
-2. Candidate items receive confidence scores and evidence pointers.
-3. Draft contract is reviewed top-down.
-4. Approved contract becomes the future source of truth.
-5. Existing code is code-synced or reconciled against the approved contract.
-
-### 16.3 Product + UX co-synthesis
-
-1. Prose intent and mockups are treated as input evidence.
-2. Product and UX items are generated iteratively.
-3. Generated items cite their evidence (capabilities, mockups, prior items).
-4. Approved product/UX graph remains acyclic.
-5. System specs derive from approved product + UX truth.
-
-### 16.4 Reconciliation
-
-1. Detect stale, drift, dangling, uncovered, or obsolete scope.
-2. Produce reconciliation packet.
-3. User chooses direction: preserve contract, amend contract, preserve downstream behavior, or user-defined.
-4. Apply bounded generation or patch.
-5. Eval and emit traces.
-
-### 16.5 UX-led project (`ux` mode)
-
-For design-led products. Designer is the primary author; PM is the peer reviewer.
-
-1. `init --mode ux` creates draft `intent-specs` and an empty `ux-specs/` folder with `mockups/` ready for designer-supplied snapshots.
-2. Designer drops mockups into `ux-specs/mockups/` and/or sketches initial flows in `ux.md`.
-3. `review intent-specs` and `review ux-specs` prepare the first approval; `approve intent-specs` and `approve ux-specs` capture approval traces.
-4. `generate product-specs --from ux` runs the `generate-product-specs-from-ux` task variant: derives product-specs from approved intent + ux evidence.
-5. PM reviews generated product-specs as a peer (the review packet shows ux-evidence backing for each derived requirement) and approves, optionally amending.
-6. `system-specs` is delegated and auto-advances when structural and semantic eval are clean.
-7. `generate code` produces the implementation; `status` reports across all tiers.
-
-This workflow is the mirror of the pm-led workflow: same artifacts, different primary author. UX evidence is durable across iterations; mockup-to-item traces let the team answer "which mockup implied this story?" months later.
+Reading: each chain is the canonical sequence; mode-specific approval gates and auto-advance behavior are defined in §5. Branches and edge cases (failed eval, mid-stream amendments, partial-wave failures) are covered in the corresponding `examples/` walkthrough.
 
 ---
 
@@ -537,7 +495,8 @@ VibeLoom is not:
 - a UI design tool (though UX evidence and mockups are first-class inputs),
 - a deterministic compiler (though the compiler analogy clarifies the intended control surface),
 - a replacement for human judgment at approval gates,
-- a guarantee that humans never inspect code in v03 — that is the dark-factory trajectory, not the v03 promise.
+- a guarantee that humans never inspect code in v03 — that is the dark-factory trajectory, not the v03 promise,
+- a claim about how DDD must be implemented universally — the layer/component/bounded-context topology in §6.5 is VibeLoom's governance choice, not a normative claim about DDD at large.
 
 ---
 

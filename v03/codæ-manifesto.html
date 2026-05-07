@@ -755,10 +755,8 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           how agent code degrades when agents iteratively extend their
           own prior code under evolving specs. The finding that deserves
           to be famous: <strong>no agent solves a whole problem
-          end-to-end</strong>. Erosion — complexity concentrating in
-          already-bloated functions — rises in 80% of trajectories.
-          Verbosity rises in 89.8%. Agent code runs 2.2× more verbose
-          than comparable open-source Python repos.
+          end-to-end</strong>. Agent code runs 2.2× more verbose than
+          comparable open-source Python repos.
         </p>
 
         <p>
@@ -770,8 +768,9 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           social side has been characterized too: Baltes, Cheong, and
           Treude<sup class="cite"><a href="#ref-1">1</a></sup> coded 1,154
           developer-forum posts and frame the result as a software-commons
-          problem — generation gains for one developer become review and
-          maintenance costs for everyone else.
+          problem<sup class="cite"><a href="#ref-14">14</a></sup> — generation
+          gains for one developer become review and maintenance costs for
+          everyone else.
         </p>
 
         <p>
@@ -881,17 +880,6 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          <span class="codae">cod<span class="ae">æ</span></span> should measure and report the actual ratio:
-        </p>
-
-        <ul>
-          <li><code>contract_items</code> — IDed contract items</li>
-          <li><code>affected_contract_items</code> — the affected graph cut for a change</li>
-          <li><code>affected_code_items</code> — code entities touched or implied by the change</li>
-          <li><code>review_compression_ratio = affected_code_items / affected_contract_items</code></li>
-        </ul>
-
-        <p>
           Until dogfood data lands, the modest claim: humans review
           <em>tens</em> of contract items, not <em>hundreds or
           thousands</em> of code items. Report the ratio; don't
@@ -978,7 +966,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           cruder line-based proxy, the spec stack is a fraction of the
           code and is sufficient to keep agents pattern-adherent at
           scale. The illustration above shows the rough proportion.
-          Item-count ratios will be reported once vibeloom dogfood data
+          Item-count ratios will be reported once VibeLoom dogfood data
           exists.
         </p>
 
@@ -1072,19 +1060,12 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
       <!-- §6 BET -->
       <section id="bet">
-        <h2><span class="num">§6 — The Bet</span>Code goes dark factory. Intent stays mendable.</h2>
+        <h2><span class="num">§6 — The Bet</span>Coding goes dark factory. Intent stays mendable.</h2>
 
         <blockquote class="pull">
           <p>"The 10–100× speedup is real only when the human stays out of the code. The contract is what keeps them out."</p>
+          <cite>— <span class="codae">cod<span class="ae">æ</span></span> thesis</cite>
         </blockquote>
-
-        <p>
-          <strong>Dark factory is a two-to-three-year bet, not a v0.3
-          promise.</strong> Today's agents aren't trustworthy enough to
-          leave entirely alone with the code. What follows is the
-          trajectory <span class="codae">cod<span class="ae">æ</span></span> commits to — not the guarantee any
-          single tool, VibeLoom included, can deliver today.
-        </p>
 
         <p>
           The choice underneath the manifesto is binary, and worth saying
@@ -1105,12 +1086,13 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          The other option is the bet <span class="codae">cod<span class="ae">æ</span></span> makes:
-          <strong>code becomes the dark factory.</strong> Generated,
-          regenerated, never maintained by hand. The human's mendable
-          surface moves up the stack — from the code to the contract
-          above it. The contract is what the human comprehends,
-          governs, edits. The code is what the agent compiles down to.
+          The other option is the bet <span class="codae">cod<span class="ae">æ</span></span> makes — a multi-year
+          trajectory, not a v0.3 promise: <strong>coding becomes the
+          dark factory.</strong> Code is generated, regenerated, never
+          maintained by hand. The human's mendable surface moves up
+          the stack — from the code to the contract above it. The
+          contract is what the human comprehends, governs, edits. The
+          code is what the agent compiles down to.
         </p>
 
         <p>
@@ -1173,7 +1155,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          The trajectory is concrete: vibeloom organizes eval on a
+          The trajectory is concrete: VibeLoom organizes eval on a
           <em>verification ladder</em> of decidable structural checks,
           mechanical validation runners, and heuristic semantic eval.
           v0.3 ships an inventory across all three tiers. Each release

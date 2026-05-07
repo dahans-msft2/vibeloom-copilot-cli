@@ -1,10 +1,12 @@
 # Build the v0.3 vibeloom engine
 
-A prompt for Claude Code (or any equivalent agentic coding tool). The agent reads the canonical implementation spec and produces a working `engine/` directory.
+A prompt for Claude Code (or any equivalent agentic coding tool). The agent reads the canonical implementation spec and produces a working engine — single Python file or multi-file package, agent's call (see Step 4).
 
 This prompt names **what** must happen, not how. Module decomposition, public API shapes, internal data structures, parsing strategies, code style — those are the agent's call. The agent should consult `vibeloom-implementation.md` as the source of truth and exercise judgment.
 
 This prompt is itself codæ-shaped — Inputs, Preconditions, Steps, Output, Postconditions, Constraints, Invariants, Validation, Failure modes — because the build of vibeloom should follow the same discipline vibeloom imposes on the systems it governs.
+
+**Time-budget calibration.** This is a 1–2 day build for a focused agent. If you find yourself spending hours on a single module, stop and ask whether you're solving the spec or solving something the spec doesn't ask for. Re-read the relevant § when in doubt; do not invent.
 
 ---
 
@@ -69,29 +71,36 @@ How to decompose this into modules and APIs is the agent's choice — match the 
 
 ## Steps
 
-1. **Read `vibeloom-implementation.md` end-to-end.** Take notes on every frontmatter shape (§6), every trace schema (§8), every operation pseudocode (§15), and every acceptance-checklist item (§18). Re-read until ambiguities are clearly identified — do not start coding while still confused.
+1. **Read `vibeloom-implementation.md` like a spec, not like prose.** Three passes: (a) skim the §s and copy the headings into a scratchpad as a working outline; (b) read each § slowly, taking notes on every frontmatter shape (§6), every trace schema (§8), every operation pseudocode (§15), and every acceptance-checklist item (§18); (c) follow forward references (§13 in §6, §15 in §13) and re-read in context. Do not start coding while still confused.
+   **Verify:** produce a 1-paragraph internal summary listing every trace family, every status category, every dispatch wave-rule, and every operation. If you can't write the summary from memory, you haven't read carefully enough — re-read.
 
 2. **Read `vibeloom-methodology.md` cover-to-cover for paradigm context.** Methodology §6.5 (layered architecture) and §11.1 (decision-trace classification) are particularly load-bearing.
+   **Verify:** produce a 1-paragraph summary covering the verification ladder (decidable / mechanical / heuristic), layered-architecture rules (BCs only in domain layer; component → container; bounded context → component), and the contract / context / code tier distinction.
 
-3. **Diff v02 against v03.** Identify every place the v03 spec changes the contract. The delta table above is a starting list; the spec is the truth.
+3. **Diff v02 against v03.** Identify every place the v03 spec changes the contract. Inventory v02/engine/ first: which modules have a 1:1 v03 analog (likely `parser`, `graph`, `ids`, `staleness`, `affected`, `status`), which need light adaptation (`schema` for new trace shapes), which are net-new (decision-trace markdown rendering, dispatch_plan + execute_plan, layered-architecture validation). The delta table above is a starting list; the spec is the truth.
+   **Verify:** the diff covers every row in the v02→v03 delta table above, plus any others you found. State which v02 modules you'll reuse as-is, which need adaptation, which you'll rewrite. Pin the v02 commit SHA you're diffing against.
 
-4. **Implement the engine** as a Python 3.10+ package under `v03/engine/`, packaged so it can be invoked with `python -m <package_name>` and (optionally) installed via `pip install -e v03/engine`. Cover the full set of capabilities the implementation doc requires:
+4. **Implement the engine** in Python 3.10+, stdlib only, somewhere under `v03/`. The agent picks the source layout (single-file script vs. multi-file package). Whatever the layout, the engine must expose **one CLI surface** invokable from the skill — a console-script (e.g. `vibeloom-engine <command>`) after `pip install -e`, or a direct script (`python3 engine.py <command>`), or `python3 -m vibeloom_engine <command>`. Choose the simplest pattern that makes the engine bundleable inside the skill release tarball without additional install steps for end users. v02 used a multi-file package + console-script — a reasonable baseline; v0.3 may keep that or simplify further.
 
-   - **Frontmatter and body parsing** for every artifact type listed in §6. Body parsing must extract IDed items per the per-tier templates referenced in `vibeloom-templates.md`.
+   Cover the full set of capabilities the implementation doc requires:
+
+   - **Frontmatter and body parsing** for every artifact type listed in §6. Body parsing extracts IDed items per the families in §5.1 and the body conventions in §19.3 (the `artifacts.md` template documents the canonical column conventions).
    - **Schema validation** for every frontmatter shape (§6) and every trace family (§8), with `schema_version` handling per §8.7.
    - **ID registry** with allocation, retired-list, and the rule that retired IDs are never reused (§5.2).
    - **Trace I/O** for every family in §8 (approval, code-sync, generation, eval, decision, import) plus the structured `id-registry.json`. JSONL is append-only; rejecting in-place rewrites is non-negotiable.
    - **Decision-trace markdown rendering** per §8.5.1 — every JSONL row in `decisions.jsonl` materializes deterministically as a per-record file at `/decisions/<record_type>/<TRACE_ID>-<slug>.md`. Idempotent, regenerable.
-   - **Contract graph** as a DAG over `derives_from` edges; cycle detection; only `CAP` and `CST` may be roots; bounded contexts only in domain-layer components (methodology §6.4); the rest of §8 of methodology.
+   - **Contract graph** as a DAG over `derives_from` edges; cycle detection; only `CAP` and `CST` may be roots; bounded contexts only in domain-layer components (methodology §6.4); the rest of methodology §8.
    - **Cache management** at `.vibeloom/cache/` — regenerable, never authoritative, safe to delete.
    - **Structural eval** covering every check listed in impl §14.1 and methodology §14.1 (Rung 1 of the verification ladder).
    - **Staleness, affected-set, direct-edit detection** per impl §10 + §15.
    - **Dispatch plan** with wave assembly per impl §13.1–§13.2 (disjoint ownership, derivation precedence, concurrency cap, reconciliation singletons, eval ordering).
    - **`execute_plan(plan)`** per §13.3 — coordinates validation, trace writing, atomic patch application; calls back to the orchestrator for actual subagent spawning.
    - **Status classification** producing the six categories in §10, plus the surrounding report fields (lifecycle per artifact, affected scope, coverage gaps, current mode, recommended next operation).
-   - **CLI** exposing every command listed in impl §1 (`parse`, `graph`, `eval`, `affected`, `staleness`, `detect-edits`, `dispatch`, `status`). All commands emit JSON on stdout. Non-zero exit on blocking findings.
+   - **CLI** with one verb per engine capability (`parse`, `graph`, `eval`, `affected`, `staleness`, `detect-edits`, `dispatch`, `status`, plus any new commands the v03 spec implies — e.g. for §8.5.1 decision-trace rendering). v02/engine/vibeloom_engine/cli.py is the baseline command surface to study. All commands emit JSON on stdout. Non-zero exit on blocking findings.
 
    The agent decides module names, public APIs, internal data shapes, parsing strategy, and code organization. Match the spec's behavior; don't over-think the structure.
+
+   **Verify:** mid-build, after the parser + graph are working, run `parse` and `graph` against the v03 source tree itself (which has real contract artifacts under `v03/templates/` once extracted via `extract-templates.py`). The engine should parse vibeloom's own contract without errors.
 
 5. **Write tests covering the engine's behavior.** At minimum, the test suite must:
    - Exercise every status category from §10 (`current` / `stale` / `uncovered` / `dangling` / `drifted` / `obsolete`).
@@ -102,30 +111,33 @@ How to decompose this into modules and APIs is the agent's choice — match the 
    - Exercise the cache's regeneration-from-traces property.
 
    Build whatever test fixtures the suite needs. Tests run with `pytest`.
+   **Verify:** `pytest --cov` reports ≥85% statement coverage on engine modules. Every status category, every wave-assembly rule, and every schema-version transition has at least one named test. Test names map to spec §s where applicable (e.g. `test_status_uncovered_per_§10`).
 
-6. **Smoke-test end-to-end on a scratch repo.** The agent assembles a fresh vibeloom-governed scratch repo (under `/tmp`) and drives the engine through enough operations to confirm the full pipeline works in both `vibe` and `pm` modes. At minimum, exercise:
+6. **Smoke-test the engine surface end-to-end on a scratch repo.** The engine is a deterministic substrate; mode-driven workflows (vibe vs. pm vs. ux vs. dev vs. expert) are skill concerns and live in the build-skill smoke tests. The engine smoke test confirms the **primitives compose correctly** on a realistic minimal contract artifact set under `/tmp`. At minimum, exercise:
    - Parsing a minimal artifact set; building the graph; running `eval` clean.
-   - Writing an approval trace; running `status` and seeing lifecycle flip to approved with all items `current`.
+   - Writing an approval trace via the engine API; running `status` and seeing lifecycle flip to approved with all items `current`.
    - Modifying an approved artifact; running `detect-edits` and seeing direct edits surfaced; running `status` and seeing items reclassified appropriately.
-   - For `pm` mode: building the graph cache; running `affected` after a CAP-level change; running `dispatch` and getting a well-formed plan.
+   - Running `affected` after a CAP-level change; running `dispatch` and getting a well-formed plan that satisfies §13.2 wave-assembly rules.
+   - Rendering decision-trace markdown per §8.5.1; deleting and re-rendering — output must be byte-identical.
 
    Each engine command must produce well-formed JSON on stdout. Each CLI exit code must match the documented semantics.
+   **Verify:** all smoke-test commands exit with documented exit codes; all stdout payloads parse as valid JSON; the eval/approve/detect-edits cycle reaches the documented end state without manual intervention; the full sequence is captured in a transcript file the human can replay.
 
 ## Output
 
-A working `v03/engine/` directory invokable as a Python package. Optionally pip-installable.
+A working engine under `v03/` — source layout per Step 4 (single file or package). Invokable via the agreed CLI surface; bundleable inside the skill release tarball with no install steps required for end users.
 
 ## Postconditions
 
-- All CLI commands listed in impl §1 exist, emit JSON on stdout, and follow the documented exit-code semantics.
+- The engine exposes one CLI verb per capability (`parse`, `graph`, `eval`, `affected`, `staleness`, `detect-edits`, `dispatch`, `status`, plus any v0.3-spec-implied commands such as decision-trace rendering). All commands emit JSON on stdout and follow documented exit-code semantics.
 - All trace schemas from impl §8 are encoded and validated on read per §8.7.
 - ID registry persists `next` counter and `retired` list per prefix; retired IDs are never reused (§5.2).
 - Contract graph is a DAG; only `CAP` and `CST` are roots.
 - Decision-trace markdown rendering is wired up per §8.5.1 — JSONL canonical, markdown derived, regenerable.
 - `dispatch_plan` and `execute_plan` exist per §13 and pass tests covering the wave-assembly rules.
 - Status classification matches §10 for all six categories.
-- Smoke tests in §6 above pass end-to-end for both `vibe` and `pm` modes.
-- Test suite passes with `pytest`.
+- Engine smoke test (Step 6) passes end-to-end on a scratch repo; transcript captured. Mode-driven smoke tests (vibe / pm) belong to `build-skill.md`.
+- Test suite passes with `pytest` at ≥85% statement coverage.
 
 ## Constraints
 
@@ -146,19 +158,31 @@ A working `v03/engine/` directory invokable as a Python package. Optionally pip-
 
 ## Validation
 
-Before declaring the engine complete, every engine-related item in impl **§18 acceptance checklist** must pass — paste a copy of §18 into your final summary with each box checked.
+Before declaring the engine complete, every **engine-side** item in impl **§18 acceptance checklist** must pass. Some §18 items are skill concerns (e.g. "subagent task header schema is the only orchestrator-to-subagent contract", "templates exist only as fenced blocks") — those are validated by `build-skill.md`, not here. Engine-side items include (without claiming to be exhaustive — re-read §18 to classify):
+
+- cache/traces split, approval-trace-backed baseline, ID registry persistence
+- trace schemas with `schema_version`, code-sync trace shape, validation-registry parsing
+- dispatch plan structure + wave-assembly + parallel semantics + execute_plan
+- status categories (six)
+- per-operation execution semantics (§15.1–§15.8) for the ones the engine implements deterministically
+- vibe-layout minimality (no graph cache, no code-sync trace at vibe stage)
+
+Paste a copy of §18 into your final report with each box marked engine-✓ / skill-deferred / blocked. Do not check skill-deferred boxes from inside the engine build.
 
 Plus:
-- `pytest` passes 100%.
-- The smoke test in step 6 passes end-to-end for both `vibe` and `pm` modes.
+- `pytest` passes 100% with ≥85% statement coverage.
+- The smoke test in step 6 passes end-to-end and a transcript is left for review.
 
 ## Failure modes
 
-- **Spec ambiguity.** Where the implementation doc is ambiguous, prefer the most conservative interpretation, leave a comment marking the choice (`# spec ambiguity: <reason>`), and surface the question in your final summary so the human can adjudicate. Do not invent behavior the spec doesn't specify.
+- **Spec ambiguity vs. spec bug — different responses:**
+  - *Ambiguity:* spec is silent or unclear. Prefer the most conservative interpretation, leave a comment marking the choice (`# spec ambiguity: <reason>`), surface in your final report. Do not invent behavior the spec doesn't specify.
+  - *Bug:* spec contradicts itself or contradicts a reference (e.g. §6.3 says one thing, §19.3 says another). **Do not fix the spec.** Stop the affected step. Surface the contradiction with both citations in your final report and request human adjudication before continuing. The spec author is the only legitimate fixer.
 - **v02-vs-v03 confusion.** If you find yourself reaching for the v02 module and pasting it, stop and re-read the relevant § of `vibeloom-implementation.md`. The v02 engine is reference, not template.
 - **Schema drift.** If your implementation diverges from §8 trace schemas, the bug is in your code, not the spec. Re-read §8.7.
-- **Test failures.** Don't suppress, don't skip. If a test exposes a real bug in the spec, surface it; if it exposes a bug in your code, fix it.
+- **Test failures.** Don't suppress, don't skip. If a test exposes a real bug in the spec, surface it (per the bug rule above); if it exposes a bug in your code, fix it.
 - **Reaching for a third-party package.** Stop. Check stdlib first. The zero-dependency constraint is not optional.
+- **Stale context after a long build.** When a step's outcome surprises you, re-read the relevant § rather than working from memory. Long sessions drift; the spec stays put.
 
 ## Anti-patterns to avoid
 
@@ -170,6 +194,23 @@ Plus:
 - Adding undocumented CLI flags.
 - Treating cache as authoritative.
 - Hand-editing extracted templates (the templates tree is a build artifact; edit the source).
+
+## Checkpointing
+
+After each major step (1 — read; 3 — v02 diff inventory; 4 — engine implementation; 5 — tests; 6 — smoke), commit the current state to a working branch with a step-naming message (e.g. `engine: step 4 complete — parser + schema + graph`). If a session is interrupted, the next agent run resumes from the most recent checkpoint without re-doing earlier work.
+
+## Final report
+
+When the engine passes acceptance, produce a one-page summary covering:
+
+1. **Checklist:** paste impl §18 with each box marked engine-✓ / skill-deferred / blocked.
+2. **Spec ambiguities found:** every `# spec ambiguity:` comment, with the chosen interpretation and rationale.
+3. **Spec bugs surfaced:** any §-vs-§ contradictions discovered (per the failure-modes rule). Do not fix; surface only.
+4. **Test results:** `pytest` summary + coverage percentage.
+5. **Smoke test:** which CLI commands ran, what state the scratch repo ended in, links to the trace files left for inspection.
+6. **v02 modules reused:** per-module notes (as-is / adapted / rewritten) with provenance line numbers.
+7. **Known limitations or deferred work:** anything intentionally not implemented yet, with rationale.
+8. **Reference commit SHA** for the engine state — `build-skill.md` will use this as its starting point.
 
 ## After this build
 

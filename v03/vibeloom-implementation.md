@@ -204,7 +204,7 @@ The table below is the **canonical** ID prefix registry. It defines every prefix
 
 ### 5.2 Registry
 
-Allocation state lives at `.vibeloom/traces/id-registry.json`:
+Allocation state for **semantic-item ID families** (every prefix in §5.1 *except* the trace, runtime, and operation-packet families covered in §5.3) lives at `.vibeloom/traces/id-registry.json`:
 
 ```json
 {
@@ -214,6 +214,14 @@ Allocation state lives at `.vibeloom/traces/id-registry.json`:
 ```
 
 The registry is engine state, not LLM context. Subagents **propose** new semantic items; the orchestrator/engine allocates final IDs. Retired IDs are never reused.
+
+### 5.3 Trace and runtime ID allocation
+
+Trace and runtime ID families (`APPROVAL`, `SYNC`, `GEN`, `EVAL`, `DEC`, `IMP`, `RUN`, `TASK`, `PLAN`) and operation-packet IDs (`REVIEW-`, `RECON-`) use the **dated form** `<KIND>-<YYYYMMDD>-<NNN>` where `NNN` starts at `001` each calendar day per kind, monotonically increasing within the day. Examples: `APPROVAL-20260502-001`, `RUN-20260502-001`, `REVIEW-20260502-001`.
+
+For these families the registry persists `{kind: {date: next_seq}}` rather than `{next, retired}`. Retirement does not apply — traces and runtime artifacts are append-only and IDs are never reissued.
+
+`FIND-####` and `DRIFT-####` are **not registry-allocated**. Both are per-invocation counters: `FIND-####` numbers findings within one `structural_eval` call (or one packet's findings list); `DRIFT-####` numbers drift cases within one reconciliation packet. Both reset each invocation. They are stable within their parent record but not globally unique, and never appear in the id-registry.
 
 ---
 
@@ -610,6 +618,19 @@ Computation rules:
 | `obsolete` | user-marked, OR all downstream consumers are themselves obsolete or absent (heuristic) |
 
 `obsolete` requires either explicit user marking via `vibeloom mark-obsolete <id>` or a heuristic signal. The engine surfaces obsolete candidates in `status` but never auto-marks.
+
+**Multi-basis lookup protocol.** When an item's `derives_from` lists multiple basis IDs (which may span multiple approval traces or multiple approval units), the engine evaluates each basis independently:
+
+1. For each `basis_id` in `derives_from`:
+   - **Approved hash** = `latest_approval_trace_containing(basis_id).items[basis_id]` per §8.1. If no approval trace has ever covered this basis_id, the basis is *unapproved*.
+   - **Current hash** = `hash_item(graph.items[basis_id])`. If the basis_id is retired or absent from the registry (§5.2), the basis is *retired-or-missing*.
+2. The item's category resolves as:
+   - `dangling` if any basis is *retired-or-missing*;
+   - `uncovered` (from the upstream side) if any basis is *unapproved* and required by the item's tier rules;
+   - `stale` if any basis has approved-hash ≠ current-hash;
+   - `current` only if every basis has approved-hash == current-hash AND no eval finding exists.
+
+Lookup is per-basis-ID, not per-approval-unit: a single item with three basis IDs may pull approved hashes from three different approval traces if those traces are the most recent ones containing each respective basis ID. This is the canonical resolution of the multi-basis case and applies uniformly to all `derives_from` evaluation in §10.
 
 ---
 

@@ -34,8 +34,13 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 
 ## Steps
 
-1. **Extract templates and verify round-trip.** Use `extract-templates.py` in default mode then `--check` mode. Drift must be zero. If the extracted count doesn't match the total declared in `vibeloom-implementation.md` §19.3, the source is corrupt — stop and fix at the source. (Spec evolves; the count today is one number, may differ tomorrow.)
-   **Verify:** `extract-templates.py --check` exits 0; extracted count matches §19.3; no leftover `templates/` files from prior runs (regenerate from source if any are present).
+1. **Extract templates and verify round-trip.** Use `extract-templates.py` in default mode then `--check` mode. Drift must be zero. The expected template count is declared in impl §19.3 line 1271 (currently 41, but **the spec evolves and that count may be different at your run-time**).
+
+   When the extracted count doesn't match §19.3:
+   - **If §19.3 was recently updated** (newer than the extracted-count expectation in your scratchpad): the spec changed; trust the spec; update your expectation; proceed.
+   - **If §19.3 is unchanged but extraction shows a different count:** the source `vibeloom-templates.md` has drifted from the spec. Stop. Surface the gap in your final report; do not bundle until §19.3 and `vibeloom-templates.md` agree.
+
+   **Verify:** `extract-templates.py --check` exits 0; extracted count matches §19.3 (or you've documented and resolved the gap per the rule above); no leftover `templates/` files from prior runs (regenerate from source if any are present).
 
 2. **Validate the skill manifest** at `templates/skill/SKILL.md`. Confirm:
    - Frontmatter is well-formed YAML and complete per the SKILL.md template's contract (per impl §19.3 and `vibeloom-templates.md`).
@@ -54,7 +59,7 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 5. **Verify ID prefix registry consistency.** The prefix registry in `templates/skill/references/artifacts.md` must match `vibeloom-implementation.md` §5.1. If they disagree, the implementation doc wins; the skill reference is a bug.
    **Verify:** diff the prefix tables (skill reference vs. impl §5.1) row-by-row. Report any divergence; do not bundle until they match. Fix at the source (`vibeloom-templates.md`'s `references/artifacts.md` block).
 
-6. **Smoke-test the vibe-mode pipeline end-to-end.** The agent running this prompt cannot recursively load and drive the skill within its own session. **Smoke-test = simulate the skill's routing manually**: for each step in the vibe workflow, execute the engine CLI calls + materialize the templates the skill would route to, capturing outputs. Verify each engine response matches what `templates/skill/SKILL.md`'s command-routing section documents.
+6. **Smoke-test the vibe-mode pipeline end-to-end.** The agent running this prompt cannot recursively load and drive the skill within its own session. **Smoke-test = drive the engine CLI calls the skill manifest documents.** Open `templates/skill/SKILL.md`'s `## Command routing` section. For each user command listed there (e.g. `init --mode vibe`, `eval intent-specs`, `approve intent-specs`), extract the underlying engine CLI invocations the skill says it will route to. Execute those exact invocations against a fresh `/tmp` repo. **The smoke test verifies the manifest's routing accuracy, not just the engine's behavior** — if the manifest says route X but the engine has no command X, that's a bundle bug.
 
    Run on a fresh scratch repo under `/tmp`. At minimum, the scenario covers:
 
@@ -66,7 +71,7 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
    The smoke test passes when every command emits well-formed JSON, exit codes match the documented semantics, and the documented post-conditions hold.
    **Verify:** capture a transcript of every engine invocation + its JSON response into `/tmp/<scratch-repo>/smoke-vibe.log`. The log is the audit artifact a human can replay.
 
-7. **Smoke-test the pm-mode pipeline end-to-end** on a separate scratch repo. Same simulation pattern as Step 6: walk the methodology §16 new-project workflow by hand, executing the engine CLI calls the skill would route to, on each step. Sequence: `init --mode pm` → review and approve `intent-specs` → generate `product-specs` (with auto-eval) → review/approve product-specs → generate `system-specs` → run `affected` after a hypothetical CAP-level change → run `dispatch` and confirm a well-formed plan → run `status`.
+7. **Smoke-test the pm-mode pipeline end-to-end** on a separate scratch repo. Same routing-driven pattern as Step 6: read `templates/skill/SKILL.md`'s `## Command routing` section, extract the engine CLI invocations the skill routes to, execute them in the order methodology §16's new-project workflow specifies. Sequence: `init --mode pm` → review and approve `intent-specs` → generate `product-specs` (with auto-eval) → review/approve product-specs → generate `system-specs` → run `affected` after a hypothetical CAP-level change → run `dispatch` and confirm a well-formed plan → run `status`.
 
    Verify on the resulting state:
 
@@ -105,7 +110,8 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 
     **Verify:** report each schema field's state (present + valid / present + invalid / missing). Any "invalid" or "missing" blocks shipping until fixed at source.
 
-10b. **(Human handoff) Live load test in Claude Code.** This step is the human's first task post-handoff: install the bundle into a clean Claude Code instance and confirm the skill registers, the argument-hint surface is recognized, no warnings appear. The agent's release notes call this out explicitly as the first post-handoff verification.
+10b. **(Handoff artifact, not an agent step) Queue the live Claude Code load test for the human.** The agent does **not** execute this. The agent's deliverable is a clear handoff item in the release notes flagging this as the human's first post-handoff task: install the bundle into a clean Claude Code instance and confirm the skill registers, the argument-hint surface is recognized, and no warnings appear. If 10b ever fails post-handoff, the SKILL.md template needs editing in `vibeloom-templates.md`; re-extract and rebuild.
+    **Verify (agent side):** the release notes contain an explicit "Pending live load test" section calling out this task with what to install, where to install it, and what success looks like.
 
 11. **Walk impl §18 acceptance checklist line by line.** Every box must be marked. Engine items are pre-validated by `build-engine.md`'s final report (cite the engine commit SHA); skill items verify against the extracted tree + manifest validation; smoke-test items verify against the runs in Steps 6 and 7. Items that depend on Step 10b live-load are marked **pending live load** with a note. Document any unchecked items in the release notes with explicit rationale.
     **Verify:** every §18 item has an explicit state (✓ / engine-deferred / pending-live-load / blocked) with a one-line citation (commit SHA, log file path, or manifest-validation line). No item is unmarked.

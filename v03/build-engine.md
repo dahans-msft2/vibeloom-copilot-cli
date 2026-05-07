@@ -89,14 +89,21 @@ How to decompose this into modules and APIs is the agent's choice — match the 
    - **ID registry** with allocation, retired-list, and the rule that retired IDs are never reused (§5.2).
    - **Trace I/O** for every family in §8 (approval, code-sync, generation, eval, decision, import) plus the structured `id-registry.json`. JSONL is append-only; rejecting in-place rewrites is non-negotiable.
    - **Decision-trace markdown rendering** per §8.5.1 — every JSONL row in `decisions.jsonl` materializes deterministically as a per-record file at `/decisions/<record_type>/<TRACE_ID>-<slug>.md`. Idempotent, regenerable.
-   - **Contract graph** as a DAG over `derives_from` edges; cycle detection; only `CAP` and `CST` may be roots; bounded contexts only in domain-layer components (methodology §6.4); the rest of methodology §8.
+   - **Contract graph** as a DAG over `derives_from` edges; only `CAP` and `CST` may be roots; bounded contexts only in domain-layer components (methodology §6.4); the rest of methodology §8.
+     - **Cycle handling:** a cycle in `derives_from` is a blocking structural-eval finding (exit 1). The engine reports the full cycle path (e.g. `A → B → C → A`) and which artifacts host the offending edges. The engine does not silently break the cycle — the user breaks it by editing an artifact's `derives_from` list.
    - **Cache management** at `.vibeloom/cache/` — regenerable, never authoritative, safe to delete.
    - **Structural eval** covering every check listed in impl §14.1 and methodology §14.1 (Rung 1 of the verification ladder).
    - **Staleness, affected-set, direct-edit detection** per impl §10 + §15.
    - **Dispatch plan** with wave assembly per impl §13.1–§13.2 (disjoint ownership, derivation precedence, concurrency cap, reconciliation singletons, eval ordering).
    - **`execute_plan(plan)`** per §13.3 — coordinates validation, trace writing, atomic patch application; calls back to the orchestrator for actual subagent spawning.
    - **Status classification** producing the six categories in §10, plus the surrounding report fields (lifecycle per artifact, affected scope, coverage gaps, current mode, recommended next operation).
-   - **CLI** with one verb per engine capability (`parse`, `graph`, `eval`, `affected`, `staleness`, `detect-edits`, `dispatch`, `status`, plus any new commands the v03 spec implies — e.g. for §8.5.1 decision-trace rendering). v02/engine/vibeloom_engine/cli.py is the baseline command surface to study. All commands emit JSON on stdout. Non-zero exit on blocking findings.
+   - **CLI** with one verb per engine capability (`parse`, `graph`, `eval`, `affected`, `staleness`, `detect-edits`, `dispatch`, `status`, plus any new commands the v03 spec implies — e.g. for §8.5.1 decision-trace rendering).
+     - **Per-command output shape:** v02/engine/vibeloom_engine/cli.py is the baseline. Each command emits its own command-specific JSON payload directly to stdout (e.g. `parse` → artifact inventory; `graph` → graph structure; `eval` → `{findings: [...], errors: [...]}`). v0.3 retains v02's per-command shape for unchanged commands; new v0.3 commands document their own payload shape in the engine source. **Do not invent a unified envelope** — v02 doesn't use one and the skill expects per-command shapes.
+     - **Exit-code semantics:**
+       - `0` — clean: no blocking findings (advisories OK).
+       - `1` — blocking findings (e.g. `eval` finds structural-rule violations; `dispatch` finds an unresolvable derivation).
+       - `2` — engine error (invalid input, internal exception, malformed trace).
+       Skills route on exit code; ambiguity here breaks routing.
 
    The agent decides module names, public APIs, internal data shapes, parsing strategy, and code organization. Match the spec's behavior; don't over-think the structure.
 
@@ -118,7 +125,9 @@ How to decompose this into modules and APIs is the agent's choice — match the 
    - Writing an approval trace via the engine API; running `status` and seeing lifecycle flip to approved with all items `current`.
    - Modifying an approved artifact; running `detect-edits` and seeing direct edits surfaced; running `status` and seeing items reclassified appropriately.
    - Running `affected` after a CAP-level change; running `dispatch` and getting a well-formed plan that satisfies §13.2 wave-assembly rules.
-   - Rendering decision-trace markdown per §8.5.1; deleting and re-rendering — output must be byte-identical.
+   - Rendering decision-trace markdown per §8.5.1, two cases:
+     (a) fresh render → delete the file → re-render: output must be byte-identical (idempotent regeneration);
+     (b) fresh render → simulate user edit (modify the body prose, leave frontmatter intact) → re-render: frontmatter is byte-identical; the user-edited body is **preserved as-is**, not overwritten (per §8.5.1's "body prose is regenerated on first materialization, then preserved on subsequent regenerations").
 
    Each engine command must produce well-formed JSON on stdout. Each CLI exit code must match the documented semantics.
    **Verify:** all smoke-test commands exit with documented exit codes; all stdout payloads parse as valid JSON; the eval/approve/detect-edits cycle reaches the documented end state without manual intervention; the full sequence is captured in a transcript file the human can replay.
@@ -144,7 +153,7 @@ A working engine under `v03/` — source layout per Step 4 (single file or packa
 - **Zero runtime dependencies beyond Python 3.10+.** No `pip install` required for end users. Stdlib only. (`pytest` is dev-only.) Custom YAML frontmatter parser shipped in-tree.
 - **No semantic judgments in the engine.** Hashes, schemas, derivation walks, IDs, JSON I/O — yes. Spec meaning, approval correctness, faithfulness — no.
 - **All operations are deterministic.** Same inputs → same outputs.
-- **Cache is regenerable.** If `.vibeloom/cache/` is deleted, the engine rebuilds from artifacts + traces with no information loss.
+- **Cache is regenerable; traces are canonical.** If `.vibeloom/cache/` is deleted, the engine rebuilds from current artifacts + the full trace history in `.vibeloom/traces/` with no information loss. When current artifacts and trace-recorded state disagree (e.g. an artifact was edited since its last approval trace), traces are the canonical record of *what was approved*; current artifacts are the canonical record of *what is now*. The status report surfaces the gap as drift.
 - **Traces are durable, append-only.** No silent rewrites. On schema-version mismatch, surface a status finding instead of crashing (§8.7).
 
 ## Invariants
@@ -158,16 +167,31 @@ A working engine under `v03/` — source layout per Step 4 (single file or packa
 
 ## Validation
 
-Before declaring the engine complete, every **engine-side** item in impl **§18 acceptance checklist** must pass. Some §18 items are skill concerns (e.g. "subagent task header schema is the only orchestrator-to-subagent contract", "templates exist only as fenced blocks") — those are validated by `build-skill.md`, not here. Engine-side items include (without claiming to be exhaustive — re-read §18 to classify):
+Before declaring the engine complete, every **engine-side** item in impl **§18 acceptance checklist** must pass. Some §18 items are skill concerns (validated by `build-skill.md`, not here). The mapping below pre-classifies every §18 box (impl lines 1210–1228) so you don't have to guess:
 
-- cache/traces split, approval-trace-backed baseline, ID registry persistence
-- trace schemas with `schema_version`, code-sync trace shape, validation-registry parsing
-- dispatch plan structure + wave-assembly + parallel semantics + execute_plan
-- status categories (six)
-- per-operation execution semantics (§15.1–§15.8) for the ones the engine implements deterministically
-- vibe-layout minimality (no graph cache, no code-sync trace at vibe stage)
+| §18 item | Lines | Owner |
+|---|---|---|
+| `.vibeloom/cache/` and `.vibeloom/traces/` separated | 1210 | **engine** |
+| Approval baseline trace-backed (JSONL append-only) | 1211 | **engine** |
+| ID registry persists retired + next | 1212 | **engine** |
+| Trace families have `schema_version` | 1213 | **engine** |
+| Code-sync traces connect IDs to file hashes + validation evidence | 1214 | **engine** |
+| Review/reconciliation packets have user-notes write capability | 1215 | skill |
+| Task templates are markdown 10-section, not YAML wrappers | 1216 | skill |
+| Subagent writes patch-staged in `.vibeloom/runs/`, validated, applied atomically | 1217 | **engine** |
+| Dispatch plan + wave-assembly + parallel semantics match §13.1–§13.3 | 1218 | **engine** |
+| Subagent task header schema is the only orchestrator↔subagent contract | 1219 | skill |
+| Validation registry parsed, runners invokable | 1220 | **engine** |
+| Product/UX peer generation supports mockup evidence with `MOCK-####` | 1221 | skill |
+| `ux` mode supported as a fifth top-level mode | 1222 | skill (modes are skill concerns) |
+| Verification ladder reflected in eval routing | 1223 | **engine** |
+| Component / container / BC rules match methodology §6.5 | 1224 | **engine** |
+| `status` distinguishes the 6 categories | 1225 | **engine** |
+| Each operation has explicit, traceable execution semantics (§15.1–§15.8) | 1226 | **engine** for primitives; skill for orchestration |
+| Vibe layout genuinely minimal (no graph cache, no code-sync trace) | 1227 | **engine** |
+| Templates only as fenced blocks; tree is build artifact | 1228 | skill |
 
-Paste a copy of §18 into your final report with each box marked engine-✓ / skill-deferred / blocked. Do not check skill-deferred boxes from inside the engine build.
+Paste this table into your final report with each engine-row marked ✓ / blocked, and skill-rows marked **skill-deferred** with a one-line rationale.
 
 Plus:
 - `pytest` passes 100% with ≥85% statement coverage.

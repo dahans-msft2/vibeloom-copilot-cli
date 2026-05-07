@@ -664,12 +664,11 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
       <div class="label">Contents</div>
       <ol>
         <li><a href="#destination">The destination</a></li>
-        <li><a href="#obstacle">The obstacle</a></li>
-        <li><a href="#surface">Cognitive surface</a></li>
-        <li><a href="#bridge">The bridge</a></li>
-        <li><a href="#thesis">The <span class="codae">cod<span class="ae">æ</span></span> thesis</a></li>
-        <li><a href="#references">References</a></li>
+        <li><a href="#blocker">The blocker</a></li>
+        <li><a href="#contract">The contract</a></li>
+        <li><a href="#bet">The bet</a></li>
       </ol>
+      <p style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--c-line); font-size: 0.82rem;"><a href="#references" style="color: var(--c-ink-4); border-bottom: 1px dotted var(--c-line-2);">References ↓</a></p>
     </aside>
 
     <article class="doc-body">
@@ -693,14 +692,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          The pattern is no longer aspirational. In February 2026, Spotify
-          confirmed its best engineers had not written a line of code
-          since December — instead, they were merging hundreds of
-          agent-authored PRs per month through Spotify's internal
-          coding-agent platform.<sup class="cite"><a href="#ref-17">17</a></sup>
-          BCG Platinion's <em>Dark Software Factory</em> report named the
-          milestone explicitly: <em>"as few as three engineers can run a
-          software factory where humans no longer write code."</em><sup class="cite"><a href="#ref-18">18</a></sup>
+          The pattern is no longer aspirational. In February 2026, Spotify confirmed its best engineers had not written a line of code since December — they were merging hundreds of agent-authored PRs per month through Spotify's internal coding-agent platform.<sup class="cite"><a href="#ref-2">2</a></sup> BCG Platinion's <em>Dark Software Factory</em> report named the milestone explicitly: <em>"as few as three engineers can run a software factory where humans no longer write code."</em><sup class="cite"><a href="#ref-3">3</a></sup> Sequoia, in their January 2026 essay declaring the practical AGI year, named the underlying capability shift: coding agents that plan, use tools, maintain state, and loop until success.<sup class="cite"><a href="#ref-1">1</a></sup>
         </p>
 
         <p>
@@ -714,20 +706,17 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
       </section>
 
-      <section id="obstacle">
-        <h2><span class="num">§2 — The obstacle</span>AI slop is what stands in the way.</h2>
+      <section id="blocker">
+        <h2><span class="num">§2 — The blocker</span>Coherence fails, and the factory cannot stay dark.</h2>
 
         <p>
-          The capability threshold has been crossed. Slop is what's
-          blocking the factory from going dark.
+          The capability threshold has been crossed. The gating constraint is <strong>coherence</strong>: preserving intent, architecture, domain meaning, and behavior across long-running, multi-agent work. When coherence fails, the symptoms have names:
         </p>
-
-        <p>The same failure shows up under different names in the 2026 literature:</p>
 
         <ul>
           <li><strong>Semantic drift</strong> — outputs progressively diverge from original task intent while remaining syntactically valid.</li>
-          <li><strong>AI slop</strong><sup class="cite"><a href="#ref-1">1</a></sup> — cheap to generate, expensive to review.</li>
-          <li><strong>Comprehension debt</strong><sup class="cite"><a href="#ref-2">2</a></sup> — the codebase looks clean, but no human (and no incoming agent) understands what it's doing or why.</li>
+          <li><strong>AI slop</strong> — cheap to generate, expensive to review.</li>
+          <li><strong>Comprehension debt</strong> — the codebase looks clean, but no human (and no incoming agent) understands what it's doing or why.</li>
         </ul>
 
         <aside class="stats-strip" aria-label="2026 evidence on AI drift and slop">
@@ -735,61 +724,45 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             <div class="stat">
               <div class="stat-num">80% / 89.8%</div>
               <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
-              <a class="stat-src" href="#ref-3">SlopCodeBench<br>Mar 2026 ↗</a>
+              <a class="stat-src" href="#ref-5">SlopCodeBench<br>Mar 2026 ↗</a>
             </div>
             <div class="stat">
               <div class="stat-num">22.7%</div>
               <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
-              <a class="stat-src" href="#ref-13">AI-debt in the wild<br>Mar 2026 ↗</a>
+              <a class="stat-src" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">AI-debt in the wild<br>Mar 2026 ↗</a>
             </div>
             <div class="stat">
               <div class="stat-num">3–5×</div>
               <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
-              <a class="stat-src" href="#ref-5">CMU Cursor study<br>Jan 2026 ↗</a>
+              <a class="stat-src" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU Cursor study<br>Jan 2026 ↗</a>
             </div>
             <div class="stat">
               <div class="stat-num">17%</div>
               <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
-              <a class="stat-src" href="#ref-7">Osmani · O'Reilly<br>Apr 2026 ↗</a>
+              <a class="stat-src" href="#ref-6">Osmani · O'Reilly<br>Apr 2026 ↗</a>
             </div>
           </div>
         </aside>
 
-        <p>
-          The pattern across these: agentic generation works as a bounded
-          operation but degrades on long-running, multi-component,
-          multi-agent systems where coherence has to be preserved. The
-          bottleneck isn't model capability — it's the absence of a durable,
-          inspectable, traceable control surface above the code.
-        </p>
-
         <blockquote class="pull">
           <p>"AI amplifies the quality of the engineering system it operates within."</p>
-          <cite>— DORA 2025 report on AI-assisted development<sup class="cite"><a href="#ref-6">6</a></sup></cite>
+          <cite>— Nicole Forsgren et al, DORA 2025 / Google Cloud<sup class="cite"><a href="#ref-4">4</a></sup></cite>
         </blockquote>
-      </section>
-
-      <section id="surface">
-        <h2><span class="num">§3 — Cognitive surface</span>If humans go upstairs, what can they hold?</h2>
 
         <p>
-          The dark factory only works if humans actually stay above the
-          code. The load-bearing question becomes: what surface CAN
-          humans hold? The answer isn't lines or tokens — it's the
-          number of meaningful items in the affected review cut.
-          Contract level: capabilities, constraints, requirements,
-          flows, stories, bounded contexts, components, interfaces,
-          behaviors, decisions. Code level: files, classes, methods,
-          endpoints, branches, tests.
+          Local fixes — better prompts, sharper instructions, stricter reviews — don't get past this. They work for one run and die on the next agent. The bottleneck isn't model capability; it's the absence of a durable, inspectable control surface above the code. With one in place, drift stops being a vague quality problem and becomes a concrete contract violation: <strong>detectable, attributable, localizable, and repairable</strong> at the contract boundary, before humans are pulled back onto the floor.
+        </p>
+      </section>
+
+      <section id="contract">
+        <h2><span class="num">§3 — The contract</span>The control surface that holds the factory together.</h2>
+
+        <p>
+          A prompt cannot govern a dark factory. A codebase is too large to be the human control surface. A requirements document is too weak if agents can ignore it. The missing object is a <strong>contract</strong> — a set of mutually-derived specs tied together by a graph: authoritative enough to govern generation, structured enough for agents to consume, small enough for humans to mend.
         </p>
 
         <p>
-          A contract is a different shape. It captures what the system
-          <em>is</em>, not how every line implements it. A small set of
-          concepts at the right level of abstraction can cover a large
-          set of code paths. The contract is, by construction, a smaller
-          item surface than the code it governs — small enough for a
-          human to hold, rich enough to keep agents from drifting.
+          The load-bearing question is what surface humans <em>can</em> hold. Not lines or tokens, but the number of <strong>meaningful items</strong> in the affected review cut — code-level (files, classes, methods, branches, tests, integrations) versus contract-level (capabilities, constraints, requirements, flows, bounded contexts, interfaces, behaviors, decisions, obligations). A contract is a different shape: a small set of concepts at the right abstraction level governing a much larger set of implementation paths.
         </p>
 
         <div class="fig">
@@ -859,185 +832,101 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
             <text x="320" y="265" font-family="JetBrains Mono, monospace" font-size="9" fill="#707070" text-anchor="middle">empirical ratio from a real 108K-line system, Vasilopoulos 2026 [9]</text>
           </svg>
-          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system (left) lies far above any human comprehension ceiling. The contract governing it (right) — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans hold the right side. Agents extend the left. The contract is the bridge.<sup class="cite"><a href="#ref-8">8</a></sup></p>
+          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system (left) lies far above any human comprehension ceiling. The contract governing it (right) — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans hold the right side. Agents extend the left. The contract is the bridge.<sup class="cite"><a href="#ref-7">7</a></sup></p>
         </div>
 
         <p>
-          Cognitive-load-aware research<sup class="cite"><a href="#ref-9">9</a></sup>
-          confirms the principle from a different angle: across 974 MBPP
-          programs, 5,000 APPS programs, and a human study of 20 programmers,
-          structures aligned to working-memory limits reduce failures by 54-71%
-          versus unconstrained prompting and improve comprehension scores by
-          17-31%. Structure that fits the cognitive surface is an empirical
-          performance lever, not a stylistic preference.
+          For the contract to be load-bearing, it has to do four jobs at once:
+        </p>
+
+        <ul>
+          <li><strong>Edited by humans</strong> — so it must be smaller than the code.</li>
+          <li><strong>Kept consistent with AI's help</strong> — so it must be machine-checkable.</li>
+          <li><strong>The long-term memory the next agent inherits</strong> — durable across sessions, independent of chat.</li>
+          <li><strong>The eval signal every generated artifact is verified against</strong> — drift becomes detectable, not hopeful.</li>
+        </ul>
+
+        <p>
+          A graph-tied set of mutually-derived specs satisfies all four. That is the contract. That is the bridge to dark factory.
         </p>
       </section>
 
-      <section id="bridge">
-        <h2><span class="num">§4 — The bridge</span>The contract is what gets us across.</h2>
+      <section id="bet">
+        <h2><span class="num">§4 — The bet</span>Generated implementation is not the source of truth.</h2>
 
         <p>
-          <strong>Coding is going dark factory</strong> — code is generated,
-          regenerated, never maintained by hand. The human's mendable surface
-          moves up to the contract.
-        </p>
-        <p>
-          <strong>Spec-driven moved upstream</strong> — but per-feature only.
-          Per-feature specs drive one cycle, then decay.
-        </p>
-        <p>
-          <strong>Contract-driven governs the lifecycle.</strong> A whole-system,
-          graph-tied, drift-detecting contract — approved upstream,
-          verified downstream, reconciled when things slip. The bridge to
-          dark factory.
-        </p>
-
-        <p>
-          For the bridge to hold, the contract does four jobs at once:
-          edited by humans (so smaller than the code), kept consistent
-          with AI's help (machine-checkable), long-term memory the next
-          agent inherits (durable across sessions), eval signal every
-          generated artifact is verified against (drift becomes
-          detectable, not hopeful).
-        </p>
-      </section>
-
-      <section id="thesis">
-        <h2><span class="num">§5 — The <span class="codae">cod<span class="ae">æ</span></span> thesis</span><span class="ae">Co</span>ntract-<span class="ae">d</span>riven <span class="ae">a</span>gentic <span class="ae">e</span>ngineering.</h2>
-
-        <p>
-          Govern agentic code generation by a contract — a set of
-          mutually-derived specs tied together by a graph — so that
-          humans can leave the factory floor. Smaller than the code,
-          persistent across agents, verifiable against the code,
-          approved by humans. The factory floor goes dark; the contract
-          stays mendable; the destination is real. We call the
-          discipline <span class="codae">cod<span class="ae">æ</span></span>.
+          The choice underneath <span class="codae">cod<span class="ae">æ</span></span> is binary. One option: keep code human-mendable. The agent drafts; the human reviews, edits, ships. Useful — but not a dark factory. The other option, the bet <span class="codae">cod<span class="ae">æ</span></span> makes: <strong>code is generated, regenerated, treated as downstream infrastructure</strong>. The contract is what humans maintain. The contract is what agents satisfy. The contract is what detects drift. The contract is what receives repair.
         </p>
 
         <h3>From spec-driven to contract-driven</h3>
 
         <p>
-          Spec-driven development<sup class="cite"><a href="#ref-15">15</a></sup>
-          — across AWS Kiro, GitHub Spec Kit, BMAD — places existing approaches
-          across rigor levels: <em>spec-first</em> (specs guide, then drift),
-          <em>spec-anchored</em> (specs and code co-evolve with enforcement),
-          <em>spec-as-source</em> (specs alone are edited; code is regenerated).
-          All three are real progress over prompt-only generation.
-          <strong><span class="codae">cod<span class="ae">æ</span></span> is the next level: contract-driven</strong> — the spec
-          stack is not one source for one file or one feature, but the
-          multi-tier, mutually-derived, drift-detecting contract that governs
-          the lifecycle. Same impulse, larger surface.
+          Spec-driven development<sup class="cite"><a href="#ref-8">8</a></sup> — across AWS Kiro, GitHub Spec Kit, BMAD — places existing approaches across rigor levels: <em>spec-first</em> (specs guide, then drift), <em>spec-anchored</em> (specs and code co-evolve with enforcement), <em>spec-as-source</em> (specs alone are edited; code is regenerated). All three are real progress over prompt-only generation. <strong><span class="codae">cod<span class="ae">æ</span></span> is the next level: contract-driven</strong> — not one spec for one file or one feature, but a multi-tier, mutually-derived, graph-tied, drift-detecting contract that governs the whole lifecycle. Same impulse, larger surface, longer arc.
         </p>
 
-        <h3>The compiler was software's first dark factory</h3>
+        <h3>The compiler was software's first dark factory.</h3>
 
         <p>
-          We used to inspect generated machine code. Now we inspect source,
-          trust the toolchain, test the result, and debug through traces.
-          <span class="codae">cod<span class="ae">æ</span></span> proposes a similar move one abstraction level up: humans inspect
-          the contract; agents compile it into implementation. The artifact
-          parser is the frontend, the contract graph is the intermediate
-          representation, traces are source maps, and generated code targets a
-          platform contract such as AWS, GCP, Cloudflare, or a local runtime.
-          This is an analogy, not a proof — a Rust compiler is deterministic,
-          agentic generation is not — but it clarifies the desired control
-          surface.
+          Software has done this climb before — one abstraction level down. We used to inspect generated machine code; now we inspect source, trust the toolchain, debug through traces. The compiler is the canonical dark factory: humans write source, the toolchain compiles, nobody reads the assembly. We trust it because its contract is decidable. <span class="codae">cod<span class="ae">æ</span></span> proposes the same move one level up: humans inspect the contract; agents compile it into implementation. The analogy is not a proof — a compiler is deterministic, agentic generation is not — but it clarifies the desired control surface.
+        </p>
+
+        <blockquote class="pull">
+          <p>The goal is not less slop. The goal is a factory that stays dark.</p>
+          <cite>— <span class="codae">cod<span class="ae">æ</span></span> thesis</cite>
+        </blockquote>
+
+        <p>
+          Govern agentic code generation by a contract — so humans can leave the factory floor. Contract in. Production system out. Humans mend. Agents compile. We call the discipline <strong><span class="codae">cod<span class="ae">æ</span></span></strong>.
         </p>
       </section>
 
       <section id="references" class="refs">
         <h2><span class="num">References</span>Primary, verified, mostly 2026.</h2>
 
-        <ol>
+                <ol>
           <li id="ref-1">
-            <span class="title">"An Endless Stream of AI Slop": The Growing Burden of AI-Assisted Software Development.</span>
-            Baltes, S., Cheong, M., Treude, C.
-            <span class="meta">arXiv:2603.27249 · 2026-03-28 · <a href="https://arxiv.org/abs/2603.27249" target="_blank" rel="noopener">arxiv.org/abs/2603.27249</a></span>
+            <span class="title">2026: This is AGI.</span>
+            Sequoia Capital — Pat Grady &amp; Sonya Huang. The essay declaring 2026 the practical AGI year, anchored by coding agents crossing the long-horizon capability threshold.
+            <span class="meta">2026-01 · <a href="https://sequoiacap.com/article/2026-this-is-agi/" target="_blank" rel="noopener">sequoiacap.com/article/2026-this-is-agi/</a></span>
           </li>
           <li id="ref-2">
-            <span class="title">Comprehension Debt in GenAI-Assisted Software Engineering Projects.</span>
-            Ahmad, M.O. (Karlstad University).
-            <span class="meta">arXiv:2604.13277 · 2026-04-14 · <a href="https://arxiv.org/abs/2604.13277" target="_blank" rel="noopener">arxiv.org/abs/2604.13277</a></span>
-          </li>
-          <li id="ref-3">
-            <span class="title">SlopCodeBench: Benchmarking How Coding Agents Degrade Over Long-Horizon Iterative Tasks.</span>
-            Orlanski, G., Roy, D., Yun, A., Shin, C., Gu, A., Ge, A., Adila, D., Sala, F., Albarghouthi, A.
-            <span class="meta">arXiv:2603.24755 · 2026-03-25 · <a href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">arxiv.org/abs/2603.24755</a></span>
-          </li>
-          <li id="ref-4">
-            <span class="title">Context Rot: how increasing input tokens impacts LLM performance.</span>
-            Chroma Research (technical report).
-            <span class="meta">2025-07-14 · <a href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noopener">trychroma.com/research/context-rot</a></span>
-          </li>
-          <li id="ref-5">
-            <span class="title">Speed at the Cost of Quality: How Cursor AI Increases Short-Term Velocity and Long-Term Complexity in Open-Source Projects.</span>
-            He, H., Miller, C., Agarwal, S., Kästner, C., Vasilescu, B. (CMU).
-            <span class="meta">MSR 2026 · arXiv:2511.04427 v3 · 2026-01-26 · <a href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">arxiv.org/abs/2511.04427</a></span>
-          </li>
-          <li id="ref-6">
-            <span class="title">2025 State of AI-Assisted Software Development.</span>
-            Google Cloud DORA team. Coverage by InfoQ, March 2026.
-            <span class="meta">2026-03-17 · <a href="https://www.infoq.com/news/2026/03/ai-dora-report/" target="_blank" rel="noopener">infoq.com/news/2026/03/ai-dora-report/</a></span>
-          </li>
-          <li id="ref-7">
-            <span class="title">Comprehension Debt — the hidden cost of AI generated code.</span>
-            Osmani, A. (O'Reilly Radar).
-            <span class="meta">2026-04-13 · <a href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/</a></span>
-          </li>
-          <li id="ref-8">
-            <span class="title">Codified Context: Infrastructure for AI Agents in a Complex Codebase.</span>
-            Vasilopoulos, A.
-            <span class="meta">arXiv:2602.20478 · 2026-02-24 · <a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arxiv.org/abs/2602.20478</a></span>
-          </li>
-          <li id="ref-9">
-            <span class="title">Cognitive-Load-Aware Refactoring (CDDRefactorER).</span>
-            Saha, S., Hasan, A.A., Shifat, F.T., Imran, M.M.
-            <span class="meta">EASE 2026 · arXiv:2603.16791 v2 · 2026-04-16 · <a href="https://arxiv.org/abs/2603.16791" target="_blank" rel="noopener">arxiv.org/abs/2603.16791</a></span>
-          </li>
-          <li id="ref-10">
-            <span class="title">2026 Agentic Coding Trends Report.</span>
-            Anthropic.
-            <span class="meta">Q1 2026 · <a href="https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf" target="_blank" rel="noopener">resources.anthropic.com/…2026 Agentic Coding Trends Report.pdf</a></span>
-          </li>
-          <li id="ref-11">
-            <span class="title">SWE Context Bench: A Benchmark for Context Learning in Coding.</span>
-            Zhu, J., Hu, M., Wu, J.
-            <span class="meta">arXiv:2602.08316 · 2026-02-09 (rev. 2026-03-27) · <a href="https://arxiv.org/abs/2602.08316" target="_blank" rel="noopener">arxiv.org/abs/2602.08316</a></span>
-          </li>
-          <li id="ref-12">
-            <span class="title">Bridging the Gap between User Intent and LLM: A Requirement Alignment Approach for Code Generation (REA-Coder).</span>
-            Li, J., Bai, R., Luo, Y., Zhang, Y., Yang, W., Sun, Z., Zhao, T., Jin, D., Li, L., Jin, Z.
-            <span class="meta">arXiv:2604.16198 · 2026-04-17 · <a href="https://arxiv.org/abs/2604.16198" target="_blank" rel="noopener">arxiv.org/abs/2604.16198</a></span>
-          </li>
-          <li id="ref-13">
-            <span class="title">Debt Behind the AI Boom: A Large-Scale Empirical Study of AI-Generated Code in the Wild.</span>
-            Liu et al.
-            <span class="meta">arXiv:2603.28592 (v2) · 2026 · <a href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">arxiv.org/abs/2603.28592</a></span>
-          </li>
-          <li id="ref-14">
-            <span class="title">AI Slop and the Software Commons.</span>
-            Baltes, S., Cheong, M., Treude, C. (companion to ref. 1.)
-            <span class="meta">arXiv:2604.16754 · 2026-04-17 · <a href="https://arxiv.org/abs/2604.16754" target="_blank" rel="noopener">arxiv.org/abs/2604.16754</a></span>
-          </li>
-          <li id="ref-15">
-            <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
-            Piskala, D.B.
-            <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
-          </li>
-          <li id="ref-17">
             <span class="title">Spotify says its best developers haven't written a line of code since December.</span>
-            TechCrunch coverage of Spotify Q4 2025 earnings call. Spotify's internal coding-agent platform "Honk" merging hundreds of agent-authored PRs/month by early 2026.
+            TechCrunch coverage of Spotify Q4 2025 earnings call (co-CEO Gustav Söderström). Spotify's internal coding-agent platform "Honk" merging hundreds of agent-authored PRs/month by early 2026.
             <span class="meta">2026-02-12 · <a href="https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/" target="_blank" rel="noopener">techcrunch.com/…spotify-…december-thanks-to-ai/</a></span>
           </li>
-          <li id="ref-18">
+          <li id="ref-3">
             <span class="title">The Dark Software Factory: A New Era of Autonomous Software Delivery.</span>
-            BCG Platinion (Schatlowski, Griewel, Lipska et al.). "As few as three engineers can run a software factory where humans no longer write code."
+            BCG Platinion (Schatlowski, Griewel, Lipska et al.). <em>"As few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."</em>
             <span class="meta">2026-03 · <a href="https://www.bcgplatinion.com/insights/the-dark-software-factory" target="_blank" rel="noopener">bcgplatinion.com/insights/the-dark-software-factory</a></span>
+          </li>
+          <li id="ref-4">
+            <span class="title">2025 State of AI-Assisted Software Development.</span>
+            Forsgren, N. et al — Google Cloud DORA team (lead author of <em>Accelerate</em>; ex-VP of Research, GitHub). Coverage by InfoQ, March 2026.
+            <span class="meta">2026-03-17 · <a href="https://www.infoq.com/news/2026/03/ai-dora-report/" target="_blank" rel="noopener">infoq.com/news/2026/03/ai-dora-report/</a></span>
+          </li>
+          <li id="ref-5">
+            <span class="title">SlopCodeBench: Benchmarking How Coding Agents Degrade Over Long-Horizon Iterative Tasks.</span>
+            Orlanski, G., Roy, D., Yun, A., Shin, C., Gu, A., Ge, A., Adila, D., Sala, F., Albarghouthi, A. The most rigorous 2026 study of agent degradation: 20 problems × 93 checkpoints × 11 models.
+            <span class="meta">arXiv:2603.24755 · 2026-03-25 · <a href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">arxiv.org/abs/2603.24755</a></span>
+          </li>
+          <li id="ref-6">
+            <span class="title">Comprehension Debt — the hidden cost of AI generated code.</span>
+            Osmani, A. (O'Reilly Radar). The 17%-lower-comprehension-score finding and the "comprehension work is the job" framing.
+            <span class="meta">2026-04-13 · <a href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/</a></span>
+          </li>
+          <li id="ref-7">
+            <span class="title">Codified Context: Infrastructure for AI Agents in a Complex Codebase.</span>
+            Vasilopoulos, A. The 108K-line C# field study: ~660-line constitution, 19 specialized agents, 34 spec docs across 283 sessions — the empirical anchor for the cognitive-surface argument.
+            <span class="meta">arXiv:2602.20478 · 2026-02-24 · <a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arxiv.org/abs/2602.20478</a></span>
+          </li>
+          <li id="ref-8">
+            <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
+            Piskala, D.B. The 2026 SDD taxonomy (spec-first / spec-anchored / spec-as-source) that <span class="codae">cod<span class="ae">æ</span></span> extends to a fourth level — contract-driven.
+            <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
           </li>
         </ol>
 
-        <p class="full-note">Full whitepaper: <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/cod%C3%A6-manifesto.html" target="_blank" rel="noopener">v03/codæ-manifesto.html</a> →</p>
+        <p class="full-note">Full whitepaper: <a class="linky" href="codæ-manifesto.html" target="_blank" rel="noopener">codæ-manifesto.html</a> →</p>
       </section>
 
     

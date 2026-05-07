@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>codæ — Contract-Driven Agentic Engineering · Whitepaper</title>
 
-<meta name="description" content="A 2026 whitepaper introducing codæ — contract-driven agentic engineering: how to keep agentic codebases coherent when generation outpaces comprehension, grounded in seventeen empirical studies published January–April 2026.">
+<meta name="description" content="A 2026 whitepaper on the path to dark-factory AI coding — coding goes lights-out, intent stays mendable. codæ is contract-driven agentic engineering: the contract is what humans hold while agents compile it into production systems. Grounded in 2026 empirical evidence from Spotify, BCG Platinion, Anthropic, Sequoia, Karpathy.">
 <meta name="author" content="Ilya Baimetov">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#ffffff">
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="codæ — Contract-Driven Agentic Engineering">
-<meta property="og:description" content="The slop problem, the cognitive-surface argument, and the case for governing agentic code generation through a stack of human-mendable contracts. Whitepaper, April 2026.">
+<meta property="og:description" content="The path to dark-factory AI coding: coding goes lights-out, intent stays mendable. The contract is what humans hold while agents compile it into production systems. Whitepaper, May 2026.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="codæ — Contract-Driven Agentic Engineering">
-<meta name="twitter:description" content="The slop problem, the cognitive-surface argument, and the case for contract-driven agentic engineering.">
+<meta name="twitter:description" content="The path to dark-factory AI coding. Coding goes lights-out, intent stays mendable. The contract is what humans hold while agents compile.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -619,13 +619,15 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
     <p class="sub"><span class="ae">Co</span>ntract-<span class="ae">d</span>riven <span class="ae">a</span>gentic <span class="ae">e</span>ngineering.</p>
 
     <p class="lead">
-      Agentic AI coding crashed the cost of producing code. It didn't
-      crash the cost of holding a system together. As autonomous agents
-      extend codebases past any single human's comprehension, semantic
-      drift accumulates and "AI slop" compounds — measurable, in 2026,
-      in real codebases. This whitepaper argues for governing it through
-      a stack of human-mendable contracts: smaller than the code,
-      persistent across agents, verifiable against what ships.
+      Coding is going dark factory. Specs in, production system out, no
+      humans on the factory floor. The multi-year trajectory of agentic
+      engineering points there — and the industry-promised 10–100×
+      speedup lives nowhere else. The obstacle on the way is AI slop and
+      semantic drift, measured in 2026 across real codebases. This
+      whitepaper argues that the bridge is a <strong>contract</strong>:
+      a set of mutually-derived specs, tied together by a graph, simple
+      enough for humans to mend and rich enough to keep agents from
+      drifting.
     </p>
 
     <div class="hero-meta">
@@ -644,12 +646,12 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
     <aside class="doc-toc" aria-label="Contents">
       <div class="label">Contents</div>
       <ol>
-        <li><a href="#problem">The slop problem</a></li>
-        <li><a href="#evidence">The evidence</a></li>
+        <li><a href="#destination">The destination</a></li>
+        <li><a href="#obstacle">The obstacle</a></li>
         <li><a href="#prompts">Why prompts don't scale</a></li>
         <li><a href="#surface">The cognitive surface</a></li>
         <li><a href="#memory-eval">Memory and eval</a></li>
-        <li><a href="#bet">The Bet</a></li>
+        <li><a href="#bridge">The bridge</a></li>
         <li><a href="#thesis">The <span class="codae">cod<span class="ae">æ</span></span> thesis</a></li>
         <li><a href="#references">References</a></li>
       </ol>
@@ -657,69 +659,122 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
     <article class="doc-body">
 
-      <!-- §1 PROBLEM -->
-      <section id="problem">
-        <h2><span class="num">§1 — The slop problem</span>Generation got cheap. Coherence didn't.</h2>
+      <!-- §1 DESTINATION -->
+      <section id="destination">
+        <h2><span class="num">§1 — The destination</span>Coding goes dark factory.</h2>
 
         <p>
-          Before LLM agents, drift was slow and human-paced. Teams
-          accumulated technical debt over months and quarters; the rate
-          of change was bounded by how fast humans could type, review,
-          and merge. Coherence was preserved or lost in the open — the
-          people writing the code held the mental model, and divergence
-          from intent surfaced where they could see it.
+          A "dark factory" in manufacturing runs lights-out — no humans
+          on the floor, just machines. The product flows in as a
+          specification and out as physical units. Workers exist; they
+          design the line, audit outputs, evolve the spec. They do not
+          turn the wrenches.
         </p>
 
         <p>
-          Agentic coding broke that bound. A multi-turn agent now extends
-          its own prior code, summarizes its own context, and re-derives
-          its understanding of the system on every turn — at machine speed,
-          without any single human holding the mental model. Every cycle
-          is a chance for meaning to slip. And the slips compound.
+          The same pattern is forming in software. The highest-leverage
+          end-state of agentic coding is the dark factory: agents write
+          the code, run the tests, fix the failures, open the pull
+          requests, and merge them. Humans set direction, govern the
+          contract that steers the factory, and audit the artifacts
+          that flow out. The factory floor is dark.
+        </p>
+
+        <p>
+          The pattern is no longer aspirational. In February 2026,
+          Spotify's co-CEO confirmed that the company's best engineers
+          had not written a line of code since December — instead, they
+          were merging hundreds of agent-authored pull requests per
+          month through Spotify's internal coding-agent platform.<sup class="cite"><a href="#ref-17">17</a></sup>
+          BCG Platinion's <em>Dark Software Factory</em> report, also
+          early 2026, named the milestone explicitly: <em>"as few as
+          three engineers can run a software factory where humans no
+          longer write code."</em><sup class="cite"><a href="#ref-18">18</a></sup>
+          Sequoia, in their January 2026 essay declaring the year of
+          AGI, framed it as a capability threshold crossed: coding
+          agents that plan, use tools, maintain state, and loop until
+          success.<sup class="cite"><a href="#ref-19">19</a></sup>
+        </p>
+
+        <blockquote class="pull">
+          <p>"Agentic engineering is about preserving the quality bar of what existed before in professional software. You're still responsible for your software just as before, but can you go faster? You have these agents which are spiky, fallible, a little stochastic, but extremely powerful. How do you coordinate them to go faster without sacrificing your quality bar?"</p>
+          <cite>— Andrej Karpathy, "From Vibe Coding to Agentic Engineering," Sequoia AI Ascent 2025<sup class="cite"><a href="#ref-20">20</a></sup></cite>
+        </blockquote>
+
+        <p>
+          The economic argument writes itself. The industry-promised
+          <strong>10× to 100× productivity gain</strong> from agentic
+          coding lives in exactly one place: the dark factory. The moment
+          the human has to drop into the code to fix what the agent built
+          — even for a small fraction of changes — the speedup collapses.
+          Reading 100,000 lines to safely change 100 isn't a 100×
+          operation. It's barely 1×. The promise breaks the moment the
+          human is required.
+        </p>
+
+        <p>
+          The dark factory does not eliminate engineers; it relocates
+          them. As Karpathy put it: <em>"You have to be in charge of
+          the aesthetics, the judgment, the taste, and the oversight.
+          People have to be in charge of this spec, this plan."</em><sup class="cite"><a href="#ref-20">20</a></sup>
+          The role moves up the stack — from coder to architect, from
+          typing to governing.
+        </p>
+
+        <p>
+          <strong><span class="codae">cod<span class="ae">æ</span></span>
+          commits to dark-factory coding as the multi-year trajectory,
+          not as a v0.3 promise.</strong> Today's agents aren't
+          trustworthy enough to leave entirely alone with the code. The
+          arc is real, the destination is realistic, the work to get
+          there is hard. The rest of this whitepaper is about what's
+          standing in the way and how to bridge it.
+        </p>
+      </section>
+
+      <!-- §2 OBSTACLE -->
+      <section id="obstacle">
+        <h2><span class="num">§2 — The obstacle</span>AI slop is what stands between us and the dark factory.</h2>
+
+        <p>
+          Dark-factory coding is plausible because agents have crossed
+          the capability threshold. It hasn't shipped at scale because of
+          one thing: <strong>AI slop</strong> — code that looks
+          reasonable, passes review-by-glance, and accumulates faster
+          than reviewers can absorb. Drift that is no longer an
+          aberration; in 2026 it is the equilibrium of long-running
+          agentic generation.
         </p>
 
         <p>The same failure shows up under three names in the 2026 literature:</p>
 
         <ul>
           <li>
-            <strong>Semantic drift</strong> — outputs progressively diverge
-            from original task intent while remaining syntactically valid.
-            Now widely named in 2026 reporting on long-running AI coding.
+            <strong>Semantic drift</strong> — outputs progressively
+            diverge from original task intent while remaining
+            syntactically valid. Now widely named in 2026 reporting on
+            long-running AI coding.
           </li>
           <li>
-            <strong>AI slop</strong> — code that looks reasonable, passes
-            review-by-glance, and accumulates faster than reviewers can
-            absorb. A 1,154-post analysis of developer-forum discussions
-            coded fifteen recurring themes, all converging on one pattern:
-            cheap to generate, expensive to review.<sup class="cite"><a href="#ref-1">1</a></sup>
+            <strong>AI slop</strong> — cheap to generate, expensive to
+            review. A 1,154-post analysis of developer-forum
+            discussions coded fifteen recurring themes, all converging
+            on this pattern.<sup class="cite"><a href="#ref-1">1</a></sup>
           </li>
           <li>
             <strong>Comprehension debt</strong> — the codebase looks
-            clean, but no human (and no incoming agent) on the team
-            understands what it's doing or why. Coined formally this year
-            in a study of 207 students across 8 weeks of agentic-Scrum
+            clean, but no human (and no incoming agent) understands
+            what it's doing or why. Coined formally this year in a
+            study of 207 students across 8 weeks of agentic-Scrum
             projects.<sup class="cite"><a href="#ref-2">2</a></sup>
           </li>
         </ul>
 
         <p>
-          Three names, one structural problem: agentic systems now
-          produce code faster than humans can integrate it into a
-          coherent whole. Drift is no longer an aberration. It's the
-          equilibrium.
-        </p>
-      </section>
-
-      <!-- §2 EVIDENCE -->
-      <section id="evidence">
-        <h2><span class="num">§2 — The evidence</span>The problem is measurable. The data isn't ambiguous.</h2>
-
-        <p>
           The literature has moved from anecdotal to instrumented over
-          the last twelve months. References below are primarily 2026
-          (one late-2025 source labeled as such), grounded in
-          peer-reviewed venues, official industry reports, or large-N
-          empirical studies. Many are arXiv preprints; treat them
+          the last twelve months. References below are primarily 2026,
+          grounded in peer-reviewed venues, official industry reports, or
+          large-N empirical studies. Many are arXiv preprints; treat them
           accordingly. The pattern is consistent.
         </p>
 
@@ -802,19 +857,28 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           bound to long-running, multi-component, multi-agent systems
           where coherence has to be preserved. The bottleneck is not
           model capability. The bottleneck is the absence of a durable,
-          inspectable, traceable control surface above the code.
+          inspectable, traceable control surface above the code — and
+          the dark factory cannot ship without one.
+        </p>
+
+        <p>
+          Slop is not a small obstacle. It <em>is</em> the obstacle. The
+          next three sections explain why every existing tactical fix —
+          better prompts, more context, sharper instructions — runs out
+          of road before it gets us to dark factory.
         </p>
       </section>
 
       <!-- §3 PROMPTS -->
       <section id="prompts">
-        <h2><span class="num">§3 — Why prompts don't scale</span>More prompts won't save you.</h2>
+        <h2><span class="num">§3 — Why prompts don't scale</span>The first instinct is local. It runs out of road.</h2>
 
         <p>
-          The default response to drift is to fight it locally — better
-          prompts, sharper instructions, more elaborate steering files,
-          stricter rules. This works for one run. It dies on the next
-          agent, the next session, the next contributor.
+          If slop is the obstacle, the first instinct is to fight it
+          locally — better prompts, sharper instructions, more elaborate
+          steering files, stricter rules. This works for one run. It
+          dies on the next agent, the next session, the next
+          contributor — and never gets us to dark factory.
         </p>
 
         <p>
@@ -847,18 +911,19 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
       <!-- §4 COGNITIVE SURFACE -->
       <section id="surface">
-        <h2><span class="num">§4 — The cognitive surface</span>Count items, not lines.</h2>
+        <h2><span class="num">§4 — The cognitive surface</span>If humans go upstairs, what can they hold?</h2>
 
         <p>
-          The right way to compare what a human can hold isn't lines
-          or tokens — it's the number of meaningful items in the
-          affected review cut. Contract-level: IDed semantic items —
-          capabilities, constraints, requirements, flows, stories,
-          acceptance criteria, bounded contexts, views, interactions,
-          components, interfaces, behaviors, decisions. Code-level:
-          files, classes/types, methods/functions, endpoints/handlers,
-          branches, tests, integrations, runtime resources, dependency
-          edges.
+          The dark factory only works if humans actually stay above the
+          code. So the load-bearing question is: what surface CAN
+          humans hold? The answer isn't lines or tokens — it's the
+          number of meaningful items in the affected review cut.
+          Contract-level: IDed semantic items — capabilities,
+          constraints, requirements, flows, stories, acceptance criteria,
+          bounded contexts, views, interactions, components, interfaces,
+          behaviors, decisions. Code-level: files, classes/types,
+          methods/functions, endpoints/handlers, branches, tests,
+          integrations, runtime resources, dependency edges.
         </p>
 
         <p>
@@ -872,11 +937,13 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          A specification is a different shape. It captures what the
-          system <em>is</em>, not how every line implements it. A small
-          set of concepts at the right level of abstraction can cover a
-          large set of code paths. The spec stack is, by construction, a
-          smaller item surface than the code it governs.
+          A contract is a different shape. It captures what the system
+          <em>is</em>, not how every line implements it. A small set of
+          concepts at the right level of abstraction can cover a large
+          set of code paths. The contract is, by construction, a smaller
+          item surface than the code it governs — small enough for a
+          human to fit in their head, rich enough to keep agents from
+          drifting.
         </p>
 
         <p>
@@ -887,7 +954,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <div class="fig">
-          <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cognitive surface comparison: a tall code mountain at left versus a short, structured spec stack at right; a horizontal red dashed line marks the human comprehension ceiling, well below the top of the code column.">
+          <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cognitive surface comparison: a tall code mountain at left versus a short, structured contract at right; a horizontal red dashed line marks the human comprehension ceiling, well below the top of the code column.">
             <line x1="20" y1="80" x2="600" y2="80" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6 4"/>
             <text x="608" y="84" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#c43a50" text-anchor="end">human comprehension ceiling</text>
 
@@ -931,7 +998,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             </g>
 
             <g transform="translate(380, 30)">
-              <text x="120" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Spec stack</text>
+              <text x="120" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Contract</text>
               <g>
                 <rect x="40" y="0" width="200" height="14" rx="2" fill="#e84057"/>
                 <text x="50" y="11" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#fff">intent</text>
@@ -953,7 +1020,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
             <text x="320" y="265" font-family="JetBrains Mono, monospace" font-size="9" fill="#707070" text-anchor="middle">empirical ratio from a real 108K-line system, Vasilopoulos 2026 [9]</text>
           </svg>
-          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system (left) lies far above any human comprehension ceiling. The spec stack governing it (right) — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans hold the right side. Agents extend the left. The contract is the bridge.<sup class="cite"><a href="#ref-8">8</a></sup></p>
+          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system (left) lies far above any human comprehension ceiling. The contract governing it (right) — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans hold the right side. Agents extend the left. The contract is the bridge.<sup class="cite"><a href="#ref-8">8</a></sup></p>
         </div>
 
         <p>
@@ -963,7 +1030,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           lines of hot-memory constitution, 19 specialized agents
           (~9,300 lines), and 34 on-demand specification documents
           (~16,250 lines), across 283 development sessions. Even by the
-          cruder line-based proxy, the spec stack is a fraction of the
+          cruder line-based proxy, the contract is a fraction of the
           code and is sufficient to keep agents pattern-adherent at
           scale. The illustration above shows the rough proportion.
           Item-count ratios will be reported once VibeLoom dogfood data
@@ -989,26 +1056,37 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
       <!-- §5 MEMORY + EVAL -->
       <section id="memory-eval">
-        <h2><span class="num">§5 — Memory and eval</span>Specs are what survives the next agent.</h2>
+        <h2><span class="num">§5 — Memory and eval</span>The contract is what survives the next agent.</h2>
 
         <p>
-          A spec stack at the right cognitive surface is necessary but
-          not sufficient. The deeper claim is that the same stack, once
+          A contract at the right cognitive surface is necessary but not
+          sufficient. The deeper claim is that the same contract, once
           it exists, does two more things at once: it gives the next
           agent long-term memory of what the system is, and it gives the
           generation step an eval signal that what it just produced can
-          be checked against.
+          be checked against. Both are prerequisites for the dark
+          factory.
         </p>
 
-        <h3>Specs as long-term memory</h3>
+        <h3>The contract as long-term memory</h3>
 
         <p>
           When chat is cheap and context is rotting, the only persistent
           representation of "what this system is supposed to be" is the
-          spec stack. Anthropic's 2026 Agentic Coding Trends Report<sup class="cite"><a href="#ref-10">10</a></sup>
+          contract. Anthropic's 2026 Agentic Coding Trends Report<sup class="cite"><a href="#ref-10">10</a></sup>
           puts it bluntly: engineers use AI in roughly 60% of work but
           can fully delegate only 0–20%. The constraint isn't model
           capability. It's context.
+        </p>
+
+        <p>
+          Anthropic's own Claude Code best-practices guidance makes the
+          same point operationally: <em>"Claude doesn't really have
+          memory. The main way we share state across sessions or across
+          our team is this CLAUDE.md file."</em><sup class="cite"><a href="#ref-21">21</a></sup>
+          A single file is the entry-level case; a contract is the
+          structured generalization — durable across sessions,
+          inspectable, mendable.
         </p>
 
         <blockquote class="pull">
@@ -1023,11 +1101,11 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           structure — improves resolution accuracy <em>and</em> reduces
           runtime/token cost. Unfiltered or wrongly selected context
           provides negative benefit. Quality of context, not quantity. A
-          spec stack <em>is</em> the curated, summarized, high-signal
+          contract <em>is</em> the curated, summarized, high-signal
           context the next agent needs.
         </p>
 
-        <h3>Specs as eval signal</h3>
+        <h3>The contract as eval signal</h3>
 
         <p>
           The same artifacts work as the eval surface. When the agent
@@ -1050,17 +1128,17 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
         <p>
           That is not a proof that contract-driven agentic engineering
-          eliminates drift. It is supporting evidence that
+          eliminates drift end-to-end. It is supporting evidence that
           requirement-alignment-before-generation scales as a real
           mechanism — not an aspiration — when paired with verification.
-          The pattern is the right shape
-          to lean on.
+          The pattern is the right shape to lean on, and the right shape
+          to scale toward dark factory.
         </p>
       </section>
 
-      <!-- §6 BET -->
-      <section id="bet">
-        <h2><span class="num">§6 — The Bet</span>Coding goes dark factory. Intent stays mendable.</h2>
+      <!-- §6 BRIDGE -->
+      <section id="bridge">
+        <h2><span class="num">§6 — The bridge</span>The contract is what gets us across.</h2>
 
         <blockquote class="pull">
           <p>"The 10–100× speedup is real only when the human stays out of the code. The contract is what keeps them out."</p>
@@ -1077,18 +1155,19 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           human reviews, edits, ships. We lived in this world for two
           years — and it's the world the industry-promised
           <strong>10× to 100× productivity</strong> lives in. It also
-          has an ugly back-of-the-envelope: the moment the human has
-          to drop into the code to fix what the agent built — even for
-          a small fraction of changes — the speedup collapses. Code's
+          has an ugly back-of-the-envelope: the moment the human has to
+          drop into the code to fix what the agent built — even for a
+          small fraction of changes — the speedup collapses. Code's
           cognitive surface (§4) is what it is. Reading 100,000 lines
           to safely change 100 isn't a 100× operation. It's barely 1×.
-          The promise breaks the moment the human is required.
+          The promise breaks the moment the human is required. This
+          path leads <em>away</em> from dark factory, not toward it.
         </p>
 
         <p>
-          The other option is the bet <span class="codae">cod<span class="ae">æ</span></span> makes — a multi-year
-          trajectory, not a v0.3 promise: <strong>coding becomes the
-          dark factory.</strong> Code is generated, regenerated, never
+          The other option — the one <span class="codae">cod<span class="ae">æ</span></span>
+          builds the bridge to: <strong>coding becomes the dark
+          factory.</strong> Code is generated, regenerated, never
           maintained by hand. The human's mendable surface moves up
           the stack — from the code to the contract above it. The
           contract is what the human comprehends, governs, edits. The
@@ -1096,21 +1175,24 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          For this bet to work, the contract has to do these jobs at once:
+          For the bridge to hold, the contract has to do four jobs at once:
         </p>
 
         <ul>
-          <li><strong>Edited by humans</strong> — so it must be smaller than the code.</li>
+          <li><strong>Edited by humans</strong> — so it must be smaller than the code (§4).</li>
           <li><strong>Kept consistent and coherent with AI's help</strong> — so it must be machine-checkable.</li>
-          <li><strong>The long-term memory the next agent inherits</strong> — durable across sessions, independent of chat.</li>
+          <li><strong>The long-term memory the next agent inherits</strong> — durable across sessions, independent of chat (§5).</li>
           <li><strong>The eval signal every generated artifact is verified against</strong> — drift becomes detectable, not hopeful.</li>
         </ul>
 
         <p>
-          A stack of mutually-derived complementary specs satisfies all
-          four. That's the <span class="codae">cod<span class="ae">æ</span></span> proposition. The 10–100× speedup
-          survives only if the human never touches the factory floor.
-          Keep them upstairs. Give them a contract.
+          A set of mutually-derived complementary specs, tied together by
+          a graph that makes the relationships explicit and machine-checkable
+          — that's a contract. It satisfies all four jobs. That's the
+          <span class="codae">cod<span class="ae">æ</span></span>
+          proposition. The 10–100× speedup survives only if the human
+          never touches the factory floor. Keep them upstairs. Give them
+          a contract.
         </p>
       </section>
 
@@ -1123,17 +1205,18 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         <ul>
           <li>The problem is structural — drift compounds at machine speed under agentic generation.</li>
           <li>The mechanism is mechanical — chat is not memory, context rots, agents re-derive their understanding every turn.</li>
-          <li>The surface humans <em>can</em> hold is the spec stack — measured by the number of IDed semantic items in the affected review cut, not by lines of code.</li>
+          <li>The surface humans <em>can</em> hold is the contract — measured by the number of IDed semantic items in the affected review cut, not by lines of code.</li>
           <li>Contract-style enforcement on agents is now empirically supported (§5) — not yet proven to bound drift universally, but real enough to lean on.</li>
         </ul>
 
         <p>
           From these, the <span class="codae">cod<span class="ae">æ</span></span> thesis follows directly: <strong>govern
-          agentic code generation by a stack of complementary,
-          human-mendable contracts</strong>. The stack is smaller than
-          the code, persists across agents, is verifiable against the
-          code, and is approved by humans. (The methodology spells out
-          how each property is implemented at the artifact level — see
+          agentic code generation by a contract — a set of mutually-derived
+          specs tied together by a graph — so that humans can leave the
+          factory floor</strong>. The contract is smaller than the code,
+          persists across agents, is verifiable against the code, and is
+          approved by humans. (The methodology spells out how each
+          property is implemented at the artifact level — see
           <a class="linky" href="vibeloom-methodology.md"><code>vibeloom-methodology.md</code></a>.
           This whitepaper stops at the paradigm.)
         </p>
@@ -1187,10 +1270,10 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
           enforcement), <em>spec-as-source</em> (specs alone are edited;
           code is regenerated). All three are real progress over
           prompt-only generation. <strong><span class="codae">cod<span class="ae">æ</span></span> is the next level:
-          contract-driven</strong> — the spec stack is not one source
-          for one file or one feature, but the multi-tier,
-          mutually-derived, drift-detecting contract that governs the
-          lifecycle. Same impulse, larger surface.
+          contract-driven</strong> — not one spec for one file or one
+          feature, but the multi-tier, mutually-derived, graph-tied,
+          drift-detecting contract that governs the whole lifecycle.
+          Same impulse, larger surface, longer arc.
         </p>
 
         <h3>The compiler was software's first dark factory</h3>
@@ -1212,9 +1295,10 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
 
         <p>
           This is what we mean by <em>contract-driven agentic engineering</em>:
-          treating the spec stack not as documentation around the code,
-          but as the contract the code is generated to satisfy. We call
-          the discipline <strong><span class="codae">cod<span class="ae">æ</span></span></strong>.
+          the contract is what humans hold while agents compile it into
+          a production system. The factory floor goes dark; the contract
+          stays mendable; the destination is real. We call the discipline
+          <strong><span class="codae">cod<span class="ae">æ</span></span></strong>.
         </p>
       </section>
 
@@ -1312,6 +1396,31 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             <span class="title">Design by Contract.</span>
             Eiffel Software (Bertrand Meyer's foundational discipline).
             <span class="meta"><a href="https://www.eiffel.com/values/design-by-contract/" target="_blank" rel="noopener">eiffel.com/values/design-by-contract</a></span>
+          </li>
+          <li id="ref-17">
+            <span class="title">Spotify says its best developers haven't written a line of code since December, thanks to AI.</span>
+            TechCrunch coverage of Spotify Q4 2025 earnings call (co-CEO Gustav Söderström). Spotify's internal coding-agent platform "Honk" had ~650 PRs/month merged by early 2026; engineers operate as agent reviewers.
+            <span class="meta">2026-02-12 · <a href="https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/" target="_blank" rel="noopener">techcrunch.com/2026/02/12/spotify-says-…</a></span>
+          </li>
+          <li id="ref-18">
+            <span class="title">The Dark Software Factory: A New Era of Autonomous Software Delivery.</span>
+            BCG Platinion (Schatlowski, Griewel, Lipska et al.). "As few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."
+            <span class="meta">2026-03 · <a href="https://www.bcgplatinion.com/insights/the-dark-software-factory" target="_blank" rel="noopener">bcgplatinion.com/insights/the-dark-software-factory</a></span>
+          </li>
+          <li id="ref-19">
+            <span class="title">2026: This is AGI.</span>
+            Sequoia Capital — Pat Grady &amp; Sonya Huang. The essay declaring 2026 the practical AGI year, anchored by coding agents crossing the long-horizon capability threshold.
+            <span class="meta">2026-01 · <a href="https://sequoiacap.com/article/2026-this-is-agi/" target="_blank" rel="noopener">sequoiacap.com/article/2026-this-is-agi/</a></span>
+          </li>
+          <li id="ref-20">
+            <span class="title">From Vibe Coding to Agentic Engineering.</span>
+            Andrej Karpathy, talk at Sequoia AI Ascent 2025. The talk that named "agentic engineering" as the next operating mode for professional software.
+            <span class="meta"><a href="https://youtu.be/96jN2OCOfLs" target="_blank" rel="noopener">youtu.be/96jN2OCOfLs</a> · transcript and Sequoia summary at <a href="https://karpathy.bearblog.dev/sequoia-ascent-2026/" target="_blank" rel="noopener">karpathy.bearblog.dev/sequoia-ascent-2026/</a></span>
+          </li>
+          <li id="ref-21">
+            <span class="title">Claude Code best practices.</span>
+            Anthropic, "Code w/ Claude" presentation. Operational guidance: agents have no native memory; CLAUDE.md is the entry-level shared state; the structured generalization is a contract.
+            <span class="meta"><a href="https://youtu.be/gv0WHhKelSE" target="_blank" rel="noopener">youtu.be/gv0WHhKelSE</a></span>
           </li>
         </ol>
       </section>

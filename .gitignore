@@ -11,3 +11,9 @@ __pycache__/
 # VibeLoom build artifacts — extracted templates
 # (canonical source is vibeloom-templates.md; templates/ is regenerable via extract-templates.py)
 v03/templates/
+
+# Release-asset staging (tarballs go to GitHub releases, not into git)
+dist/
+
+# build-bundle.sh leaves a pointer to its last /tmp staging dir
+.last-bundle-staging.txt

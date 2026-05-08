@@ -18,15 +18,15 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 
 ## Inputs
 
-- **`v03/engine/`** — built by `build-engine.md`, all engine tests passing, §18 engine-related acceptance items checked off.
-- **`v03/vibeloom-templates.md`** — canonical source for every template (skill manifest, subagent prompt, skill references, task templates, artifact templates, decision-trace template, validation-registry template, README). Total count is declared in impl §19.3 and may evolve.
+- **`v03/engine/`** — built by `build-engine.md`, all engine tests passing, §16 engine-related acceptance items checked off.
+- **`v03/vibeloom-templates.md`** — canonical source for every template (skill manifest, subagent prompt, skill references, task templates, artifact templates, decision-trace template, validation-registry template, README). Total count is declared in impl §17.3 and may evolve.
 - **`v03/extract-templates.py`** — the deterministic extractor with `--check` drift mode.
-- **`v03/vibeloom-implementation.md`** — for §18 acceptance checklist and §19 templates inventory + per-family contracts.
+- **`v03/vibeloom-implementation.md`** — for §16 acceptance checklist and §17 templates inventory + per-family contracts.
 - **`v03/vibeloom-methodology.md`** — for smoke-test workflow expectations (§16).
 
 ## Preconditions
 
-- `v03/engine/` exists; engine tests pass; engine-related items in impl §18 are checked off.
+- `v03/engine/` exists; engine tests pass; engine-related items in impl §16 are checked off.
 - All input files present.
 - Python 3.10+ and `git` available.
 - (For Step 10b only — the human's post-handoff task) a working Claude Code installation will be available for the live load test. The agent itself does not need this; Step 10a is static validation only.
@@ -34,26 +34,26 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 
 ## Steps
 
-1. **Extract templates and verify round-trip.** Use `extract-templates.py` in default mode then `--check` mode. Drift must be zero. The expected template count is declared in impl §19.3 line 1271 (currently 41, but **the spec evolves and that count may be different at your run-time**).
+1. **Extract templates and verify round-trip.** Use `extract-templates.py` in default mode then `--check` mode. Drift must be zero. The expected template count is declared in impl §17.3 line 1271 (currently 41, but **the spec evolves and that count may be different at your run-time**).
 
-   When the extracted count doesn't match §19.3:
-   - **If §19.3 was recently updated** (newer than the extracted-count expectation in your scratchpad): the spec changed; trust the spec; update your expectation; proceed.
-   - **If §19.3 is unchanged but extraction shows a different count:** the source `vibeloom-templates.md` has drifted from the spec. Stop. Surface the gap in your final report; do not bundle until §19.3 and `vibeloom-templates.md` agree.
+   When the extracted count doesn't match §17.3:
+   - **If §17.3 was recently updated** (newer than the extracted-count expectation in your scratchpad): the spec changed; trust the spec; update your expectation; proceed.
+   - **If §17.3 is unchanged but extraction shows a different count:** the source `vibeloom-templates.md` has drifted from the spec. Stop. Surface the gap in your final report; do not bundle until §17.3 and `vibeloom-templates.md` agree.
 
-   **Verify:** `extract-templates.py --check` exits 0; extracted count matches §19.3 (or you've documented and resolved the gap per the rule above); no leftover `templates/` files from prior runs (regenerate from source if any are present).
+   **Verify:** `extract-templates.py --check` exits 0; extracted count matches §17.3 (or you've documented and resolved the gap per the rule above); no leftover `templates/` files from prior runs (regenerate from source if any are present).
 
 2. **Validate the skill manifest** at `templates/skill/SKILL.md`. Confirm:
-   - Frontmatter is well-formed YAML and complete per the SKILL.md template's contract (per impl §19.3 and `vibeloom-templates.md`).
+   - Frontmatter is well-formed YAML and complete per the SKILL.md template's contract (per impl §17.3 and `vibeloom-templates.md`).
    - Body sections are present and ordered as the template requires (when-to-use, authoritative sources, runtime references, templates, engine, substrate, command routing, failure recovery, getting started, guardrails, response shape).
    - Every `references/<file>.md` mentioned is present in `templates/skill/references/`.
 
    If anything is missing, fix at the source (`vibeloom-templates.md`), re-extract, retry. **Never hand-edit the extracted `templates/` tree.**
    **Verify:** YAML frontmatter parses cleanly; no `{{template-source-placeholder}}` strings or `[TODO]` markers leaked into the body; every reference path resolves to a real file in `templates/skill/references/`.
 
-3. **Verify task-template family contract.** Every template under `templates/tasks/` must have the canonical 10 sections in order: Purpose / Inputs / Preconditions / Steps / Output / Postconditions / Constraints / Invariants / Validation / Failure modes (per impl §12.1 and §19.3). A template with any other shape is a contract violation — fix at the source.
+3. **Verify task-template family contract.** Every template under `templates/tasks/` must have the canonical 10 sections in order: Purpose / Inputs / Preconditions / Steps / Output / Postconditions / Constraints / Invariants / Validation / Failure modes (per impl §12.1 and §17.3). A template with any other shape is a contract violation — fix at the source.
    **Verify:** for each `templates/tasks/*.md`, the 10 H2 headings appear in canonical order. Compute and report a per-template compliance score (10/10 = passing). Any score <10/10 blocks bundling.
 
-4. **Verify artifact-template frontmatter shapes.** For every contract artifact template (intent-specs, product-specs, ux-specs, system-specs), the frontmatter must carry the v0.3 fields including `approval_unit`. For the system-specs templates, the layer-aware fields per impl §6.3 / §6.4. Context artifact templates must not carry `status` or `approval_unit`. Per impl §6 and §19.3.
+4. **Verify artifact-template frontmatter shapes.** For every contract artifact template (intent-specs, product-specs, ux-specs, system-specs), the frontmatter must carry the v0.3 fields including `approval_unit`. For the system-specs templates, the layer-aware fields per impl §6.3 / §6.4. Context artifact templates must not carry `status` or `approval_unit`. Per impl §6 and §17.3.
    **Verify:** every contract-artifact template parses with `status` + `approval_unit` present; every context-artifact template parses without them; every system-specs template carries `layer` (enum from §6.4). Report the per-template frontmatter compliance.
 
 5. **Verify ID prefix registry consistency.** The prefix registry in `templates/skill/references/artifacts.md` must match `vibeloom-implementation.md` §5.1. If they disagree, the implementation doc wins; the skill reference is a bug.
@@ -99,8 +99,8 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 
    **Verify:** rebuild the tarball twice on the same source commit + same template extract; the two tarball sha256s must match exactly. If they don't, fix the build script (most likely an mtime or sort-order issue) before declaring step 8 done.
 
-9. **Generate release notes** capturing what's in the release, smoke-test results, the §18 acceptance checklist (with each box's state — engine items deferred to the engine build's report; skill items checked here), the source commit SHA, and the bundle artifacts (tarball name + sha256). Format is the agent's call.
-   **Verify:** the release notes include every item from §18 with explicit state (skill-✓ / engine-deferred / blocked) and a one-line rationale for any unchecked or deferred item.
+9. **Generate release notes** capturing what's in the release, smoke-test results, the §16 acceptance checklist (with each box's state — engine items deferred to the engine build's report; skill items checked here), the source commit SHA, and the bundle artifacts (tarball name + sha256). Format is the agent's call.
+   **Verify:** the release notes include every item from §16 with explicit state (skill-✓ / engine-deferred / blocked) and a one-line rationale for any unchecked or deferred item.
 
 10a. **Static skill-manifest validation.** The agent running this prompt is Claude Code itself; it cannot recursively load the new skill into its own session. Do the validation it *can* do statically:
     - Parse `templates/skill/SKILL.md` frontmatter against Claude Code's documented skill-frontmatter schema (required fields, types, regex constraints).
@@ -113,8 +113,8 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 10b. **(Handoff artifact, not an agent step) Queue the live Claude Code load test for the human.** The agent does **not** execute this. The agent's deliverable is a clear handoff item in the release notes flagging this as the human's first post-handoff task: install the bundle into a clean Claude Code instance and confirm the skill registers, the argument-hint surface is recognized, and no warnings appear. If 10b ever fails post-handoff, the SKILL.md template needs editing in `vibeloom-templates.md`; re-extract and rebuild.
     **Verify (agent side):** the release notes contain an explicit "Pending live load test" section calling out this task with what to install, where to install it, and what success looks like.
 
-11. **Walk impl §18 acceptance checklist line by line.** Every box must be marked. Engine items are pre-validated by `build-engine.md`'s final report (cite the engine commit SHA); skill items verify against the extracted tree + manifest validation; smoke-test items verify against the runs in Steps 6 and 7. Items that depend on Step 10b live-load are marked **pending live load** with a note. Document any unchecked items in the release notes with explicit rationale.
-    **Verify:** every §18 item has an explicit state (✓ / engine-deferred / pending-live-load / blocked) with a one-line citation (commit SHA, log file path, or manifest-validation line). No item is unmarked.
+11. **Walk impl §16 acceptance checklist line by line.** Every box must be marked. Engine items are pre-validated by `build-engine.md`'s final report (cite the engine commit SHA); skill items verify against the extracted tree + manifest validation; smoke-test items verify against the runs in Steps 6 and 7. Items that depend on Step 10b live-load are marked **pending live load** with a note. Document any unchecked items in the release notes with explicit rationale.
+    **Verify:** every §16 item has an explicit state (✓ / engine-deferred / pending-live-load / blocked) with a one-line citation (commit SHA, log file path, or manifest-validation line). No item is unmarked.
 
 ## Output
 
@@ -126,13 +126,13 @@ Assemble the v0.3 vibeloom skill bundle from canonical sources: the engine (buil
 ## Postconditions
 
 - `extract-templates.py --check` exits 0 (round-trip clean).
-- Every template under `templates/tasks/` passes the canonical 10-section DbC contract (count must match impl §19.3).
+- Every template under `templates/tasks/` passes the canonical 10-section DbC contract (count must match impl §17.3).
 - All contract artifact templates carry the v0.3 frontmatter shape.
 - The ID prefix registry in `templates/skill/references/artifacts.md` matches impl §5.1.
 - Smoke tests pass for both `vibe` and `pm` modes end-to-end.
 - Static skill-manifest validation (Step 10a) passes; no schema-field is invalid or missing.
 - Live Claude Code load test (Step 10b) is queued for the human as the first post-handoff task; release notes flag this explicitly.
-- Impl §18 acceptance checklist is fully marked (every box has state: ✓ / engine-deferred / pending-live-load / blocked); blocked items are documented in release notes with rationale.
+- Impl §16 acceptance checklist is fully marked (every box has state: ✓ / engine-deferred / pending-live-load / blocked); blocked items are documented in release notes with rationale.
 - The bundle is reproducible: same source commit + same templates source + same engine source → byte-identical bundle (modulo timestamps in the manifest).
 
 ## Constraints
@@ -156,7 +156,7 @@ Before declaring the bundle ready to ship:
 1. Round-trip clean (`extract-templates.py --check` exits 0).
 2. Family contracts pass (10-section task templates; v0.3 contract-artifact frontmatter shape; non-numbered context-artifact frontmatter).
 3. Smoke tests pass end-to-end in both `vibe` and `pm` modes.
-4. Impl §18 acceptance checklist fully satisfied (paste it into release notes with each box's state).
+4. Impl §16 acceptance checklist fully satisfied (paste it into release notes with each box's state).
 5. Bundle integrity: manifest hashes match actual file contents; tarball extracts to a directory whose contents match the manifest.
 6. Static skill-manifest validation passes (Step 10a); live load test (Step 10b) queued for human post-handoff.
 7. Reproducibility spot-check: rerun `extract-templates.py` and the bundle-tarball step on the same source commit; both extracted tree and tarball sha256 should be byte-identical (modulo manifest timestamps).
@@ -166,11 +166,11 @@ Before declaring the bundle ready to ship:
 - **Drift reported by the extractor.** The source was edited but not re-extracted, or the extracted tree was hand-edited. Re-extract from source; never hand-edit the tree.
 - **Skill manifest fails to load in Claude Code.** Either the SKILL.md template is malformed or the platform's schema changed. Identify which; fix the source.
 - **Smoke test fails at a specific operation.** Trace to engine bug, template bug, or spec ambiguity. Fix at the source. Re-run from the failing step.
-- **Acceptance checklist fails on a specific item.** Surface to the human. Some §18 items reflect design choices, not bugs; do not auto-fix.
+- **Acceptance checklist fails on a specific item.** Surface to the human. Some §16 items reflect design choices, not bugs; do not auto-fix.
 - **Bundle integrity check fails.** Hash mismatch — regenerate the manifest after the bundle is final and before the tarball; fix the script ordering if needed.
 - **Spec ambiguity vs. spec bug — different responses:**
   - *Ambiguity:* spec is silent or unclear. Prefer the most conservative interpretation, surface in your final report.
-  - *Bug:* spec contradicts itself or contradicts a reference (e.g. §19.3 vs. §6.3). **Do not fix the spec.** Stop the affected step. Surface the contradiction with both citations and request human adjudication. The spec author is the only legitimate fixer.
+  - *Bug:* spec contradicts itself or contradicts a reference (e.g. §17.3 vs. §6.3). **Do not fix the spec.** Stop the affected step. Surface the contradiction with both citations and request human adjudication. The spec author is the only legitimate fixer.
 
 ## Anti-patterns to avoid
 
@@ -187,7 +187,7 @@ When the bundle passes acceptance, produce a one-page summary covering:
 
 1. **Bundle artifacts:** tarball name, sha256, release manifest path, release notes path.
 2. **Per-step state:** each Step 1–11 marked done / partial / blocked, with a one-line citation (log file, commit SHA, etc.).
-3. **§18 acceptance checklist:** every item with state (skill-✓ / engine-deferred (cite engine commit) / pending-live-load / blocked).
+3. **§16 acceptance checklist:** every item with state (skill-✓ / engine-deferred (cite engine commit) / pending-live-load / blocked).
 4. **Smoke-test transcripts:** paths to `smoke-vibe.log` and `smoke-pm.log`; brief summary of what each ran.
 5. **Reproducibility check:** confirmation that re-running extract + tarball on the same source commit produces byte-identical artifacts.
 6. **Spec ambiguities and bugs surfaced:** citations + chosen interpretations (ambiguities) or surfaced-only contradictions (bugs).

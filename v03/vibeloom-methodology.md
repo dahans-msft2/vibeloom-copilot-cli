@@ -15,7 +15,7 @@ codæ is the paradigm: contract-driven agentic engineering. VibeLoom is one conc
 What VibeLoom defines:
 
 - the contract stack (tiers and artifact families),
-- the derivation graph,
+- the Contract Graph,
 - operating modes,
 - review and reconciliation workflows,
 - context and traces,
@@ -93,7 +93,7 @@ code
 traces run alongside as durable provenance.
 ```
 
-`product-specs` and `ux-specs` are peer/co-informing tiers during generation. The approved derivation graph is acyclic.
+`product-specs` and `ux-specs` are peer/co-informing tiers during generation. The approved Contract Graph is acyclic.
 
 ---
 
@@ -227,15 +227,15 @@ Context is purely active generation guidance. Decisions — including ADR/PDR-st
 
 ---
 
-## 8. Contract graph
+## 8. Contract Graph
 
-The contract graph is the parsed, queryable model of approved and draft artifacts.
+The **Contract Graph** is the parsed, queryable model of relationships between all entities defined in the contract. The term is stable; the implementation evolves.
 
-Nodes are IDed semantic items (entities). Edges are `derives_from` relationships. The graph is a DAG.
+Nodes are IDed semantic items (entities). In v0.3, edges are `derives_from` relationships, and the graph is a DAG — i.e. the v0.3 Contract Graph is essentially a derivation DAG. Future implementations may add provenance, typed relations, and other materializations (see roadmap CGKG-B).
 
-v0.3 ships the contract graph as a **knowledge graph**: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, not in the graph. Trace schemas (§11) carry enough metadata to promote those relationships to graph form later (roadmap CGKG-B).
+v0.3 ships the Contract Graph as a **knowledge graph**: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, not in the graph. Trace schemas (§11) carry enough metadata to promote those relationships to graph form later (roadmap CGKG-B).
 
-The graph answers:
+The Contract Graph answers:
 
 - what derives from what,
 - what is affected if a node changes,
@@ -252,7 +252,7 @@ Code does not require deep graph carriers in v03. Code-sync traces (§11) bridge
 
 ### 8.2 Derivation rules
 
-Root items are capabilities and constraints. Downstream items derive from one or more approved upstream items or accepted input evidence (e.g., mockups). Product and UX may co-inform generation, but the approved graph remains acyclic.
+Root items are capabilities and constraints (`CAP`, `CST`). **Every other item derives, directly or transitively, from at least one root.** Downstream items derive from one or more approved upstream items or accepted input evidence (e.g., mockups). Product and UX may co-inform generation, but the approved Contract Graph remains acyclic.
 
 ---
 
@@ -275,21 +275,9 @@ Use distinct categories instead of overloading "stale":
 
 ---
 
-## 10. Cognitive surface metric
+## 10. Cognitive surface
 
-VibeLoom should measure review surface by item count, not primarily by token or line count.
-
-- **Contract cognitive surface** = number of IDed contract items in the affected review cut.
-- **Code cognitive surface** = files + classes/types + methods/functions + endpoints/handlers + tests + integration points in the affected implementation cut.
-- **Review compression ratio** = affected code items / affected contract items.
-
-Until dogfood data lands, treat numerical ratios as targets, not proof. The v03 claim is modest: humans review *tens* of contract items, not *hundreds or thousands* of code items. Report the ratio; don't flourish it.
-
-Useful secondary metrics to collect during dogfooding:
-
-- review time per packet,
-- defect-detection rate at review vs after merge,
-- downstream-rework frequency per approval.
+The cognitive-surface argument is made visually in [manifesto §5](codæ-manifesto.html#surface) (108K-LOC system vs 24% contract column). Item-count compression as a measurable per-cycle metric — review compression ratio, review time per packet, defect-detection rate at review vs after merge, downstream-rework frequency per approval — is a roadmap target, not yet operational. See [roadmap A4](roadmap.md#a4-cognitive-surface-instrumentation).
 
 ---
 
@@ -438,7 +426,7 @@ Ambiguous semantic cases escalate. Findings are categorized as `blocking` or `ad
 
 ### 14.3 Verification ladder
 
-Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Each tier is more rigorous and more expensive than the one below. The codæ trajectory: *promote* checks upward as the engine matures.
+Eval operates on a ladder of decidable, mechanical, and heuristic tiers. Decidable is the most rigorous and the cheapest (pure compute, no LLM); heuristic is the least rigorous and the most expensive (LLM-judged). The codæ trajectory: *promote* checks upward as the engine matures — heuristic dimensions become mechanical runners, mechanical runners become structural rules — so the cheap-and-rigorous share grows over time.
 
 | Tier | What it is | v0.3 today | Trajectory |
 | --- | --- | --- | --- |

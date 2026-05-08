@@ -17,7 +17,7 @@ Build the v0.3 vibeloom engine: a deterministic Python package that parses contr
 ## Inputs
 
 - **`v03/vibeloom-implementation.md`** — canonical spec. Authoritative for every shape, schema, rule, and operation the engine must implement. Read it cover-to-cover before writing code.
-- **`v03/vibeloom-methodology.md`** — paradigm context. Read to understand contract tiers, modes, derivation DAG, status taxonomy, traces, and the verification ladder.
+- **`v03/vibeloom-methodology.md`** — paradigm context. Read to understand contract tiers, modes, Contract Graph, status taxonomy, traces, and the verification ladder.
 - **`v02/engine/`** — prior-art reference. The v02 engine targets an older spec; many concepts carry over but several details have changed. Use it for inspiration, not for copy-paste.
 
 ### v02 → v03 delta (must-handle)
@@ -72,7 +72,7 @@ How to decompose this into modules and APIs is the agent's choice — match the 
 
 ## Steps
 
-1. **Read `vibeloom-implementation.md` like a spec, not like prose.** Three passes: (a) skim the §s and copy the headings into a scratchpad as a working outline; (b) read each § slowly, taking notes on every frontmatter shape (§6), every trace schema (§8), every operation pseudocode (§15), and every acceptance-checklist item (§18); (c) follow forward references (§13 in §6, §15 in §13) and re-read in context. Do not start coding while still confused.
+1. **Read `vibeloom-implementation.md` like a spec, not like prose.** Three passes: (a) skim the §s and copy the headings into a scratchpad as a working outline; (b) read each § slowly, taking notes on every frontmatter shape (§6), every trace schema (§8), every operation pseudocode (§15), and every acceptance-checklist item (§16); (c) follow forward references (§13 in §6, §15 in §13) and re-read in context. Do not start coding while still confused.
    **Verify:** write `read-pass-1-summary.md` at the worktree root listing every trace family, every status category, every dispatch wave-rule, and every operation. Externalize so a reviewer can verify the pass actually happened — not just that you claimed it did.
 
 2. **Read `vibeloom-methodology.md` cover-to-cover for paradigm context.** Methodology §6.5 (layered architecture) and §11.1 (decision-trace classification) are particularly load-bearing.
@@ -86,7 +86,7 @@ How to decompose this into modules and APIs is the agent's choice — match the 
    Implement in **priority order**, checkpointing after each stage. If you reach the time budget mid-stage: commit, surface what's done, surface what's not. Do not skip ahead — partial coverage of Stage 1 is more valuable than fragile half-implementations across all six.
 
    **Stage 1 — read-only primitives (target: 30% of build budget).**
-   - **Frontmatter and body parsing** for every artifact type listed in §6. Body parsing extracts IDed items per the families in §5.1 and the body conventions in §19.3 (the `artifacts.md` template documents the canonical column conventions).
+   - **Frontmatter and body parsing** for every artifact type listed in §6. Body parsing extracts IDed items per the families in §5.1 and the body conventions in §17.3 (the `artifacts.md` template documents the canonical column conventions).
    - **Schema validation** for every frontmatter shape (§6). Trace-shape validation is deferred to Stage 3.
    - **ID registry** with allocation, retired-list, and the rule that retired IDs are never reused (§5.2).
    - **Contract graph** as a DAG over `derives_from` edges; only `CAP` and `CST` may be roots; bounded contexts only in domain-layer components (methodology §6.4); the rest of methodology §8.
@@ -191,29 +191,29 @@ A working engine under `v03/` — source layout per Step 4 (single file or packa
 
 ## Validation
 
-Before declaring the engine complete, every **engine-side** item in impl **§18 acceptance checklist** must pass. Some §18 items are skill concerns (validated by `build-skill.md`, not here). The mapping below pre-classifies every §18 box (impl lines 1210–1228) so you don't have to guess:
+Before declaring the engine complete, every **engine-side** item in impl **§16 acceptance checklist** must pass. Some §16 items are skill concerns (validated by `build-skill.md`, not here). The mapping below pre-classifies every §16 box so you don't have to guess:
 
-| §18 item | Lines | Owner |
-|---|---|---|
-| `.vibeloom/cache/` and `.vibeloom/traces/` separated | 1210 | **engine** |
-| Approval baseline trace-backed (JSONL append-only) | 1211 | **engine** |
-| ID registry persists retired + next | 1212 | **engine** |
-| Trace families have `schema_version` | 1213 | **engine** |
-| Code-sync traces connect IDs to file hashes + validation evidence | 1214 | **engine** |
-| Review/reconciliation packets have user-notes write capability | 1215 | skill |
-| Task templates are markdown 10-section, not YAML wrappers | 1216 | skill |
-| Subagent writes patch-staged in `.vibeloom/runs/`, validated, applied atomically | 1217 | **engine** |
-| Dispatch plan + wave-assembly + parallel semantics match §13.1–§13.3 | 1218 | **engine** |
-| Subagent task header schema is the only orchestrator↔subagent contract | 1219 | skill |
-| Validation registry parsed, runners invokable | 1220 | **engine** |
-| Product/UX peer generation supports mockup evidence with `MOCK-####` | 1221 | skill |
-| `ux` mode supported as a fifth top-level mode | 1222 | skill (modes are skill concerns) |
-| Verification ladder reflected in eval routing | 1223 | **engine** |
-| Component / container / BC rules match methodology §6.5 | 1224 | **engine** |
-| `status` distinguishes the 6 categories | 1225 | **engine** |
-| Each operation has explicit, traceable execution semantics (§15.1–§15.8) | 1226 | **engine** for primitives; skill for orchestration |
-| Vibe layout genuinely minimal (no graph cache, no code-sync trace) | 1227 | **engine** |
-| Templates only as fenced blocks; tree is build artifact | 1228 | skill |
+| §16 item | Owner |
+|---|---|
+| `.vibeloom/cache/` and `.vibeloom/traces/` separated | **engine** |
+| Approval baseline trace-backed (JSONL append-only) | **engine** |
+| ID registry persists retired + next | **engine** |
+| Trace families have `schema_version` | **engine** |
+| Code-sync traces connect IDs to file hashes + validation evidence | **engine** |
+| Review/reconciliation packets have user-notes write capability | skill |
+| Task templates are markdown 10-section, not YAML wrappers | skill |
+| Subagent writes patch-staged in `.vibeloom/runs/`, validated, applied atomically | **engine** |
+| Dispatch plan + wave-assembly + parallel semantics match §13.1–§13.3 | **engine** |
+| Subagent task header schema is the only orchestrator↔subagent contract | skill |
+| Validation registry parsed, runners invokable | **engine** |
+| Product/UX peer generation supports mockup evidence with `MOCK-####` | skill |
+| `ux` mode supported as a fifth top-level mode | skill (modes are skill concerns) |
+| Verification ladder reflected in eval routing | **engine** |
+| Component / container / BC rules match methodology §6.5 | **engine** |
+| `status` distinguishes the 6 categories | **engine** |
+| Each operation has explicit, traceable execution semantics (§15.1–§15.8) | **engine** for primitives; skill for orchestration |
+| Vibe layout genuinely minimal (no graph cache, no code-sync trace) | **engine** |
+| Templates only as fenced blocks; tree is build artifact | skill |
 
 Paste this table into your final report with each engine-row marked ✓ / blocked, and skill-rows marked **skill-deferred** with a one-line rationale.
 
@@ -225,7 +225,7 @@ Plus:
 
 - **Spec ambiguity vs. spec bug — different responses:**
   - *Ambiguity:* spec is silent or unclear. Prefer the most conservative interpretation, leave a comment marking the choice (`# spec ambiguity: <reason>`), surface in your final report. Do not invent behavior the spec doesn't specify.
-  - *Bug:* spec contradicts itself or contradicts a reference (e.g. §6.3 says one thing, §19.3 says another). **Do not fix the spec.** Stop the affected step. Surface the contradiction with both citations in your final report and request human adjudication before continuing. The spec author is the only legitimate fixer.
+  - *Bug:* spec contradicts itself or contradicts a reference (e.g. §6.3 says one thing, §17.3 says another). **Do not fix the spec.** Stop the affected step. Surface the contradiction with both citations in your final report and request human adjudication before continuing. The spec author is the only legitimate fixer.
 - **v02-vs-v03 confusion.** If you find yourself reaching for the v02 module and pasting it, stop and re-read the relevant § of `vibeloom-implementation.md`. The v02 engine is reference, not template.
 - **Schema drift.** If your implementation diverges from §8 trace schemas, the bug is in your code, not the spec. Re-read §8.7.
 - **Test failures.** Don't suppress, don't skip. If a test exposes a real bug in the spec, surface it (per the bug rule above); if it exposes a bug in your code, fix it.
@@ -251,7 +251,7 @@ After each major step (1 — read; 3 — v02 diff inventory; 4 — engine implem
 
 When the engine passes acceptance, produce a one-page summary covering:
 
-1. **Checklist:** paste impl §18 with each box marked engine-✓ / skill-deferred / blocked.
+1. **Checklist:** paste impl §16 with each box marked engine-✓ / skill-deferred / blocked.
 2. **Spec ambiguities found:** every `# spec ambiguity:` comment, with the chosen interpretation and rationale.
 3. **Spec bugs surfaced:** any §-vs-§ contradictions discovered (per the failure-modes rule). Do not fix; surface only.
 4. **Test results:** `pytest` summary + coverage percentage.

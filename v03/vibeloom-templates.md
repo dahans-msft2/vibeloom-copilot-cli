@@ -186,8 +186,9 @@ Invoke on any `$vibeloom` or `/vibeloom` command, or when the user mentions Vibe
 
 Always consult these before making decisions:
 
-- **[vibeloom-methodology.md](../../vibeloom-methodology.md)** — WHAT and WHY (entities, tiers, modes, operations, approval model, derivation DAG, status taxonomy, verification ladder, decision-trace classification). If this skill file conflicts with the methodology, the methodology wins.
+- **[vibeloom-methodology.md](../../vibeloom-methodology.md)** — WHAT (entities, tiers, modes, operations, approval model, contract graph, status taxonomy, verification ladder, decision-trace classification). If this skill file conflicts with the methodology, the methodology wins.
 - **[vibeloom-implementation.md](../../vibeloom-implementation.md)** — HOW (cache vs traces split, artifact layout, frontmatter shape, ID schema, runtime loop, dispatch plan + wave assembly + subagent task header schema, trace schemas, layer-aware constraints).
+- **[codæ-manifesto.html](../../codæ-manifesto.html)** — WHY (the case for contract-driven agentic engineering). Paradigm context; not loaded for runtime decisions, but referenced when explaining the system or onboarding new contributors.
 
 ## Runtime references (load on demand)
 
@@ -688,7 +689,7 @@ Containers carry a required `layer` field. The layer drives:
 ## Derivation rules
 
 - The canonical relation is `derives_from`.
-- Every non-root entity must derive from one or more upstream entities allowed by the methodology's Derivation DAG.
+- Every non-root entity must derive from one or more upstream entities allowed by the methodology's Contract Graph (§8).
 - Visible `derives_from` references use short item IDs only.
 - Artifact frontmatter records the smallest useful constraining set of upstream item IDs.
 - Item-level derivation lives in body carriers per the template.
@@ -734,13 +735,7 @@ Load on demand during `eval`, `review`, `reconcile`, and `approve` when the targ
 
 ## The verification ladder
 
-Eval operates on a ladder of three tiers (per methodology §14.3):
-
-- **Decidable (engine, structural)** — deterministic checks the engine performs without an LLM. Lifecycle consistency, required fields, ID validity, reference integrity, DAG validity, coverage, dangling references, ownership rules (including layer-aware: `hosted_bounded_contexts` empty in non-domain components), context sufficiency. Findings are blocking or advisory by check type.
-- **Mechanical (engine + runners)** — project-defined validation runners declared in `validation-registry.md`. Standard families: typecheck, lint, unit/integration tests, contract conformance, generated BDD, security, smoke, deploy. Findings are pass/fail per runner.
-- **Heuristic (agent, semantic)** — agent-judged dimensions described in this file. Findings are `breaking` (must escalate) or `advisory` (worth surfacing).
-
-This file covers the **heuristic tier**: agent-judged semantic dimensions. The decidable + mechanical tiers are engine-driven and don't require this guidance.
+The three tiers (Decidable / Mechanical / Heuristic) and the per-tier check inventory are canonically defined in [methodology §14.3](../../vibeloom-methodology.md#143-verification-ladder). This reference covers the **heuristic tier** only — agent-judged semantic dimensions, where guidance is needed. The decidable and mechanical tiers are engine-driven and don't require this file.
 
 The codæ trajectory is to promote checks upward as the engine matures — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share grows over time.
 
@@ -809,7 +804,7 @@ If terminology aligns with the domain model, emit no finding.
 
 **What:** For a downstream item and its declared `derives_from`, judge whether there are upstream items the downstream's meaning depends on but that are not in `derives_from`.
 
-**Candidate upstreams** are items of allowed upstream prefixes for the downstream's type per the Derivation DAG (methodology ## Context Graph). Do not propose edges to disallowed types.
+**Candidate upstreams** are items of allowed upstream prefixes for the downstream's type per the Contract Graph (methodology §8). Do not propose edges to disallowed types.
 
 **Depends on** means the downstream's description, constraints, or behavior would change if the candidate were removed or modified. A passing mention is not a dependency; a load-bearing reference is.
 
@@ -1576,9 +1571,9 @@ Read-only validation of a target against approved upstream truth across the veri
 ## Steps
 
 1. Build/refresh contract graph via engine `parse + graph`.
-2. **Decidable tier (engine, structural)**: run all structural checks for target — lifecycle consistency, required fields, ID validity & registry consistency, reference integrity, tier-order/DAG validity, coverage, dangling references, ownership rules (including layer-aware: hosted_bounded_contexts must be empty in non-domain components), context sufficiency.
-3. **Mechanical tier (engine + runners)**: invoke validation runners declared in registry that are in scope for the target. Aggregate pass/fail per runner.
-4. **Heuristic tier (agent, semantic)**: agent runs heuristic dimensions against items in scope — faithful representation, naming consistency, implicit dependency detection, capability gaps, UX/product mismatch, mockup extraction gaps, target-platform mismatch.
+2. **Decidable tier (engine, structural)**: run the engine's structural checks for the target. The check inventory is canonical in [methodology §14.3](../../vibeloom-methodology.md#143-verification-ladder); the engine knows what to run.
+3. **Mechanical tier (engine + runners)**: invoke validation runners declared in `validation-registry.md` that are in scope for the target. Aggregate pass/fail per runner.
+4. **Heuristic tier (agent, semantic)**: agent runs the heuristic dimensions defined in [`references/eval.md`](../skill/references/eval.md) (canonical dimension list in methodology §14.2) against items in scope.
 5. Categorize findings: `blocking` (must address before approval) or `advisory` (worth noting, not gating).
 6. Emit an `eval` trace per invocation: target, checks_run, findings (each with finding_id, severity, item_id, message), cost.
 7. Return aggregated findings to caller (or surface to user if invoked directly).
@@ -3295,7 +3290,7 @@ User-visible surfaces, interactions, UX constraints, and mockup references. Peer
 ````template:artifacts/system-specs/component.md
 <!--
 VibeLoom template: component (per-component spec)
-Tier: system-specs (full modes only) — terminal node in the derivation graph.
+Tier: system-specs (full modes only) — terminal node in the Contract Graph.
 Purpose: full contract for one owned technical boundary.
 Structured content: IF-####, DEP-####, BEH-####, NOTE-####. These are addressable items but NOT independent graph nodes (per Boundary Principle).
 
@@ -3528,7 +3523,7 @@ Communication paths between containers are structured content within this artifa
 Generator guidance:
 - Every container appears in the topology.
 - Each CONT derives from at least one BC (semantic home) plus optionally NFR or SNFR.
-- Communication paths describe how containers talk to each other (event, HTTP, RPC, etc.). They are table content, not items with IDs in the derivation graph.
+- Communication paths describe how containers talk to each other (event, HTTP, RPC, etc.). They are table content, not items with IDs in the Contract Graph.
 - Do not list components here — components are inventoried in each container.md.
 - Hosting/runtime choices can be noted in the notes column or a separate prose section.
 -->
@@ -3645,7 +3640,7 @@ Tier: system-specs (vibe only)
 Purpose: all-inclusive summary "technical" spec. Flat covering system context, containers, components, and structured local content.
 Entities: CONT-#### and CMP-#### only (per methodology ## Modes ### Vibe Mode).
 
-Note on scope: vibe keeps the derivation graph unmaterialized. EXT/TB/SNFR/interfaces/dependencies/behaviors appear as structured content in this one file rather than as distinct artifacts. Upgrade to pm/dev/ux/expert expands this into system + containers + per-container + per-component.
+Note on scope: vibe keeps the Contract Graph unmaterialized. EXT/TB/SNFR/interfaces/dependencies/behaviors appear as structured content in this one file rather than as distinct artifacts. Upgrade to pm/dev/ux/expert expands this into system + containers + per-container + per-component.
 
 Generator guidance:
 - Keep this tight. Vibe is a compromise between ceremony and structure.
@@ -3942,7 +3937,7 @@ Not graph-addressable. Regenerated from approved contract when contract changes.
 Assistant slug in the `assistant` frontmatter field (e.g., `claude`, `codex`). One file per assistant.
 
 Generator guidance:
-- Include concrete project-specific pointers: artifact IDs, interface names, owned paths, test commands, cross-scope dependency cues — so subagents can orient without loading the full context graph.
+- Include concrete project-specific pointers: artifact IDs, interface names, owned paths, test commands, cross-scope dependency cues — so subagents can orient without loading the full Contract Graph.
 - Derived from approved contract entities owned at root scope and above (none above root, so just root: intent, defaults, prd, usm, dm, ux, system, containers in full modes; compact intent + defaults + system in vibe).
 - Do not duplicate contract content. Reference item IDs and artifacts.
 - Context artifacts never outrank contract. Config is operational guidance.

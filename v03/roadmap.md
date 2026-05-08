@@ -45,7 +45,7 @@ The compiler analogy creates an obligation: real compilers come with debuggers, 
 
 ### A3. Contract debugger
 
-**What it does.** Given a code-level symptom (a failing test, a runtime error trace, a user complaint with a stack pointer), the debugger walks back through code-sync traces to the contract item(s) the code claims to realize, then up the derivation graph to the contract basis. It surfaces: when each item in the chain was last approved, what eval findings have been recorded against it, what reconciliation history it has, what other code-sync traces realize the same items. The user can pivot from "what broke" to "where in the contract does it really live" in one or two steps.
+**What it does.** Given a code-level symptom (a failing test, a runtime error trace, a user complaint with a stack pointer), the debugger walks back through code-sync traces to the contract item(s) the code claims to realize, then up the Contract Graph to the contract basis. It surfaces: when each item in the chain was last approved, what eval findings have been recorded against it, what reconciliation history it has, what other code-sync traces realize the same items. The user can pivot from "what broke" to "where in the contract does it really live" in one or two steps.
 
 **Justification.** When generated code misbehaves, the natural instinct is to fix the code. But codæ's premise is that code is downstream — the contract is source of truth. Without a debugger that surfaces the contract chain, users revert to inspecting code, which defeats the model. The debugger makes "fix it upstream" cheap enough to be the default.
 
@@ -53,6 +53,19 @@ The compiler analogy creates an obligation: real compilers come with debuggers, 
 
 - *Without.* A test fails on `web/tests/search.test.ts`. The dev opens the test, opens the implementation, traces the bug to a wrong default in a search ranking function, fixes the code. Six weeks later, the same wrong default reappears because the underlying contract item still says the wrong thing and the next regeneration reverted the patch.
 - *With.* The dev runs `vibeloom debug web/tests/search.test.ts`. The debugger reports: this test realizes `BDD-0022`, which derives from `BEH-0031` on `CMP-0012`, last regenerated at SYNC-0031 from `IF-0042`. The eval log shows `IF-0042` was approved 8 weeks ago and its definition of "default ranking" is what produces this behavior. The dev fixes `IF-0042`, regenerates, and the bug never comes back.
+
+---
+
+### A4. Cognitive-surface instrumentation
+
+**What it does.** The engine instruments and reports cognitive-surface metrics for every review and reconciliation cycle: contract-item count in the affected scope, code-item count (files + classes/types + methods/functions + endpoints/handlers + tests + integration points) in the affected implementation, and the resulting compression ratio (code items / contract items). Plus secondary metrics collected per session: review time per packet, defect-detection rate at review vs after merge, downstream-rework frequency per approval. Metrics surface in `vibeloom status` and review packets so users can see the cognitive load they're avoiding — and the trend.
+
+**Justification.** The codæ premise — humans mend a small contract while agents extend large implementations — is currently asserted (manifesto §5 visual: 108K-LOC vs 24% contract). Without instrumented metrics, the claim cannot be verified per project, regression cannot be detected, and compression ratio cannot be reported per release. With instrumentation, compression becomes a measurable property of every VibeLoom-governed system; the case becomes evidence; projects flag when their compression ratio degrades (a leading indicator of contract bloat or generated-code creep).
+
+**With vs without.**
+
+- *Without.* PM completes a generation cycle. They have no idea whether they reviewed 12 contract items to govern 4,000 code lines (good) or 200 contract items to govern 800 code lines (bad — contract bloat). The codæ promise stays anecdotal.
+- *With.* `vibeloom status` reports "Last cycle: reviewed 14 contract items affecting 3,120 code items (compression ratio 1:223). Trend over last 5 cycles: 1:198, 1:215, 1:208, 1:215, 1:223 — stable." When the ratio drops, the engine surfaces a finding: "Compression ratio trending down — investigate contract bloat or low-leverage edits."
 
 ---
 

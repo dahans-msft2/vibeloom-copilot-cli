@@ -124,7 +124,7 @@ The engine owns:
 - item extraction,
 - schema validation,
 - stable ID allocation and registry,
-- derivation DAG validation,
+- Contract Graph validation (DAG invariants),
 - graph indexing,
 - affected-set computation,
 - status computation including `obsolete` heuristics,
@@ -156,7 +156,7 @@ The table below is the **canonical** ID prefix registry. It defines every prefix
 | --- | --- | --- | --- | --- | --- |
 | `CAP` | capability | intent-specs | `intent.md` | root | Root entity; no upstream basis. |
 | `CST` | hard constraint | intent-specs | `intent.md` or `defaults.md` | root | Root entity; no upstream basis. |
-| `DEF` | repo-wide default | intent-specs | `defaults.md` | root | Universally binding once derived; downstream may reference without an explicit typed edge. Tech Stack entries also use `DEF`. |
+| `DEF` | repo-wide default | intent-specs | `defaults.md` | root | Derives from `CAP`/`CST` (normalized from intent). Universally binding once derived; downstream may reference without an explicit typed edge. Tech Stack entries also use `DEF`. |
 | `OBJ` | objective | product-specs | `prd.md` | root | Derives from `CAP`. |
 | `KR` | key result | product-specs | `prd.md` | root | Derives from `OBJ`. |
 | `MET` | metric | product-specs | `prd.md` | root | Derives from `KR`, `FR`, or `NFR`. |
@@ -166,21 +166,21 @@ The table below is the **canonical** ID prefix registry. It defines every prefix
 | `FLOW` | workflow / journey | product-specs | `usm.md` | root | Derives from `EPIC`. |
 | `STORY` | story | product-specs | `usm.md` | root | Derives from `EPIC`/`FLOW`. |
 | `ACC` | acceptance criterion | product-specs | `usm.md` | per-`STORY` | Derives from `STORY`. EARS allowed. |
-| `MS` | milestone | product-specs | `usm.md` | root | Groups `STORY`s for delivery. |
-| `TERM` | ubiquitous-language term | product-specs | `dm.md` | root | Domain vocabulary; consumed by `BC`/`AGG`/`ENT`. |
+| `MS` | milestone | product-specs | `usm.md` | root | Derives from `STORY` (and optionally `OBJ`). Groups `STORY`s for delivery. |
+| `TERM` | ubiquitous-language term | product-specs | `dm.md` | root | Derives from `CAP` (or `STORY`). Domain vocabulary; consumed by `BC`/`AGG`/`ENT`. |
 | `BC` | bounded context | product-specs | `dm.md` | root | **Hosted only by `domain`-layer components.** Derives from `CAP`/`STORY`. |
 | `AGG` | aggregate | product-specs | `dm.md` | per-`BC` | Lives inside one `BC`. |
 | `ENT` | entity | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
 | `VO` | value object | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
 | `INV` | invariant | product-specs | `dm.md` | per-`AGG` | Domain rule scoped to an `AGG`. |
-| `VIEW` | UX view | ux-specs | `ux.md` | root | Optionally cites `MOCK`. |
-| `INT` | UX interaction | ux-specs | `ux.md` | per-`VIEW` | Per-view interaction. |
-| `UXC` | UX constraint | ux-specs | `ux.md` | root | Cross-view design constraint. |
-| `MOCK` | mockup reference | ux-specs | `ux.md` | root | Pointer to file under `ux-specs/mockups/`. |
-| `EXT` | external actor / system | system-specs | `system.md` | root | System context; outside trust boundaries. |
-| `TB` | trust boundary | system-specs | `system.md` | root | Crosses one or more `CONT`s. |
-| `SNFR` | system-wide NFR boundary | system-specs | `system.md` | root | Global cross-cutting NFR. |
-| `CONT` | container | system-specs | `containers.md` (inventory) + per-container `container.md` | root + per-container | Carries required `layer` field (`presentation` / `application` / `domain` / `infrastructure`). |
+| `VIEW` | UX view | ux-specs | `ux.md` | root | Derives from `CAP` and/or `STORY`/`FLOW`. May cite `MOCK` as evidence. |
+| `INT` | UX interaction | ux-specs | `ux.md` | per-`VIEW` | Derives from `VIEW` (structural) and `STORY`/`ACC` (semantic basis). |
+| `UXC` | UX constraint | ux-specs | `ux.md` | root | Derives from `CST` and/or `DEF`. Cross-view design constraint. |
+| `MOCK` | mockup reference | ux-specs | `ux.md` | root | Derives from `CAP` and/or `CST` (the intent area it serves). Pointer to file under `ux-specs/mockups/`. May be cited by `VIEW`/`INT`/`UXC`/`STORY`/`ACC` as evidence (`evidence_for`). |
+| `EXT` | external actor / system | system-specs | `system.md` | root | Derives from `CAP` and/or `FR` (the capabilities and requirements that involve this external actor). System context; outside trust boundaries. |
+| `TB` | trust boundary | system-specs | `system.md` | root | Derives from `CST`, `SNFR`, or `NFR`. Crosses one or more `CONT`s. |
+| `SNFR` | system-wide NFR boundary | system-specs | `system.md` | root | Derives from `NFR` or `CST`. Global cross-cutting NFR. |
+| `CONT` | container | system-specs | `containers.md` (inventory) + per-container `container.md` | root + per-container | Derives from `FR`/`STORY`/`CAP` (capabilities and requirements driving container choice). Carries required `layer` field (`presentation` / `application` / `domain` / `infrastructure`). |
 | `CMP` | component | system-specs | `container.md` (inventory) + per-component `component.md` | per-`CONT` | Belongs to exactly one `CONT`. Layer inherited from parent `CONT`. |
 | `IF` | owned interface | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content; not an independent graph node in v0.3. |
 | `DEP` | component dependency | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content. |
@@ -1186,11 +1186,9 @@ import(mode, root_path):
   user.show("Import complete. Run `review intent-specs` to begin top-down approval.")
 ```
 
----
+**Worked examples — what step 5 produces.**
 
-## 16. Brownfield import
-
-Import analysis must attach evidence and confidence to inferred items.
+An inferred functional requirement (FR-####) draft, with confidence and evidence:
 
 ```yaml
 id: FR-0027
@@ -1204,15 +1202,7 @@ uncertainty:
   - "No UI flow found."
 ```
 
-Imported contract remains `draft` until reviewed and approved.
-
----
-
-## 17. UX and mockup ingestion
-
-Mockups are input evidence. They may seed product and UX generation.
-
-A `MOCK-####` record:
+A mockup-evidence record (MOCK-####), produced when the import surfaces UI assets:
 
 ```yaml
 id: MOCK-0011
@@ -1222,11 +1212,11 @@ evidence_for: [VIEW-0012, INT-0041, STORY-0031]
 notes: "Shows empty-cart state, disabled checkout CTA, and sign-in prompt."
 ```
 
-Generated obligations must become IDed items (`VIEW`, `INT`, `UXC`, `STORY`, `ACC`) before they become contract truth. The mockup itself stays as evidence; it does not become normative.
+All inferred items remain `draft` until reviewed and approved. Mockups stay as evidence and don't become normative truth until their extracted obligations become IDed contract items (per methodology §6.3).
 
 ---
 
-## 18. Acceptance checklist for v03 implementation
+## 16. Acceptance checklist for v03 implementation
 
 - [ ] `.vibeloom/cache/` and `.vibeloom/traces/` are separated.
 - [ ] Approval baseline is trace-backed (JSONL append-only), not snapshot-backed.
@@ -1250,11 +1240,11 @@ Generated obligations must become IDed items (`VIEW`, `INT`, `UXC`, `STORY`, `AC
 
 ---
 
-## 19. Templates
+## 17. Templates
 
 Every template, skill reference, and skill manifest is specified canonically in [`vibeloom-templates.md`](vibeloom-templates.md). **Templates do not exist as source files.** The on-disk template tree is a build artifact, materialized on demand by [`extract-templates.py`](extract-templates.py) into `templates/` (gitignored). The repo's source tree contains only the canonical markdown source plus the extractor.
 
-### 19.1 Build-time workflow
+### 17.1 Build-time workflow
 
 ```
 edit vibeloom-templates.md          ← only canonical source
@@ -1271,7 +1261,7 @@ There is no on-disk template tree to keep in sync. All template edits go directl
 
 CI runs `python3 extract-templates.py --check` against a freshly extracted tree to confirm that the source is parseable and round-trip-clean. There is no "drift" to detect at the spec level — the canonical source is a single file by construction.
 
-### 19.2 Extractor protocol
+### 17.2 Extractor protocol
 
 A template block opens with **four** backticks immediately followed by `template:<relative-path>` and closes with a line of exactly four backticks. Four (not three) so that ordinary 3-backtick fences inside the body — `​`​`​`yaml`, `​`​`​`text`, etc. — do not prematurely close the outer block.
 
@@ -1287,7 +1277,7 @@ inputs: ...
 
 The extractor writes everything between the opener and closer, verbatim, to `<dest>/<relative-path>` (default `templates/<relative-path>`). Idempotent. `--check` mode diffs and exits non-zero on drift.
 
-### 19.3 Inventory and contracts
+### 17.3 Inventory and contracts
 
 `vibeloom-templates.md` defines 41 templates in five families. Each family has a contract: a set of structural rules every template in that family must satisfy. Templates may add prose, examples, and craft beyond the contract; they may not omit what the contract requires.
 
@@ -1304,13 +1294,13 @@ When adding a new template:
 1. Add the body inside a fenced block in `vibeloom-templates.md` (with a TOC entry up top).
 2. Run `python3 extract-templates.py` to verify the source parses and the new file extracts cleanly.
 3. Verify the new template satisfies its family contract above.
-4. Update §19.3's count.
+4. Update §17.3's count.
 
 When changing a template's family contract, the structural change should be reflected in the relevant implementation section first (§5, §6, §7, §12, etc.); the template body in `vibeloom-templates.md` is then updated to match.
 
 ---
 
-## 20. See also
+## 18. See also
 
 - [`vibeloom-methodology.md`](vibeloom-methodology.md) — what VibeLoom is
 - [`vibeloom-templates.md`](vibeloom-templates.md) — canonical source for every template (extracted to `templates/` on demand via `extract-templates.py`; never committed)

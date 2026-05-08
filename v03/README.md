@@ -29,7 +29,7 @@ The four foundational documents:
   - **Artifact templates** — intent, defaults (with Tech Stack section per DDD layer), prd, usm, dm, ux, system, containers, container (with `layer` field + per-layer deployment guidance), component, decision-trace (per `record_type`), bdd, configs, validation-registry
   - **Task templates** — one per operation, following the canonical Design-by-Contract structure: Purpose / Inputs / Preconditions / Steps / Output / Postconditions / Constraints / Invariants / Validation / Failure modes
   - **Skill assets** — `SKILL.md` + `subagent-prompt.md` + `references/` tree (operations, modes, runtime with dispatch plan + wave assembly + subagent task header, eval with verification ladder, artifacts, troubleshooting)
-  - See implementation [§19 Templates](vibeloom-implementation.md#19-templates) for the inventory + per-family contracts.
+  - See implementation [§17 Templates](vibeloom-implementation.md#17-templates) for the inventory + per-family contracts.
 
 ## Roadmap and examples
 

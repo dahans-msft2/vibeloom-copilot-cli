@@ -221,7 +221,9 @@ def parse_table(section_text: str) -> list[dict[str, str]]:
 # ---------------------------------------------------------------------------
 
 
-_ID_REF_RE = re.compile(r"[A-Z]+-(?:\d{4}|\d{8}-\d{3})")
+# Order alternatives longest-first so dated-form IDs aren't truncated to
+# their leading 4 digits.
+_ID_REF_RE = re.compile(r"[A-Z]+-(?:\d{8}-\d{3}|\d{4})")
 
 
 def parse_id_list(cell: str) -> list[str]:

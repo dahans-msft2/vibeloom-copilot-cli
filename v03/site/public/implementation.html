@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Implementation — Skill + Engine + Runtime · VibeLoom</title>
+<title>VibeLoom — Implementation</title>
 <meta name="description" content="How VibeLoom is built: the Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate that ties them together.">
 <meta name="keywords" content="vibeloom-engine, Claude Code skill, deterministic substrate, contract graph, approval traces, dispatch plan">
 <meta name="author" content="Ilya Baimetov">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="VibeLoom">
 <meta property="og:url" content="https://vibeloom.ai/implementation">
-<meta property="og:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta property="og:title" content="VibeLoom — Implementation">
 <meta property="og:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
 <meta property="og:image" content="https://vibeloom.ai/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -26,7 +26,7 @@
 <meta property="article:modified_time" content="2026-05-06T00:00:00Z">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Implementation — Skill + Engine + Runtime · VibeLoom">
+<meta name="twitter:title" content="VibeLoom — Implementation">
 <meta name="twitter:description" content="The Claude Code / Codex Skill, the zero-dependency Python engine, and the runtime substrate.">
 <meta name="twitter:image" content="https://vibeloom.ai/og-image.png">
 <meta name="twitter:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
@@ -129,7 +129,7 @@
         <li><a href="#engine">The engine</a></li>
         <li><a href="#cli">Engine CLI</a></li>
         <li><a href="#approval-traces">Approval traces and drift detection</a></li>
-        <li><a href="#graph">The contract graph</a></li>
+        <li><a href="#graph">The Contract Graph</a></li>
         <li><a href="#ids">IDs and frontmatter</a></li>
         <li><a href="#traces">Trace families</a></li>
         <li><a href="#dispatch">Subagent dispatch</a></li>
@@ -143,7 +143,7 @@
     <article class="doc-body">
       <aside class="exec-summary" aria-label="What this page tells you">
         <span class="eyebrow">In 60 seconds</span>
-        <p>VibeLoom is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, detects drift. They cooperate through a shared substrate — a regenerable cache and durable append-only traces. Pure Python, zero runtime dependencies. This page covers boundaries, substrate, engine CLI, approval traces, contract graph, IDs and frontmatter, trace families, subagent dispatch, install + run, source layout.</p>
+        <p>VibeLoom is a <strong>Skill</strong> for Claude Code / Codex plus a <strong>deterministic Python engine</strong>. The Skill judges and orchestrates; the engine parses, validates, detects drift. They cooperate through a shared substrate — a regenerable cache and durable append-only traces. Pure Python, zero runtime dependencies. This page covers boundaries, substrate, engine CLI, approval traces, Contract Graph, IDs and frontmatter, trace families, subagent dispatch, install + run, source layout.</p>
         <p class="exec-meta">If you're new — start with the <a class="linky" href="methodology.html">methodology page</a> for the <em>why</em>, then come back here for the <em>how</em>.</p>
       </aside>
 
@@ -151,7 +151,7 @@
       <p>VibeLoom is delivered as two cooperating layers:</p>
       <ul>
         <li><strong>The Skill</strong> — a prompt-and-policy package that loads automatically inside Claude Code or Codex. It owns the natural-language interface, mode selection, approval pauses, semantic judgment, subagent orchestration, and template materialization.</li>
-        <li><strong>The engine</strong> — a deterministic Python package that parses artifacts, validates schemas, builds the contract graph, computes affected sets, plans dispatch waves, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
+        <li><strong>The engine</strong> — a deterministic Python package that parses artifacts, validates schemas, builds the Contract Graph, computes affected sets, plans dispatch waves, and detects structural and lifecycle drift. It makes no semantic judgments and never asks a model for an answer.</li>
       </ul>
       <p>They cooperate through a shared substrate at <code>.vibeloom/</code> — regenerable cache + durable append-only traces (next section). The engine writes state into both; the Skill reads them, decides, generates, invokes the engine again on the result. No other channel exists between them.</p>
       <div class="callout">
@@ -163,7 +163,7 @@
       <h2 id="substrate">Cache + traces</h2>
       <p>The shared substrate at <code>.vibeloom/</code> is split deliberately:</p>
       <ul>
-        <li><strong>Cache</strong> (<code>.vibeloom/cache/</code>) — regenerable state. The contract graph, status snapshots, indices. If deleted, the engine rebuilds from artifacts and traces.</li>
+        <li><strong>Cache</strong> (<code>.vibeloom/cache/</code>) — regenerable state. The Contract Graph, status snapshots, indices. If deleted, the engine rebuilds from artifacts and traces.</li>
         <li><strong>Traces</strong> (<code>.vibeloom/traces/</code>) — durable provenance. Append-oriented JSONL streams (with the ID registry as a structured exception). Traces are never silently regenerated; missing traces degrade governance integrity and require explicit re-baselining.</li>
       </ul>
       <p>This split is the key to drift detection: the cache is what the engine currently knows; the traces are the immutable record of what was approved, generated, evaluated, decided. Drift is the gap between current state and the basis in traces.</p>
@@ -190,7 +190,7 @@
       <p>The engine is a pure Python package with zero runtime dependencies beyond Python 3.10+ (the YAML frontmatter parser is custom, minimal, and shipped in-tree). No <code>pip install</code> is required to use it from the Skill.</p>
       <p>The engine's responsibilities, in scope and out:</p>
       <ul>
-        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the contract graph; computing affected sets; reading and writing trace files for deterministic events; planning dispatch waves; computing status across the lifecycle / freshness / coverage axes.</li>
+        <li><strong>In scope:</strong> parsing artifacts; assigning and validating stable IDs; validating frontmatter and schemas; building and querying the Contract Graph; computing affected sets; reading and writing trace files for deterministic events; planning dispatch waves; computing status across the lifecycle / freshness / coverage axes.</li>
         <li><strong>Out of scope:</strong> deciding what items <em>mean</em>; deciding which fix direction is correct; choosing modes; talking to users.</li>
       </ul>
       <p>All engine commands emit JSON on stdout. Non-zero exit codes indicate blocking findings or errors. The Skill consumes the JSON and renders human-facing output.</p>
@@ -226,9 +226,9 @@ status       --repo &lt;path&gt;                       # Emit + persist status a
 
       <hr>
 
-      <h2 id="graph">The contract graph</h2>
+      <h2 id="graph">The Contract Graph</h2>
       <p>The graph is built by the engine from the entire artifact set. Nodes are IDed semantic items (entities); edges are typed <code>derives_from</code> relations read out of artifact frontmatter. The graph is a DAG — cycles are forbidden, and only capability and constraint are valid roots.</p>
-      <p>v0.3 ships the contract graph as a <strong>knowledge graph</strong> — instantiated ontology only. Provenance lives in traces (see Approval traces and Trace families); a future release may promote it into graph form (roadmap CGKG-B).</p>
+      <p>v0.3 ships the Contract Graph as a <strong>knowledge graph</strong> — instantiated ontology only. Provenance lives in traces (see Approval traces and Trace families); a future release may promote it into graph form (roadmap CGKG-B).</p>
       <p>Two operations compute on the graph:</p>
       <ul>
         <li><strong>Affected set</strong> — given a set of changed item IDs, walk forward through <code>derives_from</code> to collect every reachable downstream item. Unit of work for <code>generate</code> and <code>reconcile</code>.</li>

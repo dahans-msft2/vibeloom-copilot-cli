@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Methodology — Contract-Driven Agentic Engineering · VibeLoom</title>
+<title>VibeLoom — Methodology</title>
 <meta name="description" content="The VibeLoom methodology: a five-tier contract stack, five operating modes, six status categories. Contract-driven agentic engineering — the next step beyond spec-driven development.">
 <meta name="keywords" content="contract-driven methodology, spec-driven development, drift detection, contract stack, AI agent governance">
 <meta name="author" content="Ilya Baimetov">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="VibeLoom">
 <meta property="og:url" content="https://vibeloom.ai/methodology">
-<meta property="og:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta property="og:title" content="VibeLoom — Methodology">
 <meta property="og:description" content="Five-tier contract stack, five operating modes, six status categories. Beyond spec-driven development.">
 <meta property="og:image" content="https://vibeloom.ai/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -26,7 +26,7 @@
 <meta property="article:modified_time" content="2026-05-06T00:00:00Z">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Methodology — Contract-Driven Agentic Engineering · VibeLoom">
+<meta name="twitter:title" content="VibeLoom — Methodology">
 <meta name="twitter:description" content="Five-tier contract stack, five operating modes, six status categories. Beyond spec-driven development.">
 <meta name="twitter:image" content="https://vibeloom.ai/og-image.png">
 <meta name="twitter:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
@@ -136,7 +136,7 @@
         <li><a href="#whenuse">When to use</a></li>
         <li><a href="#layers">Architecture</a></li>
         <li><a href="#contract">Contract stack</a></li>
-        <li><a href="#graph">Contract graph</a></li>
+        <li><a href="#graph">Contract Graph</a></li>
         <li><a href="#modes">Modes</a></li>
         <li><a href="#operations">Operations</a></li>
         <li><a href="#lifecycle">Lifecycle + traces</a></li>
@@ -202,7 +202,7 @@
       </table>
 
       <h3>product-specs ⇄ ux-specs (peer tiers)</h3>
-      <p>Two co-informing tiers. Either can lead depending on mode (<code>pm</code> or <code>ux</code>). The approved derivation graph remains acyclic.</p>
+      <p>Two co-informing tiers. Either can lead depending on mode (<code>pm</code> or <code>ux</code>). The approved Contract Graph remains acyclic.</p>
       <table>
         <thead><tr><th>Artifact</th><th>Purpose</th><th>Items</th></tr></thead>
         <tbody>
@@ -242,9 +242,9 @@
 
       <hr>
 
-      <h2 id="graph">The contract graph</h2>
+      <h2 id="graph">The Contract Graph</h2>
       <p>The graph is the parsed, queryable model of approved and draft artifacts. Nodes are IDed semantic items (entities); edges are typed <code>derives_from</code> relations. The graph is a DAG.</p>
-      <p>v0.3 ships the contract graph as a <strong>knowledge graph</strong>: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, with schemas sufficient for future graph promotion (roadmap CGKG-B).</p>
+      <p>v0.3 ships the Contract Graph as a <strong>knowledge graph</strong>: instantiated ontology only — entities and typed relations as they are now. Provenance (decisions, generation events, eval findings, code-sync evidence, brownfield import history) lives in traces, with schemas sufficient for future graph promotion (roadmap CGKG-B).</p>
       <p>The graph answers:</p>
       <ul>
         <li>What derives from what.</li>
@@ -366,7 +366,7 @@
         <tbody>
           <tr>
             <td><strong>Where the complexity budget goes</strong></td>
-            <td>Contract graph + reconciliation</td>
+            <td>Contract Graph + reconciliation</td>
             <td>Per-feature workflow + constitution</td>
             <td>IDE + per-feature spec pipeline</td>
             <td>Per-feature workflow + role personas (PM, Architect, Dev, QA)</td>
@@ -409,7 +409,7 @@
       <hr>
 
       <h2 id="roadmap">Roadmap</h2>
-      <p><strong>Shipping in v0.3:</strong> the contract stack with ux-specs as peer to product-specs; modes (vibe / pm / dev / ux / expert); the contract graph; drift detection across structural / lifecycle / semantic forms; status taxonomy; the verification ladder; durable trace records with canonical families; scoped subagent dispatch with wave assembly; brownfield import; the methodology + implementation specs.</p>
+      <p><strong>Shipping in v0.3:</strong> the contract stack with ux-specs as peer to product-specs; modes (vibe / pm / dev / ux / expert); the Contract Graph; drift detection across structural / lifecycle / semantic forms; status taxonomy; the verification ladder; durable trace records with canonical families; scoped subagent dispatch with wave assembly; brownfield import; the methodology + implementation specs.</p>
       <p><strong>v0.4+:</strong> richer reconciliation with bounded auto-fix proposals (still always user-confirmed); dry-run generation; a contract REPL; a contract debugger; a cross-project contract pattern library; trace-derived learning. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/roadmap.md" target="_blank" rel="noopener">the v0.4+ roadmap</a> for the full feature brainstorm.</p>
       <p><strong>v1.0 horizon:</strong> stable trace and graph interfaces; engine API as a versioned contract; named integrations beyond Claude Code and Codex.</p>
 

@@ -156,11 +156,22 @@
       <hr>
 
       <h2 id="install">Install</h2>
-      <p>Clone the repo:</p>
+      <p>Pick either path; both work.</p>
+
+      <h3>Option A &mdash; clone the repo</h3>
       <pre><code>git clone https://github.com/ilya-baimetov/vibeloom.git</code></pre>
       <p>Point your agent at the cloned directory as a Skill source. In Claude Code:</p>
       <pre><code>&gt; add vibeloom as a Skill source from /path/to/vibeloom/v03</code></pre>
-      <p>Codex setup is the same shape &mdash; point its Skill loader at the same directory. No <code>pip install</code>. No runtime dependencies beyond Python.</p>
+
+      <h3>Option B &mdash; install the release bundle (v0.3.0)</h3>
+      <p>Drop the bundle into your Claude Code skills directory:</p>
+      <pre><code>mkdir -p ~/.claude/skills
+curl -L https://github.com/ilya-baimetov/vibeloom/releases/download/v0.3.0/vibeloom-v0.3.0.tar.gz | tar -xz -C ~/.claude/skills/
+mv ~/.claude/skills/vibeloom-v0.3.0 ~/.claude/skills/vibeloom</code></pre>
+      <p>Verify the download integrity (optional):</p>
+      <pre><code>shasum -a 256 -c &lt;(curl -sL https://github.com/ilya-baimetov/vibeloom/releases/download/v0.3.0/vibeloom-v0.3.0.tar.gz.sha256)</code></pre>
+
+      <p>Codex setup is the same shape &mdash; point its Skill loader at the directory. No <code>pip install</code>. No runtime dependencies beyond Python 3.10+.</p>
 
       <hr>
 

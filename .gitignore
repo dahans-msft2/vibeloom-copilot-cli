@@ -17,3 +17,6 @@ dist/
 
 # build-bundle.sh leaves a pointer to its last /tmp staging dir
 .last-bundle-staging.txt
+
+# Local-only announcement drafts (not for github)
+/announcement-*.md

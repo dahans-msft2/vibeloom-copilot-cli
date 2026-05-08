@@ -1233,6 +1233,7 @@ All inferred items remain `draft` until reviewed and approved. Mockups stay as e
 - [ ] `ux` mode supported as a fifth top-level mode (designer-led, PM peer reviewer).
 - [ ] Verification ladder (decidable / mechanical / heuristic) reflected in eval routing.
 - [ ] Component / container / bounded-context rules match methodology §6.5.
+- [ ] Engine validates `derives_from` per §5.1 derivation rules and §8.2 universal-trace rule (every non-root item has at least one upstream basis transitively reaching `CAP` or `CST`).
 - [ ] `status` distinguishes `current`, `stale`, `uncovered`, `dangling`, `drifted`, and `obsolete`.
 - [ ] Each operation has explicit, traceable execution semantics (§15.1–§15.8).
 - [ ] Vibe layout is genuinely minimal (no graph cache, no code-sync trace) — not a stripped full mode.

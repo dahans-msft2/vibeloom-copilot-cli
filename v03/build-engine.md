@@ -210,6 +210,7 @@ Before declaring the engine complete, every **engine-side** item in impl **§16 
 | `ux` mode supported as a fifth top-level mode | skill (modes are skill concerns) |
 | Verification ladder reflected in eval routing | **engine** |
 | Component / container / BC rules match methodology §6.5 | **engine** |
+| Engine validates `derives_from` per §5.1 + §8.2 (universal-trace) | **engine** |
 | `status` distinguishes the 6 categories | **engine** |
 | Each operation has explicit, traceable execution semantics (§15.1–§15.8) | **engine** for primitives; skill for orchestration |
 | Vibe layout genuinely minimal (no graph cache, no code-sync trace) | **engine** |

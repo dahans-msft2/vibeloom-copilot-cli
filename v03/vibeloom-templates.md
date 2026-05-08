@@ -186,7 +186,7 @@ Invoke on any `$vibeloom` or `/vibeloom` command, or when the user mentions Vibe
 
 Always consult these before making decisions:
 
-- **[vibeloom-methodology.md](../../vibeloom-methodology.md)** — WHAT (entities, tiers, modes, operations, approval model, contract graph, status taxonomy, verification ladder, decision-trace classification). If this skill file conflicts with the methodology, the methodology wins.
+- **[vibeloom-methodology.md](../../vibeloom-methodology.md)** — WHAT (entities, tiers, modes, operations, approval model, Contract Graph, status taxonomy, verification ladder, decision-trace classification). If this skill file conflicts with the methodology, the methodology wins.
 - **[vibeloom-implementation.md](../../vibeloom-implementation.md)** — HOW (cache vs traces split, artifact layout, frontmatter shape, ID schema, runtime loop, dispatch plan + wave assembly + subagent task header schema, trace schemas, layer-aware constraints).
 - **[codæ-manifesto.html](../../codæ-manifesto.html)** — WHY (the case for contract-driven agentic engineering). Paradigm context; not loaded for runtime decisions, but referenced when explaining the system or onboarding new contributors.
 
@@ -256,7 +256,7 @@ All engine commands emit JSON on stdout. The engine makes NO semantic judgments 
 
 The cooperating substrate at `.vibeloom/` is split:
 
-- **`.vibeloom/cache/`** — regenerable state (contract graph, status). Safe to delete; engine rebuilds.
+- **`.vibeloom/cache/`** — regenerable state (Contract Graph, status). Safe to delete; engine rebuilds.
 - **`.vibeloom/traces/`** — durable provenance (append-only JSONL). Never silently regenerated; missing traces require explicit re-baselining.
 
 Trace families: `approval`, `generation`, `eval`, `code-sync`, `decision`, `import`, plus the `id-registry.json` structured exception. See implementation §8 for schemas.
@@ -291,7 +291,7 @@ Consult `references/modes.md` to help the user pick a mode. Default recommendati
 
 - **Approval gates**: never bypass. When a contract tier is a user stop in the current mode, halt and surface findings.
 - **Methodology authoritative**: if this skill file disagrees with the methodology, follow the methodology and flag the drift.
-- **No invented schema**: don't introduce entity types, ID prefixes, or derivation edges. The valid set is in the methodology's DAG.
+- **No invented schema**: don't introduce entity types, ID prefixes, or derivation edges. The valid set is in the methodology's Contract Graph (§5.1 derivation rules + §8 graph).
 - **Layer-aware**: containers carry a `layer` field (presentation / application / domain / infrastructure). Bounded contexts ONLY in domain-layer containers. Tech stack inherited from `defaults.md` per layer.
 - **Decisions live in traces**: ADRs / PDRs / UDRs / IDRs are decision-trace entries with `record_type`. There is no `context/decisions/` folder. Active "decision context" is a queried view over traces filtered by `load_bearing: true`.
 - **Subagent load sets**: scoped only — never load the skill, methodology, or implementation docs into a subagent's context. Subagents see baseline + owned scope + foreign IF slices + relevant context.
@@ -361,7 +361,7 @@ You have been provided with the following load set:
 You do NOT have access to:
 - Other components' implementations.
 - Files outside `allowed_read_paths`.
-- The full contract graph (you have your slice; that's enough).
+- The full Contract Graph (you have your slice; that's enough).
 - Other subagents in the same wave (no inter-subagent communication; the orchestrator coordinates).
 
 ## Your job
@@ -1497,14 +1497,14 @@ Advance a reviewed contract approval unit from `draft` to `approved`. Records an
    - artifacts: { artifact_id: hash } per artifact in the unit
    - run_id, timestamp, author
 6. Update each artifact's frontmatter status from `draft` to `approved`.
-7. Refresh contract graph cache.
+7. Refresh Contract Graph cache.
 8. If auto-advance is configured for the next tier in current mode (and structural + semantic eval would pass for it), automatically invoke the next `generate-*` task.
 
 ## Output
 
 - Each artifact in the approval unit: status updated to `approved`.
 - New approval trace entry in .vibeloom/traces/approvals.jsonl.
-- Contract graph cache refreshed.
+- Contract Graph cache refreshed.
 - (Optional) Auto-advance kicked off for next tier.
 
 ## Postconditions
@@ -1570,8 +1570,8 @@ Read-only validation of a target against approved upstream truth across the veri
 
 ## Steps
 
-1. Build/refresh contract graph via engine `parse + graph`.
-2. **Decidable tier (engine, structural)**: run the engine's structural checks for the target. The check inventory is canonical in [methodology §14.3](../../vibeloom-methodology.md#143-verification-ladder); the engine knows what to run.
+1. Build/refresh Contract Graph via engine `parse + graph`.
+2. **Decidable tier (engine, structural)**: run the engine's structural checks for the target. The check inventory is canonical in [methodology §14.3](../../vibeloom-methodology.md#143-verification-ladder); the engine knows what to run. Notable inclusion: `derives_from` validation per implementation §5.1 derivation rules and §8.2 universal-trace rule (every non-root item must cite valid upstream basis transitively reaching `CAP` or `CST`).
 3. **Mechanical tier (engine + runners)**: invoke validation runners declared in `validation-registry.md` that are in scope for the target. Aggregate pass/fail per runner.
 4. **Heuristic tier (agent, semantic)**: agent runs the heuristic dimensions defined in [`references/eval.md`](../skill/references/eval.md) (canonical dimension list in methodology §14.2) against items in scope.
 5. Categorize findings: `blocking` (must address before approval) or `advisory` (worth noting, not gating).
@@ -1763,7 +1763,7 @@ Generate or repair context artifacts (root + per-container + per-component AGENT
 - AGENTS.md, CLAUDE.md at root + per container + per component.
 - BDD scenario files in <container>/<component>/context/bdd/.
 - New trace entry in .vibeloom/traces/generations.jsonl.
-- Contract graph updated.
+- Contract Graph updated.
 - Findings.
 
 ## Postconditions
@@ -1940,7 +1940,7 @@ Designer-led generation: derive product-specs (prd + usm + dm) from approved int
 
 - prd.md, usm.md, dm.md updated (status: draft, awaiting PM review).
 - New trace entry in .vibeloom/traces/generations.jsonl with the from-ux variant flag.
-- Contract graph updated.
+- Contract Graph updated.
 - PM peer-review packet (each FR/STORY/TERM with its mockup/ux backing).
 
 ## Postconditions
@@ -2037,7 +2037,7 @@ Generate or repair `product-specs` (prd.md + usm.md + dm.md) from approved inten
 
 - prd.md, usm.md, dm.md updated (status: draft).
 - New trace entry in .vibeloom/traces/generations.jsonl.
-- Contract graph updated.
+- Contract Graph updated.
 - Findings.
 
 ## Postconditions
@@ -2143,7 +2143,7 @@ Generate or repair `system-specs` (system.md + containers.md + per-container con
 - system.md, containers.md updated (status: draft).
 - Per-container container.md and per-component component.md files created/updated.
 - New trace entry in .vibeloom/traces/generations.jsonl.
-- Contract graph updated.
+- Contract Graph updated.
 - Findings.
 
 ## Postconditions
@@ -2171,6 +2171,7 @@ Generate or repair `system-specs` (system.md + containers.md + per-container con
 ## Validation
 
 - Structural eval must pass: layer-aware constraints, ID validity, reference integrity, DAG validity, ownership rules, context sufficiency.
+- Every IDed item cites at least one approved upstream item in `derives_from` per implementation §5.1 derivation rules.
 - Mechanical runners not invoked at the system-specs tier (no code yet).
 - Semantic eval surfaces target-platform mismatches and capability gaps.
 
@@ -2230,13 +2231,13 @@ Generate or repair `ux-specs` (ux.md + mockup index) from approved intent-specs 
 
 - ux.md updated (status: draft).
 - New trace entry in .vibeloom/traces/generations.jsonl.
-- Contract graph updated.
+- Contract Graph updated.
 - Designer peer-review packet.
 
 ## Postconditions
 
 - `ux.md` exists as `draft` with `VIEW`/`INT`/`UXC`/`MOCK` items.
-- Every IDed item cites an approved upstream item (intent in pm/ux mode; intent + product in peer mode) in `derives_from`.
+- Every IDed item cites an approved upstream item (intent in pm/ux mode; intent + product in peer mode) in `derives_from` per implementation §5.1 derivation rules.
 - Structural eval on ux-specs passes.
 - Generation trace written.
 
@@ -2628,7 +2629,7 @@ Read-only report across lifecycle, freshness, coverage, drift, and current mode.
 
 ## Steps
 
-1. Build/refresh contract graph via engine `parse + graph` (cheap if cache is current).
+1. Build/refresh Contract Graph via engine `parse + graph` (cheap if cache is current).
 2. Compute per-item status by category:
    - **current**: synchronized to approved basis; no findings.
    - **stale**: downstream depended on changed approved truth.
@@ -2934,7 +2935,7 @@ VibeLoom template: dm
 Tier: product-specs (full modes only)
 Purpose: domain model — bounded contexts, aggregates, entities, value objects, invariants, ubiquitous language.
 Entities: TERM-####, BC-####, AGG-####, ENT-####, VO-####, INV-####.
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - TERM derives from CAP, FR, STORY
 - BC derives from FR, STORY, FLOW, TERM
 - AGG derives from STORY, BC
@@ -3127,7 +3128,7 @@ VibeLoom template: usm
 Tier: product-specs (full modes only)
 Purpose: delivery structure — epics, flows, stories, acceptance criteria, milestones.
 Entities: EPIC-####, FLOW-####, STORY-####, ACC-####, MS-####.
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - EPIC derives from FR
 - FLOW derives from FR
 - STORY derives from FR
@@ -3209,7 +3210,7 @@ Tier: ux-specs (full modes only; peer to product-specs)
 Purpose: user-visible surfaces, interactions, UX constraints, mockup references.
 Entities: VIEW-####, INT-####, UXC-####, MOCK-####.
 
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - VIEW derives from CAP, FR, STORY (and optional MOCK references)
 - INT derives from FLOW, STORY, VIEW
 - UXC derives from CST, NFR, MOCK
@@ -3294,7 +3295,7 @@ Tier: system-specs (full modes only) — terminal node in the Contract Graph.
 Purpose: full contract for one owned technical boundary.
 Structured content: IF-####, DEP-####, BEH-####, NOTE-####. These are addressable items but NOT independent graph nodes (per Boundary Principle).
 
-Derivation rules (per DAG) for the component itself:
+Derivation rules (per §5.1) for the component itself:
 - domain-layer component: derives from AGG, ENT, BC, CONT, FLOW, VO
 - application-layer component: derives from CONT and any FLOW or domain CMPs it orchestrates
 - presentation-layer component: derives from CONT and optional VIEW/INT references
@@ -3515,7 +3516,7 @@ VibeLoom template: containers
 Tier: system-specs (full modes only)
 Purpose: global runtime/deployment topology; inter-container communication paths as structured content.
 Entities: CONT-####.
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - CONT derives from BC, NFR, SNFR
 
 Communication paths between containers are structured content within this artifact (NOT graph entities). Every communication path references valid container endpoints.
@@ -3573,7 +3574,7 @@ VibeLoom template: system
 Tier: system-specs (full modes only)
 Purpose: system context — external actors/systems, trust boundaries, system-wide NFR boundaries.
 Entities: EXT-####, TB-####, SNFR-####.
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - EXT derives from FR, NFR, CAP
 - TB derives from NFR
 - SNFR derives from NFR
@@ -3716,7 +3717,7 @@ VibeLoom template: bdd (behavioral scenarios)
 Tier: context (full modes only; not generated in vibe)
 Purpose: non-executable Gherkin scenarios derived from approved contract for one component-owned behavior slice.
 Entities: SCN-#### (individual Gherkin scenarios).
-Derivation rules (per DAG):
+Derivation rules (per §5.1):
 - SCN derives from ACC, INV, component (CMP), STORY
 
 One artifact per behavior: filename BDD-####-<slug>.md under /<container>/<component>/context/bdd/.

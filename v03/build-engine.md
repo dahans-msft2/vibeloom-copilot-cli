@@ -140,6 +140,7 @@ How to decompose this into modules and APIs is the agent's choice — match the 
    - Exercise the ID registry's retired-list invariant.
    - Exercise the decision-trace markdown rendering's idempotency.
    - Exercise the cache's regeneration-from-traces property.
+   - Exercise `derives_from` validation per §5.1 + §8.2: non-root item missing `derives_from` → blocking finding; derivation chain that doesn't transitively reach `CAP` or `CST` → blocking finding; non-allowed upstream prefix per §5.1 derivation rules → blocking finding.
 
    Build whatever test fixtures the suite needs. Tests run with `pytest`.
    **Verify:** `pytest --cov` reports ≥85% statement coverage on engine modules. Every status category, every wave-assembly rule, and every schema-version transition has at least one named test. Test names map to spec §s where applicable (e.g. `test_status_uncovered_per_§10`).

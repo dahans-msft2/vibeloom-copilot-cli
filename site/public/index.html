@@ -72,7 +72,7 @@
       "operatingSystem": "Cross-platform",
       "url": "https://vibeloom.ai/",
       "description": "Contract-driven agentic engineering. A living contract stack that generates, evaluates, and reconciles AI-coded systems as they evolve.",
-      "softwareVersion": "0.2",
+      "softwareVersion": "0.3",
       "author": {"@type":"Person","name":"Ilya Baimetov","url":"https://vibeloom.ai/contact"},
       "publisher": {"@id":"https://vibeloom.ai/#org"},
       "offers": {"@type":"Offer","price":"0","priceCurrency":"USD"},
@@ -81,11 +81,14 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
-        {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"For throwaway scripts, weekend demos, or single-file utilities, prompt-only generation is faster. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
-        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the spec-driven development family but goes further: contract-driven, not just spec-driven. Other spec-driven tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle: derivation, eval, drift detection, reconciliation, traceability across components."}},
-        {"@type":"Question","name":"Does VibeLoom work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill — clone the repo from GitHub and point Claude Code or Codex at it as a Skill source. Python 3.10+ is the only system requirement for the deterministic engine; no pip install, no runtime dependencies."}},
-        {"@type":"Question","name":"What is contract-driven development?","acceptedAnswer":{"@type":"Answer","text":"Contract-driven development treats specifications as a tiered, version-controlled contract that actively governs generation, evaluation, and reconciliation across the lifecycle — not as one-off planning documents that decay after the first feature."}},
-        {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern in which structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development by treating the entire spec stack as a living contract that governs the codebase across every change, not just the first generation pass."}}
+        {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"Throwaway scripts, weekend demos, single-file utilities, hackathon work. Prompt-only generation is faster and sufficient. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
+        {"@type":"Question","name":"What is codæ and how does it relate to VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"codæ — contract-driven agentic engineering — is the paradigm. VibeLoom is one concrete instantiation. codæ makes the case (in the manifesto); VibeLoom delivers it as an open-source Skill + engine for Claude Code and Codex."}},
+        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the broader spec-driven development family but goes a step further: contract-driven, not just spec-driven. Other spec-driven tools — GitHub Spec Kit, Kiro, BMAD — generate specs that decay after one feature. Tessl pivoted to per-skill context management. VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation."}},
+        {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern where structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass."}},
+        {"@type":"Question","name":"Won't another prompt cycle just fix the drift?","acceptedAnswer":{"@type":"Answer","text":"Better prompts help one run. A contract stack helps future runs inherit approved meaning, scoped context, and known boundaries — without relying on chat memory. Drift is a structural problem; prompts are a tactical fix. Baltes et al. (arXiv 2603.27249, 2026) frame the cumulative cost of AI slop as a tragedy of the commons: individual prompt-level wins externalize onto reviewers, maintainers, and the codebase. Better prompts don't survive the next chat. A graph-connected contract does."}},
+        {"@type":"Question","name":"Does it work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill — clone the repo from GitHub and point Claude Code or Codex at it as a Skill source. Python 3.10+ is the only system requirement for the deterministic engine — no pip install, no runtime dependencies. (A discoverable Skill registry entry is on the v0.3 roadmap.)"}},
+        {"@type":"Question","name":"Can I adopt it on an existing AI-coded codebase?","acceptedAnswer":{"@type":"Answer","text":"Yes. /vibeloom import --mode <mode> reconstructs a candidate contract bottom-up from existing code. You still review and approve top-down. Brownfield is a first-class path, not an afterthought."}},
+        {"@type":"Question","name":"Do I need DDD experience to use it?","acceptedAnswer":{"@type":"Answer","text":"For vibe mode, no — it skips the domain-model formalism entirely. For pm, dev, and expert modes, vocabulary like bounded contexts and ubiquitous language matters. Start in vibe; upgrade when the project earns the ceremony."}}
       ]
     },
     {
@@ -111,17 +114,18 @@
 
 <a class="skip" href="#main">Skip to content</a>
 <nav class="site-nav" aria-label="Primary">
-  <a class="brand" href="/" aria-label="VibeLoom home">
+  <a class="brand" href="index.html" aria-label="VibeLoom home">
     <img src="vibeloom-logo-loom.svg" alt="" width="26" height="26">
     VibeLoom
   </a>
   <div class="links">
-    <a href="/" class="is-active" aria-current="page">Overview</a>
-    <a href="/methodology">Methodology</a>
-    <a href="/implementation">Implementation</a>
-    <a href="/contact">Contact Us</a>
+    <a href="index.html" class="is-active" aria-current="page">Overview</a>
+    <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+    <a href="methodology.html">Methodology</a>
+    <a href="implementation.html">Implementation</a>
+    <a href="contact.html">Contact Us</a>
     <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
-    <a class="cta" href="#start">Get started</a>
+    <a class="cta" href="get-started.html">Get started</a>
   </div>
   <details class="menu">
     <summary aria-label="Open menu">Menu
@@ -130,12 +134,13 @@
       </svg>
     </summary>
     <div class="panel">
-      <a href="/" class="is-active" aria-current="page">Overview</a>
-      <a href="/methodology">Methodology</a>
-      <a href="/implementation">Implementation</a>
-      <a href="/contact">Contact Us</a>
+      <a href="index.html" class="is-active" aria-current="page">Overview</a>
+      <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+      <a href="methodology.html">Methodology</a>
+      <a href="implementation.html">Implementation</a>
+      <a href="contact.html">Contact Us</a>
       <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
-      <a class="cta" href="#start">Get started</a>
+      <a class="cta" href="get-started.html">Get started</a>
     </div>
   </details>
 </nav>
@@ -146,7 +151,7 @@
   <div class="wrap hero-inner">
     <div class="hero-badge">
       <span class="dot" aria-hidden="true"></span>
-      v0.2 — open-source Skill for Claude Code &amp; Codex + Python 3.10+ engine
+      v0.3 — open-source Skill for Claude Code &amp; Codex + Python 3.10+ engine
     </div>
 
     <h1 aria-label="Contract-driven agentic engineering">
@@ -155,16 +160,16 @@
     </h1>
 
     <p class="sub">
-      VibeLoom uses a living contract stack to generate, evaluate, and
-      reconcile AI-coded systems as they evolve.
+      A living contract stack that generates, evaluates, and reconciles
+      AI-coded systems as they evolve.
     </p>
 
     <div class="hero-actions">
-      <a href="#start" class="btn btn-primary">
+      <a href="get-started.html" class="btn btn-primary">
         Get started
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="/methodology" class="btn btn-secondary">Read the methodology</a>
+      <a href="methodology.html" class="btn btn-secondary">Read the methodology</a>
       <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" class="btn btn-ghost" style="margin-left:8px">
         View source
         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -177,54 +182,6 @@
       <span><strong>Graph-backed drift detection</strong> before silent decay</span>
       <span><strong>Scoped subagents</strong> for parallel work</span>
       <span><strong>Python 3.10+</strong>, no runtime dependencies</span>
-    </div>
-
-    <div class="hero-visual">
-      <!-- terminal -->
-      <div class="terminal" role="img" aria-label="Sample VibeLoom CLI session">
-        <div class="terminal-bar">
-          <span class="terminal-dot r"></span>
-          <span class="terminal-dot y"></span>
-          <span class="terminal-dot g"></span>
-          <div class="terminal-title">claude code · ~/notes-app</div>
-        </div>
-        <div class="terminal-body">
-          <span class="ln"><span class="pmt">$</span> <span class="cmd">/vibeloom init --mode vibe "note-taking app with full-text search and tags"</span></span>
-          <span class="ln"><span class="ok">✓</span> Generated <span class="cmd">intent.md</span> · 4 capabilities, 3 constraints  <span class="dim">(draft)</span></span>
-          <span class="ln"><span class="ok">✓</span> Generated <span class="cmd">defaults.md</span> · 6 defaults derived from intent  <span class="dim">(draft)</span></span>
-          <span class="ln"><span class="info">i</span> Eval intent-specs · 0 blocking, 1 advisory <span class="dim">(CST-0002 needs measurable target)</span></span>
-          <span class="ln"><span class="arr">→</span> Next: <span class="cmd">/vibeloom review intent-specs</span></span>
-          <span class="ln">&nbsp;</span>
-          <span class="ln"><span class="pmt">$</span> <span class="cmd">/vibeloom approve intent-specs</span></span>
-          <span class="ln"><span class="ok">✓</span> intent-specs approved · snapshot captured  <span class="dim">(mode=user)</span></span>
-          <span class="ln"><span class="ok">✓</span> Auto-advanced compact system-specs · 5 components  <span class="dim">(structural eval passed)</span></span>
-          <span class="ln"><span class="ok">✓</span> Generated context · <span class="cmd">AGENTS.md</span>, <span class="cmd">CLAUDE.md</span></span>
-          <span class="ln"><span class="ok">✓</span> Generated code · 14 files across 5 components in 2 dispatch waves</span>
-          <span class="ln">&nbsp;</span>
-          <span class="ln"><span class="pmt">$</span> <span class="cmd">vim intent.md</span>     <span class="dim"># added CAP-0005 outside the flow</span></span>
-          <span class="ln"><span class="pmt">$</span> <span class="cmd">/vibeloom status</span></span>
-          <span class="ln"><span class="warn">!</span> Direct edit detected on <span class="cmd">intent.md</span> · reopened to <span class="info">draft</span></span>
-          <span class="ln"><span class="warn">!</span> Stale: <span class="cmd">system.md</span> (1 item), 4 code files</span>
-          <span class="ln"><span class="arr">→</span> Next: <span class="cmd">/vibeloom reconcile code</span></span>
-        </div>
-      </div>
-
-      <!-- side card -->
-      <aside class="hero-card">
-        <h2 class="hero-card-title">The contract stack, at a glance</h2>
-        <p>Each tier is generated from the approved tier above. Structural and semantic eval bind every layer to its source of truth.</p>
-        <div class="stack-mini" aria-hidden="true">
-          <div class="row is-accent"><span class="lbl">tier 1</span><span class="v">intent + defaults</span></div>
-          <div class="arrow">↓</div>
-          <div class="row"><span class="lbl">tier 2</span><span class="v">prd · usm · dm</span></div>
-          <div class="arrow">↓</div>
-          <div class="row"><span class="lbl">tier 3</span><span class="v">system · containers · components</span></div>
-          <div class="arrow">↓</div>
-          <div class="row"><span class="lbl">tier 4</span><span class="v">context: pdr · adr · bdd · configs</span></div>
-          <div class="arrow">↓</div>
-          <div class="row"><span class="lbl">tier 5</span><span class="v">code · tests · runtime</span></div>
-        </div>
-      </aside>
     </div>
   </div>
 </header>
@@ -252,10 +209,9 @@
       <div class="label">Contents</div>
       <ol>
         <li><a href="#problem">Problem</a></li>
-        <li><a href="#vision">The Bet</a></li>
-        <li><a href="#model">The Model</a></li>
-        <li><a href="#stack">Contract stack</a></li>
-        <li><a href="#drift">Drift detection</a></li>
+        <li><a href="#vision">The vision</a></li>
+        <li><a href="#cccode">Contract · Context · Code</a></li>
+        <li><a href="#drift">Drift</a></li>
         <li><a href="#modes">Modes</a></li>
         <li><a href="#compare">How it compares</a></li>
         <li><a href="#faq">FAQ</a></li>
@@ -270,289 +226,133 @@
     <div class="section-head">
       <div class="left">
         <span class="eyebrow">The Problem</span>
-        <h2>AI agents generate local momentum.<br>They lose <span style="color:var(--c-red)">long-term coherence.</span></h2>
+        <h2>AI agents drift<br>from <span style="color:var(--c-red)">intent.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          The first generation pass can look impressive. The twentieth is where the
-          real cost appears: meaning shifts, old decisions disappear, and every new
-          agent has to rediscover what the software is supposed to be. Four named
-          failure modes show up again and again.
+          Drift compounds. Slop is the steady state.
         </p>
       </div>
     </div>
 
-    <aside class="stats-strip" aria-label="2026 industry signals on AI drift and AI slop">
-      <div class="stats-strip-head">
-        <span class="eyebrow">Why now · 2026 evidence</span>
-      </div>
+    <aside class="stats-strip" aria-label="Verified 2026 evidence on AI drift and slop in production">
       <div class="stats-strip-grid">
         <div class="stat">
-          <div class="stat-num">3 drift forms</div>
-          <div class="stat-label">semantic · coordination · behavioral, in multi-agent LLM systems</div>
-          <a class="stat-src" href="https://arxiv.org/pdf/2601.04170" target="_blank" rel="noopener">Agent Drift, arXiv 2601.04170 · Jan 2026 ↗</a>
+          <div class="stat-num">80% / 89.8%</div>
+          <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
+          <a class="stat-src" href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">SlopCodeBench<br>Mar 2026 ↗</a>
         </div>
         <div class="stat">
-          <div class="stat-num">24.2%</div>
-          <div class="stat-label">of tracked AI-introduced issues survive at latest revision · 6,275 repos · 304,362 commits</div>
-          <a class="stat-src" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">arXiv 2603.28592 · Feb 2026 ↗</a>
+          <div class="stat-num">22.7%</div>
+          <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
+          <a class="stat-src" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">AI-debt in the wild<br>Mar 2026 ↗</a>
         </div>
         <div class="stat">
-          <div class="stat-num">85 / 5</div>
-          <div class="stat-label">enterprises piloting AI agents <em>vs</em> in production</div>
-          <a class="stat-src" href="https://venturebeat.com/infrastructure/context-decay-orchestration-drift-and-the-rise-of-silent-failures-in-ai-systems" target="_blank" rel="noopener">Cisco, RSA Conference 2026 ↗</a>
+          <div class="stat-num">3–5×</div>
+          <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
+          <a class="stat-src" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU Cursor study<br>Jan 2026 ↗</a>
+        </div>
+        <div class="stat">
+          <div class="stat-num">17%</div>
+          <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
+          <a class="stat-src" href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">Osmani · O'Reilly<br>Apr 2026 ↗</a>
         </div>
       </div>
     </aside>
 
     <div class="grid">
       <div class="cell">
-        <h3><span class="num">01</span> Semantic drift</h3>
+        <h3>Semantic drift</h3>
         <p>Concepts and invariants mutate quietly as prompts pile up. Code still compiles, but it no longer represents the same product.</p>
       </div>
       <div class="cell">
-        <h3><span class="num">02</span> Invisible governance</h3>
+        <h3>Invisible governance</h3>
         <p>Intent lives in chat history. There is no durable review surface, no approval trail, no answer to "who decided this and when?"</p>
       </div>
       <div class="cell">
-        <h3><span class="num">03</span> Context fragmentation</h3>
+        <h3>Context fragmentation</h3>
         <p>The codebase outgrows one agent's window. No agent holds the whole picture; ownership becomes informal, then guesswork.</p>
       </div>
       <div class="cell">
-        <h3><span class="num">04</span> Reconciliation failure</h3>
+        <h3>Reconciliation failure</h3>
         <p>When code and spec diverge, there is no defined procedure for which wins, where to fix it, or how to verify the fix actually closed the gap.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ░░ VISION / THE BET ░░ -->
+<!-- ░░ VISION / THE DESTINATION ░░ -->
 <section id="vision" class="vision">
   <div class="wrap">
     <div class="vision-head">
-      <span class="eyebrow">The Bet</span>
+      <span class="eyebrow">The Vision</span>
       <h2>
-        Implementation is going<br>
-        <span class="ital">dark factory.</span><br>
-        <span class="accent">Intent isn't.</span>
+        Dark factory<br>
+        is the <span class="accent">destination.</span><br>
+        <span class="ital">Contract is the bridge.</span>
       </h2>
     </div>
 
-    <div class="vision-body">
-      <p>
-        Every coding agent gets better every quarter. The implementation gap is
-        closing fast — and any tool whose value depends on directing the model's
-        coding choices ages with the model that supplanted yesterday's. What stays
-        unique to your business isn't <em>how</em> code gets written; it's <em>what</em>
-        you're building, and why.
-      </p>
-      <p>
-        As agentic codebases scale, managing that contract — intent, requirements,
-        domain, architecture — becomes the load-bearing engineering activity.
-        Other tools double down on directing implementation: per-feature workflows,
-        IDE scaffolds, prompt pipelines. They're betting against the model curve.
-        VibeLoom bets <em>with</em> it.
-      </p>
-      <p>
-        The shift is already underway. <strong>Tessl</strong> — which launched as a
-        per-file <em>spec-as-source</em> tool — visibly pivoted in early 2026 to a
-        package manager for agent skills and context. The per-file
-        implementation-control story didn't survive contact with smarter agents.
-        Academia followed: a March 2026 paper names the same problem.
-      </p>
-
-      <blockquote class="vision-quote">
-        <p>"Semantic intent divergence: a primary yet formally unaddressed root cause of multi-agent failure in enterprise settings."</p>
-        <cite>— arXiv 2604.16339 · March 2026</cite>
-      </blockquote>
-
-      <p class="vision-pull">
-        The contract is the moat. Build it once,<br>evolve it forever, let the
-        implementation be cheap.
-      </p>
-    </div>
-
-    <div class="vision-grid">
-      <article class="vision-card">
-        <span class="vision-tag">Ages with the model</span>
-        <h3>What gets cheaper</h3>
-        <ul>
-          <li>Per-feature spec ceremony</li>
-          <li>IDE scaffolding for plan/design/tasks</li>
-          <li>Prompt pipelines that direct implementation</li>
-          <li>Steering rules to keep agents on rails</li>
-        </ul>
-      </article>
-      <article class="vision-card is-feature">
-        <span class="vision-tag">Compounds with the model</span>
-        <h3>What gets more valuable</h3>
-        <ul>
-          <li>A contract that survives every regeneration</li>
-          <li>Cross-component coherence and invariants</li>
-          <li>Drift detection across the whole system</li>
-          <li>Traceability from code back to intent</li>
-        </ul>
-      </article>
+    <div class="vision-body bet-tight">
+      <p><strong>Coding is going dark factory.</strong></p>
+      <p><strong>Spec-driven moved upstream</strong> — per-feature only. Specs decay.</p>
+      <p><strong>Contract-driven governs the lifecycle.</strong> The dark-factory enabler.</p>
     </div>
   </div>
 </section>
 
-<!-- ░░ MODEL / BRIDGE ░░ -->
-<section id="model" class="model">
+<!-- ░░ CONTRACT · CONTEXT · CODE ░░ -->
+<section id="cccode" class="cccode">
   <div class="wrap">
     <div class="section-head">
       <div class="left">
-        <span class="eyebrow">The Model</span>
+        <span class="eyebrow">The model · how it's organized</span>
         <h2>Contract.<br>Context.<br><span style="color:var(--c-red)">Code.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          Three layers, in that order. The contract is governed truth. Context tells
-          worker agents how to act inside their scope. Code is generated from both — and
-          judged against the contract upstream, never approved on its own.
+          The contract decomposes into <code>intent → product ⇄ ux → system</code>.
+          You own approval. Context is derived from approved contract; code is generated
+          from both — and judged upstream, never approved on its own.
         </p>
       </div>
     </div>
 
-    <div class="model-grid">
-      <article class="model-card">
-        <div class="row">
-          <span class="kicker">Layer 1</span>
-          <span class="badge">governed truth</span>
+    <div class="cccode-grid">
+      <article class="cccode-card is-contract">
+        <h3>CONTRACT</h3>
+        <div class="cccode-stack">
+          <span class="ccc-pill is-accent">intent</span>
+          <span class="ccc-conn">↓</span>
+          <span class="ccc-pill ccc-pair"><em>product</em><span class="ccc-peer">⇄</span><em>ux</em></span>
+          <span class="ccc-conn">↓</span>
+          <span class="ccc-pill">system</span>
         </div>
-        <h3>Contract</h3>
-        <p>What you and the agent agree on, gated by approval. The durable source of meaning that survives chat history, contributor turnover, and architectural revisions.</p>
-        <div class="who"><strong>Who owns it</strong>You — through approval gates. The agent generates and validates against approved upstream.</div>
+        <p class="cccode-note">What the system is. Governed by you · approval gates per piece.</p>
       </article>
 
-      <article class="model-card">
-        <div class="row">
-          <span class="kicker">Layer 2</span>
-          <span class="badge">execution truth</span>
+      <span class="cccode-arrow" aria-hidden="true">→</span>
+
+      <article class="cccode-card">
+        <h3>CONTEXT</h3>
+        <div class="cccode-list">
+          <span>configs</span>
+          <span>bdd · scenarios</span>
         </div>
-        <h3>Context</h3>
-        <p>Configs, decision records, and behavior specs derived from approved contract. Worker agents read it to know exactly how to act inside their scope — no chat-history archaeology required.</p>
-        <div class="who"><strong>Who owns it</strong>Generated. No approval. If it's wrong, fix it upstream in the contract.</div>
+        <p class="cccode-note">How worker agents act on it. Generated · no approval gate.</p>
       </article>
 
-      <article class="model-card is-feature">
-        <div class="row">
-          <span class="kicker">Layer 3</span>
-          <span class="badge">executable</span>
+      <span class="cccode-arrow" aria-hidden="true">→</span>
+
+      <article class="cccode-card">
+        <h3>CODE</h3>
+        <div class="cccode-list">
+          <span>source</span>
+          <span>tests</span>
+          <span>runtime</span>
         </div>
-        <h3>Code</h3>
-        <p>Source, tests, runtime — produced by scoped subagent waves working in parallel. Cross-scope coherence is verified after each wave; failures reopen the affected components.</p>
-        <div class="who"><strong>Who owns it</strong>Generated. Judged against upstream contract — never approved as a separate tier.</div>
+        <p class="cccode-note">What runs. Generated · judged against contract — never approved as its own layer.</p>
       </article>
-    </div>
-  </div>
-</section>
-
-<!-- ░░ SOLUTION / STACK ░░ -->
-<section id="stack" class="stack">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="left">
-        <span class="eyebrow">Inside the Contract</span>
-        <h2>One contract.<br>Five tiers.<br>Each derives from the one above.</h2>
-      </div>
-      <div class="right">
-        <p class="h-lead">
-          Three layers, five tiers — same model, different zoom. The contract layer
-          holds three of them; context and code are one each. Upstream items are the
-          eval basis for downstream work. Approval gates bracket each contract tier.
-          Context and code are derived — and judged against — what you approved.
-        </p>
-      </div>
-    </div>
-
-    <div class="stack-vis">
-      <div class="stack-row is-contract">
-        <div class="label">
-          <span class="name">intent-specs</span>
-          <span class="role">Tier 1 · contract</span>
-        </div>
-        <div class="body">
-          <span class="pill">intent</span>
-          <span class="arrow">→</span>
-          <span class="pill">defaults</span>
-          <span class="note">capabilities · constraints · binding rules</span>
-        </div>
-      </div>
-      <div class="stack-arrow">↓</div>
-
-      <div class="stack-row is-contract">
-        <div class="label">
-          <span class="name">product-specs</span>
-          <span class="role">Tier 2 · contract</span>
-        </div>
-        <div class="body">
-          <span class="pill">prd</span>
-          <span class="arrow">→</span>
-          <span class="pill">usm</span>
-          <span class="arrow">→</span>
-          <span class="pill">dm</span>
-          <span class="note">objectives · stories · domain model</span>
-        </div>
-      </div>
-      <div class="stack-arrow">↓</div>
-
-      <div class="stack-row is-contract">
-        <div class="label">
-          <span class="name">system-specs</span>
-          <span class="role">Tier 3 · contract</span>
-        </div>
-        <div class="body">
-          <span class="pill">system</span>
-          <span class="arrow">→</span>
-          <span class="pill">containers</span>
-          <span class="arrow">→</span>
-          <span class="pill">container</span>
-          <span class="arrow">→</span>
-          <span class="pill">component</span>
-          <span class="note">topology · interfaces · ownership</span>
-        </div>
-      </div>
-      <div class="stack-arrow">↓</div>
-
-      <div class="stack-row is-derived">
-        <div class="label">
-          <span class="name">context</span>
-          <span class="role">Tier 4 · derived</span>
-        </div>
-        <div class="body">
-          <span class="pill">configs</span>
-          <span class="arrow">·</span>
-          <span class="pill">pdr</span>
-          <span class="arrow">·</span>
-          <span class="pill">adr</span>
-          <span class="arrow">·</span>
-          <span class="pill">bdd</span>
-          <span class="note">execution truth for worker agents</span>
-        </div>
-      </div>
-      <div class="stack-arrow">↓</div>
-
-      <div class="stack-row is-code">
-        <div class="label">
-          <span class="name">code</span>
-          <span class="role">Tier 5 · executable</span>
-        </div>
-        <div class="body">
-          <span class="pill">source</span>
-          <span class="arrow">·</span>
-          <span class="pill">tests</span>
-          <span class="arrow">·</span>
-          <span class="pill">runtime</span>
-          <span class="note" style="color:#9a9a9a">scoped writes · disjoint by directory</span>
-        </div>
-      </div>
-
-      <div class="stack-legend">
-        <div class="key"><span class="swatch contract"></span> Contract — user-approved</div>
-        <div class="key"><span class="swatch derived"></span> Derived — generated, no approval</div>
-        <div class="key"><span class="swatch code"></span> Code — executable result</div>
-      </div>
     </div>
   </div>
 </section>
@@ -562,56 +362,32 @@
   <div class="wrap">
     <div class="section-head">
       <div class="left">
-        <span class="eyebrow">Drift Detection</span>
-        <h2>Three forms of drift.<br>Each one detected.</h2>
+        <span class="eyebrow">Drift</span>
+        <h2>Drift, detected<br>and avoided.</h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          Other tools generate specs that go stale silently. VibeLoom names three
-          drift forms and detects each one — two deterministically in the engine,
-          one with the agent's semantic eval. False positives are acceptable;
-          false negatives are not.
-        </p>
-        <p class="h-lead-note">
-          A parallel triad — <em>semantic, coordination, behavioral</em> — is
-          named for multi-agent LLM agent drift in <a class="linky" href="https://arxiv.org/pdf/2601.04170" target="_blank" rel="noopener">arXiv 2601.04170</a> (Jan 2026). Different framing, same family of failure modes — VibeLoom's three are about contract-vs-code drift specifically.
+          Other tools generate specs that go stale silently. VibeLoom catches drift
+          before it lands and offers a defined path to reconcile it when it does —
+          deterministically where possible, semantically where judgment is needed.
         </p>
       </div>
     </div>
 
-    <div class="grid">
-      <article class="drift-card">
-        <div class="label">01 · Structural</div>
-        <h3>Upstream changed</h3>
-        <p>An approved upstream item was modified or removed since the downstream artifact was last synchronized to it.</p>
-        <div class="how">
-          <div class="k">How it's detected</div>
-          <div class="v">Content diff against the approved snapshot, propagated forward through the derivation graph. Caught deterministically on the next pass.</div>
-        </div>
-        <div class="who">→ Engine · deterministic</div>
-      </article>
+    <div class="drift-body">
+      <ul class="drift-bullets">
+        <li><strong>Detect</strong> — every approved item is hashed; drift surfaces on the next pass.</li>
+        <li><strong>Avoid</strong> — the Contract Graph blocks generation from unreviewed truth.</li>
+        <li><strong>Reconcile</strong> — defined remediation loop with item-ID anchors and chosen fix direction.</li>
+      </ul>
 
-      <article class="drift-card">
-        <div class="label">02 · Lifecycle</div>
-        <h3>Approved file edited directly</h3>
-        <p>An approved contract artifact was edited outside the normal flow. Auto-reopens to draft so downstream tiers can't derive from unreviewed truth.</p>
-        <div class="how">
-          <div class="k">How it's detected</div>
-          <div class="v">The current file is compared against approved state. Whitespace and non-semantic edits don't trigger a reopen.</div>
-        </div>
-        <div class="who">→ Engine · deterministic</div>
-      </article>
-
-      <article class="drift-card">
-        <div class="label">03 · Semantic</div>
-        <h3>Meaning shifted</h3>
-        <p>Downstream content no longer faithfully represents upstream meaning even when the structure passes. The judgment call.</p>
-        <div class="how">
-          <div class="k">How it's detected</div>
-          <div class="v">Agent eval across four dimensions — faithful representation, naming consistency, implicit dependencies, capability gaps. Findings are <em>breaking</em> or <em>advisory</em>.</div>
-        </div>
-        <div class="who">→ Agent · model-reasoned</div>
-      </article>
+      <figure class="drift-flow" aria-label="Three-step drift handling: detect, reconcile, re-eval.">
+        <div class="dflow-step"><span class="dflow-label">detect</span></div>
+        <span class="dflow-arrow" aria-hidden="true">→</span>
+        <div class="dflow-step"><span class="dflow-label">reconcile</span></div>
+        <span class="dflow-arrow" aria-hidden="true">→</span>
+        <div class="dflow-step"><span class="dflow-label">re-eval</span></div>
+      </figure>
     </div>
   </div>
 </section>
@@ -621,75 +397,60 @@
   <div class="wrap">
     <div class="section-head">
       <div class="left">
-        <span class="eyebrow">Four Modes</span>
-        <h2>Use the right amount<br>of governance.</h2>
+        <span class="eyebrow">Modes</span>
+        <h2>From <span class="ital">vibe</span><br>to <span class="ital">expert.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
           A mode controls which tiers <em>you</em> co-author and approve, and which the agent
           handles autonomously. Start in <code>vibe</code> for a prototype; one-way
-          upgrade to <code>pm</code>, <code>dev</code>, or <code>expert</code> when the project
-          earns the ceremony.
+          upgrade to <code>pm</code>, <code>dev</code>, or <code>ux</code> (peer
+          orientations) — or <code>expert</code> (all gates explicit) — when the
+          project earns the ceremony.
         </p>
       </div>
     </div>
 
-    <div class="mode-grid">
+    <div class="mode-grid mode-grid-5">
       <article class="mode-card is-feature">
         <div class="top">
           <span class="name">vibe</span>
           <span class="tag">Compact</span>
         </div>
-        <p>A compact stack — intent + defaults + flat system. One approval gate at intent. Everything else auto-advances.</p>
-        <div class="who"><strong>Best for</strong>Solo dev · prototype · MVP · weekend project</div>
+        <p>Compact stack. One gate at intent. Auto-advances.</p>
       </article>
 
       <article class="mode-card">
         <div class="top">
           <span class="name">pm</span>
-          <span class="tag">Full</span>
+          <span class="tag">Product-led</span>
         </div>
-        <p>You own intent-specs and product-specs. System-specs auto-advance when the eval is clean and no semantic break is detected.</p>
-        <div class="who"><strong>Best for</strong>Product-led teams · PM driving requirements</div>
+        <p>You own intent + product. System auto-advances.</p>
       </article>
 
       <article class="mode-card">
         <div class="top">
           <span class="name">dev</span>
-          <span class="tag">Full</span>
+          <span class="tag">Tech-led</span>
         </div>
-        <p>You own intent-specs and system-specs. Product-specs auto-advance once intent is settled. Architecture-first orientation.</p>
-        <div class="who"><strong>Best for</strong>Tech-led teams · architecture-first work</div>
+        <p>You own intent + system. Product auto-advances.</p>
+      </article>
+
+      <article class="mode-card">
+        <div class="top">
+          <span class="name">ux</span>
+          <span class="tag">Design-led</span>
+        </div>
+        <p>You own intent + ux. Mockups can drive product-spec.</p>
       </article>
 
       <article class="mode-card">
         <div class="top">
           <span class="name">expert</span>
-          <span class="tag">Full</span>
+          <span class="tag">All-gated</span>
         </div>
-        <p>All three contract tiers gated for explicit user approval. Nothing auto-advances. Maximum traceability.</p>
-        <div class="who"><strong>Best for</strong>Architects · regulated systems · co-owned design</div>
+        <p>Every contract tier explicit. Nothing auto-advances.</p>
       </article>
-    </div>
-  </div>
-</section>
-
-<!-- ░░ DEEPER LINKS — engine + operations live on subpages now ░░ -->
-<section class="deeper" aria-label="Deeper docs">
-  <div class="wrap">
-    <div class="deeper-grid">
-      <a class="deeper-card" href="/methodology#operations">
-        <span class="eyebrow">Methodology</span>
-        <h3>Eight operations, one consistent loop.</h3>
-        <p><code>generate</code> · <code>eval</code> · <code>review</code> · <code>reconcile</code> · <code>approve</code> · <code>status</code> · <code>init</code> · <code>import</code>. Full mechanics on the methodology page.</p>
-        <span class="cta-line">Read the methodology →</span>
-      </a>
-      <a class="deeper-card" href="/implementation">
-        <span class="eyebrow">Implementation</span>
-        <h3>Two layers — Skill + deterministic engine.</h3>
-        <p>The Skill judges. The engine parses, validates, and detects drift. Pure Python, zero runtime dependencies, 9 structural checks.</p>
-        <span class="cta-line">See how it's built →</span>
-      </a>
     </div>
   </div>
 </section>
@@ -700,25 +461,11 @@
     <div class="section-head">
       <div class="left">
         <span class="eyebrow">How it compares</span>
-        <h2>Beyond <span class="ital">spec-driven<br>development</span>.</h2>
+        <h2>From <span class="ital">spec-driven</span><br>to <span style="color:var(--c-red)">contract-driven.</span></h2>
       </div>
       <div class="right">
         <p class="h-lead">
-          Three tools, three bets, one shared assumption: <em>the agent still needs
-          detailed instructions for the next feature.</em> We disagree. As code generation
-          goes <strong>dark factory</strong>, the only artifact a human still needs to maintain
-          is the <strong>blueprint</strong> — what the system <em>is</em>, not how the next
-          feature gets built.
-        </p>
-        <p class="h-lead">
-          Spec Kit and Kiro keep humans in the loop on the <em>factory floor</em>:
-          per-feature specs that drive one generation cycle, then ship and go static.
-          Their durable layers — constitution, steering files — are thin. Tessl
-          pivoted away from per-file spec-as-source because that fight ages with the
-          model; their bet is on per-skill context — the right direction at the wrong
-          scope. VibeLoom is the only one of the four with a <strong>whole-system,
-          structured, human-verifiable contract</strong> that survives every regeneration
-          and is graph-connected from intent down to component.
+          Spec-driven was the right step. Contract-driven is the next.
         </p>
       </div>
     </div>
@@ -731,7 +478,7 @@
           <span>Whole-system blueprint</span>
         </div>
         <div>
-          <div class="m-canvas" role="img" aria-label="Positioning matrix: VibeLoom in the upper right (whole-system blueprint); Tessl on the right edge (per-skill but contract-managed); Kiro and GitHub Spec Kit in the lower left (per-feature, implementation-direction)">
+          <div class="m-canvas" role="img" aria-label="Positioning matrix: VibeLoom in the upper right (whole-system blueprint); Tessl on the right edge (per-skill but contract-managed); Kiro, GitHub Spec Kit, and BMAD in the lower left (per-feature, implementation-direction)">
             <div class="m-pt is-self" style="left:85%;top:10%">
               <img src="vibeloom-logo-loom.svg" alt="" width="16" height="16">
               VibeLoom
@@ -744,9 +491,12 @@
               <img src="kiro-logo.svg" alt="" width="16" height="16" style="filter:grayscale(1)">
               Kiro
             </div>
-            <div class="m-pt" style="left:45%;top:65%">
+            <div class="m-pt" style="left:45%;top:72%">
               <img src="github-spec-kit-logo.ico" alt="" width="16" height="16" style="filter:grayscale(1)">
               GitHub Spec Kit
+            </div>
+            <div class="m-pt" style="left:30%;top:80%">
+              BMAD
             </div>
           </div>
           <div class="m-x">
@@ -755,7 +505,13 @@
             <span class="r">Blueprint (contract)</span>
           </div>
           <p class="matrix-caption">
-            VibeLoom sits alone in the upper-right — whole-system blueprint plus contract management. Tessl moved right (managing context, not implementation) but stayed at the per-skill level. Spec Kit and Kiro cluster lower-left: factory-floor direction, scoped per feature. The lower-left quadrant ages with the model curve; the upper-right compounds with it. <a class="linky" href="/methodology#compare">See the full comparison →</a>
+            VibeLoom sits alone in the upper-right — whole-system blueprint plus
+            contract management. Tessl moved right (managing context, not
+            implementation) but stayed at the per-skill level. Spec Kit, Kiro, and
+            BMAD cluster lower-left: factory-floor direction, scoped per feature.
+            The lower-left quadrant ages with the model curve; the upper-right
+            compounds with it.
+            <a class="linky" href="methodology.html#compare">See the full comparison →</a>
           </p>
         </div>
       </div>
@@ -780,6 +536,11 @@
           <div class="m-name"><img src="kiro-logo.svg" alt="" width="18" height="18"> Kiro</div>
           <div class="m-pos">Per-feature ticket · Factory floor</div>
           <p>Auditable IDE-bound spec pipeline. Specs go static post-creation. <a class="linky" href="https://kiro.dev/docs/specs/feature-specs/" target="_blank" rel="noopener">Docs ↗</a></p>
+        </li>
+        <li>
+          <div class="m-name">BMAD</div>
+          <div class="m-pos">Per-feature ticket · Factory floor</div>
+          <p>Heavyweight workflow with role personas (PM, Architect, Dev, QA). Strong ceremony per feature; no whole-system contract. <a class="linky" href="https://github.com/bmadcode/BMAD-METHOD" target="_blank" rel="noopener">Repo ↗</a></p>
         </li>
       </ul>
     </div>
@@ -815,11 +576,21 @@
 
       <details class="faq-item">
         <summary>
-          <span class="q">How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, or Tessl?</span>
+          <span class="q">What is <span class="codae">cod<span class="ae">æ</span></span> and how does it relate to VibeLoom?</span>
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes one step further: <strong>contract-driven, not just spec-driven</strong>. Other spec-driven tools generate specs that decay after one feature. VibeLoom keeps the contract load-bearing across the lifecycle — derivation, eval, drift detection, reconciliation, traceability across components. Tessl wins inside one file; VibeLoom wins across files and tiers. <a class="linky" href="/methodology#compare">See the full comparison.</a></p>
+          <p><strong><span class="codae">cod<span class="ae">æ</span></span></strong> — contract-driven agentic engineering — is the paradigm. <strong>VibeLoom</strong> is one concrete instantiation. <span class="codae">cod<span class="ae">æ</span></span> makes the case (in <a class="linky" href="codae.html">the manifesto</a>); VibeLoom delivers it as an open-source Skill + engine for Claude Code and Codex.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="q">How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?</span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="a">
+          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes a step further: <strong>contract-driven, not just spec-driven</strong>. Other spec-driven tools — <strong>GitHub Spec Kit, Kiro, BMAD</strong> — generate specs that decay after one feature. <strong>Tessl pivoted to per-skill context management.</strong> VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
         </div>
       </details>
 
@@ -879,8 +650,7 @@
 <!-- ░░ CTA ░░ -->
 <section class="cta" id="start">
   <div class="wrap cta-inner">
-    <span class="cta-kicker">Give your AI-coded system a source of truth.</span>
-    <h2>Try v0.2 in a few minutes.</h2>
+    <h2>Get started in 30 minutes.</h2>
     <p>Clone the repo, load it as a Skill in Claude Code or Codex, and run one command. Python 3.10+ is the only system requirement &mdash; the engine is pure Python with no runtime dependencies.</p>
     <div class="install" id="install">
       <span class="pmt">$</span>
@@ -888,12 +658,15 @@
       <span class="copy" id="copyBtn" role="button" tabindex="0">Copy</span>
     </div>
     <div class="actions">
-      <a class="btn btn-primary" href="/methodology">Read the methodology</a>
+      <a class="btn btn-primary" href="get-started.html">Open the full guide</a>
       <a class="btn btn-secondary" href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         GitHub
       </a>
     </div>
+    <p class="cta-extra">
+      Or <a href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/examples" target="_blank" rel="noopener">see worked examples on GitHub →</a> — greenfield, brownfield, ux-led, multi-component reconciliation, parallel dispatch.
+    </p>
   </div>
 </section>
 
@@ -907,20 +680,21 @@
 <footer>
   <div class="wrap">
     <div class="row">
-      <a class="brand" href="/">
+      <a class="brand" href="index.html">
         <img src="vibeloom-logo-loom.svg" alt="" width="22" height="22">
         VibeLoom
       </a>
       <div class="nav">
-        <a href="/methodology">Methodology</a>
-        <a href="/implementation">Implementation</a>
-        <a href="/contact">Contact Us</a>
+        <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="contact.html">Contact Us</a>
         <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
     <div class="small">
       <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
-      <span>v0.2 · MIT licensed · Built by <a href="/contact">Ilya Baimetov</a></span>
+      <span>v0.3 · MIT licensed · Built by <a href="contact.html">Ilya Baimetov</a></span>
     </div>
   </div>
 </footer>

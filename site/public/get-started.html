@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VibeLoom — 30-minute on-ramp</title>
+<meta name="description" content="The 30-minute on-ramp to VibeLoom. Install, bootstrap a vibe project, generate, ship. Plus brownfield import and mode upgrades. Python 3.10+ only — no runtime dependencies.">
+<meta name="keywords" content="VibeLoom getting started, vibe mode, install, brownfield import, contract-driven, Claude Code Skill">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:locale" content="en_US">
+<link rel="canonical" href="https://vibeloom.ai/get-started">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="VibeLoom">
+<meta property="og:url" content="https://vibeloom.ai/get-started">
+<meta property="og:title" content="VibeLoom — 30-minute on-ramp">
+<meta property="og:description" content="Install, bootstrap a vibe project, generate, ship. Plus brownfield import and mode upgrades. Python 3.10+ only.">
+<meta property="og:image" content="https://vibeloom.ai/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VibeLoom — 30-minute on-ramp">
+<meta name="twitter:description" content="Install, bootstrap, generate, ship. Plus brownfield import and mode upgrades.">
+<meta name="twitter:image" content="https://vibeloom.ai/og-image.png">
+<meta name="twitter:image:alt" content="VibeLoom — Contract-Driven Agentic Engineering">
+
+<link rel="icon" type="image/svg+xml" href="vibeloom-logo-loom.svg">
+
+<!-- Fonts: non-blocking parallel fetch -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap"></noscript>
+
+<link rel="stylesheet" href="styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "HowTo",
+      "name": "Get started with VibeLoom",
+      "description": "The 30-minute on-ramp to VibeLoom: install, bootstrap a vibe project, generate, ship. Plus brownfield import and mode upgrades.",
+      "author": {"@type":"Person","name":"Ilya Baimetov"},
+      "publisher": {"@type":"Organization","name":"VibeLoom","logo":{"@type":"ImageObject","url":"https://vibeloom.ai/vibeloom-logo-loom.svg"}},
+      "image": "https://vibeloom.ai/og-image.png",
+      "url": "https://vibeloom.ai/get-started",
+      "mainEntityOfPage": "https://vibeloom.ai/get-started",
+      "datePublished": "2026-05-05",
+      "dateModified": "2026-05-07",
+      "inLanguage": "en-US",
+      "totalTime": "PT30M",
+      "tool": [
+        {"@type":"HowToTool","name":"Python 3.10+"},
+        {"@type":"HowToTool","name":"Claude Code or Codex (with Skill loader)"}
+      ],
+      "step": [
+        {"@type":"HowToStep","name":"Install","text":"Clone the VibeLoom repo and point your agent at it as a Skill source."},
+        {"@type":"HowToStep","name":"Bootstrap","text":"Run /vibeloom init --mode vibe with a one-line description, then expand intent.md and approve intent-specs."},
+        {"@type":"HowToStep","name":"Generate","text":"Run /vibeloom generate. Vibe mode auto-advances through the compact stack into code."},
+        {"@type":"HowToStep","name":"Read, ship, iterate","text":"Run /vibeloom status. If everything is current, ship. To change behavior, edit intent and regenerate, or edit code and reconcile."},
+        {"@type":"HowToStep","name":"Upgrade when vibe outgrows itself","text":"When the engine surfaces vibe-limit warnings, upgrade with /vibeloom init --upgrade --mode <pm|dev|ux|expert>."},
+        {"@type":"HowToStep","name":"Brownfield import","text":"For existing codebases, run /vibeloom import --mode <mode> to infer a candidate contract, review top-down, and approve."}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Overview","item":"https://vibeloom.ai/"},
+        {"@type":"ListItem","position":2,"name":"Get started","item":"https://vibeloom.ai/get-started"}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="index.html" aria-label="VibeLoom home"><img src="vibeloom-logo-loom.svg" alt="" width="26" height="26"> VibeLoom</a>
+  <div class="links">
+    <a href="index.html">Overview</a>
+    <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+    <a href="methodology.html">Methodology</a>
+    <a href="implementation.html">Implementation</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta is-active" href="get-started.html" aria-current="page">Get started</a>
+  </div>
+  <details class="menu">
+    <summary aria-label="Open menu">Menu
+      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="panel">
+      <a href="index.html">Overview</a>
+      <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+      <a href="methodology.html">Methodology</a>
+      <a href="implementation.html">Implementation</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      <a class="cta is-active" href="get-started.html" aria-current="page">Get started</a>
+    </div>
+  </details>
+</nav>
+
+<main id="main">
+<header class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Get started · v0.3</span>
+    <h1>Make your first contract in 30 minutes.</h1>
+    <p class="lead">Clone the repo, load it as a Skill in Claude Code or Codex, and run one command. Python 3.10+ is the only system requirement &mdash; the engine is pure Python with zero runtime dependencies.</p>
+    <aside class="thesis">
+      <span class="thesis-label">Start in vibe mode</span>
+      Vibe is the cold-start path. Begin there even if you'll outgrow it &mdash; the upgrade trace is part of how the methodology works.
+    </aside>
+    <div class="meta">
+      <span>~5 min read · ~30 min hands-on</span>
+      <span>Source: <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/getting-started.md" target="_blank" rel="noopener"><code>getting-started.md</code></a></span>
+      <span>v0.3</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="doc-layout">
+    <aside class="doc-toc" aria-label="Get started table of contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#prereq" class="is-active">Prerequisites</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#bootstrap">First 5 min &mdash; bootstrap</a></li>
+        <li><a href="#generate">Next 10 min &mdash; generate</a></li>
+        <li><a href="#ship">Next 10 min &mdash; read, ship, iterate</a></li>
+        <li><a href="#upgrade">Outgrow vibe &mdash; upgrade</a></li>
+        <li><a href="#brownfield">Brownfield &mdash; import</a></li>
+        <li><a href="#next">Where to next</a></li>
+        <li><a href="#notuse">When NOT to use</a></li>
+      </ol>
+    </aside>
+
+    <article class="doc-body">
+      <h2 id="prereq">Prerequisites</h2>
+      <ul>
+        <li><strong>Python 3.10+</strong> &mdash; the only system dependency.</li>
+        <li><strong>An agent with a Skill loader</strong> &mdash; Claude Code or Codex. Both pick up VibeLoom the same way.</li>
+        <li><strong>A folder to try it on</strong> &mdash; a throwaway directory works for the vibe walkthrough; a real codebase works for the <a class="linky" href="#brownfield">brownfield path</a>.</li>
+      </ul>
+
+      <hr>
+
+      <h2 id="install">Install</h2>
+      <p>Pick either path; both work.</p>
+
+      <h3>Option A &mdash; clone the repo</h3>
+      <pre><code>git clone https://github.com/ilya-baimetov/vibeloom.git</code></pre>
+      <p>Point your agent at the cloned directory as a Skill source. In Claude Code:</p>
+      <pre><code>&gt; add vibeloom as a Skill source from /path/to/vibeloom/v03</code></pre>
+
+      <h3>Option B &mdash; install the release bundle (v0.3.0)</h3>
+      <p>Drop the bundle into your Claude Code skills directory:</p>
+      <pre><code>mkdir -p ~/.claude/skills
+curl -L https://github.com/ilya-baimetov/vibeloom/releases/download/v0.3.0/vibeloom-v0.3.0.tar.gz | tar -xz -C ~/.claude/skills/
+mv ~/.claude/skills/vibeloom-v0.3.0 ~/.claude/skills/vibeloom</code></pre>
+      <p>Verify the download integrity (optional):</p>
+      <pre><code>shasum -a 256 -c &lt;(curl -sL https://github.com/ilya-baimetov/vibeloom/releases/download/v0.3.0/vibeloom-v0.3.0.tar.gz.sha256)</code></pre>
+
+      <p>Codex setup is the same shape &mdash; point its Skill loader at the directory. No <code>pip install</code>. No runtime dependencies beyond Python 3.10+.</p>
+
+      <hr>
+
+      <h2 id="bootstrap">First 5 min &mdash; bootstrap a vibe project</h2>
+      <p>In an empty directory (or a folder you want to seed):</p>
+      <pre><code>&gt; /vibeloom init --mode vibe "a personal note-taking app with full-text search and tags"</code></pre>
+      <p>VibeLoom creates <code>intent.md</code>, <code>system.md</code> (compact), and <code>AGENTS.md</code>. It writes your one-line description into <code>intent.md</code> and asks you to expand. Open the file and add capabilities and constraints in plain English &mdash; that's the only real work here.</p>
+      <p>Then approve:</p>
+      <pre><code>&gt; /vibeloom approve intent-specs</code></pre>
+      <p>This writes the first approval trace and unlocks downstream generation.</p>
+
+      <hr>
+
+      <h2 id="generate">Next 10 min &mdash; generate</h2>
+      <pre><code>&gt; /vibeloom generate</code></pre>
+      <p>In vibe mode this auto-advances through the compact stack and into code. Expect output that looks roughly like:</p>
+      <pre><code>✓ generated system.md (compact: 3 components, 2 interfaces)
+✓ generated AGENTS.md
+✓ generated code (14 files across 3 components in 2 dispatch waves)
+✓ all validation runners passed
+ℹ status: current; 0 stale, 0 drifted, 0 uncovered</code></pre>
+      <p>Look at what got generated. Ignore the engine's status report for a second &mdash; just open the files and skim them. The whole point of vibe mode is that a small system stays comprehensible.</p>
+
+      <hr>
+
+      <h2 id="ship">Next 10 min &mdash; read, ship, iterate</h2>
+      <p>If the generated code looks roughly right:</p>
+      <pre><code>&gt; /vibeloom status</code></pre>
+      <p>Read the report. If it says <code>current</code> everywhere, ship it. Run the code, see if it does what you wanted.</p>
+      <p>To change behavior, you have two paths:</p>
+      <ul>
+        <li><strong>Change the intent.</strong> Edit <code>intent.md</code>, <code>approve</code> it again, <code>generate</code> again. The engine regenerates affected scopes.</li>
+        <li><strong>Edit the code by hand.</strong> Fine, but on the next <code>status</code> you'll see <code>drifted</code> for whichever files you touched. Use <code>reconcile code</code> to either bring code back in line with the contract or amend the contract to match what you wrote. Don't ignore drift.</li>
+      </ul>
+
+      <hr>
+
+      <h2 id="upgrade">Outgrow vibe &mdash; upgrade</h2>
+      <p>After a few weeks of iteration, VibeLoom may surface:</p>
+      <pre><code>ℹ Vibe limits exceeded:
+  - 12 components (vibe recommends ≤ 5)
+  - 3 contributors (vibe recommends 1-2)
+  - 4 reconciliations in last 30 days
+→ Consider: vibeloom init --upgrade --mode &lt;pm|dev|ux|expert&gt;</code></pre>
+      <p>This is the upgrade prompt. Pick a mode based on who's leading discovery on your team:</p>
+      <ul>
+        <li><strong><code>pm</code></strong> &mdash; product-led. PM owns intent + product specs. Best for product-driven teams.</li>
+        <li><strong><code>dev</code></strong> &mdash; tech-led. Dev owns intent + system specs. Best for architecture-first work.</li>
+        <li><strong><code>ux</code></strong> &mdash; design-led. Designer owns intent + UX specs; PM is peer reviewer of generated product specs. Best for design-heavy products. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/examples/ux-led-design.md" target="_blank" rel="noopener">examples/ux-led-design.md</a>.</li>
+        <li><strong><code>expert</code></strong> &mdash; all approval gates explicit. Best for regulated systems or co-owned design.</li>
+      </ul>
+      <div class="callout">
+        <strong>One-way.</strong> Upgrade is one-way and produces an explicit migration trace. The compact stack expands into the full graph; existing code is import-analyzed against the freshly generated full contract. Plan ~1 hour for the first review pass after upgrade.
+      </div>
+
+      <hr>
+
+      <h2 id="brownfield">I have an existing codebase &mdash; brownfield import</h2>
+      <p>Use brownfield import:</p>
+      <pre><code>&gt; /vibeloom import --mode &lt;mode&gt;</code></pre>
+      <p>VibeLoom scans the existing code, infers a candidate contract with confidence scores per item, and writes it as <code>draft</code>. You review top-down (intent → product → system) and approve. Existing code is then code-synced or reconciled against the approved contract.</p>
+      <p>Plan a half-day to a day for the first import + review cycle on a 50K-LOC project. See <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/examples/brownfield-import.md" target="_blank" rel="noopener">examples/brownfield-import.md</a> for a worked walkthrough.</p>
+
+      <hr>
+
+      <h2 id="next">Where to next</h2>
+      <ul>
+        <li><a class="linky" href="codae.html"><span class="codae">cod<span class="ae">æ</span></span> &mdash; the manifesto</a> &mdash; the case for the paradigm</li>
+        <li><a class="linky" href="methodology.html">Methodology</a> &mdash; the model: contract stack, modes, operations, status categories</li>
+        <li><a class="linky" href="implementation.html">Implementation</a> &mdash; the engine: skill + engine + validation runners; trace schemas; dispatch + parallel semantics</li>
+        <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/tree/main/v03/examples" target="_blank" rel="noopener">Examples on GitHub</a> &mdash; greenfield, brownfield, ux-led, multi-component reconciliation, parallel dispatch</li>
+        <li><a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/roadmap.md" target="_blank" rel="noopener">Roadmap</a> &mdash; what's coming in v0.4 (dry-run, contract REPL, contract debugger, contract pattern library, DDD context maps, compliance mode, trace-derived learning)</li>
+      </ul>
+
+      <hr>
+
+      <h2 id="notuse">When NOT to use VibeLoom</h2>
+      <p>Throwaway prototype? Single-file utility? Weekend demo? Hackathon submission? Prompt-only is faster. The contract overhead pays back when the system has to survive past one development cycle and matter to more than one person. See <a class="linky" href="codae.html#case">manifesto §6</a> for the argument.</p>
+
+      <hr>
+
+      <p id="full" style="margin-top:32px; font-family: var(--f-mono); font-size: 0.86rem; color: var(--c-ink-4);">Full source: <a class="linky" href="https://github.com/ilya-baimetov/vibeloom/blob/main/v03/getting-started.md" target="_blank" rel="noopener">v03/getting-started.md</a> →</p>
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="index.html"><img src="vibeloom-logo-loom.svg" alt="" width="22" height="22"> VibeLoom</a>
+      <div class="nav">
+        <a href="codae.html"><span class="codae">cod<span class="ae">æ</span></span></a>
+        <a href="methodology.html">Methodology</a>
+        <a href="implementation.html">Implementation</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+    <div class="small">
+      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>v0.3 · MIT licensed · Built by <a href="contact.html">Ilya Baimetov</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // active TOC link based on scroll position (same handler as methodology/implementation)
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.doc-toc a'));
+    if (!links.length) return;
+    var sections = links.map(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (s) { return s.el; });
+    function set() {
+      var y = window.scrollY + 120;
+      var current = sections[0];
+      for (var i = 0; i < sections.length; i++) {
+        if (sections[i].el.offsetTop <= y) current = sections[i];
+      }
+      links.forEach(function (a) { a.classList.remove('is-active'); });
+      current.a.classList.add('is-active');
+    }
+    window.addEventListener('scroll', set, { passive: true });
+    set();
+  })();
+</script>
+</body>
+</html>

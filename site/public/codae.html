@@ -1,0 +1,973 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>codæ — Contract-Driven Agentic Engineering</title>
+
+<meta name="description" content="A 2026 whitepaper introducing codæ — contract-driven agentic engineering: how to keep agentic codebases coherent when generation outpaces comprehension, grounded in seventeen empirical studies published January–April 2026.">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="codæ — Contract-Driven Agentic Engineering">
+<meta property="og:description" content="The path to dark-factory AI coding: coding goes lights-out, intent stays mendable. The contract is what humans hold while agents compile it into production systems. Whitepaper, May 2026.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="codæ — Contract-Driven Agentic Engineering">
+<meta name="twitter:description" content="The path to dark-factory AI coding. Coding goes lights-out, intent stays mendable. The contract is what humans hold while agents compile.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap"></noscript>
+
+<style>
+:root {
+  --c-bg:        #ffffff;
+  --c-bg-soft:   #f7f7f6;
+  --c-bg-mute:   #efeeec;
+  --c-ink:       #0a0a0a;
+  --c-ink-2:     #1a1a1a;
+  --c-ink-3:     #3a3a3a;
+  --c-ink-4:     #5a5a5a;
+  --c-ink-5:     #707070;
+  --c-line:      #e6e4e0;
+  --c-line-2:    #d6d3cd;
+
+  --c-red:       #e84057;
+  --c-red-deep:  #c43a50;
+  --c-red-soft:  #fbe6ea;
+  --c-red-tint:  rgba(232, 64, 87, 0.08);
+
+  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --f-serif:     "Fraunces", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif;
+
+  --w-site:      1200px;
+  --w-content:   780px;
+  --w-prose:     720px;
+  --nav-h:       64px;
+
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.02), 0 2px 8px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--f-sans);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection { background: var(--c-red); color: #fff; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ===== skip link ===== */
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  padding: 10px 16px;
+  background: var(--c-ink); color: #fff;
+  font-weight: 600; font-size: 0.88rem;
+  border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; outline: 2px solid var(--c-red); outline-offset: 2px; }
+
+/* ===== nav ===== */
+nav.site-nav {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--c-line);
+}
+nav.site-nav .brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 1.05rem; letter-spacing: -0.025em;
+  color: var(--c-ink);
+}
+nav.site-nav .brand img { width: 26px; height: 26px; display: block; }
+nav.site-nav .links {
+  display: flex; align-items: center; gap: 22px;
+  font-size: 0.88rem; font-weight: 500; color: var(--c-ink-3);
+}
+nav.site-nav .links a { transition: color 0.15s; position: relative; }
+nav.site-nav .links a:hover { color: var(--c-ink); }
+nav.site-nav .links a.is-active { color: var(--c-ink); }
+nav.site-nav .links a.is-active::after {
+  content: ""; position: absolute;
+  bottom: -22px; left: 0; right: 0;
+  height: 2px; background: var(--c-red);
+}
+nav.site-nav .links a.cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--c-ink); color: #fff !important;
+  font-weight: 600 !important;
+  transition: background 0.15s, transform 0.1s;
+}
+nav.site-nav .links a.cta:hover { background: var(--c-red); transform: translateY(-1px); }
+nav.site-nav .badge {
+  font-family: var(--f-mono); font-size: 0.7rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid var(--c-red-soft);
+  border-radius: 100px;
+  background: var(--c-red-tint);
+  white-space: nowrap;
+}
+
+/* ===== layout primitives ===== */
+.wrap   { max-width: var(--w-site); margin: 0 auto; padding: 0 32px; }
+.wrap-md { max-width: var(--w-content); margin: 0 auto; padding: 0 32px; }
+.wrap-sm { max-width: var(--w-prose); margin: 0 auto; padding: 0 32px; }
+
+/* ===== typography ===== */
+h1, h2, h3, h4 {
+  font-family: var(--f-sans);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--c-ink);
+  font-weight: 800;
+}
+h2 { font-size: clamp(1.7rem, 2.8vw, 2.2rem); letter-spacing: -0.03em; }
+h3 { font-size: 1.18rem; font-weight: 700; }
+h4 { font-size: 0.98rem; font-weight: 700; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: ""; width: 18px; height: 1px; background: var(--c-red-deep);
+}
+
+p { color: var(--c-ink-3); }
+p strong { color: var(--c-ink); font-weight: 600; }
+em { font-style: italic; }
+
+/* ===== codæ wordmark ===== */
+.codae {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.ae { color: var(--c-red); }
+
+code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+  background: var(--c-bg-mute);
+  color: var(--c-ink-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+}
+
+a.linky {
+  color: var(--c-ink);
+  border-bottom: 1px solid var(--c-line-2);
+  transition: border-color 0.15s, color 0.15s;
+}
+a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
+
+sup.cite {
+  font-family: var(--f-mono);
+  font-size: 0.62em;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  margin-left: 1px;
+  vertical-align: super;
+  line-height: 0;
+}
+sup.cite a {
+  border-bottom: 1px dotted var(--c-red-soft);
+  transition: border-color 0.15s;
+}
+sup.cite a:hover { border-color: var(--c-red); }
+
+/* ===== hero ===== */
+.hero {
+  position: relative;
+  padding: 96px 0 72px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--c-line);
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(10,10,10,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10,10,10,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 880px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid var(--c-line-2);
+  border-radius: 100px;
+  background: #fff;
+  font-size: 0.78rem; font-weight: 500; color: var(--c-ink-3);
+  margin-bottom: 28px;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-red);
+  box-shadow: 0 0 0 4px rgba(232,64,87,0.18);
+}
+.hero h1 {
+  font-family: var(--f-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(4.2rem, 11vw, 8rem);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin-bottom: 24px;
+  color: var(--c-ink);
+}
+.hero h1 .accent,
+nav.site-nav .brand .accent,
+footer .accent { color: var(--c-red); }
+.hero .sub {
+  font-family: var(--f-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  max-width: 22ch;
+  color: var(--c-ink);
+  margin-bottom: 28px;
+}
+.hero .lead {
+  font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+  color: var(--c-ink-3);
+  line-height: 1.65;
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 12px 28px;
+  margin-top: 32px; padding-top: 22px;
+  border-top: 1px solid var(--c-line);
+  font-size: 0.82rem; color: var(--c-ink-4);
+  font-family: var(--f-mono);
+}
+.hero-meta span strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== doc layout ===== */
+.doc-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+  padding-top: 64px;
+  padding-bottom: 96px;
+}
+.doc-toc {
+  position: sticky; top: calc(var(--nav-h) + 32px);
+  font-size: 0.86rem;
+}
+.doc-toc .label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--c-ink-5); font-weight: 700;
+  margin-bottom: 14px;
+}
+.doc-toc ol {
+  list-style: none;
+  display: grid; gap: 4px;
+  counter-reset: tocnum;
+}
+.doc-toc ol li { counter-increment: tocnum; }
+.doc-toc ol a {
+  display: block;
+  padding: 5px 0 5px 28px;
+  color: var(--c-ink-4);
+  border-left: 2px solid var(--c-line);
+  position: relative;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.35;
+}
+.doc-toc ol a::before {
+  content: "§" counter(tocnum);
+  position: absolute; left: 8px; top: 5px;
+  font-family: var(--f-mono); font-size: 0.7rem;
+  color: var(--c-ink-5); font-weight: 600;
+}
+.doc-toc ol a:hover { color: var(--c-ink); border-color: var(--c-ink-5); }
+.doc-toc ol a.is-active {
+  color: var(--c-ink); font-weight: 600;
+  border-left-color: var(--c-red);
+}
+
+.doc-body { max-width: var(--w-prose); }
+.doc-body section {
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--c-line);
+}
+.doc-body section:first-child {
+  border-top: 0;
+  padding-top: 8px;
+}
+.doc-body h2 {
+  margin-bottom: 22px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.doc-body h2 .num {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+.doc-body h3 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+.doc-body p {
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+.doc-body p + p { margin-top: 14px; }
+.doc-body ul, .doc-body ol {
+  padding-left: 22px;
+  margin: 18px 0;
+}
+.doc-body li {
+  color: var(--c-ink-3);
+  margin: 10px 0;
+  line-height: 1.65;
+  font-size: 1.02rem;
+}
+.doc-body li strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== stats strip ===== */
+.stats-strip {
+  margin: 28px 0 8px;
+  padding: 28px 32px;
+  border: 1px solid var(--c-line);
+  border-left: 3px solid var(--c-red);
+  border-radius: 12px;
+  background: var(--c-bg-soft);
+}
+.stats-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.stats-strip .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  line-height: 1.15;
+}
+.stat-label {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.stat-label strong { color: var(--c-ink); font-weight: 600; }
+.stat-src {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--c-red);
+  text-decoration: underline dotted var(--c-red);
+  text-underline-offset: 3px;
+  margin-top: auto;
+  padding-top: 12px;
+  align-self: flex-start;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.stat-src:hover { color: var(--c-red-deep); text-decoration-color: var(--c-red-deep); }
+
+/* ===== pull quotes ===== */
+blockquote.pull {
+  margin: 30px 0;
+  padding: 14px 0 14px 24px;
+  border-left: 3px solid var(--c-red);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.18rem, 2vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+blockquote.pull p { color: var(--c-ink); margin: 0 0 10px 0; font-size: inherit; line-height: inherit; }
+blockquote.pull cite {
+  display: block;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--c-ink-4);
+  letter-spacing: 0.02em;
+  margin-top: 8px;
+}
+
+/* ===== figure ===== */
+.fig {
+  margin: 32px 0;
+  padding: 28px;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.fig svg { width: 100%; height: auto; }
+.fig-caption {
+  margin-top: 16px;
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-4);
+  line-height: 1.55;
+}
+.fig-caption strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== next links ===== */
+.next-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+.next-card {
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.next-card:hover {
+  border-color: var(--c-ink);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.next-card .eyebrow { margin-bottom: 12px; }
+.next-card h3 { margin-bottom: 8px; margin-top: 0; }
+.next-card p { font-size: 0.94rem; line-height: 1.55; margin-bottom: 0; }
+.next-card .arr {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--c-red-deep);
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ===== references ===== */
+.full-note { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--c-line); font-family: var(--f-mono); font-size: 0.86rem; color: var(--c-ink-4); }
+.refs ol {
+  list-style: none;
+  counter-reset: ref;
+  padding-left: 0;
+  display: grid; gap: 16px;
+}
+.refs ol li {
+  counter-increment: ref;
+  padding-left: 42px;
+  position: relative;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--c-ink-3);
+}
+.refs ol li::before {
+  content: counter(ref);
+  position: absolute; left: 0; top: 1px;
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--c-bg-mute);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--c-ink-2);
+}
+.refs ol li .meta {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-5);
+  margin-top: 2px;
+  display: block;
+}
+.refs ol li .title { font-weight: 600; color: var(--c-ink); }
+.refs ol li a {
+  color: var(--c-red-deep);
+  border-bottom: 1px dotted var(--c-red-soft);
+  word-break: break-all;
+}
+.refs ol li a:hover { border-color: var(--c-red); color: var(--c-red); }
+.refs-note {
+  margin-bottom: 24px;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--c-ink-3);
+}
+
+/* ===== footer ===== */
+footer {
+  border-top: 1px solid var(--c-line);
+  padding: 32px 0 40px;
+  background: var(--c-bg-soft);
+  font-size: 0.82rem;
+  color: var(--c-ink-4);
+}
+footer .row {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+footer .row .b-mark {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--c-red);
+}
+footer a {
+  color: var(--c-ink-3);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
+
+/* ===== responsive ===== */
+@media (max-width: 920px) {
+  .doc-layout { grid-template-columns: 1fr; gap: 28px; padding-top: 40px; padding-bottom: 56px; }
+  .doc-toc {
+    position: static;
+    margin-bottom: 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-bg-soft);
+  }
+  .doc-toc ol { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+  .doc-toc ol a {
+    padding: 6px 10px;
+    border-left: 0;
+    border: 1px solid var(--c-line);
+    border-radius: 100px;
+    background: #fff;
+    font-size: 0.82rem;
+  }
+  .doc-toc ol a::before { display: none; }
+  .doc-toc ol a.is-active {
+    border-color: var(--c-red);
+    color: var(--c-red-deep);
+  }
+  .next-grid { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0 44px; }
+  nav.site-nav { padding: 0 16px; }
+  nav.site-nav .links { gap: 14px; }
+  nav.site-nav .links a:not(.cta) { display: none; }
+  nav.site-nav .links a.cta { display: inline-flex; }
+  .wrap { padding: 0 20px; }
+  .stats-strip { padding: 22px; }
+  .stats-strip-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .doc-body p { font-size: 1rem; line-height: 1.7; }
+  .doc-body li { font-size: 0.98rem; }
+  .stats-strip-grid { grid-template-columns: 1fr; gap: 20px; }
+  blockquote.pull { padding-left: 18px; font-size: 1.1rem; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="index.html" aria-label="VibeLoom home">
+    <img src="vibeloom-logo-loom.svg" alt="" width="26" height="26">
+    VibeLoom
+  </a>
+  <div class="links">
+    <a href="index.html">Overview</a>
+    <a href="codae.html" class="is-active" aria-current="page"><span class="codae">cod<span class="ae">æ</span></span></a>
+    <a href="methodology.html">Methodology</a>
+    <a href="implementation.html">Implementation</a>
+    <a href="contact.html">Contact Us</a>
+    <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener" aria-label="VibeLoom on GitHub">GitHub</a>
+    <a class="cta" href="get-started.html">Get started</a>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ░░ HERO ░░ -->
+<header class="hero">
+  <div class="wrap hero-inner">
+    <h1 class="codae-hero">cod<span class="ae">æ</span></h1>
+
+    <p class="sub"><span class="ae">Co</span>ntract-<span class="ae">d</span>riven <span class="ae">a</span>gentic <span class="ae">e</span>ngineering.</p>
+
+    <p class="lead">
+      Agentic AI coding crashed the cost of producing code. It didn't
+      crash the cost of holding a system together. As autonomous agents
+      extend codebases past any single human's comprehension, semantic
+      drift accumulates and "AI slop" compounds — measurable, in 2026,
+      in real codebases. This whitepaper argues for governing it through
+      a stack of human-mendable contracts: smaller than the code,
+      persistent across agents, verifiable against what ships.
+    </p>
+
+    <div class="hero-meta">
+      <span><strong>Author</strong> Ilya Baimetov</span>
+      <span><strong>Published</strong> v0.3 · May 2026</span>
+      <span><strong>Read time</strong> ~14 min</span>
+      <span><strong>Sources</strong> primary, verified, mostly 2026</span>
+    </div>
+  </div>
+</header>
+
+<!-- ░░ DOC LAYOUT ░░ -->
+<div class="wrap">
+  <div class="doc-layout">
+
+    <aside class="doc-toc" aria-label="Contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#destination">The destination</a></li>
+        <li><a href="#blocker">The blocker</a></li>
+        <li><a href="#contract">The contract</a></li>
+        <li><a href="#bet">The bet</a></li>
+      </ol>
+      <p style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--c-line); font-size: 0.82rem;"><a href="#references" style="color: var(--c-ink-4); border-bottom: 1px dotted var(--c-line-2);">References ↓</a></p>
+    </aside>
+
+    <article class="doc-body">
+      <section id="destination">
+        <h2><span class="num">§1 — The destination</span>Coding goes dark factory.</h2>
+
+        <p>
+          A "dark factory" runs lights-out — no humans on the floor, just
+          machines. The product flows in as a specification and out as
+          physical units. Workers exist; they design the line, audit
+          outputs, evolve the spec. They do not turn the wrenches.
+        </p>
+
+        <p>
+          The same pattern is forming in software. The highest-leverage
+          end-state of agentic coding is the dark factory: agents write
+          the code, run the tests, fix the failures, open the pull
+          requests, and merge them. Humans set direction, govern the
+          contract that steers the factory, and audit what flows out.
+          The factory floor is dark.
+        </p>
+
+        <p>
+          The pattern is no longer aspirational. In February 2026, Spotify confirmed its best engineers had not written a line of code since December — they were merging hundreds of agent-authored PRs per month through Spotify's internal coding-agent platform.<sup class="cite"><a href="#ref-2">2</a></sup> BCG Platinion's <em>Dark Software Factory</em> report named the milestone explicitly: <em>"as few as three engineers can run a software factory where humans no longer write code."</em><sup class="cite"><a href="#ref-3">3</a></sup> Sequoia, in their January 2026 essay declaring the practical AGI year, named the underlying capability shift: coding agents that plan, use tools, maintain state, and loop until success.<sup class="cite"><a href="#ref-1">1</a></sup>
+        </p>
+
+        <p>
+          The economics: the industry-promised <strong>10–100×
+          speedup</strong> from agentic coding lives in exactly one
+          place — the dark factory. The moment the human has to drop
+          into the code to fix what the agent built, the speedup
+          collapses. <span class="codae">cod<span class="ae">æ</span></span>
+          commits to dark-factory coding as the multi-year trajectory,
+          not as a v0.3 promise.
+        </p>
+      </section>
+
+      <section id="blocker">
+        <h2><span class="num">§2 — The blocker</span>Coherence fails, and the factory cannot stay dark.</h2>
+
+        <p>
+          The capability threshold has been crossed. The gating constraint is <strong>coherence</strong>: preserving intent, architecture, domain meaning, and behavior across long-running, multi-agent work. When coherence fails, the symptoms have names:
+        </p>
+
+        <ul>
+          <li><strong>Semantic drift</strong> — outputs progressively diverge from original task intent while remaining syntactically valid.</li>
+          <li><strong>AI slop</strong> — cheap to generate, expensive to review.</li>
+          <li><strong>Comprehension debt</strong> — the codebase looks clean, but no human (and no incoming agent) understands what it's doing or why.</li>
+        </ul>
+
+        <aside class="stats-strip" aria-label="2026 evidence on AI drift and slop">
+          <div class="stats-strip-grid">
+            <div class="stat">
+              <div class="stat-num">80% / 89.8%</div>
+              <div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div>
+              <a class="stat-src" href="#ref-5">SlopCodeBench<br>Mar 2026 ↗</a>
+            </div>
+            <div class="stat">
+              <div class="stat-num">22.7%</div>
+              <div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div>
+              <a class="stat-src" href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">AI-debt in the wild<br>Mar 2026 ↗</a>
+            </div>
+            <div class="stat">
+              <div class="stat-num">3–5×</div>
+              <div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div>
+              <a class="stat-src" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU Cursor study<br>Jan 2026 ↗</a>
+            </div>
+            <div class="stat">
+              <div class="stat-num">17%</div>
+              <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
+              <a class="stat-src" href="#ref-6">Osmani · O'Reilly<br>Apr 2026 ↗</a>
+            </div>
+          </div>
+        </aside>
+
+        <blockquote class="pull">
+          <p>"AI amplifies the quality of the engineering system it operates within."</p>
+          <cite>— Nicole Forsgren et al, DORA 2025 / Google Cloud<sup class="cite"><a href="#ref-4">4</a></sup></cite>
+        </blockquote>
+
+        <p>
+          Local fixes — better prompts, sharper instructions, stricter reviews — don't get past this. They work for one run and die on the next agent. The bottleneck isn't model capability; it's the absence of a durable, inspectable control surface above the code. With one in place, drift stops being a vague quality problem and becomes a concrete contract violation: <strong>detectable, attributable, localizable, and repairable</strong> at the contract boundary, before humans are pulled back onto the floor.
+        </p>
+      </section>
+
+      <section id="contract">
+        <h2><span class="num">§3 — The contract</span>The control surface that holds the factory together.</h2>
+
+        <p>
+          A prompt cannot govern a dark factory. A codebase is too large to be the human control surface. A requirements document is too weak if agents can ignore it. The missing object is a <strong>contract</strong> — a set of mutually-derived specs tied together by a graph: authoritative enough to govern generation, structured enough for agents to consume, small enough for humans to mend.
+        </p>
+
+        <p>
+          The load-bearing question is what surface humans <em>can</em> hold. Not lines or tokens, but the number of <strong>meaningful items</strong> in the affected review cut — code-level (files, classes, methods, branches, tests, integrations) versus contract-level (capabilities, constraints, requirements, flows, bounded contexts, interfaces, behaviors, decisions, obligations). A contract is a different shape: a small set of concepts at the right abstraction level governing a much larger set of implementation paths.
+        </p>
+
+        <div class="fig">
+          <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cognitive surface comparison: a tall code mountain at left versus a short, structured contract at right; a horizontal red dashed line marks the human comprehension ceiling, well below the top of the code column.">
+            <line x1="20" y1="80" x2="600" y2="80" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="608" y="84" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#c43a50" text-anchor="end">human comprehension ceiling</text>
+
+            <g transform="translate(40, 30)">
+              <text x="100" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Code</text>
+              <g fill="#3a3a3a">
+                <rect x="20" y="0" width="160" height="3" rx="1"/>
+                <rect x="20" y="6" width="140" height="3" rx="1"/>
+                <rect x="20" y="12" width="170" height="3" rx="1"/>
+                <rect x="20" y="18" width="130" height="3" rx="1"/>
+                <rect x="20" y="24" width="155" height="3" rx="1"/>
+                <rect x="20" y="30" width="145" height="3" rx="1"/>
+                <rect x="20" y="36" width="170" height="3" rx="1"/>
+                <rect x="20" y="42" width="120" height="3" rx="1"/>
+                <rect x="20" y="48" width="160" height="3" rx="1"/>
+                <rect x="20" y="54" width="135" height="3" rx="1"/>
+                <rect x="20" y="60" width="150" height="3" rx="1"/>
+                <rect x="20" y="66" width="170" height="3" rx="1"/>
+                <rect x="20" y="72" width="125" height="3" rx="1"/>
+                <rect x="20" y="78" width="155" height="3" rx="1"/>
+                <rect x="20" y="84" width="140" height="3" rx="1"/>
+                <rect x="20" y="90" width="160" height="3" rx="1"/>
+                <rect x="20" y="96" width="135" height="3" rx="1"/>
+                <rect x="20" y="102" width="170" height="3" rx="1"/>
+                <rect x="20" y="108" width="145" height="3" rx="1"/>
+                <rect x="20" y="114" width="150" height="3" rx="1"/>
+                <rect x="20" y="120" width="160" height="3" rx="1"/>
+                <rect x="20" y="126" width="130" height="3" rx="1"/>
+                <rect x="20" y="132" width="170" height="3" rx="1"/>
+                <rect x="20" y="138" width="155" height="3" rx="1"/>
+                <rect x="20" y="144" width="140" height="3" rx="1"/>
+                <rect x="20" y="150" width="160" height="3" rx="1"/>
+                <rect x="20" y="156" width="135" height="3" rx="1"/>
+                <rect x="20" y="162" width="170" height="3" rx="1"/>
+                <rect x="20" y="168" width="145" height="3" rx="1"/>
+                <rect x="20" y="174" width="160" height="3" rx="1"/>
+                <rect x="20" y="180" width="135" height="3" rx="1"/>
+                <rect x="20" y="186" width="170" height="3" rx="1"/>
+              </g>
+              <text x="100" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~108K LOC · all branches</text>
+            </g>
+
+            <g transform="translate(380, 30)">
+              <text x="120" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Contract</text>
+              <g>
+                <rect x="40" y="0" width="200" height="14" rx="2" fill="#e84057"/>
+                <text x="50" y="11" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#fff">intent</text>
+
+                <rect x="40" y="20" width="200" height="20" rx="2" fill="#1a1a1a"/>
+                <text x="50" y="33" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">requirements / domain</text>
+
+                <rect x="40" y="46" width="200" height="20" rx="2" fill="#3a3a3a"/>
+                <text x="50" y="59" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">structure / interfaces</text>
+
+                <rect x="40" y="72" width="200" height="14" rx="2" fill="#5a5a5a"/>
+                <text x="50" y="83" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">behavior / decisions</text>
+
+                <rect x="40" y="92" width="200" height="14" rx="2" fill="#707070"/>
+                <text x="50" y="103" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">execution config</text>
+              </g>
+              <text x="140" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~16K lines · ~24% of code</text>
+            </g>
+
+            <text x="320" y="265" font-family="JetBrains Mono, monospace" font-size="9" fill="#707070" text-anchor="middle">empirical ratio from a real 108K-line system, Vasilopoulos 2026 [9]</text>
+          </svg>
+          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system (left) lies far above any human comprehension ceiling. The contract governing it (right) — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans hold the right side. Agents extend the left. The contract is the bridge.<sup class="cite"><a href="#ref-7">7</a></sup></p>
+        </div>
+
+        <p>
+          For the contract to be load-bearing, it has to do four jobs at once:
+        </p>
+
+        <ul>
+          <li><strong>Edited by humans</strong> — so it must be smaller than the code.</li>
+          <li><strong>Kept consistent with AI's help</strong> — so it must be machine-checkable.</li>
+          <li><strong>The long-term memory the next agent inherits</strong> — durable across sessions, independent of chat.</li>
+          <li><strong>The eval signal every generated artifact is verified against</strong> — drift becomes detectable, not hopeful.</li>
+        </ul>
+
+        <p>
+          A graph-tied set of mutually-derived specs satisfies all four. That is the contract. That is the bridge to dark factory.
+        </p>
+      </section>
+
+      <section id="bet">
+        <h2><span class="num">§4 — The bet</span>Generated implementation is not the source of truth.</h2>
+
+        <p>
+          The choice underneath <span class="codae">cod<span class="ae">æ</span></span> is binary. One option: keep code human-mendable. The agent drafts; the human reviews, edits, ships. Useful — but not a dark factory. The other option, the bet <span class="codae">cod<span class="ae">æ</span></span> makes: <strong>code is generated, regenerated, treated as downstream infrastructure</strong>. The contract is what humans maintain. The contract is what agents satisfy. The contract is what detects drift. The contract is what receives repair.
+        </p>
+
+        <h3>From spec-driven to contract-driven</h3>
+
+        <p>
+          Spec-driven development<sup class="cite"><a href="#ref-8">8</a></sup> — across AWS Kiro, GitHub Spec Kit, BMAD — places existing approaches across rigor levels: <em>spec-first</em> (specs guide, then drift), <em>spec-anchored</em> (specs and code co-evolve with enforcement), <em>spec-as-source</em> (specs alone are edited; code is regenerated). All three are real progress over prompt-only generation. <strong><span class="codae">cod<span class="ae">æ</span></span> is the next level: contract-driven</strong> — not one spec for one file or one feature, but a multi-tier, mutually-derived, graph-tied, drift-detecting contract that governs the whole lifecycle. Same impulse, larger surface, longer arc.
+        </p>
+
+        <h3>The compiler was software's first dark factory.</h3>
+
+        <p>
+          Software has done this climb before — one abstraction level down. We used to inspect generated machine code; now we inspect source, trust the toolchain, debug through traces. The compiler is the canonical dark factory: humans write source, the toolchain compiles, nobody reads the assembly. We trust it because its contract is decidable. <span class="codae">cod<span class="ae">æ</span></span> proposes the same move one level up: humans inspect the contract; agents compile it into implementation. The analogy is not a proof — a compiler is deterministic, agentic generation is not — but it clarifies the desired control surface.
+        </p>
+
+        <blockquote class="pull">
+          <p>The goal is not less slop. The goal is a factory that stays dark.</p>
+          <cite>— <span class="codae">cod<span class="ae">æ</span></span> thesis</cite>
+        </blockquote>
+
+        <p>
+          Govern agentic code generation by a contract — so humans can leave the factory floor. Contract in. Production system out. Humans mend. Agents compile. We call the discipline <strong><span class="codae">cod<span class="ae">æ</span></span></strong>.
+        </p>
+      </section>
+
+      <section id="references" class="refs">
+        <h2><span class="num">References</span>Primary, verified, mostly 2026.</h2>
+
+                <ol>
+          <li id="ref-1">
+            <span class="title">2026: This is AGI.</span>
+            Sequoia Capital — Pat Grady &amp; Sonya Huang. The essay declaring 2026 the practical AGI year, anchored by coding agents crossing the long-horizon capability threshold.
+            <span class="meta">2026-01 · <a href="https://sequoiacap.com/article/2026-this-is-agi/" target="_blank" rel="noopener">sequoiacap.com/article/2026-this-is-agi/</a></span>
+          </li>
+          <li id="ref-2">
+            <span class="title">Spotify says its best developers haven't written a line of code since December.</span>
+            TechCrunch coverage of Spotify Q4 2025 earnings call (co-CEO Gustav Söderström). Spotify's internal coding-agent platform "Honk" merging hundreds of agent-authored PRs/month by early 2026.
+            <span class="meta">2026-02-12 · <a href="https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/" target="_blank" rel="noopener">techcrunch.com/…spotify-…december-thanks-to-ai/</a></span>
+          </li>
+          <li id="ref-3">
+            <span class="title">The Dark Software Factory: A New Era of Autonomous Software Delivery.</span>
+            BCG Platinion (Schatlowski, Griewel, Lipska et al.). <em>"As few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."</em>
+            <span class="meta">2026-03 · <a href="https://www.bcgplatinion.com/insights/the-dark-software-factory" target="_blank" rel="noopener">bcgplatinion.com/insights/the-dark-software-factory</a></span>
+          </li>
+          <li id="ref-4">
+            <span class="title">2025 State of AI-Assisted Software Development.</span>
+            Forsgren, N. et al — Google Cloud DORA team (lead author of <em>Accelerate</em>; ex-VP of Research, GitHub). Coverage by InfoQ, March 2026.
+            <span class="meta">2026-03-17 · <a href="https://www.infoq.com/news/2026/03/ai-dora-report/" target="_blank" rel="noopener">infoq.com/news/2026/03/ai-dora-report/</a></span>
+          </li>
+          <li id="ref-5">
+            <span class="title">SlopCodeBench: Benchmarking How Coding Agents Degrade Over Long-Horizon Iterative Tasks.</span>
+            Orlanski, G., Roy, D., Yun, A., Shin, C., Gu, A., Ge, A., Adila, D., Sala, F., Albarghouthi, A. The most rigorous 2026 study of agent degradation: 20 problems × 93 checkpoints × 11 models.
+            <span class="meta">arXiv:2603.24755 · 2026-03-25 · <a href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">arxiv.org/abs/2603.24755</a></span>
+          </li>
+          <li id="ref-6">
+            <span class="title">Comprehension Debt — the hidden cost of AI generated code.</span>
+            Osmani, A. (O'Reilly Radar). The 17%-lower-comprehension-score finding and the "comprehension work is the job" framing.
+            <span class="meta">2026-04-13 · <a href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/</a></span>
+          </li>
+          <li id="ref-7">
+            <span class="title">Codified Context: Infrastructure for AI Agents in a Complex Codebase.</span>
+            Vasilopoulos, A. The 108K-line C# field study: ~660-line constitution, 19 specialized agents, 34 spec docs across 283 sessions — the empirical anchor for the cognitive-surface argument.
+            <span class="meta">arXiv:2602.20478 · 2026-02-24 · <a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arxiv.org/abs/2602.20478</a></span>
+          </li>
+          <li id="ref-8">
+            <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
+            Piskala, D.B. The 2026 SDD taxonomy (spec-first / spec-anchored / spec-as-source) that <span class="codae">cod<span class="ae">æ</span></span> extends to a fourth level — contract-driven.
+            <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
+          </li>
+        </ol>
+
+        <p class="full-note">Full whitepaper: <a class="linky" href="codæ-manifesto.html" target="_blank" rel="noopener">codæ-manifesto.html</a> →</p>
+      </section>
+
+    
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© 2026 <span class="codae">cod<span class="ae">æ</span></span> — contract-driven agentic engineering · whitepaper v0.3</span>
+      <span>By <a href="mailto:info@vibeloom.ai">Ilya Baimetov</a> · <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var toc = document.querySelector('.doc-toc');
+  if (!toc) return;
+  var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+  var sections = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return { a: a, el: document.getElementById(id) };
+  }).filter(function (s) { return s.el; });
+  function update() {
+    var probe = window.scrollY + 140;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= probe) current = sections[i];
+    }
+    links.forEach(function (a) { a.classList.remove('is-active'); });
+    current && current.a.classList.add('is-active');
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
+
+</body>
+</html>

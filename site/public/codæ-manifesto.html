@@ -1,0 +1,1493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>codæ — Contract-Driven Agentic Engineering · Dark-Factory AI Coding</title>
+
+<meta name="description" content="A 2026 manifesto for codæ: contract-driven agentic engineering for dark-factory AI coding. Contract in, production system out. Humans mend the contract; agents operate the factory. Grounded in 2026 evidence from Spotify, BCG Platinion, Anthropic, Sequoia, Karpathy.">
+<meta name="author" content="Ilya Baimetov">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#ffffff">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="codæ — Contract-Driven Agentic Engineering · Dark-Factory AI Coding">
+<meta property="og:description" content="Contract-driven agentic engineering: the control surface for dark-factory software development. Contract in, production system out. Humans mend; agents operate the factory.">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="codæ — Contract-Driven Agentic Engineering · Dark-Factory AI Coding">
+<meta name="twitter:description" content="A manifesto for contract-driven agentic engineering. Contract in. Production system out.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap"></noscript>
+
+<style>
+:root {
+  --c-bg:        #ffffff;
+  --c-bg-soft:   #f7f7f6;
+  --c-bg-mute:   #efeeec;
+  --c-ink:       #0a0a0a;
+  --c-ink-2:     #1a1a1a;
+  --c-ink-3:     #3a3a3a;
+  --c-ink-4:     #5a5a5a;
+  --c-ink-5:     #707070;
+  --c-line:      #e6e4e0;
+  --c-line-2:    #d6d3cd;
+
+  --c-red:       #e84057;
+  --c-red-deep:  #c43a50;
+  --c-red-soft:  #fbe6ea;
+  --c-red-tint:  rgba(232, 64, 87, 0.08);
+
+  --f-sans:      "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --f-mono:      "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --f-serif:     "Fraunces", "Iowan Old Style", "Apple Garamond", "Baskerville", Georgia, serif;
+
+  --w-site:      1200px;
+  --w-content:   780px;
+  --w-prose:     720px;
+  --nav-h:       64px;
+
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04);
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.02), 0 2px 8px rgba(0,0,0,0.04), 0 16px 48px rgba(0,0,0,0.06);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--f-sans);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  line-height: 1.6;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection { background: var(--c-red); color: #fff; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ===== skip link ===== */
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  padding: 10px 16px;
+  background: var(--c-ink); color: #fff;
+  font-weight: 600; font-size: 0.88rem;
+  border-radius: 0 0 8px 0;
+}
+.skip:focus { left: 0; outline: 2px solid var(--c-red); outline-offset: 2px; }
+
+/* ===== nav ===== */
+nav.site-nav {
+  position: sticky; top: 0; z-index: 50;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--c-line);
+}
+nav.site-nav .brand {
+  display: inline-block;
+  font-weight: 700; font-size: 1.04rem; letter-spacing: -0.025em;
+  color: var(--c-ink);
+}
+nav.site-nav .brand .b-mark {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: var(--c-red);
+  margin-right: 1px;
+}
+nav.site-nav .links {
+  display: flex; align-items: center; gap: 22px;
+  font-size: 0.88rem; font-weight: 500; color: var(--c-ink-3);
+}
+nav.site-nav .links a { transition: color 0.15s; }
+nav.site-nav .links a:hover { color: var(--c-ink); }
+nav.site-nav .badge {
+  font-family: var(--f-mono); font-size: 0.7rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid var(--c-red-soft);
+  border-radius: 100px;
+  background: var(--c-red-tint);
+  white-space: nowrap;
+}
+
+/* ===== layout primitives ===== */
+.wrap   { max-width: var(--w-site); margin: 0 auto; padding: 0 32px; }
+.wrap-md { max-width: var(--w-content); margin: 0 auto; padding: 0 32px; }
+.wrap-sm { max-width: var(--w-prose); margin: 0 auto; padding: 0 32px; }
+
+/* ===== typography ===== */
+h1, h2, h3, h4 {
+  font-family: var(--f-sans);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--c-ink);
+  font-weight: 800;
+}
+h2 { font-size: clamp(1.7rem, 2.8vw, 2.2rem); letter-spacing: -0.03em; }
+h3 { font-size: 1.18rem; font-weight: 700; }
+h4 { font-size: 0.98rem; font-weight: 700; }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--c-red-deep); font-weight: 700;
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: ""; width: 18px; height: 1px; background: var(--c-red-deep);
+}
+
+p { color: var(--c-ink-3); }
+p strong { color: var(--c-ink); font-weight: 600; }
+em { font-style: italic; }
+
+/* ===== codæ wordmark ===== */
+.codae {
+  font-family: var(--f-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.ae { color: var(--c-red); }
+
+code {
+  font-family: var(--f-mono);
+  font-size: 0.86em;
+  background: var(--c-bg-mute);
+  color: var(--c-ink-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-line);
+}
+
+a.linky {
+  color: var(--c-ink);
+  border-bottom: 1px solid var(--c-line-2);
+  transition: border-color 0.15s, color 0.15s;
+}
+a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
+
+sup.cite {
+  font-family: var(--f-mono);
+  font-size: 0.62em;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  margin-left: 1px;
+  vertical-align: super;
+  line-height: 0;
+}
+sup.cite a {
+  border-bottom: 1px dotted var(--c-red-soft);
+  transition: border-color 0.15s;
+}
+sup.cite a:hover { border-color: var(--c-red); }
+
+/* ===== hero ===== */
+.hero {
+  position: relative;
+  padding: 96px 0 72px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--c-line);
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(10,10,10,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(10,10,10,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000, transparent 75%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 880px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px 6px 8px;
+  border: 1px solid var(--c-line-2);
+  border-radius: 100px;
+  background: #fff;
+  font-size: 0.78rem; font-weight: 500; color: var(--c-ink-3);
+  margin-bottom: 28px;
+}
+.hero-badge .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--c-red);
+  box-shadow: 0 0 0 4px rgba(232,64,87,0.18);
+}
+.hero h1 {
+  font-family: var(--f-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(4.2rem, 11vw, 8rem);
+  letter-spacing: -0.045em;
+  line-height: 0.95;
+  margin-bottom: 24px;
+  color: var(--c-ink);
+}
+.hero h1 .accent,
+nav.site-nav .brand .accent,
+footer .accent { color: var(--c-red); }
+.hero .sub {
+  font-family: var(--f-sans);
+  font-style: normal;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  max-width: 22ch;
+  color: var(--c-ink);
+  margin-bottom: 28px;
+}
+.hero .lead {
+  font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+  color: var(--c-ink-3);
+  line-height: 1.65;
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex; flex-wrap: wrap; gap: 12px 28px;
+  margin-top: 32px; padding-top: 22px;
+  border-top: 1px solid var(--c-line);
+  font-size: 0.82rem; color: var(--c-ink-4);
+  font-family: var(--f-mono);
+}
+.hero-meta span strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== doc layout ===== */
+.doc-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 64px;
+  align-items: start;
+  padding-top: 64px;
+  padding-bottom: 96px;
+}
+.doc-toc {
+  position: sticky; top: calc(var(--nav-h) + 32px);
+  font-size: 0.86rem;
+}
+.doc-toc .label {
+  font-family: var(--f-mono);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--c-ink-5); font-weight: 700;
+  margin-bottom: 14px;
+}
+.doc-toc ol {
+  list-style: none;
+  display: grid; gap: 4px;
+  counter-reset: tocnum;
+}
+.doc-toc ol li { counter-increment: tocnum; }
+.doc-toc ol a {
+  display: block;
+  padding: 5px 0 5px 28px;
+  color: var(--c-ink-4);
+  border-left: 2px solid var(--c-line);
+  position: relative;
+  transition: color 0.15s, border-color 0.15s;
+  line-height: 1.35;
+}
+.doc-toc ol a::before {
+  content: "§" counter(tocnum);
+  position: absolute; left: 8px; top: 5px;
+  font-family: var(--f-mono); font-size: 0.7rem;
+  color: var(--c-ink-5); font-weight: 600;
+}
+.doc-toc ol a:hover { color: var(--c-ink); border-color: var(--c-ink-5); }
+.doc-toc ol a.is-active {
+  color: var(--c-ink); font-weight: 600;
+  border-left-color: var(--c-red);
+}
+
+.doc-body { max-width: var(--w-prose); }
+.doc-body section {
+  padding: 56px 0 64px;
+  border-top: 1px solid var(--c-line);
+}
+.doc-body section:first-child {
+  border-top: 0;
+  padding-top: 8px;
+}
+.doc-body h2 {
+  margin-bottom: 22px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.doc-body h2 .num {
+  font-family: var(--f-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--c-red-deep);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 10px;
+}
+.doc-body h3 {
+  margin-top: 36px;
+  margin-bottom: 12px;
+}
+.doc-body p {
+  font-size: 1.04rem;
+  line-height: 1.75;
+}
+.doc-body p + p { margin-top: 14px; }
+.doc-body ul, .doc-body ol {
+  padding-left: 22px;
+  margin: 18px 0;
+}
+.doc-body li {
+  color: var(--c-ink-3);
+  margin: 10px 0;
+  line-height: 1.65;
+  font-size: 1.02rem;
+}
+.doc-body li strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== stats strip ===== */
+.stats-strip {
+  margin: 28px 0 8px;
+  padding: 28px 32px;
+  border: 1px solid var(--c-line);
+  border-left: 3px solid var(--c-red);
+  border-radius: 12px;
+  background: var(--c-bg-soft);
+}
+.stats-strip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.stats-strip .stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.stat-num {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+  line-height: 1.15;
+}
+.stat-label {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--c-ink-3);
+}
+.stat-label strong { color: var(--c-ink); font-weight: 600; }
+.stat-src {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--c-red);
+  text-decoration: underline dotted var(--c-red);
+  text-underline-offset: 3px;
+  margin-top: auto;
+  padding-top: 12px;
+  align-self: flex-start;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.stat-src:hover { color: var(--c-red-deep); text-decoration-color: var(--c-red-deep); }
+
+/* ===== pull quotes ===== */
+blockquote.pull {
+  margin: 30px 0;
+  padding: 14px 0 14px 24px;
+  border-left: 3px solid var(--c-red);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.18rem, 2vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+blockquote.pull p { color: var(--c-ink); margin: 0 0 10px 0; font-size: inherit; line-height: inherit; }
+blockquote.pull cite {
+  display: block;
+  font-family: var(--f-mono);
+  font-style: normal;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--c-ink-4);
+  letter-spacing: 0.02em;
+  margin-top: 8px;
+}
+
+/* ===== figure ===== */
+.fig {
+  margin: 32px 0;
+  padding: 28px;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.fig svg { width: 100%; height: auto; }
+.fig-caption {
+  margin-top: 16px;
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-4);
+  line-height: 1.55;
+}
+.fig-caption strong { color: var(--c-ink); font-weight: 600; }
+
+/* ===== next links ===== */
+.next-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+.next-card {
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+  transition: border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.next-card:hover {
+  border-color: var(--c-ink);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.next-card .eyebrow { margin-bottom: 12px; }
+.next-card h3 { margin-bottom: 8px; margin-top: 0; }
+.next-card p { font-size: 0.94rem; line-height: 1.55; margin-bottom: 0; }
+.next-card .arr {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--c-red-deep);
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ===== references ===== */
+.refs ol {
+  list-style: none;
+  counter-reset: ref;
+  padding-left: 0;
+  display: grid; gap: 16px;
+}
+.refs ol li {
+  counter-increment: ref;
+  padding-left: 42px;
+  position: relative;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--c-ink-3);
+}
+.refs ol li::before {
+  content: counter(ref);
+  position: absolute; left: 0; top: 1px;
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--c-bg-mute);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  font-family: var(--f-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--c-ink-2);
+}
+.refs ol li .meta {
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  color: var(--c-ink-5);
+  margin-top: 2px;
+  display: block;
+}
+.refs ol li .title { font-weight: 600; color: var(--c-ink); }
+.refs ol li a {
+  color: var(--c-red-deep);
+  border-bottom: 1px dotted var(--c-red-soft);
+  word-break: break-all;
+}
+.refs ol li a:hover { border-color: var(--c-red); color: var(--c-red); }
+.refs-note {
+  margin-bottom: 24px;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--c-ink-3);
+}
+
+/* ===== footer ===== */
+footer {
+  border-top: 1px solid var(--c-line);
+  padding: 32px 0 40px;
+  background: var(--c-bg-soft);
+  font-size: 0.82rem;
+  color: var(--c-ink-4);
+}
+footer .row {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+}
+footer .row .b-mark {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--c-red);
+}
+footer a {
+  color: var(--c-ink-3);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
+
+/* ===== responsive ===== */
+@media (max-width: 920px) {
+  .doc-layout { grid-template-columns: 1fr; gap: 28px; padding-top: 40px; padding-bottom: 56px; }
+  .doc-toc {
+    position: static;
+    margin-bottom: 8px;
+    padding: 16px 18px;
+    border: 1px solid var(--c-line);
+    border-radius: 12px;
+    background: var(--c-bg-soft);
+  }
+  .doc-toc ol { display: flex; flex-wrap: wrap; gap: 4px 6px; }
+  .doc-toc ol a {
+    padding: 6px 10px;
+    border-left: 0;
+    border: 1px solid var(--c-line);
+    border-radius: 100px;
+    background: #fff;
+    font-size: 0.82rem;
+  }
+  .doc-toc ol a::before { display: none; }
+  .doc-toc ol a.is-active {
+    border-color: var(--c-red);
+    color: var(--c-red-deep);
+  }
+  .next-grid { grid-template-columns: 1fr; }
+  .hero { padding: 56px 0 44px; }
+  nav.site-nav { padding: 0 16px; }
+  nav.site-nav .links { gap: 14px; }
+  nav.site-nav .links a:not(.badge) { display: none; }
+  .wrap { padding: 0 20px; }
+  .stats-strip { padding: 22px; }
+  .stats-strip-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .doc-body p { font-size: 1rem; line-height: 1.7; }
+  .doc-body li { font-size: 0.98rem; }
+  .stats-strip-grid { grid-template-columns: 1fr; gap: 20px; }
+  blockquote.pull { padding-left: 18px; font-size: 1.1rem; }
+}
+
+/* ===== contract-manifesto additions ===== */
+.definition-card,
+.callout-card {
+  margin: 28px 0;
+  padding: 26px 28px;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  background: var(--c-bg-soft);
+  box-shadow: var(--shadow-soft);
+}
+.definition-card { border-left: 3px solid var(--c-red); }
+.definition-card .term,
+.callout-card .term {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.definition-card p,
+.callout-card p { margin: 0; font-size: 1.04rem; line-height: 1.7; }
+.definition-card p + p,
+.callout-card p + p { margin-top: 12px; }
+.definition-card ul {
+  margin: 12px 0 6px 0;
+  padding-left: 20px;
+}
+.definition-card ul li {
+  font-size: 0.98rem;
+  line-height: 1.6;
+  margin: 6px 0;
+  color: var(--c-ink-3);
+}
+.definition-card ul li strong { color: var(--c-ink); font-weight: 600; }
+
+.schema-grid,
+.principle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 26px 0;
+}
+.schema-card,
+.principle-card {
+  padding: 18px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+}
+.schema-card h3,
+.principle-card h3 { margin: 0 0 8px 0; font-size: 1rem; }
+.schema-card p,
+.principle-card p { font-size: 0.95rem; line-height: 1.6; margin: 0; color: var(--c-ink-3); }
+
+.table-wrap {
+  margin: 28px 0;
+  overflow-x: auto;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+}
+.doc-body table { width: 100%; border-collapse: collapse; min-width: 620px; }
+.doc-body th,
+.doc-body td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--c-line);
+  vertical-align: top;
+  text-align: left;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--c-ink-3);
+}
+.doc-body th {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-ink);
+  background: var(--c-bg-soft);
+  font-weight: 700;
+}
+.doc-body tr:last-child td { border-bottom: 0; }
+.doc-body td strong { color: var(--c-ink); font-weight: 600; }
+
+.flow-caption {
+  margin-top: 14px;
+  font-family: var(--f-mono);
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--c-ink-4);
+}
+.flow-caption strong { color: var(--c-ink); font-weight: 600; }
+
+.ladder { display: grid; gap: 12px; margin: 26px 0; }
+.ladder-step {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 18px;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: #fff;
+}
+.ladder-step .rung {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+}
+.ladder-step h3 { margin: 0 0 6px 0; }
+.ladder-step p { margin: 0; font-size: 0.96rem; line-height: 1.6; color: var(--c-ink-3); }
+
+.thesis-card {
+  margin: 32px 0 8px 0;
+  padding: 26px 28px;
+  border: 1px solid var(--c-line-2);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+.thesis-card .term {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-red-deep);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.thesis-card .lines {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  line-height: 1.45;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+.thesis-card .lines strong { color: var(--c-red-deep); font-weight: 600; }
+
+@media (max-width: 640px) {
+  .schema-grid,
+  .principle-grid { grid-template-columns: 1fr; }
+  .ladder-step { grid-template-columns: 1fr; gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="site-nav" aria-label="Primary">
+  <a class="brand" href="#"><span class="codae">cod<span class="ae">æ</span></span></a>
+  <div class="links">
+    <span class="badge">Whitepaper · v0.3 · May 2026</span>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ░░ HERO ░░ -->
+<header class="hero">
+  <div class="wrap hero-inner">
+    <h1 class="codae-hero">cod<span class="ae">æ</span></h1>
+
+    <p class="sub"><span class="ae">Co</span>ntract-<span class="ae">d</span>riven <span class="ae">a</span>gentic <span class="ae">e</span>ngineering for dark-factory AI coding.</p>
+
+    <p class="lead">
+      The end-state of AI coding is not autocomplete, pair programming,
+      or faster pull requests. It is a dark factory:
+      <strong>contract in, production system out</strong>. Humans
+      govern intent and constraints. Orchestrated agents derive,
+      generate, verify, repair, and regenerate the implementation. By
+      early 2026 the pattern is no longer aspirational — it has begun
+      to ship in pioneering organizations.
+    </p>
+
+    <p class="lead">
+      Today, the factory does not stay dark. Agents produce code at
+      machine speed but do not reliably preserve meaning across
+      long-running systems. The visible failure modes are AI slop,
+      semantic drift, and comprehension debt. The structural blocker
+      is coherence. <span class="codae">cod<span class="ae">æ</span></span>
+      proposes the missing control surface: a human-mendable,
+      machine-checkable <strong>contract</strong> made from
+      mutually-derived specs and a graph that ties them together.
+    </p>
+
+    <div class="hero-meta">
+      <span><strong>Author</strong> Ilya Baimetov</span>
+      <span><strong>Published</strong> v0.3 · May 2026</span>
+      <span><strong>Read time</strong> ~16 min</span>
+      <span><strong>Thesis</strong> contract in · production system out</span>
+    </div>
+  </div>
+</header>
+
+<!-- ░░ DOC LAYOUT ░░ -->
+<div class="wrap">
+  <div class="doc-layout">
+
+    <aside class="doc-toc" aria-label="Contents">
+      <div class="label">Contents</div>
+      <ol>
+        <li><a href="#destination">The destination</a></li>
+        <li><a href="#contract">The contract</a></li>
+        <li><a href="#paradigm">The <span class="codae">cod<span class="ae">æ</span></span> paradigm</a></li>
+        <li><a href="#blocker">The blocker</a></li>
+        <li><a href="#surface">The mendable surface</a></li>
+        <li><a href="#memory-eval">The durable object</a></li>
+        <li><a href="#ladder">The ladder</a></li>
+        <li><a href="#bet">The bet</a></li>
+      </ol>
+      <p style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--c-line); font-size: 0.82rem;"><a href="#references" style="color: var(--c-ink-4); border-bottom: 1px dotted var(--c-line-2);">References ↓</a></p>
+    </aside>
+
+    <article class="doc-body">
+
+      <!-- §1 DESTINATION -->
+      <section id="destination">
+        <h2><span class="num">§1 — The destination</span>Software wants a dark factory.</h2>
+
+        <p>
+          AI coding is usually described as assistance: autocomplete,
+          chat, pair programming, faster pull requests. That is the
+          transitional form. The real destination is production-system
+          synthesis: a human-approved contract enters the system, and a
+          production system comes out.
+        </p>
+
+        <blockquote class="pull">
+          <p>Contract in. Production system out.</p>
+          <cite>— the dark-factory target</cite>
+        </blockquote>
+
+        <p>
+          A dark factory does not mean humans disappear. It means
+          humans leave the implementation floor. They govern the
+          contract — intent, product behavior, domain rules,
+          architectural constraints, operational requirements,
+          tradeoffs. Agents operate the factory: deriving artifacts,
+          writing code, generating tests, configuring infrastructure,
+          running checks, diagnosing failures, regenerating outputs.
+        </p>
+
+        <div class="fig">
+          <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dark-factory loop: humans mend the contract; the contract enters an agentic factory of derive/build/verify steps; a production system comes out; failures, traces, and deltas return to the contract.">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#c43a50"/>
+              </marker>
+            </defs>
+
+            <!-- humans -->
+            <text x="114" y="32" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#5a5a5a" text-anchor="middle">HUMANS · mend</text>
+
+            <!-- contract box -->
+            <rect x="28" y="64" width="172" height="120" rx="14" fill="#ffffff" stroke="#d6d3cd"/>
+            <text x="114" y="94" font-family="Inter, sans-serif" font-size="15" font-weight="800" fill="#0a0a0a" text-anchor="middle">Contract</text>
+            <text x="114" y="121" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">specs + graph</text>
+            <text x="114" y="139" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">obligations + checks</text>
+            <text x="114" y="165" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#c43a50" text-anchor="middle">human-mendable</text>
+
+            <!-- arrow contract → factory -->
+            <line x1="216" y1="124" x2="296" y2="124" stroke="#c43a50" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- agentic factory -->
+            <text x="401" y="32" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#5a5a5a" text-anchor="middle">AGENTS · operate</text>
+            <rect x="306" y="50" width="190" height="170" rx="18" fill="#0a0a0a"/>
+            <text x="401" y="78" font-family="Inter, sans-serif" font-size="15" font-weight="800" fill="#ffffff" text-anchor="middle">Agentic factory</text>
+            <circle cx="352" cy="118" r="23" fill="#e84057"/>
+            <circle cx="401" cy="118" r="23" fill="#3a3a3a"/>
+            <circle cx="450" cy="118" r="23" fill="#707070"/>
+            <text x="352" y="122" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">derive</text>
+            <text x="401" y="122" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">build</text>
+            <text x="450" y="122" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">verify</text>
+            <text x="401" y="166" font-family="JetBrains Mono, monospace" font-size="10" fill="#efeeec" text-anchor="middle">orchestrated against</text>
+            <text x="401" y="184" font-family="JetBrains Mono, monospace" font-size="10" fill="#efeeec" text-anchor="middle">the contract</text>
+
+            <!-- arrow factory → system -->
+            <line x1="510" y1="124" x2="586" y2="124" stroke="#c43a50" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- system -->
+            <rect x="600" y="64" width="92" height="120" rx="14" fill="#ffffff" stroke="#d6d3cd"/>
+            <text x="646" y="94" font-family="Inter, sans-serif" font-size="15" font-weight="800" fill="#0a0a0a" text-anchor="middle">System</text>
+            <text x="646" y="121" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">code</text>
+            <text x="646" y="139" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">tests</text>
+            <text x="646" y="157" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">infra</text>
+            <text x="646" y="175" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#5a5a5a" text-anchor="middle">regenerable</text>
+
+            <!-- feedback curve system → contract -->
+            <path d="M 640 200 C 570 252, 276 252, 126 200" fill="none" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+            <text x="383" y="262" font-family="JetBrains Mono, monospace" font-size="10" fill="#c43a50" text-anchor="middle">drift, failures, deltas — surfaced to the contract for repair</text>
+          </svg>
+          <p class="flow-caption"><strong>The dark-factory loop.</strong> Humans maintain the contract. Agents operate the factory. Generated implementation is an output, not the primary maintenance surface. Drift returns to the contract — never to the factory floor.</p>
+        </div>
+
+        <p>
+          The pattern is already shipping in pioneering organizations. In February 2026, Spotify's co-CEO confirmed the company's best engineers had not written a line of code since December — they were merging hundreds of agent-authored pull requests per month through Spotify's internal coding-agent platform, <em>Honk</em>.<sup class="cite"><a href="#ref-17">17</a></sup> Two weeks later, BCG Platinion's <em>Dark Software Factory</em> report named the threshold explicitly: <em>"as few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."</em><sup class="cite"><a href="#ref-18">18</a></sup> Sequoia, in their January 2026 essay declaring the practical AGI year, named the underlying capability shift: coding agents that plan, use tools, maintain state, and loop through attempts until success.<sup class="cite"><a href="#ref-19">19</a></sup> Demis Hassabis describes the same shift from the model side in his 2026 Y Combinator talk on agents and AGI: scientific-research-grade autonomy at increasingly long horizons.<sup class="cite"><a href="#ref-24">24</a></sup>
+        </p>
+
+        <blockquote class="pull">
+          <p>"You have to be in charge of the aesthetics, the judgment, the taste, and the oversight. People have to be in charge of this spec, this plan."</p>
+          <cite>— Andrej Karpathy, "From Vibe Coding to Agentic Engineering," Sequoia AI Ascent 2025<sup class="cite"><a href="#ref-20">20</a></sup></cite>
+        </blockquote>
+
+        <p>
+          The economic case writes itself. The industry-promised
+          <strong>10× to 100× productivity gain</strong> from agentic
+          coding lives in exactly one place — the dark factory. The
+          moment humans have to step back onto the implementation floor
+          to repair what the agent built, that gain collapses into
+          inspection of machine-volume output. Reading 100,000 lines to
+          safely change 100 isn't a 100× operation. It's barely 1×.
+        </p>
+
+        <p>
+          <strong><span class="codae">cod<span class="ae">æ</span></span>
+          commits to dark-factory coding as a multi-year trajectory,
+          not a v0.3 promise.</strong> Today's agents are not yet
+          trustworthy enough to leave alone with the code. The
+          destination is real; the path to it is the rest of this
+          manifesto.
+        </p>
+      </section>
+
+      <!-- §2 THE CONTRACT -->
+      <section id="contract">
+        <h2><span class="num">§2 — The contract</span>The control surface that holds the factory together.</h2>
+
+        <p>
+          A prompt cannot govern a dark factory. A codebase is too
+          large to be the human control surface. A requirements
+          document is too weak if agents can ignore it. The missing
+          object is a <strong>contract</strong> — authoritative enough
+          to govern generation, structured enough for agents to
+          consume, and small enough for humans to mend.
+        </p>
+
+        <div class="definition-card">
+          <div class="term">Definition</div>
+          <p>
+            A <strong><span class="codae">cod<span class="ae">æ</span></span> contract</strong> is the authoritative control surface of an agentic engineering system: <strong>human-mendable, agent-legible, machine-checkable, traceable</strong> end-to-end from intent to running code.
+          </p>
+          <p>
+            A contract is <em>not</em> documentation, a prompt, a requirements file, or annotations on generated code. None of those govern. Only a contract does.
+          </p>
+        </div>
+
+        <p>
+          A contract has four parts. <strong>Specs</strong> are the atoms. The <strong>graph</strong> is the structure. <strong>Obligations</strong> and <strong>checks</strong> make it load-bearing.
+        </p>
+
+        <div class="schema-grid" aria-label="Contract anatomy">
+          <div class="schema-card"><h3>Specs</h3><p>The atoms. Typed artifacts each carrying one obligation: a requirement, a capability, a flow, an interface, an invariant, a decision, an acceptance criterion, an operational rule.</p></div>
+          <div class="schema-card"><h3>Graph</h3><p>The structure. Typed edges connecting specs — derivation, refinement, satisfaction, conflict, traceability.</p></div>
+          <div class="schema-card"><h3>Obligations</h3><p>The force. What every generated artifact must satisfy to count as a faithful realization of the contract.</p></div>
+          <div class="schema-card"><h3>Checks</h3><p>The enforcement. Structural, mechanical, and semantic verifications that detect contract violations before they enter the working tree.</p></div>
+        </div>
+
+        <p>
+          After the contract exists, the primary noun in every conversation is <em>contract</em>, not <em>specs</em>. Specs are building blocks; the contract is what holds the dark factory together.
+        </p>
+      </section>
+
+
+      <!-- §3 PARADIGM -->
+      <section id="paradigm">
+        <h2><span class="num">§3 — The paradigm</span><span class="codae">cod<span class="ae">æ</span></span> is contract-driven agentic engineering.</h2>
+
+        <p>
+          <span class="codae">cod<span class="ae">æ</span></span> names the discipline of building production systems through intelligently orchestrated coding agents governed by a contract. The contract is not documentation around the code. It is the source of truth the code is generated to satisfy.
+        </p>
+
+        <blockquote class="pull">
+          <p><span class="codae">cod<span class="ae">æ</span></span> makes dark-factory coding possible by moving human control from code to contract.</p>
+          <cite>— <span class="codae">cod<span class="ae">æ</span></span> thesis</cite>
+        </blockquote>
+
+        <p>
+          In a contract-driven agentic system, agents do not merely
+          receive a task. They <strong>inherit a contract</strong>,
+          derive missing artifacts from it, implement against it,
+          verify outputs against it, and report unresolved
+          contradictions back into it. Humans do not repair the factory
+          by spelunking through generated implementation. They mend the
+          contract and let the factory regenerate.
+        </p>
+
+        <p>
+          The pattern is already taking primitive shape inside today's
+          coding agents. Anthropic's own Claude Code best-practices
+          guidance describes the entry-level case: <em>"Claude doesn't
+          really have memory. The main way we share state across
+          sessions or across our team is this CLAUDE.md
+          file."</em><sup class="cite"><a href="#ref-21">21</a></sup>
+          A single markdown file is the proto-contract. <span class="codae">cod<span class="ae">æ</span></span>
+          is the structured generalization: not one file, but a
+          tiered Contract Graph; not implicit guidance, but typed
+          obligations and checks.
+        </p>
+
+        <div class="principle-grid" aria-label="codæ commitments">
+          <div class="principle-card"><h3>One contract</h3><p>The maintained source of truth. Generated code, tests, infrastructure, and traces are downstream artifacts subordinate to it.</p></div>
+          <div class="principle-card"><h3>Many specs</h3><p>Atomic obligations expressing requirements, domain meaning, interfaces, behaviors, constraints, and decisions at the right level of abstraction.</p></div>
+          <div class="principle-card"><h3>Many agents</h3><p>Specialized roles — derive, implement, test, inspect, repair, refactor, deploy, observe, explain — orchestrated against the same contract.</p></div>
+          <div class="principle-card"><h3>Many checks</h3><p>Structural, mechanical, and semantic verifications that continuously test whether generated artifacts satisfy the contract.</p></div>
+        </div>
+
+        <h3>From spec-driven to contract-driven</h3>
+
+        <p>
+          <span class="codae">cod<span class="ae">æ</span></span> is adjacent to spec-driven development, but it is a step beyond. The 2026 SDD taxonomy<sup class="cite"><a href="#ref-15">15</a></sup> places existing approaches at three rigor levels: <em>spec-first</em> (specs guide, then drift), <em>spec-anchored</em> (specs and code co-evolve with enforcement), <em>spec-as-source</em> (specs alone are edited; code is regenerated). All three are progress over prompt-only generation. Tools like AWS Kiro<sup class="cite"><a href="#ref-25">25</a></sup>, GitHub Spec Kit, and BMAD live in this band.
+        </p>
+
+        <p>
+          <strong><span class="codae">cod<span class="ae">æ</span></span> is the next level: contract-driven.</strong> Not one spec for one file or one feature, but a multi-tier, mutually-derived, graph-tied, drift-detecting contract that governs the whole lifecycle. Spec-driven asks how to make specs better inputs to generation. Contract-driven asks how to make a contract the durable control surface of the lifecycle. Same impulse, larger surface, longer arc.
+        </p>
+      </section>
+
+      <!-- §4 BLOCKER -->
+      <section id="blocker">
+        <h2><span class="num">§4 — The blocker</span>Coherence fails, and local fixes can't restore it.</h2>
+
+        <p>
+          The central obstacle to dark-factory AI coding is not syntax, boilerplate, or local code generation. Agents are already useful for bounded tasks. The gating constraint is <strong>coherence</strong>: preserving intent, architecture, domain meaning, constraints, and behavior across long-running, multi-component, multi-agent work.
+        </p>
+
+        <p>When coherence fails, the symptoms have names:</p>
+
+        <ul>
+          <li><strong>Semantic drift</strong> — outputs progressively diverge from original task intent while remaining plausible and syntactically valid.</li>
+          <li><strong>AI slop</strong><sup class="cite"><a href="#ref-1">1</a></sup> — code that looks reasonable, passes review-by-glance, and accumulates faster than reviewers can absorb.</li>
+          <li><strong>Comprehension debt</strong><sup class="cite"><a href="#ref-2">2</a></sup> — the codebase appears clean, but no human or incoming agent understands what it is doing or why.</li>
+        </ul>
+
+        <p>
+          These are not the destination. They are the evidence that the current factory has no durable control surface — and the team-performance literature converges with the academic findings. Nicole Forsgren — DORA-research lead and co-author of <em>Accelerate</em> — frames the team-level corollary in her 2026 Pragmatic Engineer talk on leading engineering teams in the AI era: high-performing teams are the ones that systematize what was previously tacit context.<sup class="cite"><a href="#ref-22">22</a></sup>
+        </p>
+
+        <aside class="stats-strip" aria-label="Evidence that ungoverned agentic generation loses coherence">
+          <div class="stats-strip-grid">
+            <div class="stat"><div class="stat-num">80% / 89.8%</div><div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div><a class="stat-src" href="#ref-3">SlopCodeBench<br>Mar 2026 ↗</a></div>
+            <div class="stat"><div class="stat-num">22.7%</div><div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div><a class="stat-src" href="#ref-13">AI-debt in the wild<br>Mar 2026 ↗</a></div>
+            <div class="stat"><div class="stat-num">3–5×</div><div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div><a class="stat-src" href="#ref-5">CMU Cursor study<br>Jan 2026 ↗</a></div>
+            <div class="stat"><div class="stat-num">17%</div><div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div><a class="stat-src" href="#ref-7">Osmani · O'Reilly<br>Apr 2026 ↗</a></div>
+          </div>
+        </aside>
+
+        <p>
+          SlopCodeBench<sup class="cite"><a href="#ref-3">3</a></sup> makes the failure mechanical: 20 problems × 93 checkpoints × 11 models, instrumented to measure how agent code degrades when agents iteratively extend their own prior code under evolving requirements. <strong>No agent solves a whole problem end-to-end.</strong> Agent code runs 2.2× more verbose than comparable open-source Python repositories.
+        </p>
+
+        <p>
+          The same pattern appears in live code. Liu et al.<sup class="cite"><a href="#ref-13">13</a></sup> tracked 302.6k verified AI-authored commits across 6,299 repositories and identified 484,366 introduced issues; 22.7% survive at latest revision. The social cost has been characterized too: Baltes, Cheong, and Treude<sup class="cite"><a href="#ref-1">1</a></sup> frame the result as a software-commons problem<sup class="cite"><a href="#ref-14">14</a></sup> — generation gains for one developer become review and maintenance costs for everyone else. The mechanism upstream of all of this is documented in Chroma's <em>Context Rot</em> report<sup class="cite"><a href="#ref-4">4</a></sup>: every frontier model becomes unreliable as input length grows; SWE Context Bench<sup class="cite"><a href="#ref-11">11</a></sup> adds the corollary — context quality, not quantity, is what improves agent accuracy and cost.
+        </p>
+
+        <blockquote class="pull">
+          <p>AI amplifies the quality of the engineering system it operates within.</p>
+          <cite>— DORA 2025 report on AI-assisted development<sup class="cite"><a href="#ref-6">6</a></sup></cite>
+        </blockquote>
+
+        <p>
+          Organizations with mature systems get leverage. Organizations with fragmented systems get accelerated drift. A dark factory cannot depend on tacit human memory to repair that gap.
+        </p>
+
+        <h3>Why local fixes fail</h3>
+
+        <p>
+          The default response to drift is local steering: better prompts, sharper instructions, more elaborate rules files, stricter reviewer checklists. This works for one run. It dies on the next agent, the next session, the next contributor, the next context window.
+        </p>
+
+        <p>
+          Chat history is not memory. A prompt is not authority. The next agent does not reliably inherit what the last one was told. Every cycle re-derives the system from partial context, and the durable artifact becomes the codebase itself — too large for any human or agent to re-internalize from scratch. Karpathy, the same talk that named "agentic engineering," concedes the point: <em>"agent workflows need docs, memory, project files, rules, tests, and clear feedback loops."</em><sup class="cite"><a href="#ref-20">20</a></sup> That sentence is the requirement spec for a contract. Matt Pocock makes the complementary point at AI Engineer 2026: software fundamentals — explicit interfaces, durable contracts, named invariants — matter <em>more</em> in the agentic era, not less.<sup class="cite"><a href="#ref-23">23</a></sup>
+        </p>
+
+        <p>
+          Code review is not the dark-factory control system either. If humans must repeatedly enter generated implementation to restore coherence, the factory is not dark — and the promised speedup collapses into manual inspection of machine-volume output. The cumulative cost is measurable: an Anthropic study cited by O'Reilly<sup class="cite"><a href="#ref-7">7</a></sup> finds developers using AI assistance score <strong>17% lower on comprehension</strong> after equivalent tasks, with the largest decline in debugging.
+        </p>
+
+        <blockquote class="pull">
+          <p>Making code cheap to generate doesn't make understanding cheap to skip. The comprehension work is the job.</p>
+          <cite>— Addy Osmani, O'Reilly Radar, Apr 2026<sup class="cite"><a href="#ref-7">7</a></sup></cite>
+        </blockquote>
+
+        <p>
+          Drift, then, is not a vague quality problem. With a contract in place, it becomes a concrete contract violation: <strong>detectable, attributable, localizable, and repairable</strong> at the contract boundary, before humans are pulled back onto the floor. The fix has to be more durable than chat and smaller than code. It has to be a maintained contract that agents can consume and humans can repair.
+        </p>
+      </section>
+
+      <!-- §6 MENDABLE SURFACE -->
+      <section id="surface">
+        <h2><span class="num">§5 — The mendable surface</span>Move human control above implementation.</h2>
+
+        <p>
+          The dark factory stays dark only while humans stay above the code. The load-bearing question is not how many lines a human can review. It is how many <strong>meaningful items</strong> a human can hold in the affected review cut — code-level (files, classes, functions, branches, tests, integrations, dependency edges) versus contract-level (capabilities, constraints, requirements, flows, bounded contexts, interfaces, behaviors, decisions, obligations).
+        </p>
+
+        <p>
+          Code grows roughly as features × accumulation: every branch, retry path, glue layer, integration, edge case adds items. Human comprehension does not scale linearly with that growth. The working-memory ceiling is hard — humans plateau around 7±2 elements; cognitive-load research formalizes the rest. Above the ceiling, code remains readable line by line but opaque as a system.
+        </p>
+
+        <p>
+          The contract has a different shape. It captures what the system <em>is</em>, what must remain true, and what generated artifacts must satisfy. A small set of concepts at the right abstraction level can govern a much larger set of implementation paths. That is why the contract — not the code — is the human-mendable surface.
+        </p>
+
+        <div class="fig">
+          <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cognitive surface comparison: a tall code mountain at left versus a short, structured contract at right; a horizontal red dashed line marks the human comprehension ceiling, well below the top of the code column.">
+            <line x1="20" y1="80" x2="600" y2="80" stroke="#e84057" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="608" y="84" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#c43a50" text-anchor="end">human comprehension ceiling</text>
+
+            <g transform="translate(40, 30)">
+              <text x="100" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Code</text>
+              <g fill="#3a3a3a">
+                <rect x="20" y="0" width="160" height="3" rx="1"/>
+                <rect x="20" y="6" width="140" height="3" rx="1"/>
+                <rect x="20" y="12" width="170" height="3" rx="1"/>
+                <rect x="20" y="18" width="130" height="3" rx="1"/>
+                <rect x="20" y="24" width="155" height="3" rx="1"/>
+                <rect x="20" y="30" width="145" height="3" rx="1"/>
+                <rect x="20" y="36" width="170" height="3" rx="1"/>
+                <rect x="20" y="42" width="120" height="3" rx="1"/>
+                <rect x="20" y="48" width="160" height="3" rx="1"/>
+                <rect x="20" y="54" width="135" height="3" rx="1"/>
+                <rect x="20" y="60" width="150" height="3" rx="1"/>
+                <rect x="20" y="66" width="170" height="3" rx="1"/>
+                <rect x="20" y="72" width="125" height="3" rx="1"/>
+                <rect x="20" y="78" width="155" height="3" rx="1"/>
+                <rect x="20" y="84" width="140" height="3" rx="1"/>
+                <rect x="20" y="90" width="160" height="3" rx="1"/>
+                <rect x="20" y="96" width="135" height="3" rx="1"/>
+                <rect x="20" y="102" width="170" height="3" rx="1"/>
+                <rect x="20" y="108" width="145" height="3" rx="1"/>
+                <rect x="20" y="114" width="150" height="3" rx="1"/>
+                <rect x="20" y="120" width="160" height="3" rx="1"/>
+                <rect x="20" y="126" width="130" height="3" rx="1"/>
+                <rect x="20" y="132" width="170" height="3" rx="1"/>
+                <rect x="20" y="138" width="155" height="3" rx="1"/>
+                <rect x="20" y="144" width="140" height="3" rx="1"/>
+                <rect x="20" y="150" width="160" height="3" rx="1"/>
+                <rect x="20" y="156" width="135" height="3" rx="1"/>
+                <rect x="20" y="162" width="170" height="3" rx="1"/>
+                <rect x="20" y="168" width="145" height="3" rx="1"/>
+                <rect x="20" y="174" width="160" height="3" rx="1"/>
+                <rect x="20" y="180" width="135" height="3" rx="1"/>
+                <rect x="20" y="186" width="170" height="3" rx="1"/>
+              </g>
+              <text x="100" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~108K LOC · all branches</text>
+            </g>
+
+            <g transform="translate(380, 30)">
+              <text x="120" y="-12" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#0a0a0a" text-anchor="middle">Contract</text>
+              <g>
+                <rect x="40" y="0" width="200" height="14" rx="2" fill="#e84057"/>
+                <text x="50" y="11" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#fff">intent</text>
+
+                <rect x="40" y="20" width="200" height="20" rx="2" fill="#1a1a1a"/>
+                <text x="50" y="33" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">requirements / domain</text>
+
+                <rect x="40" y="46" width="200" height="20" rx="2" fill="#3a3a3a"/>
+                <text x="50" y="59" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">structure / interfaces</text>
+
+                <rect x="40" y="72" width="200" height="14" rx="2" fill="#5a5a5a"/>
+                <text x="50" y="83" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">behavior / decisions</text>
+
+                <rect x="40" y="92" width="200" height="14" rx="2" fill="#707070"/>
+                <text x="50" y="103" font-family="Inter, sans-serif" font-size="9" font-weight="600" fill="#fff">execution config</text>
+              </g>
+              <text x="140" y="218" font-family="JetBrains Mono, monospace" font-size="10" fill="#5a5a5a" text-anchor="middle">~16K lines · ~24% of code</text>
+            </g>
+
+            <text x="320" y="265" font-family="JetBrains Mono, monospace" font-size="9" fill="#707070" text-anchor="middle">empirical ratio from a real 108K-line system, Vasilopoulos 2026 [8]</text>
+          </svg>
+          <p class="fig-caption"><strong>Cognitive surface, to scale.</strong> A 108K-line system lies far above any human comprehension ceiling. The contract governing it — intent, requirements, structure, behavior, config — is roughly 24% of the code volume and fits below the ceiling. Humans mend the contract. Agents extend the implementation.<sup class="cite"><a href="#ref-8">8</a></sup></p>
+        </div>
+
+        <p>
+          One empirical anchor (using lines as a coarse proxy for items): Vasilopoulos's 2026 field study reports a 108,000-line C# distributed system governed by ~660 lines of hot-memory constitution, 19 specialized agents (~9,300 lines), and 34 on-demand specification documents (~16,250 lines), across 283 development sessions.<sup class="cite"><a href="#ref-8">8</a></sup> Even by the cruder line-based proxy, the contract is a fraction of the code and is sufficient to keep agents pattern-adherent at scale.
+        </p>
+
+        <p>
+          Cognitive-load-aware refactoring research<sup class="cite"><a href="#ref-9">9</a></sup> confirms the principle from a different angle. Across 974 MBPP programs, 5,000 APPS programs, and a human study of 20 programmers: structures aligned to working-memory limits reduce failures by 54–71% versus unconstrained prompting and improve comprehension scores by 17–31% across multiple measures. Structure that fits the cognitive surface is not decoration. It is a performance lever.
+        </p>
+
+        <blockquote class="pull">
+          <p>"Treating project documentation as infrastructure rather than artifact: living specifications that AI agents depend on to produce correct, convention-adherent code."</p>
+          <cite>— Vasilopoulos, Codified Context, Feb 2026<sup class="cite"><a href="#ref-8">8</a></sup></cite>
+        </blockquote>
+      </section>
+
+      <!-- §7 DURABLE OBJECT -->
+      <section id="memory-eval">
+        <h2><span class="num">§6 — The durable object</span>The contract is memory. The contract is eval.</h2>
+
+        <p>
+          Once the contract exists, it does more than describe the system. It becomes the durable memory the next agent inherits <em>and</em> the eval surface every generated artifact is checked against. Both are prerequisites for the dark factory.
+        </p>
+
+        <h3>The contract as long-term memory</h3>
+
+        <p>
+          When chat is cheap and context is rotting, the only persistent representation of "what this system is supposed to be" is the contract. Anthropic's 2026 Agentic Coding Trends Report<sup class="cite"><a href="#ref-10">10</a></sup> puts it bluntly: engineers use AI in roughly 60% of work but can fully delegate only 0–20%. The constraint isn't model capability. It's context.
+        </p>
+
+        <blockquote class="pull">
+          <p>The gap isn't capability. The gap is that fully delegating a task requires the agent to have the right context to complete it.</p>
+          <cite>— Anthropic, 2026 Agentic Coding Trends Report<sup class="cite"><a href="#ref-10">10</a></sup></cite>
+        </blockquote>
+
+        <p>
+          SWE Context Bench<sup class="cite"><a href="#ref-11">11</a></sup> tests the same mechanism on 1,100 base tasks across 51 repositories and 9 languages. Correctly selected, summarized context — distilled intent and structure — improves resolution accuracy <em>and</em> reduces runtime/token cost. Unfiltered or wrongly-selected context provides negative benefit. The contract <em>is</em> curated, summarized, high-signal context, durable across agents and sessions.
+        </p>
+
+        <h3>The contract as eval signal</h3>
+
+        <p>
+          The same contract checks what agents produce. Generated specs, code, tests, migrations, infrastructure, traces — every downstream artifact can be verified structurally (does it derive from the right upstream obligations?) and semantically (does it preserve the intended meaning?).
+        </p>
+
+        <p>
+          REA-Coder<sup class="cite"><a href="#ref-12">12</a></sup> tested the shape directly: align requirements before generation, verify after, iterate on misalignments. Across 4 LLMs and 5 benchmarks, the result was <strong>7.93% to 30.25% Pass@1 improvement</strong>. The binding constraint on code-generation quality is not model capability. It is requirement understanding. Fix the contract; the code follows.
+        </p>
+
+        <p>
+          That does not prove contract-driven agentic engineering eliminates drift end-to-end. It supports the mechanism: align against a contract before generation, then verify against it after. Drift becomes a contract violation — detectable, attributable, localizable, and repairable at the contract boundary before humans are forced back into implementation.
+        </p>
+      </section>
+
+      <!-- §8 LADDER -->
+      <section id="ladder">
+        <h2><span class="num">§7 — The ladder</span>Toward a decidable contract.</h2>
+
+        <p>
+          <span class="codae">cod<span class="ae">æ</span></span> is an hommage to Bertrand Meyer's Design by Contract<sup class="cite"><a href="#ref-16">16</a></sup>, not an equivalence. Meyer's discipline made obligations explicit between software elements through preconditions, postconditions, and invariants — and crucially made many of those obligations <em>decidable</em>: boolean-checkable at runtime, sound for the property they encoded. Contract-driven agentic engineering inherits the discipline of explicit obligations and the principle that downstream artifacts must satisfy upstream contracts. It does not yet inherit full decidability. The trajectory is to climb toward it.
+        </p>
+
+        <div class="ladder" aria-label="Verification ladder">
+          <div class="ladder-step"><div class="rung">Rung 1</div><div><h3>Semantic eval</h3><p>Heuristic. Requirement alignment, intent preservation, architectural fit, omitted obligations, hidden conflicts, explanation quality. Agent-judged where machines can't yet decide. This is where most of the contract is checked today.</p></div></div>
+          <div class="ladder-step"><div class="rung">Rung 2</div><div><h3>Mechanical runners</h3><p>Validation runners — type checks, tests, linters, migrations, policy checks, infrastructure validation, interface conformance, smoke tests, deployment probes. Project-defined; orchestrator-invoked.</p></div></div>
+          <div class="ladder-step"><div class="rung">Rung 3</div><div><h3>Structural checks</h3><p>Decidable. IDs, schema validity, contract-graph edges, coverage, traceability, artifact provenance, dependency consistency, absence of unresolved contradictions. The engine performs these without an LLM.</p></div></div>
+        </div>
+
+        <p>
+          The climb goes upward. Each release should promote checks toward decidability — heuristic dimensions become mechanical runners; mechanical runners become structural rules. The decidable share of the contract grows as the engine matures.
+        </p>
+
+        <h3>The compiler was software's first dark factory.</h3>
+
+        <p>
+          Software has done this climb before — one abstraction level down. We used to inspect generated machine code. Now we inspect source, trust the toolchain, test the result, debug through traces. The compiler is the canonical dark factory: humans write source, the toolchain compiles, nobody reads the assembly. We trust it because its contract is decidable.
+        </p>
+
+        <p>
+          <span class="codae">cod<span class="ae">æ</span></span> proposes the same move one level up: humans inspect the contract; agents compile it into implementation. The artifact parser is the frontend, the Contract Graph is the intermediate representation, traces are source maps, and generated code targets a platform contract such as AWS, GCP, Cloudflare, or a local runtime. The analogy is not a proof — a compiler is deterministic, agentic generation is not — but it clarifies the desired control surface and the toolchain that earns it. The long-term ambition is the dream Meyer's discipline pointed at: formally verifiable software, this time at contract scope rather than routine scope. That destination is years away. The ladder is the climb.
+        </p>
+      </section>
+
+      <!-- §9 BET -->
+      <section id="bet">
+        <h2><span class="num">§8 — The bet</span>Generated implementation is not the source of truth.</h2>
+
+        <p>The choice underneath <span class="codae">cod<span class="ae">æ</span></span> is binary, and worth saying out loud.</p>
+
+        <p>
+          One option: keep code human-mendable. The agent drafts; the human reviews, edits, ships. Useful — but not a dark factory. The moment humans must repeatedly enter generated implementation to restore intent, architecture, or behavior, the speedup collapses into manual inspection of machine-volume output. Reading 100,000 lines to safely change 100 isn't a 100× operation. It's barely 1×.
+        </p>
+
+        <p>
+          The other option: <strong>code is generated, regenerated, and treated as downstream infrastructure</strong>. The contract is what humans maintain. The contract is what agents satisfy. The contract is what detects drift. The contract is what receives repair. This is the <span class="codae">cod<span class="ae">æ</span></span> bet.
+        </p>
+
+        <div class="table-wrap" aria-label="Shift from code-maintained to contract-driven engineering">
+          <table>
+            <thead><tr><th>Old surface</th><th>Contract-driven surface</th><th>Why it matters</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Prompt</strong> as instruction</td><td><strong>Contract</strong> as authority</td><td>Prompts steer one run. Contracts govern the lifecycle.</td></tr>
+              <tr><td><strong>Code</strong> as source of truth</td><td><strong>Contract</strong> as source of truth</td><td>Generated implementation can be replaced when it violates the contract.</td></tr>
+              <tr><td><strong>Review</strong> as manual comprehension</td><td><strong>Verification</strong> as contract satisfaction</td><td>Humans inspect the smaller, mendable surface; machines check downstream artifacts.</td></tr>
+              <tr><td><strong>Drift</strong> as inevitable decay</td><td><strong>Drift</strong> as contract violation</td><td>Divergence becomes detectable, attributable, localizable, repairable.</td></tr>
+              <tr><td><strong>Per-feature</strong> spec scope</td><td><strong>Whole-system</strong> contract scope</td><td>Specs alone govern one cycle. A graph-tied contract governs the lifecycle.</td></tr>
+              <tr><td><strong>Tacit</strong> team memory</td><td><strong>Durable</strong> contract memory</td><td>State survives the next agent, the next session, the next contributor.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <blockquote class="pull">
+          <p>The goal is not less slop. The goal is a factory that stays dark.</p>
+          <cite>— <span class="codae">cod<span class="ae">æ</span></span> thesis</cite>
+        </blockquote>
+
+        <div class="thesis-card">
+          <div class="term">The <span class="codae">cod<span class="ae">æ</span></span> thesis</div>
+          <p class="lines">
+            Dark-factory AI coding is the destination.<br>
+            Coherence is the gating constraint.<br>
+            The contract is the control surface.<br>
+            <strong>Contract in. Production system out.</strong><br>
+            Humans mend. Agents compile.
+          </p>
+        </div>
+
+        <p>
+          The methodology spells out how each property is implemented at the artifact level — see <a class="linky" href="vibeloom-methodology.md"><code>vibeloom-methodology.md</code></a>. This manifesto stops at the paradigm.
+        </p>
+      </section>
+
+      <!-- REFERENCES -->
+      <section id="references" class="refs">
+        <h2><span class="num">References</span>Primary, verified, mostly 2026.</h2>
+
+        <p class="refs-note">
+          Most citations below are 2026 publications; one (Chroma's
+          Context Rot, July 2025) is included because nothing comparable
+          has appeared since. arXiv items are preprints unless they
+          name a peer-reviewed venue. Verification was performed
+          against primary or current sources; older draft figures (e.g.
+          earlier counts in the AI-debt paper) were updated to current
+          numbers. This list reflects May 2026.
+        </p>
+
+        <ol>
+          <li id="ref-1">
+            <span class="title">"An Endless Stream of AI Slop": The Growing Burden of AI-Assisted Software Development.</span>
+            Baltes, S., Cheong, M., Treude, C.
+            <span class="meta">arXiv:2603.27249 · 2026-03-28 · <a href="https://arxiv.org/abs/2603.27249" target="_blank" rel="noopener">arxiv.org/abs/2603.27249</a></span>
+          </li>
+          <li id="ref-2">
+            <span class="title">Comprehension Debt in GenAI-Assisted Software Engineering Projects.</span>
+            Ahmad, M.O. (Karlstad University).
+            <span class="meta">arXiv:2604.13277 · 2026-04-14 · <a href="https://arxiv.org/abs/2604.13277" target="_blank" rel="noopener">arxiv.org/abs/2604.13277</a></span>
+          </li>
+          <li id="ref-3">
+            <span class="title">SlopCodeBench: Benchmarking How Coding Agents Degrade Over Long-Horizon Iterative Tasks.</span>
+            Orlanski, G., Roy, D., Yun, A., Shin, C., Gu, A., Ge, A., Adila, D., Sala, F., Albarghouthi, A.
+            <span class="meta">arXiv:2603.24755 · 2026-03-25 · <a href="https://arxiv.org/abs/2603.24755" target="_blank" rel="noopener">arxiv.org/abs/2603.24755</a></span>
+          </li>
+          <li id="ref-4">
+            <span class="title">Context Rot: how increasing input tokens impacts LLM performance.</span>
+            Chroma Research (technical report).
+            <span class="meta">2025-07-14 · <a href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noopener">trychroma.com/research/context-rot</a></span>
+          </li>
+          <li id="ref-5">
+            <span class="title">Speed at the Cost of Quality: How Cursor AI Increases Short-Term Velocity and Long-Term Complexity in Open-Source Projects.</span>
+            He, H., Miller, C., Agarwal, S., Kästner, C., Vasilescu, B. (CMU).
+            <span class="meta">MSR 2026 · arXiv:2511.04427 v3 · 2026-01-26 · <a href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">arxiv.org/abs/2511.04427</a></span>
+          </li>
+          <li id="ref-6">
+            <span class="title">2025 State of AI-Assisted Software Development.</span>
+            Google Cloud DORA team. Coverage by InfoQ, March 2026.
+            <span class="meta">2026-03-17 · <a href="https://www.infoq.com/news/2026/03/ai-dora-report/" target="_blank" rel="noopener">infoq.com/news/2026/03/ai-dora-report/</a></span>
+          </li>
+          <li id="ref-7">
+            <span class="title">Comprehension Debt — the hidden cost of AI generated code.</span>
+            Osmani, A. (O'Reilly Radar).
+            <span class="meta">2026-04-13 · <a href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/</a></span>
+          </li>
+          <li id="ref-8">
+            <span class="title">Codified Context: Infrastructure for AI Agents in a Complex Codebase.</span>
+            Vasilopoulos, A.
+            <span class="meta">arXiv:2602.20478 · 2026-02-24 · <a href="https://arxiv.org/abs/2602.20478" target="_blank" rel="noopener">arxiv.org/abs/2602.20478</a></span>
+          </li>
+          <li id="ref-9">
+            <span class="title">Cognitive-Load-Aware Refactoring (CDDRefactorER).</span>
+            Saha, S., Hasan, A.A., Shifat, F.T., Imran, M.M.
+            <span class="meta">EASE 2026 · arXiv:2603.16791 v2 · 2026-04-16 · <a href="https://arxiv.org/abs/2603.16791" target="_blank" rel="noopener">arxiv.org/abs/2603.16791</a></span>
+          </li>
+          <li id="ref-10">
+            <span class="title">2026 Agentic Coding Trends Report.</span>
+            Anthropic.
+            <span class="meta">Q1 2026 · <a href="https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf" target="_blank" rel="noopener">resources.anthropic.com/…2026 Agentic Coding Trends Report.pdf</a></span>
+          </li>
+          <li id="ref-11">
+            <span class="title">SWE Context Bench: A Benchmark for Context Learning in Coding.</span>
+            Zhu, J., Hu, M., Wu, J.
+            <span class="meta">arXiv:2602.08316 · 2026-02-09 (rev. 2026-03-27) · <a href="https://arxiv.org/abs/2602.08316" target="_blank" rel="noopener">arxiv.org/abs/2602.08316</a></span>
+          </li>
+          <li id="ref-12">
+            <span class="title">Bridging the Gap between User Intent and LLM: A Requirement Alignment Approach for Code Generation (REA-Coder).</span>
+            Li, J., Bai, R., Luo, Y., Zhang, Y., Yang, W., Sun, Z., Zhao, T., Jin, D., Li, L., Jin, Z.
+            <span class="meta">arXiv:2604.16198 · 2026-04-17 · <a href="https://arxiv.org/abs/2604.16198" target="_blank" rel="noopener">arxiv.org/abs/2604.16198</a></span>
+          </li>
+          <li id="ref-13">
+            <span class="title">Debt Behind the AI Boom: A Large-Scale Empirical Study of AI-Generated Code in the Wild.</span>
+            Liu et al.
+            <span class="meta">arXiv:2603.28592 (v2) · 2026 · <a href="https://arxiv.org/abs/2603.28592" target="_blank" rel="noopener">arxiv.org/abs/2603.28592</a></span>
+          </li>
+          <li id="ref-14">
+            <span class="title">AI Slop and the Software Commons.</span>
+            Baltes, S., Cheong, M., Treude, C. (companion to ref. 1.)
+            <span class="meta">arXiv:2604.16754 · 2026-04-17 · <a href="https://arxiv.org/abs/2604.16754" target="_blank" rel="noopener">arxiv.org/abs/2604.16754</a></span>
+          </li>
+          <li id="ref-15">
+            <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
+            Piskala, D.B.
+            <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
+          </li>
+          <li id="ref-16">
+            <span class="title">Design by Contract.</span>
+            Eiffel Software (Bertrand Meyer's foundational discipline).
+            <span class="meta"><a href="https://www.eiffel.com/values/design-by-contract/" target="_blank" rel="noopener">eiffel.com/values/design-by-contract</a></span>
+          </li>
+          <li id="ref-17">
+            <span class="title">Spotify says its best developers haven't written a line of code since December, thanks to AI.</span>
+            TechCrunch coverage of Spotify Q4 2025 earnings call (co-CEO Gustav Söderström). Spotify's internal coding-agent platform "Honk" had ~650 PRs/month merged by early 2026; engineers operate as agent reviewers.
+            <span class="meta">2026-02-12 · <a href="https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/" target="_blank" rel="noopener">techcrunch.com/2026/02/12/spotify-says-…</a></span>
+          </li>
+          <li id="ref-18">
+            <span class="title">The Dark Software Factory: A New Era of Autonomous Software Delivery.</span>
+            BCG Platinion (Schatlowski, Griewel, Lipska et al.). "As few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."
+            <span class="meta">2026-03 · <a href="https://www.bcgplatinion.com/insights/the-dark-software-factory" target="_blank" rel="noopener">bcgplatinion.com/insights/the-dark-software-factory</a></span>
+          </li>
+          <li id="ref-19">
+            <span class="title">2026: This is AGI.</span>
+            Sequoia Capital — Pat Grady &amp; Sonya Huang. The essay declaring 2026 the practical AGI year, anchored by coding agents crossing the long-horizon capability threshold.
+            <span class="meta">2026-01 · <a href="https://sequoiacap.com/article/2026-this-is-agi/" target="_blank" rel="noopener">sequoiacap.com/article/2026-this-is-agi/</a></span>
+          </li>
+          <li id="ref-20">
+            <span class="title">From Vibe Coding to Agentic Engineering.</span>
+            Andrej Karpathy, talk at Sequoia AI Ascent 2025. The talk that named "agentic engineering" as the next operating mode for professional software.
+            <span class="meta"><a href="https://youtu.be/96jN2OCOfLs" target="_blank" rel="noopener">youtu.be/96jN2OCOfLs</a> · transcript and Sequoia summary at <a href="https://karpathy.bearblog.dev/sequoia-ascent-2026/" target="_blank" rel="noopener">karpathy.bearblog.dev/sequoia-ascent-2026/</a></span>
+          </li>
+          <li id="ref-21">
+            <span class="title">Claude Code best practices.</span>
+            Anthropic, "Code w/ Claude" presentation. Operational guidance: agents have no native memory; CLAUDE.md is the entry-level shared state; the structured generalization is a contract.
+            <span class="meta"><a href="https://youtu.be/gv0WHhKelSE" target="_blank" rel="noopener">youtu.be/gv0WHhKelSE</a></span>
+          </li>
+          <li id="ref-22">
+            <span class="title">Leading high-performing engineering teams in the age of AI.</span>
+            Forsgren, N. (DORA-research lead; co-author of <em>Accelerate</em>; ex-VP of Research, GitHub). Talk at the Pragmatic Engineer Summit, 2026. Frames the team-level corollary of the DORA finding: high-performing AI-era teams are the ones that systematize tacit context.
+            <span class="meta"><a href="https://youtu.be/DfrAaDgFgjc" target="_blank" rel="noopener">youtu.be/DfrAaDgFgjc</a></span>
+          </li>
+          <li id="ref-23">
+            <span class="title">Software Fundamentals Matter More Than Ever.</span>
+            Pocock, M. Talk at AI Engineer Summit 2026. Argument: explicit interfaces, durable contracts, and named invariants matter <em>more</em> in the agentic era, not less.
+            <span class="meta"><a href="https://youtu.be/v4F1gFy-hqg" target="_blank" rel="noopener">youtu.be/v4F1gFy-hqg</a></span>
+          </li>
+          <li id="ref-24">
+            <span class="title">Agents, AGI &amp; the Next Big Scientific Breakthrough.</span>
+            Hassabis, D. (CEO, Google DeepMind; Nobel laureate, 2024). Talk at Y Combinator, 2026. The capability shift toward long-horizon autonomous agents from the model side.
+            <span class="meta"><a href="https://youtu.be/JNyuX1zoOgU" target="_blank" rel="noopener">youtu.be/JNyuX1zoOgU</a></span>
+          </li>
+          <li id="ref-25">
+            <span class="title">Accelerate development with Kiro's new agentic AI capabilities (DVT228).</span>
+            AWS, re:Invent 2025. AWS Kiro positioned within the spec-driven development band; representative of the broader category <span class="codae">cod<span class="ae">æ</span></span> extends.
+            <span class="meta"><a href="https://youtu.be/XpgcpsGKIio" target="_blank" rel="noopener">youtu.be/XpgcpsGKIio</a></span>
+          </li>
+        </ol>
+      </section>
+
+    </article>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© 2026 <span class="codae">cod<span class="ae">æ</span></span> — contract-driven agentic engineering · whitepaper v0.3</span>
+      <span>By <a href="mailto:info@vibeloom.ai">Ilya Baimetov</a> · <a href="https://github.com/ilya-baimetov/vibeloom" target="_blank" rel="noopener">GitHub</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var toc = document.querySelector('.doc-toc');
+  if (!toc) return;
+  var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+  var sections = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return { a: a, el: document.getElementById(id) };
+  }).filter(function (s) { return s.el; });
+  function update() {
+    var probe = window.scrollY + 140;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= probe) current = sections[i];
+    }
+    links.forEach(function (a) { a.classList.remove('is-active'); });
+    current && current.a.classList.add('is-active');
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+</script>
+
+</body>
+</html>

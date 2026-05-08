@@ -84,7 +84,7 @@ See [methodology §5.1](vibeloom-methodology.md#51-vibe-is-intentionally-minimal
       decisions.jsonl
 ```
 
-No `cache/`, no graph state, no code-sync trace. Approval traces remain — cheap and useful even at vibe scale, and the substrate the future upgrade migration runs on.
+No graph cache, no code-sync trace. A `status.json` cache may appear after a `status` invocation (regenerable from current state and approval traces; not load-bearing — safe to delete). Approval traces remain — cheap and useful even at vibe scale, and the substrate the future upgrade migration runs on.
 
 ---
 

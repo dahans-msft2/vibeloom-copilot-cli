@@ -615,7 +615,7 @@ Canonical source: [implementation §5.1](../../../vibeloom-implementation.md#51-
 |---|---|---|---|---|---|
 | `CAP` | capability | intent-specs | `intent.md` | root | Root entity; no upstream basis. |
 | `CST` | hard constraint | intent-specs | `intent.md` or `defaults.md` | root | Root entity; no upstream basis. |
-| `DEF` | repo-wide default | intent-specs | `defaults.md` | root | Universally binding once derived; downstream may reference without an explicit typed edge. Tech Stack entries also use `DEF`. |
+| `DEF` | repo-wide default | intent-specs | `defaults.md` | root | Derives from `CAP`/`CST` (normalized from intent). Universally binding once derived; downstream may reference without an explicit typed edge. Tech Stack entries also use `DEF`. |
 | `OBJ` | objective | product-specs | `prd.md` | root | Derives from `CAP`. |
 | `KR` | key result | product-specs | `prd.md` | root | Derives from `OBJ`. |
 | `MET` | metric | product-specs | `prd.md` | root | Derives from `KR`, `FR`, or `NFR`. |
@@ -625,21 +625,21 @@ Canonical source: [implementation §5.1](../../../vibeloom-implementation.md#51-
 | `FLOW` | workflow / journey | product-specs | `usm.md` | root | Derives from `EPIC`. |
 | `STORY` | story | product-specs | `usm.md` | root | Derives from `EPIC`/`FLOW`. |
 | `ACC` | acceptance criterion | product-specs | `usm.md` | per-`STORY` | Derives from `STORY`. EARS allowed. |
-| `MS` | milestone | product-specs | `usm.md` | root | Groups `STORY`s for delivery. |
-| `TERM` | ubiquitous-language term | product-specs | `dm.md` | root | Domain vocabulary; consumed by `BC`/`AGG`/`ENT`. |
+| `MS` | milestone | product-specs | `usm.md` | root | Derives from `STORY` (and optionally `OBJ`). Groups `STORY`s for delivery. |
+| `TERM` | ubiquitous-language term | product-specs | `dm.md` | root | Derives from `CAP` (or `STORY`). Domain vocabulary; consumed by `BC`/`AGG`/`ENT`. |
 | `BC` | bounded context | product-specs | `dm.md` | root | **Hosted only by `domain`-layer components.** Derives from `CAP`/`STORY`. |
 | `AGG` | aggregate | product-specs | `dm.md` | per-`BC` | Lives inside one `BC`. |
 | `ENT` | entity | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
 | `VO` | value object | product-specs | `dm.md` | per-`AGG` | Lives inside one `AGG`. |
 | `INV` | invariant | product-specs | `dm.md` | per-`AGG` | Domain rule scoped to an `AGG`. |
-| `VIEW` | UX view | ux-specs | `ux.md` | root | Optionally cites `MOCK`. |
-| `INT` | UX interaction | ux-specs | `ux.md` | per-`VIEW` | Per-view interaction. |
-| `UXC` | UX constraint | ux-specs | `ux.md` | root | Cross-view design constraint. |
-| `MOCK` | mockup reference | ux-specs | `ux.md` | root | Pointer to file under `ux-specs/mockups/`. |
-| `EXT` | external actor / system | system-specs | `system.md` | root | System context; outside trust boundaries. |
-| `TB` | trust boundary | system-specs | `system.md` | root | Crosses one or more `CONT`s. |
-| `SNFR` | system-wide NFR boundary | system-specs | `system.md` | root | Global cross-cutting NFR. |
-| `CONT` | container | system-specs | `containers.md` (inventory) + per-container `container.md` | root + per-container | Carries required `layer` field (`presentation` / `application` / `domain` / `infrastructure`). |
+| `VIEW` | UX view | ux-specs | `ux.md` | root | Derives from `CAP` and/or `STORY`/`FLOW`. May cite `MOCK` as evidence. |
+| `INT` | UX interaction | ux-specs | `ux.md` | per-`VIEW` | Derives from `VIEW` (structural) and `STORY`/`ACC` (semantic basis). |
+| `UXC` | UX constraint | ux-specs | `ux.md` | root | Derives from `CST` and/or `DEF`. Cross-view design constraint. |
+| `MOCK` | mockup reference | ux-specs | `ux.md` | root | Derives from `CAP` and/or `CST` (the intent area it serves). Pointer to file under `ux-specs/mockups/`. May be cited by `VIEW`/`INT`/`UXC`/`STORY`/`ACC` as evidence (`evidence_for`). |
+| `EXT` | external actor / system | system-specs | `system.md` | root | Derives from `CAP` and/or `FR` (the capabilities and requirements that involve this external actor). System context; outside trust boundaries. |
+| `TB` | trust boundary | system-specs | `system.md` | root | Derives from `CST`, `SNFR`, or `NFR`. Crosses one or more `CONT`s. |
+| `SNFR` | system-wide NFR boundary | system-specs | `system.md` | root | Derives from `NFR` or `CST`. Global cross-cutting NFR. |
+| `CONT` | container | system-specs | `containers.md` (inventory) + per-container `container.md` | root + per-container | Derives from `FR`/`STORY`/`CAP` (capabilities and requirements driving container choice). Carries required `layer` field (`presentation` / `application` / `domain` / `infrastructure`). |
 | `CMP` | component | system-specs | `container.md` (inventory) + per-component `component.md` | per-`CONT` | Belongs to exactly one `CONT`. Layer inherited from parent `CONT`. |
 | `IF` | owned interface | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content; not an independent graph node in v0.3. |
 | `DEP` | component dependency | system-specs (body carrier) | `component.md` | per-`CMP` | Structured content. |

@@ -2556,8 +2556,8 @@ Interactive findings loop on a single target. Surface eval findings; propose bou
    - Downstream impact preview (which downstream items will become stale if this target changes).
    - Recommendation summary.
    - Evidence and trace pointers.
-3. Present the packet to the user (one finding at a time or batched, per UX preference).
-4. For each finding, the user picks:
+3. Present the packet to the user as a summary first — counts by severity, total findings, estimated walk-time. Confirm scope: walk all blocking? include advisory? skip any category? The user may re-prioritize before drilling in.
+4. Walk findings in priority order (one at a time or batched, per UX preference). For each finding, the user picks:
    - **Accept proposed fix** → apply patch to target.
    - **Edit fix** → user provides their own patch.
    - **Defer** → mark finding as deferred (kept in trace but not blocking this review pass).

@@ -223,3 +223,9 @@ The same paradigm could govern non-code artifacts: API specs (OpenAPI), infrastr
 ### E5. Cross-organization contract sharing
 
 If an organization has many vibeloom projects, the same domain model often appears across them. A shared-organization contract layer could let multiple projects reference the same approved domain truth (e.g. "the canonical Customer entity for this org").
+
+---
+
+### E6. Factor the reusable review-loop pattern out of consumers
+
+The interactive review loop (build packet → present summary → confirm scope → walk in priority → Accept / Edit / Defer / Reject → re-verify → loop → recommend next) appears in four places: `tasks/review.md` and the three `review-{canon,site,skill}.md` prompts. Each copy uses slightly different vocabulary (contract-artifact "trace" / "eval" vs doc "report" / "checklist"), so editing the loop means editing all four files consistently. Factoring into a single vocabulary-neutral `review-loop.md` with consumers referencing it would establish a single source of truth and remove drift risk; each consumer would shrink by 10–15 lines and gain a clearer specialization-vs-pattern boundary. Trade-off: prompts lose some standalone readability since the loop mechanic moves to a referenced file. Defer until drift between the four copies actually causes pain.

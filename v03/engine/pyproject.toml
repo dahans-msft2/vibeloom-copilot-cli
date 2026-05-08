@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibeloom-engine"
+version = "0.3.0"
+description = "VibeLoom v0.3 deterministic engine: parsing, schema, graph, traces, dispatch, status."
+requires-python = ">=3.10"
+authors = [{name = "VibeLoom"}]
+# Stdlib only at runtime — no runtime dependencies.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-cov>=4"]
+
+[project.scripts]
+vibeloom-engine = "vibeloom_engine.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["vibeloom_engine*"]
+exclude = ["tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["vibeloom_engine"]
+omit = ["*/__main__.py"]
+
+[tool.coverage.report]
+show_missing = true

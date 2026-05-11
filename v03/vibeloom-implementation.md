@@ -840,7 +840,7 @@ waves:
     dependencies: [{from: W2, to: W3}]
 ```
 
-The plan is build once per `generate` invocation and is itself a logged artifact (`.vibeloom/runs/RUN-.../plan.yaml`).
+The plan is built once per `generate` invocation and is itself a logged artifact (`.vibeloom/runs/RUN-.../plan.yaml`).
 
 ### 13.2 Wave assembly rules
 

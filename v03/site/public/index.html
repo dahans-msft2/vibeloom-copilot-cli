@@ -83,7 +83,7 @@
       "mainEntity": [
         {"@type":"Question","name":"When should I not use VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"Throwaway scripts, weekend demos, single-file utilities, hackathon work. Prompt-only generation is faster and sufficient. VibeLoom is for projects expected to survive, evolve, or involve more than one agent or contributor."}},
         {"@type":"Question","name":"What is codæ and how does it relate to VibeLoom?","acceptedAnswer":{"@type":"Answer","text":"codæ — contract-driven agentic engineering — is the paradigm. VibeLoom is one concrete instantiation. codæ makes the case (in the manifesto); VibeLoom delivers it as an open-source Skill + engine for Claude Code and Codex."}},
-        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the broader spec-driven development family but goes a step further: contract-driven, not just spec-driven. Other spec-driven tools — GitHub Spec Kit, Kiro, BMAD — generate specs that decay after one feature. Tessl pivoted to per-skill context management. VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation."}},
+        {"@type":"Question","name":"How is VibeLoom different from spec-driven development tools like GitHub Spec Kit, Kiro, BMAD, or Tessl?","acceptedAnswer":{"@type":"Answer","text":"VibeLoom belongs to the broader spec-driven development family and extends it: contract-driven, not just spec-driven. The tools in that family each focus on different parts of the lifecycle — GitHub Spec Kit and Kiro on per-feature spec authoring, BMAD on workflow ceremony with role personas, Tessl on per-skill context management. VibeLoom focuses on keeping a multi-tier contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. Each tool has its strengths — see the full comparison for which fits which need."}},
         {"@type":"Question","name":"What is spec-driven development?","acceptedAnswer":{"@type":"Answer","text":"Spec-driven development is a workflow pattern where structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into contract-driven development: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass."}},
         {"@type":"Question","name":"Won't another prompt cycle just fix the drift?","acceptedAnswer":{"@type":"Answer","text":"Better prompts help one run. A contract stack helps future runs inherit approved meaning, scoped context, and known boundaries — without relying on chat memory. Drift is a structural problem; prompts are a tactical fix. Baltes et al. (arXiv 2603.27249, 2026) frame the cumulative cost of AI slop as a tragedy of the commons: individual prompt-level wins externalize onto reviewers, maintainers, and the codebase. Better prompts don't survive the next chat. A graph-connected contract does."}},
         {"@type":"Question","name":"Does it work with Claude Code and Codex?","acceptedAnswer":{"@type":"Answer","text":"Yes. VibeLoom ships as a Skill — clone the repo from GitHub and point Claude Code or Codex at it as a Skill source. Python 3.10+ is the only system requirement for the deterministic engine — no pip install, no runtime dependencies. (A discoverable Skill registry entry is on the v0.3 roadmap.)"}},
@@ -154,8 +154,8 @@
       v0.3 — open-source Skill for Claude Code &amp; Codex + Python 3.10+ engine
     </div>
 
-    <h1 aria-label="Contract-driven agentic engineering">
-      <span class="accent" aria-hidden="true"><span class="word-cycle" data-from="Spec" data-to="Contract">Contract</span>-driven</span><br>
+    <h1>
+      <span class="accent">Contract-driven</span><br>
       agentic engineering.
     </h1>
 
@@ -590,7 +590,7 @@
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes a step further: <strong>contract-driven, not just spec-driven</strong>. <strong>GitHub Spec Kit, Kiro, BMAD</strong> generate specs that decay after one feature. <strong>Tessl pivoted to per-skill context.</strong> VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
+          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family and extends it: <strong>contract-driven, not just spec-driven</strong>. Each tool in the family focuses on different parts of the lifecycle — <strong>GitHub Spec Kit</strong> and <strong>Kiro</strong> on per-feature spec authoring, <strong>BMAD</strong> on workflow ceremony with role personas, <strong>Tessl</strong> on per-skill context management. <strong>VibeLoom</strong> focuses on keeping a multi-tier contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. <a class="linky" href="methodology.html#compare">See the full comparison</a> for which fits which need.</p>
         </div>
       </details>
 
@@ -703,7 +703,7 @@
       </div>
     </div>
     <div class="small">
-      <span>© 2026 VibeLoom · Contract-driven development for AI-coded projects</span>
+      <span>© 2026 VibeLoom · Contract-driven agentic engineering</span>
       <span>v0.3 · MIT licensed · Built by <a href="contact.html">Ilya Baimetov</a></span>
     </div>
   </div>

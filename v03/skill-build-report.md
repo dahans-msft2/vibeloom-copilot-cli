@@ -1,5 +1,9 @@
 # Skill Build Report — v0.3 Session 2
 
+> **Historical record (May 8, 2026).** This report documents the v0.3 skill build at the time it was made. It is **not** current certification. Subsequent adversarial review (`adversarial-skill-prompts-report.md`) identified schema drift between the skill and canon (`approval_mode` vs `approval_unit`, decision ID model conflicts, missing `task-template-version` trailers, broken reference links, etc.). Re-run validation before treating "checks passed" claims here as current.
+
+---
+
 Final report per `build-skill.md §Final report`. Walks Steps 1–11, lists the deliverables, surfaces ambiguities, and queues post-handoff tasks.
 
 ---

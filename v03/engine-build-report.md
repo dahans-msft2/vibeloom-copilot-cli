@@ -1,5 +1,9 @@
 # v0.3 vibeloom engine — build report
 
+> **Historical record (May 8, 2026).** This report documents the v0.3 engine build at the time it was made. It is **not** a current certification of the engine state. Subsequent adversarial reviews (see `adversarial-canon-report.md`, `adversarial-skill-prompts-report.md`) identified defects against the canon — re-run validation before treating the checkmarks below as evidence the current `engine/` is defect-free.
+
+---
+
 **Engine commit:** `4b4b03a` (worktree branch `worktree-agent-abfa51f7a0784c7f4`).  
 **v02 baseline pinned:** `63f0a76` ("Drop PyYAML dependency: engine is now pure-Python with a built-in frontmatter parser").  
 **Build profile:** stdlib-only at runtime (Python 3.10+); `pytest` + `pytest-cov` dev-only.  

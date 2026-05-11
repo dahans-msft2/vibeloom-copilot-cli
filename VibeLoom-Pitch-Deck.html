@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1320, initial-scale=1">
-<title>VibeLoom — Pitch Deck · May 2026</title>
+<title>VibeLoom — EWOR Pitch · AutoCAD for Software Systems · May 2026</title>
 <meta name="author" content="Ilya Baimetov">
-<meta name="description" content="VibeLoom pitch deck. Sequoia format. Contract-driven agentic engineering — the layer above the code.">
+<meta name="description" content="VibeLoom: AutoCAD for software systems. The drafting room for codæ — contract-driven agentic engineering. EWOR fellowship pitch, May 2026.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -318,19 +318,51 @@ h1, h2, h3, h4 {
   text-decoration: underline dotted var(--c-red-soft);
   text-underline-offset: 3px;
 }
+.s-problem .bot-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: stretch;
+}
 .s-problem .pull {
-  margin-top: 28px;
+  margin: 0;
   border-left: 3px solid var(--c-red);
-  padding: 8px 0 8px 16px;
+  padding: 6px 0 6px 16px;
   font-family: var(--f-serif); font-style: italic; font-weight: 500;
-  font-size: 19px; line-height: 1.45;
+  font-size: 16px; line-height: 1.4;
   color: var(--c-ink);
+  display: flex; flex-direction: column; justify-content: center;
 }
 .s-problem .pull cite {
   display: block; margin-top: 6px;
-  font-family: var(--f-mono); font-style: normal; font-size: 11px;
+  font-family: var(--f-mono); font-style: normal; font-size: 10.5px;
   color: var(--c-ink-4); font-weight: 600;
   letter-spacing: 0.02em;
+}
+.s-problem .sdd-callout {
+  background: var(--c-ink);
+  color: #fff;
+  padding: 14px 18px;
+  font-size: 12.5px; line-height: 1.55;
+}
+.s-problem .sdd-callout .k {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--c-red);
+  margin-bottom: 8px;
+}
+.s-problem .sdd-callout .em {
+  font-family: var(--f-serif);
+  font-style: italic; font-weight: 600;
+  color: var(--c-red);
+}
+.s-problem .sdd-callout cite {
+  display: block; margin-top: 8px;
+  font-family: var(--f-mono); font-style: normal; font-size: 10px;
+  color: #888;
 }
 
 /* === Slide 4: Why Now === */
@@ -1000,19 +1032,19 @@ h1, h2, h3, h4 {
 <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
 <section class="slide s-dark s-title">
   <div class="top">
-    <div class="eyebrow">PITCH DECK · MAY 2026</div>
+    <div class="eyebrow">EWOR FELLOWSHIP · MAY 2026</div>
     <div class="brand-big">vibe<span class="accent">loom</span></div>
   </div>
   <h1 class="giant">VibeLoom</h1>
   <p class="substatement">
-    The contract layer for <span class="em">agentic engineering</span>.
+    AutoCAD for software <span class="em">systems</span>.
   </p>
   <p class="lead">
-    Agentic AI crashed the cost of producing code. It didn't crash the cost of holding a system together. We govern long-lived AI-generated software through a stack of human-mendable contracts — smaller than the code, persistent across agents, verifiable against what ships.
+    Cursor put a model in the IDE and crashed the cost of writing code. One layer up, the bigger unlock is unstarted: a drafting room for software systems where humans author the contract and AI agents are the compiler. Model-driven engineering was right about the destination and wrong about the era — the compiler didn't exist yet. Now it does. We call the discipline <em>codæ — contract-driven agentic engineering</em>.
   </p>
   <div class="meta">
     <span><span class="k">FOUNDER</span> Ilya Baimetov</span>
-    <span><span class="k">STAGE</span> Pre-seed / Seed</span>
+    <span><span class="k">STAGE</span> Solo · pre-revenue · seeking €750K fellowship</span>
     <span><span class="k">CONTACT</span> info@vibeloom.ai</span>
     <span><span class="k">SITE</span> vibeloom.ai</span>
   </div>
@@ -1025,12 +1057,12 @@ h1, h2, h3, h4 {
   <div class="eyebrow">§01 · COMPANY PURPOSE</div>
   <hr class="divider">
   <h2 class="big-sentence">
-    We help engineering teams ship AI-generated software that <span class="em">stays coherent</span> — by giving humans a contract above the code, and giving every agent the same one.
+    Cursor is the construction site. We're the <span class="em">drafting room</span> upstream of it — where the system is designed before agents build it.
   </h2>
   <div class="three-callouts">
     <div class="callout">
       <div class="k kicker">WHAT</div>
-      <div class="v">A stack of human-mendable contracts: intent, product, UX, system, behavior.</div>
+      <div class="v">A multi-tier contract — intent, product, UX, system, behavior — that is the design representation agents are compiled against.</div>
     </div>
     <div class="callout">
       <div class="k kicker">WHO</div>
@@ -1055,7 +1087,7 @@ h1, h2, h3, h4 {
   <hr class="divider">
   <h2 class="headline">Generation got cheap. Coherence didn't.</h2>
   <p class="subhead">
-    Three names — semantic drift, AI slop, comprehension debt — for one structural failure: agents now produce code faster than humans can integrate it into a coherent whole. The 2026 evidence is no longer ambiguous.
+    Three names — semantic drift, AI slop, comprehension debt — for one failure: agents produce code faster than humans can integrate it. The 2026 evidence is unambiguous.
   </p>
   <div class="stats">
     <div class="stat">
@@ -1074,15 +1106,22 @@ h1, h2, h3, h4 {
       <div class="src">CMU Cursor study · MSR 2026</div>
     </div>
     <div class="stat">
-      <div class="num">0–20%</div>
-      <div class="label">of work engineers can fully delegate — context, not capability, is the binding constraint</div>
-      <div class="src">Anthropic Agentic Coding Trends · 2026</div>
+      <div class="num">65% vs &lt;40%</div>
+      <div class="label">mastery scores when AI is used for conceptual inquiry vs. delegated code generation. The <em>layer</em> of delegation decides whether skill is preserved.</div>
+      <div class="src">Anthropic RCT, n=52 · Feb 2026</div>
     </div>
   </div>
-  <blockquote class="pull">
-    "AI amplifies the quality of the engineering system it operates within."
-    <cite>— DORA 2025 State of AI-Assisted Software Development</cite>
-  </blockquote>
+  <div class="bot-row">
+    <blockquote class="pull">
+      "AI amplifies the quality of the engineering system it operates within."
+      <cite>— DORA 2025 State of AI-Assisted Software Development</cite>
+    </blockquote>
+    <div class="sdd-callout">
+      <span class="k">AND THE OBVIOUS FIX FAILS THE SCAFFOLDING TEST</span>
+      Spec-driven dev (Kiro, Spec Kit, BMAD) names the problem but ships <span class="em">fragile scaffolding</span> — a starter spec, then disconnect. Every ambiguity in prose becomes a hallucination; every gap burns tokens and erodes review. Faye's prescription: don't try. Ours: build the robust scaffolding.
+      <cite>— Lars Faye, "Agentic Coding is a Trap" · 391 HN points · May 2026</cite>
+    </div>
+  </div>
   <div class="s-foot">
     <div class="brand">vibe<span class="accent">loom</span></div>
     <div class="pg">03 / 12</div>
@@ -1103,7 +1142,7 @@ h1, h2, h3, h4 {
     <div class="col">
       <div class="num-tag">1.&nbsp;&nbsp;GENERATION OUTRUNS COMPREHENSION</div>
       <div class="head">Cursor: $0 → $2B ARR in 36 months. 17% comprehension drop on AI-assisted tasks.</div>
-      <div class="body">The fastest B2B company to $2B ARR in history is shipping code at machine speed. Anthropic's study (cited by O'Reilly) shows developers using AI score 17% lower on comprehension quizzes after equivalent tasks — largest decline in debugging.</div>
+      <div class="body">The fastest B2B company to $2B ARR is shipping code at machine speed. Anthropic's study (via O'Reilly): developers using AI score 17% lower on comprehension after equivalent tasks — largest decline in debugging.</div>
       <div class="src">TechCrunch · O'Reilly Radar, 2026</div>
     </div>
     <div class="col">
@@ -1113,10 +1152,10 @@ h1, h2, h3, h4 {
       <div class="src">codæ whitepaper references 1–17</div>
     </div>
     <div class="col">
-      <div class="num-tag">3.&nbsp;&nbsp;THE CATEGORY IS NAMING ITSELF</div>
-      <div class="head">Spec-driven development: AWS Kiro, GitHub Spec Kit, BMAD, the 2026 SDD taxonomy.</div>
-      <div class="body">The market has decided that prompts aren't enough — but the existing tools are spec-first or spec-anchored, not contract-driven. The vocabulary, the hunger, and the reference comparators all arrived in the same six months.</div>
-      <div class="src">Piskala 2026 · arXiv 2602.00180</div>
+      <div class="num-tag">3.&nbsp;&nbsp;THE COMPILER EXISTS · THE FIELD CONVERGED</div>
+      <div class="head">The 30-year dream of model-driven engineering finally has its compiler — and the field is naming the gap in real time.</div>
+      <div class="body">UML, Rational Rose, MDA died on one rock — their generators produced unusable scaffolding. AI agents close that gap. In Jan–Apr 2026 alone, Storey named <em>intent debt</em>, Kos'myna (MIT) <em>cognitive debt</em>, Anthropic the <em>paradox of supervision</em>, Faye <em>scaffolding fragility</em>. Six labels, one gap. None ship the implementation. We do.</div>
+      <div class="src">Storey · Kos'myna · Anthropic · Faye · Piskala — Jan–Apr 2026</div>
     </div>
   </div>
   <blockquote class="pull">
@@ -1135,7 +1174,7 @@ h1, h2, h3, h4 {
 <section class="slide s-light s-solution">
   <div class="eyebrow">§04 · SOLUTION</div>
   <hr class="divider">
-  <h2 class="headline">A <span class="em">contract</span> above the code that humans edit and agents are compiled against.</h2>
+  <h2 class="headline">The design representation for software systems. Humans author it. Agents <span class="em">compile</span> it.</h2>
   <div class="body">
     <div class="stack">
       <div class="tier t1">intent-specs <span class="note">capabilities · constraints</span></div>
@@ -1146,7 +1185,7 @@ h1, h2, h3, h4 {
       <div class="tier t6">code <span class="note">generated · synced · validated</span></div>
     </div>
     <div class="jobs">
-      <h3>The contract does four jobs at once.</h3>
+      <h3>The design does four jobs at once.</h3>
       <div class="job">
         <div class="k">EDITED BY HUMANS</div>
         <div class="v">Smaller than the code. Tens of items, not thousands.</div>
@@ -1165,7 +1204,7 @@ h1, h2, h3, h4 {
       </div>
     </div>
   </div>
-  <p class="footnote">codæ — contract-driven agentic engineering. VibeLoom is the reference implementation.</p>
+  <p class="footnote">Storey (Canada Research Chair, Mar 2026) named the missing object: <em>intent debt</em> — the absence of externalized rationale developers and AI agents need to work safely with code. The codæ contract <em>is</em> that externalized intent. VibeLoom is the reference implementation.</p>
   <div class="s-foot">
     <div class="brand">vibe<span class="accent">loom</span></div>
     <div class="pg">05 / 12</div>
@@ -1275,7 +1314,7 @@ h1, h2, h3, h4 {
   </div>
   <div class="frame">
     <span class="k kicker">STRATEGIC FRAME</span>
-    Cursor proved the dev-tools per-seat motion at $2B ARR. <strong>Every dollar that flows into AI code generation is a dollar that needs a governance layer to keep the output coherent.</strong> We are not selling the model — we are selling the audit trail.
+    Two precedents intersect here. <strong>Cursor proved the dev-tools per-seat motion at $2B ARR.</strong> <strong>Autodesk proved the CAD-for-X category at $58B market cap.</strong> We sit at their intersection: the system-design environment where every dollar of AI-generated code needs a contract above it. We don't sell the model — we sell the drafting room.
   </div>
   <div class="s-foot">
     <div class="brand">vibe<span class="accent">loom</span></div>
@@ -1317,7 +1356,7 @@ h1, h2, h3, h4 {
   </table>
   <p class="wedge">
     <span class="k kicker">WEDGE</span>
-    Cursor is locked into its IDE; Claude Code into Anthropic's loop. Neither has a commercial reason to standardize a contract format that works for the others. We do — because we sit <span class="em">between</span> the human, the agent, and the code.
+    <span class="em">Different layer, different category.</span> Cursor / Windsurf / Codex are better construction sites — IDE-shaped, code-shaped, locked to one agent. Kiro / Spec Kit / BMAD are first-draft blueprints — useful but spec-first, not contract-driven. VibeLoom is the CAD program one layer up: agent-agnostic, contract-shaped, designed for the system to outlive any single generation. <span class="em">Cursor sells velocity. We pay down intent debt.</span>
   </p>
   <div class="s-foot">
     <div class="brand">vibe<span class="accent">loom</span></div>
@@ -1389,11 +1428,11 @@ h1, h2, h3, h4 {
 <!-- SLIDE 10 — TRACTION                                              -->
 <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
 <section class="slide s-light s-traction">
-  <div class="eyebrow">§09 · TRACTION</div>
+  <div class="eyebrow">§09 · FOUNDER THESIS · ALREADY PUBLIC</div>
   <hr class="divider">
-  <h2 class="headline">Category-defining work, already public.</h2>
+  <h2 class="headline">No revenue. A paradigm shipped.</h2>
   <p class="subhead">
-    Pre-revenue. The asset is the paradigm: a published whitepaper grounded in 17 cited 2026 studies, plus a working v0.3 reference implementation.
+    EWOR funds founders with a thesis. Mine isn't a slide deck — it's a published whitepaper grounded in 17 cited 2026 studies, a working reference implementation, four months of public artifact. The fellowship buys the second chapter: turning the thesis into a product 10,000 teams ship with.
   </p>
   <div class="nums">
     <div>
@@ -1425,8 +1464,8 @@ h1, h2, h3, h4 {
     <div class="d">MAY 2026</div><div class="t">v03 reference impl: templates · 5 worked examples · UX-led mode · brownfield import</div>
   </div>
   <div class="next">
-    <span class="k kicker">NEXT</span>
-    Convert the whitepaper's audience into design partners. Target: 10 paying teams in 12 months.
+    <span class="k kicker">FELLOWSHIP CHAPTER</span>
+    Convert the whitepaper's audience — devtools-curious senior engineers and CTOs — into 10 named design partners by month 6, 3 paid teams by month 12.
   </div>
   <div class="s-foot">
     <div class="brand">vibe<span class="accent">loom</span></div>
@@ -1438,11 +1477,11 @@ h1, h2, h3, h4 {
 <!-- SLIDE 11 — TEAM                                                  -->
 <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
 <section class="slide s-light s-team">
-  <div class="eyebrow">§10 · TEAM</div>
+  <div class="eyebrow">§10 · FOUNDER · WHY ME</div>
   <hr class="divider">
-  <h2 class="headline">Solo technical founder. By design — for now.</h2>
+  <h2 class="headline">Solo. On purpose. The paradigm needed one mind to make it coherent.</h2>
   <p class="subhead">
-    The codæ paradigm and v0.3 reference implementation are the work of one person. That is a strength for an EWOR-shaped fellowship and a known objection at YC. We address it head-on, with the right hires queued for week one of funding.
+    A multi-tier contract stack with consistent semantics, an honest verification ladder, five operating modes, brownfield import, parallel dispatch — all from one architectural worldview — does not survive design-by-committee in chapter one. The right team gets built around a thesis that has cohered. That's now.
   </p>
   <div class="body">
     <div class="founder">
@@ -1489,9 +1528,9 @@ h1, h2, h3, h4 {
         </div>
       </div>
       <div class="objection">
-        <div class="k">THE OBJECTION WE EXPECT</div>
-        <div class="q">"Where's the co-founder?"</div>
-        <div class="a">The work shipped to date is paradigm-level depth — better solo than diluted. Co-founder placement is open and prioritized; we will not bring in the wrong one to make a slide look complete.</div>
+        <div class="k">FOUNDER CONVICTION</div>
+        <div class="q">"Why now, why me, why this."</div>
+        <div class="a">Now: the AI compiler exists; the category names itself in real time. Me: I authored codæ and shipped the reference impl in four months — alone — because design coherence had to come from one mind first. This: every dollar flowing into AI code generation needs a CAD program one layer up. I want to build it.</div>
       </div>
     </div>
   </div>
@@ -1513,18 +1552,18 @@ h1, h2, h3, h4 {
       <span class="muted">Intent stays mendable.</span>
     </h2>
     <p class="vision-lead">
-      A 2-3 year bet, not a v0.3 promise. The 10-100× productivity dream of agentic coding only survives if humans never touch the factory floor. We keep them upstairs, with a contract. Long term: codæ contracts may revive the dream of formally verifiable software at system scope — this time at the contract layer, not the routine.
+      A 2–3 year bet. The order-of-magnitude productivity gains promised by agentic coding only survive if humans never touch the construction site. We keep them in the drafting room, with a contract. Long term: codæ contracts may revive the dream of formally verifiable software — this time at the contract layer, not the routine. The dark factory builds. Humans design.
     </p>
     <div class="asks">
       <div class="ask">
-        <div class="track">TRACK A · PRE-SEED / FELLOWSHIP</div>
-        <div class="amount">€500K – €1M <span class="for">for 18-24 month runway</span></div>
-        <div class="desc">Ship v1.0 cloud platform · land 10 design partners · convert to first paying teams. Fits EWOR fellowship shape; YC standard deal also viable.</div>
+        <div class="track">EWOR FELLOWSHIP · THE ASK</div>
+        <div class="amount">€750K <span class="for">for 18 months at the Founders Studio</span></div>
+        <div class="desc">Standard EWOR shape: capital + studio support + community. Spend: 60% engine + cloud platform · 25% DevRel and design-partner program · 15% ops, legal, infra. Co-founder + first 3 hires recruited from EWOR network in months 2–6.</div>
       </div>
       <div class="ask">
-        <div class="track">TRACK B · SEED</div>
-        <div class="amount">$2M – $3M <span class="for">for 18-month sprint to $1M ARR</span></div>
-        <div class="desc">60% engineering (engine + cloud) · 25% GTM (DevRel + design partner program) · 15% ops/infra. Lead investor TBD. Dilution: 18-22%.</div>
+        <div class="track">WHAT €750K BUYS BY MONTH 18</div>
+        <div class="amount">v1.0 + 10 partners <span class="for">+ 3 paying teams</span></div>
+        <div class="desc">M1–M6: hosted platform v1.0, contract REPL, contract debugger. M3–M9: 10 named design partners shipping with VibeLoom. M9–M18: convert 3 to paid Team plan — early proof of the per-seat motion. Seed-ready by month 18.</div>
       </div>
     </div>
   </div>

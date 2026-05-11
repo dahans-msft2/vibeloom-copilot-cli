@@ -253,9 +253,9 @@
           <a class="stat-src" href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">CMU Cursor study<br>Jan 2026 ↗</a>
         </div>
         <div class="stat">
-          <div class="stat-num">17%</div>
-          <div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div>
-          <a class="stat-src" href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">Osmani · O'Reilly<br>Apr 2026 ↗</a>
+          <div class="stat-num">65% vs &lt;40%</div>
+          <div class="stat-label">mastery scores when AI is used for <strong>conceptual inquiry</strong> vs. <strong>delegated code generation</strong>. The <em>layer</em> of delegation decides whether skill is preserved.</div>
+          <a class="stat-src" href="https://www.anthropic.com/research/AI-assistance-coding-skills" target="_blank" rel="noopener">Anthropic RCT, n=52<br>Feb 2026 ↗</a>
         </div>
       </div>
     </aside>
@@ -278,6 +278,11 @@
         <p>When code and spec diverge, there is no defined procedure for which wins, where to fix it, or how to verify the fix actually closed the gap.</p>
       </div>
     </div>
+
+    <aside class="convergence-strip" aria-label="Industry and academia converged on the same problem in Q1 2026">
+      <p class="conv-kicker">Jan–Apr 2026 · the diagnosis converged</p>
+      <p class="conv-body">Six names for the same gap, all landed in five months: <strong>intent debt</strong> (<a class="linky" href="https://arxiv.org/abs/2603.22106" target="_blank" rel="noopener">Storey</a>, Canada Research Chair · Mar 2026) · <strong>cognitive debt</strong> (<a class="linky" href="https://www.media.mit.edu/publications/your-brain-on-chatgpt/" target="_blank" rel="noopener">Kos'myna</a>, MIT Media Lab) · <strong>paradox of supervision</strong> (<a class="linky" href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic" target="_blank" rel="noopener">Anthropic</a>) · <strong>scaffolding fragility</strong> (<a class="linky" href="https://larsfaye.com/articles/agentic-coding-is-a-trap" target="_blank" rel="noopener">Faye</a>, viral on HN · May 2026) · <strong>comprehension debt</strong> (<a class="linky" href="https://www.oreilly.com/radar/comprehension-debt-the-hidden-cost-of-ai-generated-code/" target="_blank" rel="noopener">Osmani</a>, O'Reilly) · <strong>AI slop</strong> (<a class="linky" href="https://arxiv.org/abs/2603.27249" target="_blank" rel="noopener">Baltes et al.</a>). <span class="conv-close">None of them ship the implementation. VibeLoom does.</span></p>
+    </aside>
   </div>
 </section>
 
@@ -505,12 +510,7 @@
             <span class="r">Blueprint (contract)</span>
           </div>
           <p class="matrix-caption">
-            VibeLoom sits alone in the upper-right — whole-system blueprint plus
-            contract management. Tessl moved right (managing context, not
-            implementation) but stayed at the per-skill level. Spec Kit, Kiro, and
-            BMAD cluster lower-left: factory-floor direction, scoped per feature.
-            The lower-left quadrant ages with the model curve; the upper-right
-            compounds with it.
+            VibeLoom sits alone in the upper-right: whole-system blueprint plus contract management. Tessl moved right (managing context) but stayed at per-skill scope. Spec Kit, Kiro, and BMAD cluster lower-left: factory-floor direction, per-feature scope. Lower-left ages with the model curve; upper-right compounds with it.
             <a class="linky" href="methodology.html#compare">See the full comparison →</a>
           </p>
         </div>
@@ -590,7 +590,7 @@
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes a step further: <strong>contract-driven, not just spec-driven</strong>. Other spec-driven tools — <strong>GitHub Spec Kit, Kiro, BMAD</strong> — generate specs that decay after one feature. <strong>Tessl pivoted to per-skill context management.</strong> VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
+          <p>VibeLoom belongs to the broader <strong>spec-driven development</strong> family but goes a step further: <strong>contract-driven, not just spec-driven</strong>. <strong>GitHub Spec Kit, Kiro, BMAD</strong> generate specs that decay after one feature. <strong>Tessl pivoted to per-skill context.</strong> VibeLoom keeps the contract load-bearing across the whole lifecycle: derivation, eval, drift detection, reconciliation. <a class="linky" href="methodology.html#compare">See the full comparison.</a></p>
         </div>
       </details>
 
@@ -600,7 +600,7 @@
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p><strong>Spec-driven development</strong> is a workflow pattern where structured specifications are written before code and used to drive AI-assisted code generation — popularized by tools like GitHub Spec Kit, AWS Kiro, and Tessl. VibeLoom extends this pattern into <strong>contract-driven development</strong>: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass.</p>
+          <p><strong>Spec-driven development</strong> is a workflow pattern where structured specifications are written before code and used to drive AI-assisted generation — popularized by GitHub Spec Kit, AWS Kiro, Tessl. VibeLoom extends it into <strong>contract-driven development</strong>: the entire spec stack becomes a living contract that governs the codebase across every change, not just the first generation pass.</p>
         </div>
       </details>
 
@@ -610,7 +610,17 @@
           <span class="chev" aria-hidden="true"></span>
         </summary>
         <div class="a">
-          <p>Better prompts help one run. A contract stack helps future runs inherit approved meaning, scoped context, and known boundaries — without relying on chat memory. Drift is a structural problem; prompts are a tactical fix. Baltes et al. (<a class="linky" href="https://arxiv.org/html/2603.27249v1" target="_blank" rel="noopener">arXiv 2603.27249, 2026</a>) frame the cumulative cost of <em>AI slop</em> as a tragedy of the commons: individual prompt-level wins externalize onto reviewers, maintainers, and the codebase. Better prompts don't survive the next chat. A graph-connected contract does.</p>
+          <p>Better prompts help one run. A contract stack helps future runs inherit approved meaning, scoped context, and known boundaries — without relying on chat memory. Drift is structural; prompts are tactical. Baltes et al. (<a class="linky" href="https://arxiv.org/html/2603.27249v1" target="_blank" rel="noopener">arXiv 2603.27249, 2026</a>) frame the cumulative cost of <em>AI slop</em> as a tragedy of the commons: prompt-level wins externalize onto reviewers, maintainers, and the codebase. Better prompts don't survive the next chat. A graph-connected contract does.</p>
+        </div>
+      </details>
+
+      <details class="faq-item">
+        <summary>
+          <span class="q">What about Lars Faye's "Agentic Coding is a Trap"?</span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="a">
+          <p>Faye's diagnosis is correct: spec-driven scaffolding fails when its specs are prose — <em>"what you say is often not what you mean, and LLMs fill in ambiguity with assumptions."</em> His prescription is wrong: <em>keep humans writing code by hand</em>. The right answer to fragile scaffolding is not <em>no</em> scaffolding — it is scaffolding that doesn't fail his test: a multi-tier contract graph with stable IDs, typed obligations, explicit derivation links, and structural checks. VibeLoom shares the diagnosis and builds the scaffolding that survives it. <a class="linky" href="https://larsfaye.com/articles/agentic-coding-is-a-trap" target="_blank" rel="noopener">Read Faye ↗</a></p>
         </div>
       </details>
 
@@ -651,7 +661,7 @@
 <section class="cta" id="start">
   <div class="wrap cta-inner">
     <h2>Get started in 30 minutes.</h2>
-    <p>Clone the repo, load it as a Skill in Claude Code or Codex, and run one command. Python 3.10+ is the only system requirement &mdash; the engine is pure Python with no runtime dependencies.</p>
+    <p>Clone the repo, load it as a Skill in Claude Code or Codex, run one command. Python 3.10+ is the only system requirement — pure Python, no runtime dependencies.</p>
     <div class="install" id="install">
       <span class="pmt">$</span>
       <span><code style="background:transparent;border:0;color:#fff;padding:0;font-family:inherit">/vibeloom init --mode vibe</code></span>

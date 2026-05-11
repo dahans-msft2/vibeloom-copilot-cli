@@ -877,7 +877,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </div>
 
         <p>
-          The pattern is already shipping. In February 2026, Spotify's co-CEO confirmed the company's best engineers hadn't written a line of code since December — instead merging hundreds of agent-authored PRs per month through Spotify's internal coding-agent platform, <em>Honk</em>.<sup class="cite"><a href="#ref-16">16</a></sup> Two weeks later, BCG Platinion's <em>Dark Software Factory</em> report named the threshold: <em>"as few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."</em><sup class="cite"><a href="#ref-11">11</a></sup> Demis Hassabis describes the same shift from the model side in his 2026 YC talk: research-grade autonomy at lengthening horizons.<sup class="cite"><a href="#ref-23">23</a></sup>
+          The pattern is already shipping. In February 2026, Spotify's co-CEO confirmed the company's best engineers hadn't written a line of code since December — instead merging hundreds of agent-authored PRs per month through Spotify's internal coding-agent platform, <em>Honk</em>.<sup class="cite"><a href="#ref-17">17</a></sup> Two weeks later, BCG Platinion's <em>Dark Software Factory</em> report named the threshold: <em>"as few as three engineers can run a software factory where humans no longer write code… The moat is not the code. The moat is the specification and the scenario architecture that validates it."</em><sup class="cite"><a href="#ref-11">11</a></sup> Demis Hassabis describes the same shift from the model side in his 2026 YC talk: research-grade autonomy at lengthening horizons.<sup class="cite"><a href="#ref-23">23</a></sup>
         </p>
 
         <blockquote class="pull">
@@ -969,7 +969,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         <h3>From spec-driven to contract-driven</h3>
 
         <p>
-          <span class="codae">cod<span class="ae">æ</span></span> is adjacent to spec-driven development but a step beyond it. The 2026 SDD taxonomy<sup class="cite"><a href="#ref-19">19</a></sup> places existing approaches at three rigor levels: <em>spec-first</em> (specs guide, then drift), <em>spec-anchored</em> (specs and code co-evolve with enforcement), <em>spec-as-source</em> (specs alone are edited; code is regenerated). All three are progress over prompt-only generation. AWS Kiro, GitHub Spec Kit, and BMAD live in this band.
+          <span class="codae">cod<span class="ae">æ</span></span> is adjacent to spec-driven development but a step beyond it. The 2026 SDD taxonomy<sup class="cite"><a href="#ref-20">20</a></sup> places existing approaches at three rigor levels: <em>spec-first</em> (specs guide, then drift), <em>spec-anchored</em> (specs and code co-evolve with enforcement), <em>spec-as-source</em> (specs alone are edited; code is regenerated). All three are progress over prompt-only generation. AWS Kiro, GitHub Spec Kit, and BMAD live in this band.
         </p>
 
         <p>
@@ -998,14 +998,14 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </ul>
 
         <p>
-          These are evidence that the current factory has no durable control surface. Nicole Forsgren — DORA-research lead, co-author of <em>Accelerate</em> — frames the team-level corollary in her 2026 Pragmatic Engineer talk: high-performing teams systematize what was previously tacit context.<sup class="cite"><a href="#ref-21">21</a></sup>
+          These are evidence that the current factory has no durable control surface. Nicole Forsgren — DORA-research lead, co-author of <em>Accelerate</em> — frames the team-level corollary in her 2026 Pragmatic Engineer talk: high-performing teams systematize what was previously tacit context.<sup class="cite"><a href="#ref-22">22</a></sup>
         </p>
 
         <aside class="stats-strip" aria-label="Evidence that ungoverned agentic generation loses coherence">
           <div class="stats-strip-grid">
             <div class="stat"><div class="stat-num">80% / 89.8%</div><div class="stat-label">of agent trajectories show <strong>rising erosion / verbosity</strong> on long-horizon iterative coding tasks</div><a class="stat-src" href="#ref-7">SlopCodeBench<br>Mar 2026 ↗</a></div>
             <div class="stat"><div class="stat-num">22.7%</div><div class="stat-label">of <strong>tracked AI-introduced issues survive</strong> at latest revision · 302.6k commits across 6,299 repos</div><a class="stat-src" href="#ref-10">AI-debt in the wild<br>Mar 2026 ↗</a></div>
-            <div class="stat"><div class="stat-num">3–5×</div><div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div><a class="stat-src" href="#ref-20">CMU Cursor study<br>Jan 2026 ↗</a></div>
+            <div class="stat"><div class="stat-num">3–5×</div><div class="stat-label">short-term velocity gain from Cursor adoption — <strong>dissipates after 2 months</strong>, leaving +30% warnings and +41% complexity</div><a class="stat-src" href="#ref-21">CMU Cursor study<br>Jan 2026 ↗</a></div>
             <div class="stat"><div class="stat-num">17%</div><div class="stat-label">lower comprehension scores for AI-assisted developers on equivalent tasks; <strong>largest decline in debugging</strong></div><a class="stat-src" href="#ref-5">Osmani · O'Reilly<br>Apr 2026 ↗</a></div>
           </div>
         </aside>
@@ -1028,7 +1028,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          The diagnosis has converged across academia and industry inside a five-month window. Kos'myna et al. at MIT Media Lab<sup class="cite"><a href="#ref-27">27</a></sup> introduce the term <em>cognitive debt</em> with EEG evidence: across four sessions, LLM users showed the weakest brain connectivity and underperformed at neural, linguistic, and behavioral levels. Simon Willison<sup class="cite"><a href="#ref-15">15</a></sup> operationalizes it from 30 years of practitioner experience: <em>"losing a firm mental model of what the applications can do, which means each additional feature becomes harder to reason about."</em> Storey<sup class="cite"><a href="#ref-9">9</a></sup> extends to the Triple Debt Model and names <em>intent debt</em> as the load-bearing missing object. Lee et al. at Microsoft Research and Carnegie Mellon<sup class="cite"><a href="#ref-28">28</a></sup> survey 319 knowledge workers and document the mechanism — by automating routine work and leaving exception-handling to humans, AI atrophies the very judgment exception-handling requires. Anthropic's own sociotechnical study of work inside Anthropic<sup class="cite"><a href="#ref-18">18</a></sup> names this contradiction the <em>paradox of supervision</em>: effectively using Claude requires supervision, and supervising Claude requires the very coding skills AI overuse erodes. Six different names — cognitive debt, intent debt, comprehension debt, paradox of supervision, scaffolding fragility, slop — for the same gap. The field has converged on the diagnosis. It has not converged on the implementation. <span class="codae">cod<span class="ae">æ</span></span> is the implementation.
+          The diagnosis has converged across academia and industry inside a five-month window. Kos'myna et al. at MIT Media Lab<sup class="cite"><a href="#ref-27">27</a></sup> introduce the term <em>cognitive debt</em> with EEG evidence: across four sessions, LLM users showed the weakest brain connectivity and underperformed at neural, linguistic, and behavioral levels. Simon Willison<sup class="cite"><a href="#ref-15">15</a></sup> operationalizes it from 30 years of practitioner experience: <em>"losing a firm mental model of what the applications can do, which means each additional feature becomes harder to reason about."</em> Storey<sup class="cite"><a href="#ref-9">9</a></sup> extends to the Triple Debt Model and names <em>intent debt</em> as the load-bearing missing object. Martin Fowler endorses the framing at the Thoughtworks Future of Software Development Retreat<sup class="cite"><a href="#ref-16">16</a></sup>, mapping cognitive cruft to <em>"ignorance — both of the code and the domain the code is supporting"</em> — the same object codæ externalizes as intent. Lee et al. at Microsoft Research and Carnegie Mellon<sup class="cite"><a href="#ref-28">28</a></sup> survey 319 knowledge workers and document the mechanism — by automating routine work and leaving exception-handling to humans, AI atrophies the very judgment exception-handling requires. Anthropic's own sociotechnical study of work inside Anthropic<sup class="cite"><a href="#ref-19">19</a></sup> names this contradiction the <em>paradox of supervision</em>: effectively using Claude requires supervision, and supervising Claude requires the very coding skills AI overuse erodes. Six different names — cognitive debt, intent debt, comprehension debt, paradox of supervision, scaffolding fragility, slop — for the same gap. The field has converged on the diagnosis. It has not converged on the implementation. <span class="codae">cod<span class="ae">æ</span></span> is the implementation.
         </p>
 
         <h3>Why local fixes fail</h3>
@@ -1038,7 +1038,7 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         </p>
 
         <p>
-          Chat history is not memory. A prompt is not authority. The next agent does not reliably inherit what the last one was told; every cycle re-derives the system from partial context, and the durable artifact becomes the codebase itself — too large for any human or agent to re-internalize. Karpathy, in the same talk that named "agentic engineering," concedes the point: <em>"agent workflows need docs, memory, project files, rules, tests, and clear feedback loops."</em><sup class="cite"><a href="#ref-25">25</a></sup> That sentence is the requirement spec for a contract. Matt Pocock makes the complementary point at AI Engineer 2026: software fundamentals — explicit interfaces, durable contracts, named invariants — matter <em>more</em> in the agentic era, not less.<sup class="cite"><a href="#ref-22">22</a></sup>
+          Chat history is not memory. A prompt is not authority. The next agent does not reliably inherit what the last one was told; every cycle re-derives the system from partial context, and the durable artifact becomes the codebase itself — too large for any human or agent to re-internalize. Karpathy, in the same talk that named "agentic engineering," concedes the point: <em>"agent workflows need docs, memory, project files, rules, tests, and clear feedback loops."</em><sup class="cite"><a href="#ref-25">25</a></sup> That sentence is the requirement spec for a contract.
         </p>
 
         <p>
@@ -1195,16 +1195,16 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
         <h3>The contract is the right layer to delegate from</h3>
 
         <p>
-          The empirical case against dark-factory coding is usually framed as <em>"humans atrophy when they let AI do the work."</em> Anthropic's coding-skills RCT<sup class="cite"><a href="#ref-17">17</a></sup> tested the claim — and the finding is sharper than the framing. Across 52 engineers learning the unfamiliar Trio async library, the AI group scored 17% lower on mastery (50% vs 67%), with the largest gap in <em>debugging</em>. The load-bearing sub-finding: <strong>those who used AI for conceptual inquiry scored 65%+; those delegating code generation scored below 40%.</strong> The data does not say AI assistance causes atrophy — it says <em>the layer at which work is delegated determines whether skill is preserved</em>. Conceptual delegation (asking the agent to explain, compare, clarify intent) leaves cognitive musculature intact; code-generation delegation does not.
+          The empirical case against dark-factory coding is usually framed as <em>"humans atrophy when they let AI do the work."</em> Anthropic's coding-skills RCT<sup class="cite"><a href="#ref-18">18</a></sup> tested the claim — and the finding is sharper than the framing. Across 52 engineers learning the unfamiliar Trio async library, the AI group scored 17% lower on mastery (50% vs 67%), with the largest gap in <em>debugging</em>. The load-bearing sub-finding: <strong>those who used AI for conceptual inquiry scored 65%+; those delegating code generation scored below 40%.</strong> The data does not say AI assistance causes atrophy — it says <em>the layer at which work is delegated determines whether skill is preserved</em>. Conceptual delegation (asking the agent to explain, compare, clarify intent) leaves cognitive musculature intact; code-generation delegation does not.
         </p>
 
         <blockquote class="pull">
           <p>The atrophy is not about <em>whether</em> humans delegate to agents. It is about <em>at which layer</em>.</p>
-          <cite>— Reading of Anthropic's coding-skills RCT<sup class="cite"><a href="#ref-17">17</a></sup></cite>
+          <cite>— Reading of Anthropic's coding-skills RCT<sup class="cite"><a href="#ref-18">18</a></sup></cite>
         </blockquote>
 
         <p>
-          The codæ contract is precisely that layer. Humans stay above it — clarifying intent, refining obligations, mending the graph, judging trade-offs the contract cannot decide on its own. That is conceptual delegation, which the RCT shows preserves skill. Below the contract, agents do the work the same study shows degrades skill when humans do it: generating code, testing, refactoring, repairing failures. The contract is not just memory or eval signal — <strong>it is the boundary that makes the human-AI division of labor stable instead of corrosive.</strong> The paradox of supervision<sup class="cite"><a href="#ref-18">18</a></sup> dissolves when humans supervise the contract rather than the code.
+          The codæ contract is precisely that layer. Humans stay above it — clarifying intent, refining obligations, mending the graph, judging trade-offs the contract cannot decide on its own. That is conceptual delegation, which the RCT shows preserves skill. Below the contract, agents do the work the same study shows degrades skill when humans do it: generating code, testing, refactoring, repairing failures. The contract is not just memory or eval signal — <strong>it is the boundary that makes the human-AI division of labor stable instead of corrosive.</strong> The paradox of supervision<sup class="cite"><a href="#ref-19">19</a></sup> dissolves when humans supervise the contract rather than the code.
         </p>
 
         <p>
@@ -1376,41 +1376,40 @@ footer a:hover { color: var(--c-ink); border-color: var(--c-ink); }
             <span class="meta">2026-02-15 · <a href="https://simonwillison.net/2026/Feb/15/cognitive-debt/" target="_blank" rel="noopener">simonwillison.net/2026/Feb/15/cognitive-debt/</a></span>
           </li>
           <li id="ref-16">
+            <span class="title">Fragments: February 13.</span>
+            Fowler, M. (Thoughtworks Chief Scientist; <em>Refactoring</em> · <em>Patterns of Enterprise Application Architecture</em>). Notes from the Thoughtworks Future of Software Development Retreat. Ratifies Storey's cognitive-debt framing at the most senior practitioner table in the industry and adds his own anchor: <em>"the equivalent of cruft is ignorance — both of the code and the domain the code is supporting."</em> That ignorance is precisely what the codæ contract externalizes.
+            <span class="meta">2026-02-13 · <a href="https://martinfowler.com/fragments/2026-02-13.html" target="_blank" rel="noopener">martinfowler.com/fragments/2026-02-13.html</a></span>
+          </li>
+          <li id="ref-17">
             <span class="title">Spotify says its best developers haven't written a line of code since December, thanks to AI.</span>
             TechCrunch coverage of Spotify Q4 2025 earnings call (co-CEO Gustav Söderström). Spotify's internal coding-agent platform <em>Honk</em> had ~650 PRs/month merged by early 2026; engineers operate as agent reviewers.
             <span class="meta">2026-02-12 · <a href="https://techcrunch.com/2026/02/12/spotify-says-its-best-developers-havent-written-a-line-of-code-since-december-thanks-to-ai/" target="_blank" rel="noopener">techcrunch.com/2026/02/12/spotify-says-…</a></span>
           </li>
-          <li id="ref-17">
+          <li id="ref-18">
             <span class="title">How AI assistance impacts the formation of coding skills.</span>
             Anthropic. Randomized controlled trial (n=52) on engineers learning the Trio async library. AI-assisted group scored 17% lower on mastery (50% vs 67%); the gap was <em>largest in debugging</em>. Decisive sub-finding: those who used AI for <strong>conceptual inquiry</strong> scored 65%+; those <strong>delegating code generation</strong> scored below 40%. The layer of delegation determines whether skill is preserved.
             <span class="meta">2026-02 · <a href="https://www.anthropic.com/research/AI-assistance-coding-skills" target="_blank" rel="noopener">anthropic.com/research/AI-assistance-coding-skills</a></span>
           </li>
-          <li id="ref-18">
+          <li id="ref-19">
             <span class="title">How AI Is Transforming Work at Anthropic.</span>
             Anthropic. Sociotechnical study of 132 engineers + 53 interviews. Names the <em>paradox of supervision</em>: "effectively using Claude requires supervision, and supervising Claude requires the very coding skills that may atrophy from AI overuse." The structural argument for keeping humans above implementation.
             <span class="meta">Q1 2026 · <a href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic" target="_blank" rel="noopener">anthropic.com/research/how-ai-is-transforming-work-at-anthropic</a></span>
           </li>
-          <li id="ref-19">
+          <li id="ref-20">
             <span class="title">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants.</span>
             Piskala, D.B.
             <span class="meta">arXiv:2602.00180 · 2026-01-30 · <a href="https://arxiv.org/abs/2602.00180" target="_blank" rel="noopener">arxiv.org/abs/2602.00180</a></span>
           </li>
-          <li id="ref-20">
+          <li id="ref-21">
             <span class="title">Speed at the Cost of Quality: How Cursor AI Increases Short-Term Velocity and Long-Term Complexity in Open-Source Projects.</span>
             He, H., Miller, C., Agarwal, S., Kästner, C., Vasilescu, B. (CMU).
             <span class="meta">MSR 2026 · arXiv:2511.04427 v3 · 2026-01-26 · <a href="https://arxiv.org/abs/2511.04427" target="_blank" rel="noopener">arxiv.org/abs/2511.04427</a></span>
           </li>
-          <li id="ref-21">
+          <li id="ref-22">
             <span class="title">Leading high-performing engineering teams in the age of AI.</span>
             Forsgren, N. (DORA-research lead; co-author of <em>Accelerate</em>; ex-VP of Research, GitHub). Talk at the Pragmatic Engineer Summit, 2026.
             <span class="meta"><a href="https://youtu.be/DfrAaDgFgjc" target="_blank" rel="noopener">youtu.be/DfrAaDgFgjc</a></span>
-          </li>
-          <li id="ref-22">
-            <span class="title">Software Fundamentals Matter More Than Ever.</span>
-            Pocock, M. Talk at AI Engineer Summit 2026. Explicit interfaces, durable contracts, and named invariants matter <em>more</em> in the agentic era, not less.
-            <span class="meta"><a href="https://youtu.be/v4F1gFy-hqg" target="_blank" rel="noopener">youtu.be/v4F1gFy-hqg</a></span>
-          </li>
-          <li id="ref-23">
+          </li>          <li id="ref-23">
             <span class="title">Agents, AGI &amp; the Next Big Scientific Breakthrough.</span>
             Hassabis, D. (CEO, Google DeepMind; Nobel laureate, 2024). Talk at Y Combinator, 2026.
             <span class="meta"><a href="https://youtu.be/JNyuX1zoOgU" target="_blank" rel="noopener">youtu.be/JNyuX1zoOgU</a></span>

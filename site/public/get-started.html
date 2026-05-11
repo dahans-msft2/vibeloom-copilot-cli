@@ -178,7 +178,7 @@ mv ~/.claude/skills/vibeloom-v0.3.0 ~/.claude/skills/vibeloom</code></pre>
       <h2 id="bootstrap">First 5 min &mdash; bootstrap a vibe project</h2>
       <p>In an empty directory (or a folder you want to seed):</p>
       <pre><code>&gt; /vibeloom init --mode vibe "a personal note-taking app with full-text search and tags"</code></pre>
-      <p>VibeLoom creates <code>intent.md</code>, <code>system.md</code> (compact), and <code>AGENTS.md</code>. It writes your one-line description into <code>intent.md</code> and asks you to expand. Open the file and add capabilities and constraints in plain English &mdash; that's the only real work here.</p>
+      <p>VibeLoom creates <code>intent.md</code>, <code>system.md</code> (compact), and <code>AGENTS.md</code>. Your one-line description goes into <code>intent.md</code>; expand it with capabilities and constraints in plain English. That's the only real work.</p>
       <p>Then approve:</p>
       <pre><code>&gt; /vibeloom approve intent-specs</code></pre>
       <p>This writes the first approval trace and unlocks downstream generation.</p>
@@ -193,7 +193,7 @@ mv ~/.claude/skills/vibeloom-v0.3.0 ~/.claude/skills/vibeloom</code></pre>
 ✓ generated code (14 files across 3 components in 2 dispatch waves)
 ✓ all validation runners passed
 ℹ status: current; 0 stale, 0 drifted, 0 uncovered</code></pre>
-      <p>Look at what got generated. Ignore the engine's status report for a second &mdash; just open the files and skim them. The whole point of vibe mode is that a small system stays comprehensible.</p>
+      <p>Open the files and skim them — ignore the engine's status report for a moment. The whole point of vibe mode is that a small system stays comprehensible.</p>
 
       <hr>
 

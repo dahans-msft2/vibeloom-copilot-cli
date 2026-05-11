@@ -2,21 +2,39 @@
 <urlset xmlns="http://www.w3.org/sitemaps/schemas/sitemap/0.9">
   <url>
     <loc>https://vibeloom.ai/</loc>
-    <lastmod>2026-05-06</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://vibeloom.ai/codae</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://vibeloom.ai/cod%C3%A6-manifesto</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://vibeloom.ai/methodology</loc>
-    <lastmod>2026-05-06</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://vibeloom.ai/implementation</loc>
-    <lastmod>2026-05-06</lastmod>
+    <lastmod>2026-05-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://vibeloom.ai/get-started</loc>
+    <lastmod>2026-05-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://vibeloom.ai/contact</loc>

@@ -170,7 +170,7 @@
         <li>Drift would be expensive or dangerous.</li>
         <li>You need traceability from intent to implementation.</li>
       </ul>
-      <p>Skip VibeLoom for throwaway prototypes, single-file utilities, or weekend demos. Heuristic: if the system is single-author, single-cycle, and small enough that re-reading it end-to-end before each change is faster than maintaining a contract about it, prompt-only is faster. Once any of those breaks — second contributor, second iteration, or the cost-of-rereading exceeds the cost-of-governing — the contract overhead pays back.</p>
+      <p>Skip VibeLoom for throwaway prototypes, single-file utilities, weekend demos. Heuristic: if re-reading the system end-to-end before each change is faster than maintaining a contract about it, prompt-only is faster. Once that breaks — second contributor, second iteration — the contract overhead pays back.</p>
 
       <hr>
 
@@ -345,7 +345,7 @@
       <p>VibeLoom uses two parallel taxonomies — drift forms (causes) and status categories (item states) — to make incoherence locatable rather than aspirational.</p>
       <p><strong>Drift forms</strong> describe how mismatches arise: <em>structural</em> (upstream item changed since downstream synchronized), <em>lifecycle</em> (approved file edited outside the flow), <em>semantic</em> (downstream meaning shifted even when structure passes). Each form maps to a different detection mechanism in the engine.</p>
       <p><strong>Status categories</strong> describe item lifecycle states at any moment: <code>current</code>, <code>stale</code>, <code>uncovered</code>, <code>dangling</code>, <code>drifted</code>, <code>obsolete</code>. <code>uncovered</code> is distinct from <code>stale</code> — newly approved upstream creates downstream obligations that no downstream item can yet depend on.</p>
-      <p>Both taxonomies are VibeLoom-specific, not borrowed from external literature. Other framings exist (Rath's semantic/coordination/behavioral for agent-to-agent drift; VentureBeat's "context decay" narrative for silent-failure). VibeLoom's framework targets contract-vs-code drift specifically.</p>
+      <p>Both taxonomies are VibeLoom-specific. Other framings exist (Rath's semantic/coordination/behavioral for agent-to-agent drift; VentureBeat's "context decay" for silent failure). VibeLoom's framework targets contract-vs-code drift specifically.</p>
       <p>Detection mechanism + state diagrams: see <a class="linky" href="implementation.html#snapshot">Implementation · Approval traces and drift detection</a>.</p>
 
       <hr>
@@ -404,7 +404,7 @@
       <div class="callout">
         <strong>Sidebar: Tessl.</strong> Tessl pivoted in early 2026 away from per-file <em>spec-as-source</em> toward per-skill context management. Different bet — managing what the agent <em>knows</em>, not what it <em>writes</em>. Same direction as VibeLoom, smaller scope (per-skill, not whole-system).
       </div>
-      <p><strong>Where each tool wins.</strong> Spec Kit is the strongest open-source starting point with the largest community. Kiro is the cleanest auditable per-feature trail for regulated environments inside an IDE. BMAD is the strongest workflow-with-personas for teams who want explicit role separation per feature. VibeLoom is the only one with a whole-system, structured, graph-connected contract.</p>
+      <p><strong>Where each tool wins.</strong> Spec Kit — strongest open-source starting point and community. Kiro — cleanest auditable per-feature trail for regulated environments inside an IDE. BMAD — strongest workflow-with-personas for teams that want explicit role separation. VibeLoom — the only whole-system, graph-connected contract.</p>
 
       <hr>
 

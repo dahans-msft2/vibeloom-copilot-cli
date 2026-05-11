@@ -585,6 +585,36 @@ a.linky:hover { color: var(--c-red); border-color: var(--c-red); }
 }
 .problem .cell p { font-size: 0.96rem; line-height: 1.65; max-width: 50ch; }
 
+/* ===== convergence strip (problem-section postscript) ===== */
+.convergence-strip {
+  margin-top: 36px;
+  padding: 22px 26px;
+  background: var(--c-bg-soft);
+  border-left: 3px solid var(--c-red);
+  border-radius: 8px;
+}
+.convergence-strip .conv-kicker {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--c-red-deep);
+  text-transform: uppercase;
+  margin: 0 0 10px 0;
+}
+.convergence-strip .conv-body {
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--c-ink-2);
+  margin: 0;
+}
+.convergence-strip .conv-close {
+  color: var(--c-red-deep);
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 600;
+}
+
 /* ===== big section heading ===== */
 .section-head {
   display: grid;

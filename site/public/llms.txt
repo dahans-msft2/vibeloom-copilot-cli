@@ -1,49 +1,68 @@
 # VibeLoom
 
-> Contract-driven agentic engineering — an open-source Skill plus a deterministic Python engine that gives AI coding agents a living contract stack with drift detection, approval gates, and reconciliation across the lifecycle.
+> Contract-driven agentic engineering — an open-source Skill plus a deterministic Python engine that gives AI coding agents a multi-tier contract that humans author and agents are compiled against, with drift detection, approval gates, and reconciliation across the lifecycle.
 
-VibeLoom is the next step beyond per-feature spec-driven development tools (GitHub Spec Kit, AWS Kiro, Tessl). Instead of treating specifications as one-off planning documents that decay after the first generation pass, VibeLoom maintains a tiered, version-controlled contract stack that doubles as the eval surface for every subsequent change.
+VibeLoom is the v0.3 reference implementation of **codæ** — contract-driven agentic engineering. codæ is the next step beyond per-feature spec-driven development (GitHub Spec Kit, AWS Kiro, BMAD): instead of treating specifications as one-off planning documents that decay after the first generation pass, codæ maintains a multi-tier, mutually-derived, graph-tied contract that doubles as the eval surface for every subsequent change. The contract is more formal than prose, less formal than first-order logic — structured markdown with stable IDs and explicit derivation links, plus a deterministic engine that detects drift the moment it appears.
 
-The methodology and engine are open source under MIT license. v0.2 ships as a Skill for Claude Code and Codex plus a deterministic Python 3.10+ engine with zero runtime dependencies.
+The methodology and engine are open source under MIT license. v0.3 ships as a Skill for Claude Code and Codex plus a deterministic Python 3.10+ engine with zero runtime dependencies.
 
 ## Pages
 
-- [Overview](https://vibeloom.ai/): the bet, the model, the contract stack, drift detection, the comparison vs spec-driven tools.
-- [Methodology](https://vibeloom.ai/methodology): principles, the three-layer architecture, contract stack in detail, modes, operations, eval, drift, comparison, roadmap.
-- [Implementation](https://vibeloom.ai/implementation): the Skill, the deterministic engine, the CLI, the approved-state snapshot, the context graph, IDs and frontmatter, subagent dispatch, install, quickstart.
-- [Contact](https://vibeloom.ai/contact): independent advisory engagements (drift audit, bootstrap, custom governance) and `info@vibeloom.ai`.
+- [Overview](https://vibeloom.ai/): the bet, the model, the contract + context + code stack, drift detection, the comparison vs spec-driven tools, FAQ.
+- [codæ — the manifesto (essay)](https://vibeloom.ai/codae): the short public essay arguing the case for contract-driven agentic engineering as the path to dark-factory AI coding.
+- [codæ — the full whitepaper](https://vibeloom.ai/cod%C3%A6-manifesto): the long form, 32 cited references, structured as 8 sections (destination, contract, paradigm, blocker, mendable surface, durable object, ladder, bet) plus Foundations bibliography.
+- [Methodology](https://vibeloom.ai/methodology): principles, when to use, three-layer architecture, contract stack (intent → product ⇄ ux → system), Contract Graph, five modes, eight operations, lifecycle + traces, verification ladder, drift and status, comparison vs spec-driven tools, roadmap.
+- [Implementation](https://vibeloom.ai/implementation): the Skill / engine split, shared substrate at `.vibeloom/`, engine CLI, approval traces and drift detection, the Contract Graph, IDs and frontmatter, six canonical trace families, subagent dispatch, install + quickstart, source layout.
+- [Get started](https://vibeloom.ai/get-started): the 30-minute on-ramp — prerequisites, install (clone or release bundle), bootstrap a vibe project, generate, ship/iterate, upgrade vibe → full, brownfield import path.
+- [Contact](https://vibeloom.ai/contact): independent advisory engagements and `info@vibeloom.ai`.
 
 ## Concepts
 
-- **Contract stack** — five tiers: intent-specs → product-specs → system-specs → context → code. Each tier derives from the approved tier above; upstream items are the eval basis for downstream work.
-- **Three layers** — contract (governed truth), context (execution truth, derived), code (executable result). The contract layer holds three of the five tiers.
-- **Three drift forms** detected by VibeLoom — *structural* (upstream changed), *lifecycle* (approved file edited outside the flow), *semantic* (downstream meaning shifted). Distinct from the multi-agent agent-drift triad (semantic/coordination/behavioral) named in arXiv 2601.04170.
-- **Four modes** — `vibe` (compact, one approval gate), `pm` (full, product-led), `dev` (full, architecture-led), `expert` (full, all gates explicit). Vibe → full upgrade is one-way.
-- **Eight operations** — `generate`, `eval`, `review`, `reconcile`, `approve`, `status`, `init`, `import`. Plus `$vibeloom` shorthand that triages by current state.
-- **Approved-state snapshot** — per-item SHA-256 canonical hash. Basis for staleness, direct-edit detection, and the entire drift-detection mechanism.
-- **Context graph** — directed acyclic graph of items connected by `derives_from` frontmatter declarations. Computed by the engine; persisted to `.vibeloom/state/context-graph.json`. Powers derivation order, affected-set computation, drift detection, scoped subagent dispatch, and traceability.
-- **Two-layer architecture** — the Skill (semantic judgment, orchestration, approval gates) plus the deterministic engine (parsing, schema validation, graph construction, eval, snapshot, drift detection). They cooperate through `.vibeloom/state/`; the engine never decides product meaning.
-- **Forward-back generation** — within a tier, the forward pass produces artifacts in dependency order; the back pass reopens upstream artifacts that downstream work made stale. Idempotent.
+- **Contract stack** — four contract tiers plus context: **intent-specs → product-specs ⇄ ux-specs → system-specs → context → code**. Each tier derives from the approved tier above; `product-specs` and `ux-specs` are peer co-informing tiers. Upstream items are the eval basis for downstream work.
+- **Three working layers** — **Contract** (governed truth; only approved items drive downstream generation), **Context** (active generation guidance derived from approved contract), **Code** (executable result; synchronized and validated, not approved). Traces run alongside as durable append-only provenance.
+- **Contract Graph** — DAG of IDed semantic items (entities) connected by typed `derives_from` edges. Built by the engine from frontmatter declarations; persisted to `.vibeloom/cache/contract-graph.json` (regenerable). Powers derivation order, affected-set computation, drift detection, scoped subagent dispatch, traceability.
+- **Five modes** — `vibe` (compact, solo, one gate, no graph or code-sync), `pm` (product-led), `dev` (tech-led), `ux` (design-led with mockups as primary evidence), `expert` (all gates explicit). Vibe → full upgrade is one-way and produces an explicit migration trace.
+- **Eight operations** — `init`, `import`, `generate`, `eval`, `review`, `reconcile`, `approve`, `status`. Orthogonal — none does another's job. Plus `$vibeloom` shorthand that triages by current state.
+- **Verification ladder** — three tiers: **decidable** (structural eval — boolean checks, no LLM), **mechanical** (project-defined runners — typecheck, lint, tests, contract conformance), **heuristic** (semantic eval — agent-judged). The trajectory: promote checks upward as the engine matures.
+- **Six trace families** — `approval`, `generation`, `eval`, `code-sync`, `decision`, `import` (plus `id-registry`). Append-only JSONL streams in `.vibeloom/traces/`. Never silently regenerated. Approval traces carry per-item content fingerprints — the substrate for drift detection.
+- **Drift forms** — *structural* (upstream item changed since downstream synchronized), *lifecycle* (approved file edited outside the flow), *semantic* (downstream meaning shifted even when structure passes). Distinct from the multi-agent agent-drift triad (semantic/coordination/behavioral).
+- **Status categories** — `current`, `stale`, `uncovered`, `dangling`, `drifted`, `obsolete`. `uncovered` is distinct from `stale` — newly approved upstream creates downstream obligations that no item can yet depend on.
+- **Two-layer architecture** — the **Skill** (semantic judgment, mode selection, approval gates, subagent orchestration) plus the deterministic **engine** (parsing, schema validation, Contract Graph construction, structural eval, drift detection, dispatch planning). They cooperate through `.vibeloom/` — regenerable cache plus durable append-only traces. The engine never decides product meaning.
+
+## Empirical anchors
+
+The codæ argument is grounded in 28 contemporary citations (2025–2026) plus four foundational works (Meyer's Design by Contract, Brooks's *No Silver Bullet*, Evans's *Domain-Driven Design*, Fowler & Parsons's *Domain-Specific Languages*). Load-bearing 2026 anchors include:
+
+- **Anthropic randomized controlled trial** on coding-skill formation (Feb 2026): 17% lower mastery with AI assistance; the layer of delegation determines whether skill is preserved (65%+ for conceptual inquiry vs <40% for delegated code generation).
+- **Margaret-Anne Storey** (Canada Research Chair, March 2026): proposes the Triple Debt Model — technical debt + cognitive debt + *intent debt* (the absence of externalized rationale that developers and AI agents need to work safely with code).
+- **Martin Fowler** (Thoughtworks Chief Scientist, February 2026): ratifies Storey's diagnosis at the Future of Software Development Retreat — "cognitive cruft is ignorance, both of the code and the domain the code is supporting."
+- **MIT Media Lab** (Kos'myna et al.): EEG study introducing the term *cognitive debt* — LLM users showed weakest brain connectivity and underperformed across four sessions.
+- **Anthropic** *How AI is Transforming Work* (Q1 2026): names the *paradox of supervision* — effectively using Claude requires the very coding skills AI overuse erodes.
+- **SlopCodeBench** (Mar 2026): 80%/89.8% of agent trajectories show rising erosion/verbosity on long-horizon iterative coding tasks.
+- **CMU Cursor study** (MSR 2026): short-term velocity gain dissipates after 2 months, leaving +30% warnings and +41% complexity.
+- **Lars Faye** *Agentic Coding is a Trap* (Apr 2026, 391 HN points): the viral critique of fragile spec-driven scaffolding. codæ shares the diagnosis and builds the scaffolding that doesn't fail it.
 
 ## Repository
 
 - Source: https://github.com/ilya-baimetov/vibeloom
 - License: MIT
-- Engine version: `vibeloom-engine 0.2.0` — pure Python, zero runtime dependencies, 25 tests across parser, graph, eval, staleness, CLI.
+- Engine version: `vibeloom-engine 0.3.0` — pure Python, zero runtime dependencies.
 
 ## Author
 
-Ilya Baimetov. Independent advisory available — see https://vibeloom.ai/contact. Long-form writing is moving to https://pragprod.com once that launches.
+Ilya Baimetov. Independent advisory available — see https://vibeloom.ai/contact.
 
 ## How VibeLoom compares to spec-driven development tools
 
 - **GitHub Spec Kit** — open-source spec-driven workflow with constitution + per-feature specify/plan/tasks. Strong durable layer at the constitution; per-feature artifacts decay post-merge. Source: https://github.com/github/spec-kit
 - **AWS Kiro** — IDE-bound feature spec workflow (requirements → design → tasks) plus steering files and hooks. Strong feature documentation; per-feature specs go static post-creation. Source: https://kiro.dev/docs/specs/feature-specs/
-- **Tessl** — package manager for agent skills, docs, rules, and evaluations. Strong per-skill knowledge distribution; no whole-system contract. Pivoted from per-file `spec-as-source` in early 2026. Source: https://docs.tessl.io/introduction-to-tessl/how-tessl-works
+- **BMAD** — workflow-with-personas approach (PM, Architect, Dev, QA) for per-feature ceremony. Strong role separation; no whole-system contract.
+- **Tessl** — pivoted from per-file `spec-as-source` toward per-skill context management. Same direction as VibeLoom, smaller scope.
 - **VibeLoom** — whole-system contract for one codebase, graph-connected from intent down to component, with explicit drift detection and reconciliation across every change.
 
 ## Honest limitations
 
-- v0.2 — public field evidence is still early. Adoption should begin in `vibe` mode or via brownfield `import` before a team commits to full governance.
+- v0.3 — public field evidence is still early. Adoption should begin in `vibe` mode or via brownfield `import` before a team commits to full governance.
 - DDD vocabulary in full modes (bounded contexts, ubiquitous language, aggregates) narrows the addressable market.
-- Contracts decay too if nobody maintains them. The context graph detects drift but does not prevent cultural neglect.
+- Contracts decay too if nobody maintains them. The Contract Graph detects drift but does not prevent cultural neglect.
+- The dark-factory trajectory is a 2-3 year bet, not a v0.3 promise. Today's agents are not yet trustworthy enough to leave alone with the code.

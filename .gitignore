@@ -20,3 +20,12 @@ dist/
 
 # Local-only announcement drafts (not for github)
 /announcement-*.md
+
+# Ephemeral eval/feedback outputs (vibeloom-dev)
+/reports/
+
+# Version-agnostic marketing material (not tracked)
+/pitch-deck/
+
+# Per-version release artifacts (rebuildable from source)
+/v*/dist/

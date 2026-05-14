@@ -19,8 +19,8 @@ vibeloom/
 ├── .git/  .github/  .claude/  .wrangler/
 │
 ├── site/                              # production site (Cloudflare-deployed; §3)
-├── vibeloom-dev/                      # dev skill (§4; design deferred)
-├── reports/                           # gitignored, ephemeral build/review outputs (§5)
+├── vibeloom-dev/                      # dev skill (§4)
+├── reports/                           # gitignored, ephemeral build/review outputs (§5; FLAT)
 ├── pitch-deck/                        # gitignored, version-agnostic marketing material
 │
 ├── v01/  v02/  v03/                   # FROZEN — legacy layout, do not touch
@@ -64,39 +64,78 @@ site/
 
 ---
 
-## 4. `vibeloom-dev/` — the dev skill (design deferred)
+## 4. `vibeloom-dev/` — the dev skill
 
-Design is **deferred** to a forthcoming intent-spec. The following constraints are known:
+A Claude/Codex skill bundle that develops vibeloom itself. Operates on any `vNN/` version (version passed as argument; default = latest mutable).
 
-**Owned content.**
-- The build/review prompts that today live at `v03/`: `build-engine.md`, `build-skill.md`, `review-canon.md`, `review-site.md`, `review-skill.md`. These are **version-aware** — one prompt, version passed as argument.
-- The template extractor `extract-templates.py` (unpacks `canon/vibeloom-templates.md` into individual files inside `skill/` to lighten context load).
-- Version-specific validators that today live at `v03/site/scripts/` (e.g., `check_consistency.py`, `check_site.py`).
+**Layout:**
+
+```
+vibeloom-dev/
+├── SKILL.md                            # manifest + command routing
+├── README.md
+├── tasks/                              # one prompt per operation (separate files)
+│   ├── init.md                         # layout-aware version init
+│   ├── eval.md                         # adversarial consistency check (target is parameter)
+│   ├── review.md                       # interactive walk of eval findings
+│   ├── generate-methodology.md         # split per target — each generate is meaningfully different
+│   ├── generate-implementation.md
+│   ├── generate-skill.md
+│   ├── generate-site.md
+│   ├── reconcile.md                    # interactive walk of generate output
+│   └── feedback.md                     # cross-agent critique (eval-only in v1)
+├── references/                         # load-on-demand reference docs for the LLM
+│   ├── vocabulary.md                   # decision vocabulary
+│   ├── targets.md                      # what each target is + which commands accept it
+│   ├── multi-agent.md                  # agent auto-detection + handoff conventions
+│   ├── interactive-loop.md             # just-in-time variant pattern for review/reconcile
+│   ├── layering.md                     # intent↔manifesto → methodology → impl+templates → skill+engine
+│   ├── file-layout-pointer.md          # short pointer to /file-layout.md at repo root
+│   ├── eval-passes-canon.md            # adversarial passes for canon eval
+│   ├── eval-passes-skill.md            # adversarial passes for skill eval
+│   └── eval-passes-site.md             # adversarial passes for site eval
+└── scripts/                            # executable helpers
+    ├── extract-templates.py            # template extractor (from vibeloom-templates.md)
+    ├── check_consistency.py            # site/canon consistency validator
+    └── check_site.py                   # site validator
+```
+
+**Commands.** `init`, `eval`, `review`, `generate <target>`, `reconcile`, `feedback <peer-agent> <target>`. See `vibeloom-dev/SKILL.md` for routing.
+
+**Targets.** `intent`, `manifesto`, `methodology`, `implementation`, `skill`, `site`, plus shortcuts `canon` (= intent + manifesto + methodology + implementation) and `all` (= canon + skill + site). `generate` accepts only `methodology`, `implementation`, `skill`, `site` (intent/manifesto are hand-authored).
 
 **Behavioral constraints.**
-- vibeloom-dev **reviews and proposes only.** It writes reports and discussion artifacts. It does **not** edit canon/skill/site/examples files without explicit user approval.
-- Cross-agent reviews: each adversarial review is a multi-agent pass. Both Claude and Codex run the same prompt and write to deterministic per-agent files; a consensus file is produced at the end. The skill auto-detects which agent is running. Cap at 3 rounds, then user manually reviews.
+- vibeloom-dev **reviews and proposes only.** It writes reports and discussion artifacts. It does **not** edit canon/skill/site/examples files without explicit user Accept (per item, in the interactive loop).
+- **Vibe-mode for v1.** No persistent state, no derivation graph, no formal staleness tracking. `generate` assumes upstream is consistent and does a full rewrite from current upstream. `eval` is the LLM-driven detector.
+- **Cross-agent collaboration**: each agent runs eval independently; `feedback <peer> <target>` lets either agent critique the other's eval. No synthesize/consensus command in v1.
+- **Interactive loops (review, reconcile)** may offer 1-3 variants per item, generated just-in-time in LLM context only (no sidecar files). User picks one; agent applies. See `references/interactive-loop.md`.
+- **Agent identity auto-detected** at runtime (Claude vs Codex env signatures). No `--as` flag.
+
+**No own canon, no own engine, no own versions.** vibeloom-dev lives at HEAD; git is the history. Future "full mode" with an engine would reuse `vNN/skill/engine/vibeloom_engine/` code.
 
 ---
 
-## 5. `reports/` — build/review outputs
+## 5. `reports/` — build/review outputs (FLAT)
 
 ```
 reports/                                 # gitignored, ephemeral, overwrite-on-rerun
-└── vNN/
-    ├── review-canon/
-    │   ├── claude.md                    # Claude's findings
-    │   ├── codex.md                     # Codex's findings
-    │   └── consensus.md                 # reconciled list, ACCEPT/REJECT/DEFER per finding
-    ├── review-site/    (same shape)
-    ├── review-skill/   (same shape)
-    ├── build-engine/   (same shape)
-    └── build-skill/    (same shape)
+├── eval-canon-claude.md                 # Claude's eval of canon
+├── eval-canon-codex.md                  # Codex's eval of canon
+├── eval-site-claude.md
+├── eval-skill-codex.md
+├── feedback-canon-claude-on-codex.md    # Claude's feedback on Codex's eval of canon
+├── feedback-canon-codex-on-claude.md    # Codex's feedback on Claude's eval of canon
+└── ...
 ```
 
-- All of `reports/` is gitignored.
-- Reports are **ephemeral** — deleted after fixes are applied. The audit trail of fixes lives in git history of the artifacts themselves.
-- Reruns **overwrite** the previous file for that (version, target, agent).
+- **Flat folder.** No per-version subfolders. No per-op subfolders. All eval/feedback files at the top of `reports/`.
+- Filename pattern:
+  - `eval-<target>-<agent>.md` — eval output (target ∈ canon, site, skill, ...; agent ∈ claude, codex).
+  - `feedback-<target>-<author>-on-<peer>.md` — feedback output (author = whoever wrote the critique; peer = whose eval was critiqued).
+- All gitignored.
+- Reports are **ephemeral** — deleted after fixes applied. Audit trail of fixes lives in git history of the artifacts themselves.
+- Reruns **overwrite** the previous file for that (target, agent) tuple.
+- Version-bumping does not version reports; the user wipes `reports/` or lets the new version's eval overwrite the old files.
 
 ---
 

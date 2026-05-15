@@ -33,7 +33,7 @@ All multi-agent files live in `reports/` (flat, at repo root, gitignored).
 | File | Pattern | Example |
 |---|---|---|
 | Own eval output | `eval-<target>-<self>.md` | `reports/eval-canon-claude.md` |
-| Another agent's eval output (read-only from your view) | `eval-<target>-<other>.md` | `reports/eval-canon-codex.md` |
+| Another agent's eval output (read-only from your view) | `eval-<target>-<peer>.md` | `reports/eval-canon-codex.md` |
 | Own feedback on someone else | `feedback-<target>-<self>-on-<peer>.md` | `reports/feedback-canon-claude-on-codex.md` |
 
 `<self>` and `<peer>` are agent names — whatever names the agents self-identify with.

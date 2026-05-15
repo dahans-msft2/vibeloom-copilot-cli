@@ -4,16 +4,18 @@ What each target keyword refers to, which commands accept it, and which files it
 
 ## Targets
 
-| Target | Files | `init` | `eval` | `review` | `generate` | `reconcile` | `feedback` |
-|---|---|---|---|---|---|---|---|
-| `intent` | `vNN/intent.md` | (init creates it) | ✓ | ✓ | ✗ (hand-authored) | ✓ | ✓ |
-| `manifesto` | `vNN/canon/codæ-manifesto.html` | ✗ | ✓ | ✓ | ✗ (hand-authored) | ✓ | ✓ |
-| `methodology` | `vNN/canon/vibeloom-methodology.md` | ✗ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `implementation` | `vNN/canon/vibeloom-implementation.md` + `vNN/canon/vibeloom-templates.md` | ✗ | ✓ | ✓ | ✓ (both files together) | ✓ | ✓ |
-| `skill` | `vNN/skill/**` (SKILL.md + references/ + tasks/ + artifacts/ + engine/) | ✗ | ✓ | ✓ | ✓ (extract + maybe engine regen) | ✓ | ✓ |
-| `site` | `vNN/site/**` (public/ + comparison-source.html) | ✗ | ✓ | ✓ | ✓ (HTML pages) | ✓ | ✓ |
-| `canon` (shortcut) | intent + manifesto + methodology + implementation | n/a | ✓ | ✓ | ✗ (no single command — use per-target) | ✓ | ✓ |
-| `all` (shortcut) | canon + skill + site | n/a | ✓ | ✓ | ✗ (no single command) | ✓ | ✓ |
+| Target | Files | `eval` | `review` | `generate` | `reconcile` | `feedback` |
+|---|---|---|---|---|---|---|
+| `intent` | `vNN/intent.md` | ✓ | ✓ | ✗ (hand-authored) | ✓ | ✓ |
+| `manifesto` | `vNN/canon/codæ-manifesto.html` | ✓ | ✓ | ✗ (hand-authored) | ✓ | ✓ |
+| `methodology` | `vNN/canon/vibeloom-methodology.md` | ✓ | ✓ | ✓ | ✓ | ✓ |
+| `implementation` | `vNN/canon/vibeloom-implementation.md` + `vNN/canon/vibeloom-templates.md` | ✓ | ✓ | ✓ (both files together) | ✓ | ✓ |
+| `skill` | `vNN/skill/**` (SKILL.md + references/ + tasks/ + artifacts/ + engine/) | ✓ | ✓ | ✓ (extract + maybe engine regen) | ✓ | ✓ |
+| `site` | `vNN/site/**` (public/ + comparison-source.html) | ✓ | ✓ | ✓ (HTML pages) | ✓ | ✓ |
+| `canon` (shortcut) | intent + manifesto + methodology + implementation | ✓ | ✓ | ✗ (no single command — use per-target) | ✓ | ✓ |
+| `all` (shortcut) | canon + skill + site | ✓ | ✓ | ✗ (no single command) | ✓ | ✓ |
+
+**`init` is not in this table** — it has no `<target>` argument. It operates on the whole version directory and incidentally creates `vNN/intent.md` as part of its interactive seeding/refactor step. See `tasks/init.md`.
 
 ## Why intent and manifesto can't be `generate`d
 

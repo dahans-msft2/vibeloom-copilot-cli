@@ -34,7 +34,23 @@ Full rewrite of `vNN/canon/vibeloom-methodology.md` from current intent + manife
    - For each Constraint (CST) in intent: identify how methodology encodes it (as a rule, an invariant, a gate, etc.).
    - For each principle in manifesto: identify how methodology operationalizes it (or marks it as manifesto-only philosophy).
 
-4. **Author the methodology.** Full rewrite. Write to `vNN/canon/vibeloom-methodology.md`. Use the same overall section structure as the prior version unless intent has changed in ways that warrant restructuring.
+4. **Author the methodology.** Full rewrite. Write to `vNN/canon/vibeloom-methodology.md`.
+
+   **Default section skeleton** (use this shape unless intent fundamentally changes the structure of vibeloom; deviations should be justified in the summary):
+
+   1. **Overview** — one-paragraph elevator pitch; cite intent's Vision.
+   2. **Concepts and entities** — the named things vibeloom traffics in (artifacts, items, IDs, layers, tiers, contracts, traces, decision-records).
+   3. **Tiered contract** — the canonical chain (intent-specs → product-specs ⇄ ux-specs → system-specs → context → code), derivation rules, what each tier owns.
+   4. **Modes** — vibe, pm, dev, ux, expert. Per-mode user ownership, delegation, contract-stack depth, public surface.
+   5. **Operations** — the verbs (init, import, generate, eval, review, reconcile, approve, status). Per-operation purpose, preconditions, postconditions.
+   6. **Approval model** — gates per tier per mode; the auto-advance rule.
+   7. **Status taxonomy** — current, stale, uncovered, dangling, drifted, obsolete (or whatever set intent calls for).
+   8. **Verification ladder** — decidable / mechanical / heuristic; what gets checked at each rung.
+   9. **Trace classification** — trace families (approval, generation, eval, code-sync, decision, import) and decision-trace record types (IDR, PDR, UDR, ADR, general).
+   10. **Governance semantics** — what users approve vs what's regenerated; layer-aware constraints; vibe-to-full upgrade.
+   11. **Glossary** (optional) — terse definitions of the named entities for quick reference.
+
+   For each Capability (CAP) and Constraint (CST) in intent: identify which section(s) it manifests in, and ensure the resulting prose expresses it (without verbatim CAP-#### references in body prose — IDs are intent-internal). For each principle in manifesto: identify which section operationalizes it (or mark it as manifesto-only).
 
 5. **Authority discipline.** Methodology owns WHAT (concepts, operations, modes, status semantics). It should NOT contain runtime implementation details (those belong in implementation), schema tables (implementation), file paths (implementation or file-layout.md), or marketing language (site). If you're tempted to write any of those, stop and reconsider.
 

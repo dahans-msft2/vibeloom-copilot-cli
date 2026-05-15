@@ -78,7 +78,7 @@ Full rewrite of `vNN/canon/vibeloom-implementation.md` AND `vNN/canon/vibeloom-t
 
 ## Invariants
 
-- After this task: `python3 vibeloom-dev/scripts/extract-templates.py --check vNN/canon/vibeloom-templates.md --dest /tmp/probe-extract/` succeeds (extractor parses every fence cleanly, with no malformed blocks).
+- After this task: `python3 vibeloom-dev/scripts/extract-templates.py --source vNN/canon/vibeloom-templates.md --dest /tmp/probe-extract/` succeeds end-to-end (extractor parses every fence cleanly and materializes them, with no malformed blocks). Note: a successful run + a subsequent `--check` against the same `--dest` would also succeed and prove zero drift.
 - Template inventory matches implementation's operation/artifact lists.
 
 ## Failure modes
@@ -93,7 +93,7 @@ Full rewrite of `vNN/canon/vibeloom-implementation.md` AND `vNN/canon/vibeloom-t
 
 - After step 4: implementation.md is valid markdown.
 - After step 6: templates.md is valid markdown.
-- After step 6: run `python3 vibeloom-dev/scripts/extract-templates.py --check vNN/canon/vibeloom-templates.md` (or the equivalent dry-run command) — must succeed.
+- After step 6: run `python3 vibeloom-dev/scripts/extract-templates.py --source vNN/canon/vibeloom-templates.md --dest /tmp/probe-extract/` end-to-end — must succeed (this exercises the extractor as a parse validator; success means every fenced block is well-formed and writeable).
 - Every template destination path in templates.md is one of: `SKILL.md`, `subagent-prompt.md`, `references/<name>.md`, `tasks/<name>.md`, `artifacts/<tier>/<name>.md`.
 - Every operation listed in implementation's "operations" section has a corresponding `template:tasks/<op>.md` fence in templates.md.
 - Every artifact tier in implementation has at least one `template:artifacts/<tier>/...` fence in templates.md.

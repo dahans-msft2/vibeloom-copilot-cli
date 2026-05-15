@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """
-VibeLoom site static integrity checker (SITE-10 mitigation).
+VibeLoom site static integrity checker.
+
+Version-agnostic. Operates on whatever `--root` you point it at — the HTML
+structure of a vibeloom site (`index.html`, `methodology.html`,
+`implementation.html`, `codæ-manifesto.html`, `styles.css`, `sitemap.xml`,
+`robots.txt`, `llms.txt`) is invariant across versions.
 
 Validates:
   - Internal local links resolve (relative file paths and absolute /paths under site root).
   - Fragment links (#anchor) target existing id="anchor" or name="anchor" attributes.
   - Each public HTML page declares <link rel="canonical">.
   - sitemap.xml URLs each map to an existing page on disk.
-  - llms.txt is not empty and mentions a current-version anchor (`v0.3` / `v03`).
+  - llms.txt is not empty.
+  - llms.txt mentions the expected version anchor (only when --version is passed).
   - No duplicate <title> across distinct public pages.
 
 Exit code:
@@ -15,7 +21,12 @@ Exit code:
   1 = defects found (printed to stderr)
 
 Usage:
-  python3 site/scripts/check_site.py [--root site/public]
+  python3 vibeloom-dev/scripts/check_site.py --root vNN/site/public [--version vNN]
+
+  --root is REQUIRED (no implicit default, since the script lives in vibeloom-dev/
+  but operates on any vNN/site/public).
+  --version is OPTIONAL: when provided (e.g. `--version v03` or `v04`), the script
+  also checks that llms.txt mentions that anchor.
 """
 
 from __future__ import annotations
@@ -117,7 +128,7 @@ def page_for_path(root: Path, target: Path) -> Path | None:
 # ---------------------------- checks ---------------------------- #
 
 
-def check_site(root: Path) -> list[str]:
+def check_site(root: Path, version: str | None = None) -> list[str]:
     defects: list[str] = []
 
     html_pages = sorted(root.glob("*.html"))
@@ -197,25 +208,39 @@ def check_site(root: Path) -> list[str]:
         text = llms.read_text(encoding="utf-8")
         if not text.strip():
             defects.append("llms.txt: empty")
-        elif not re.search(r"v0?\.?3", text):
-            defects.append("llms.txt: no v0.3 / v03 anchor — possibly stale")
+        elif version is not None:
+            # Only check version anchor when caller specified --version.
+            # Pattern accepts "v04", "v0.4", or "v0.4.0" forms (numeric only).
+            # E.g. version="v04" → matches v04 or v0.4 or v0.4.X in llms.txt.
+            m = re.fullmatch(r"v0?(\d+)", version)
+            if m:
+                vnum = m.group(1)
+                # Match either "v<n>", "v0<n>", "v0.<n>", or "v0.<n>.<x>"
+                pattern = rf"v0?\.?{vnum}\b"
+                if not re.search(pattern, text):
+                    defects.append(f"llms.txt: no {version} anchor (pattern: {pattern}) — possibly stale")
 
     return defects
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(description="VibeLoom site static integrity checker (version-agnostic).")
     ap.add_argument(
         "--root",
-        default=str(Path(__file__).resolve().parent.parent / "public"),
-        help="Site root (default: ../public relative to this script)",
+        required=True,
+        help="Path to the site public/ directory to check (e.g., v03/site/public or v04/site/public).",
+    )
+    ap.add_argument(
+        "--version",
+        default=None,
+        help='Optional: expected version anchor in llms.txt (e.g., "v03" or "v04"). If omitted, llms.txt version-anchor check is skipped.',
     )
     args = ap.parse_args()
     root = Path(args.root).resolve()
     if not root.is_dir():
         print(f"Site root does not exist: {root}", file=sys.stderr)
         return 1
-    defects = check_site(root)
+    defects = check_site(root, version=args.version)
     if defects:
         print(f"Site check FAILED with {len(defects)} defect(s):", file=sys.stderr)
         for d in defects:

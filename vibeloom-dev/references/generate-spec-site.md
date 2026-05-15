@@ -39,13 +39,18 @@ Produce/update `vNN/site/public/**` HTML files from current methodology + implem
    - Read `vNN/site/public/styles.css` — this defines the visual language. Do NOT regenerate styles.css unless the user explicitly asks. Pages must use existing classes/elements.
    - Read one existing page (e.g., index.html) to understand layout patterns: header, nav, main content structure, footer, OG meta tags. New pages should match these patterns.
 
-4. **Generate / update each page.**
-   - For each page in the plan:
+4. **Generate / update each page** (EXCEPT the manifesto — handled in step 4.5).
+   - For each non-manifesto page in the plan:
      - Determine content: derived from which canon source, what level of detail (full / abbreviated / linked).
      - Author the HTML. Use existing layout patterns + existing CSS classes. Inline only what's unique to the page.
      - Keep title, meta description, OG tags consistent with the page's purpose.
-     - If the page is the manifesto, copy `vNN/canon/codæ-manifesto.html` literally to `vNN/site/public/codæ-manifesto.html` (manifesto is hand-authored design-heavy HTML; site just serves it).
    - Write each updated page in place.
+
+4.5. **Copy the manifesto byte-for-byte** (special-cased — never LLM-rewritten):
+   ```bash
+   cp vNN/canon/codæ-manifesto.html vNN/site/public/codæ-manifesto.html
+   ```
+   The manifesto is hand-authored design-heavy HTML. The site serves it verbatim. Do NOT use the Write or Edit tool on `vNN/site/public/codæ-manifesto.html` — only `cp` (or equivalent file-copy mechanism). Any LLM authoring here breaks the design.
 
 5. **Update `sitemap.xml`** and `robots.txt` to reflect the current page set. Update `llms.txt` (if present — the AI-discovery file) with a current summary.
 
@@ -77,7 +82,7 @@ Produce/update `vNN/site/public/**` HTML files from current methodology + implem
 
 - **Marketing register.** Pages may simplify, abbreviate, use friendlier language. They MUST NOT contradict canon. If methodology says "modes are vibe/pm/dev/ux/expert", the site can't say "modes are casual/professional".
 - **No new visual design.** Reuse existing styles.css and existing layout patterns. If a new style is genuinely needed, surface to the user and ask before generating.
-- **Manifesto is byte-copied.** Don't regenerate manifesto HTML; copy from canon.
+- **Manifesto is byte-copied with `cp`.** Never use Write or Edit on `vNN/site/public/codæ-manifesto.html`. The validation gate at the end of this spec enforces byte-identity with `vNN/canon/codæ-manifesto.html` (use `diff` to verify zero output).
 - **No JavaScript dependencies.** The site is static HTML + CSS. No build step beyond authoring + serving.
 - **No external assets.** All images, fonts, etc. live in `vNN/site/public/` (or are loaded from canonical CDNs already in use, like Google Fonts if the site uses them).
 - **OG image source lives at root site/, not in vNN/site/.** Don't generate or modify the OG image generator; only consume what root site/ provides.

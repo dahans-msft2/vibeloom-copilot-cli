@@ -10,22 +10,30 @@ Critique a peer agent's eval. Reads the peer's eval file, evaluates the findings
 
 ## Inputs
 
-- `<peer-agent>` (required) — the agent name whose eval you're critiquing (e.g., `claude`, `codex`, or whatever name appears in the peer's `reports/eval-<target>-<peer>.md` file). The current agent (self-identified per `references/multi-agent.md`) is the AUTHOR of the critique.
+- `<peer>` (required) — the agent name whose eval you're critiquing (e.g., `claude`, `codex`, or whatever name appears in the peer's `reports/eval-<target>-<peer>.md` file). The current agent (self-identified per `references/multi-agent.md`) is the AUTHOR of the critique.
 - `<target>` (required) — the target whose eval is being critiqued: one of `canon`, `intent`, `manifesto`, `methodology`, `implementation`, `skill`, `site`.
 - `--version <vNN>` (optional, default = latest mutable).
 
 ## Preconditions
 
-- The peer's eval file exists: `reports/eval-<target>-<peer-agent>.md`.
-- The current agent's identity is detectable AND is different from `<peer-agent>`.
+- The peer's eval file exists: `reports/eval-<target>-<peer>.md`.
+- The current agent's own name is resolvable per `references/multi-agent.md` AND is different from `<peer>`.
 - `reports/` directory exists.
 
 ## Steps
 
-1. **Validate peer identity.**
-   - Detect current agent. If equal to `<peer-agent>`, halt: "You're <X> giving feedback on <X>'s own eval — that's a self-review, not cross-agent feedback. Use `eval <target>` to re-eval, or specify the other agent."
+0. **Resolve own agent name.** Per `references/multi-agent.md`:
+   1. If `VIBELOOM_AGENT_NAME` env var is set, use it.
+   2. Else if the skill install has a hardcoded name, use it.
+   3. Else ask the user: "What lowercase, hyphenated name should I use to identify my outputs in this repo? (e.g., `claude`, `codex`, `cursor`, `gemini`)". Use the answer for the session.
+   Bind this to `<self>` for the rest of the task.
 
-2. **Load peer's eval file.** `reports/eval-<target>-<peer-agent>.md`. Parse findings into a list.
+0.5. **Ensure `reports/` exists.** Run `mkdir -p reports/` from the repo root. Idempotent; gitignored per `/file-layout.md §5`.
+
+1. **Validate distinctness.**
+   - If `<self>` equals `<peer>`, halt: "You're <self> giving feedback on <self>'s own eval — that's a self-review, not cross-agent feedback. Use `eval <target>` to re-eval, or specify a different peer agent."
+
+2. **Load peer's eval file.** `reports/eval-<target>-<peer>.md`. Parse findings into a list.
 
 3. **Independently re-read the target.**
    - Resolve target → file list (same logic as `eval`).
@@ -49,10 +57,10 @@ Critique a peer agent's eval. Reads the peer's eval file, evaluates the findings
    - Where peer's framing + your reframing could combine into a stronger statement, note it.
    - Don't actually write the synthesis (no consensus.md in v1) — just flag the opportunities.
 
-7. **Write the feedback file** to `reports/feedback-<target>-<self>-on-<peer-agent>.md`. Overwrite any existing.
+7. **Write the feedback file** to `reports/feedback-<target>-<self>-on-<peer>.md`. Overwrite any existing.
 
    File structure:
-   - Frontmatter (author=self, peer=peer-agent, target, version, date).
+   - Frontmatter: `self: <self>`, `peer: <peer>`, `target: <target>`, `version: vNN`, `date: <ISO timestamp>`.
    - **Summary of agreement** — % of peer findings you agree with, top 3 you most strongly agree with.
    - **Disagreements** — list, each with reason.
    - **New findings** (MISS-* ids) — full eval-format findings.
@@ -61,11 +69,11 @@ Critique a peer agent's eval. Reads the peer's eval file, evaluates the findings
 8. **Print summary to user.**
    - File written.
    - Counts: peer findings reviewed, agreed with, disagreed with, partially agreed; new findings added.
-   - Suggested next: open the feedback file, then "you may also want to run `feedback <self> <target>` in <peer-agent> for the reverse direction" OR "you have enough perspective — review the canon decisions yourself."
+   - Suggested next: open the feedback file, then "you may also want to run `feedback <self> <target>` in <peer> for the reverse direction" OR "you have enough perspective — review the canon decisions yourself."
 
 ## Output
 
-- `reports/feedback-<target>-<self>-on-<peer-agent>.md`.
+- `reports/feedback-<target>-<self>-on-<peer>.md`.
 - A printed summary.
 
 ## Postconditions
@@ -83,22 +91,22 @@ Critique a peer agent's eval. Reads the peer's eval file, evaluates the findings
 
 ## Invariants
 
-- The feedback file's `author` field equals the current agent's identity.
-- The `peer` field equals the `<peer-agent>` argument.
+- The feedback file's `self` field equals `<self>` (resolved in Step 0).
+- The `peer` field equals the `<peer>` argument.
 - For every peer finding id, there's a corresponding assessment in the feedback file (agree / disagree / partially agree).
 - For every MISS-* finding, the finding meets the eval quality bar.
 
 ## Failure modes
 
-- **Peer file not found.** Halt: "No eval from <peer-agent> for <target>. The peer needs to run `vibeloom-dev eval <target>` first."
+- **Peer file not found.** Halt: "No eval from <peer> for <target>. The peer needs to run `vibeloom-dev eval <target>` first."
 - **Peer file malformed.** Halt: "Peer's eval file at <path> doesn't parse. Show the user the parse error; they may need to ask the peer to re-eval."
-- **Current agent equals peer agent.** Halt per step 1.
+- **`<self>` equals `<peer>`.** Halt per step 1.
 - **Target files have changed since peer evaluated.** (User edited canon between eval and feedback.) Surface to user: "Target has changed since peer's eval. My critique will be against the current state, not the state peer evaluated. Proceed? (y/n)". Default: proceed but note in the feedback file's frontmatter.
 
 ## Validation gates
 
 - After step 7: feedback file is valid markdown with required frontmatter and sections.
-- The filename matches pattern `feedback-<target>-<self>-on-<peer-agent>.md`.
+- The filename matches pattern `feedback-<target>-<self>-on-<peer>.md`.
 - Every peer finding id appears in the file's "Summary of agreement" or "Disagreements" section (no peer finding is silently dropped).
 - Every MISS-* finding has all eval-format fields.
 - `git status --short reports/` shows only the new/updated feedback file.

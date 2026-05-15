@@ -87,7 +87,6 @@ vibeloom-dev/
 │   ├── multi-agent.md                  # N-agent coordination (self-identify by name)
 │   ├── interactive-loop.md             # just-in-time variant pattern for review/reconcile
 │   ├── layering.md                     # intent↔manifesto → methodology → impl+templates → skill+engine
-│   ├── file-layout-pointer.md          # short pointer to /file-layout.md at repo root
 │   ├── eval-passes-canon.md            # adversarial passes for canon eval
 │   ├── eval-passes-skill.md            # adversarial passes for skill eval
 │   ├── eval-passes-site.md             # adversarial passes for site eval
@@ -97,13 +96,12 @@ vibeloom-dev/
 │   └── generate-spec-site.md           # generate procedure for site HTML
 └── scripts/                            # executable helpers
     ├── extract-templates.py            # template extractor (from vibeloom-templates.md)
-    ├── check_consistency.py            # site/canon consistency validator
-    └── check_site.py                   # site validator
+    └── check_site.py                   # version-agnostic site HTML integrity checker
 ```
 
 **Pattern.** Tasks own procedure; references own per-target specifics or shared doctrine. `eval` and `generate` are dispatchers that load the right `references/<op>-{passes,spec}-<target>.md` based on the target arg.
 
-**Commands.** `init`, `eval`, `review`, `generate <target>`, `reconcile`, `feedback <peer-agent> <target>`. See `vibeloom-dev/SKILL.md` for routing.
+**Commands.** `init`, `eval`, `review`, `generate <target>`, `reconcile`, `feedback <peer> <target>`. See `vibeloom-dev/SKILL.md` for routing.
 
 **Targets.** `intent`, `manifesto`, `methodology`, `implementation`, `skill`, `site`, plus shortcuts `canon` (= intent + manifesto + methodology + implementation) and `all` (= canon + skill + site). `generate` accepts only `methodology`, `implementation`, `skill`, `site` (intent/manifesto are hand-authored).
 
@@ -134,7 +132,7 @@ reports/                                 # gitignored, ephemeral, overwrite-on-r
 - **Flat folder.** No per-version subfolders. No per-op subfolders. All eval/feedback files at the top of `reports/`.
 - Filename pattern:
   - `eval-<target>-<agent>.md` — eval output (target ∈ canon, site, skill, ...; agent ∈ claude, codex).
-  - `feedback-<target>-<author>-on-<peer>.md` — feedback output (author = whoever wrote the critique; peer = whose eval was critiqued).
+  - `feedback-<target>-<self>-on-<peer>.md` — feedback output (`<self>` = the author of the critique; `<peer>` = whose eval was critiqued).
 - All gitignored.
 - Reports are **ephemeral** — deleted after fixes applied. Audit trail of fixes lives in git history of the artifacts themselves.
 - Reruns **overwrite** the previous file for that (target, agent) tuple.
@@ -262,4 +260,4 @@ v04/
 - The skill loader is pointed at `vNN/skill/`.
 - The skill imports the engine via `from vibeloom_engine.X import Y` — this works because `skill/engine/` is a proper Python package.
 - The site has no runtime dependency on canon or skill — it is a static export. Build inputs that *derive* from canon (e.g., `comparison-source.html`) are version-scoped under `vNN/site/`.
-- vibeloom-dev operates on a version by reading `vNN/canon/`, `vNN/skill/`, `vNN/site/`, `vNN/examples/`, and writing to `reports/vNN/...`.
+- vibeloom-dev operates on a version by reading `vNN/canon/`, `vNN/skill/`, `vNN/site/`, `vNN/examples/`, and writing to `reports/` (flat — no per-version subfolder; the version is encoded in the file content, not the path).

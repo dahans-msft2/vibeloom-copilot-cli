@@ -1,6 +1,6 @@
 # Task: review
 
-Interactive walk of findings from `eval`. Per finding, present the proposed fix(es), recommend one, wait for user decision, apply on Accept. Never auto-applies.
+Interactive walk of findings from `eval`. Per finding, present the proposed fix(es), recommend one, wait for user decision, apply on `preserve_contract`. Never auto-applies. Uses the unified decision vocabulary defined in `references/vocabulary.md`.
 
 ## Purpose
 
@@ -31,42 +31,49 @@ Interactive walk of findings from `eval`. Per finding, present the proposed fix(
    a. **Display.** Show: id, severity, location, issue, why it matters, downstream impact.
 
    b. **Present fix options.** Show the proposed fixes from the findings file (the eval already produced 1-3). If, on reading the finding in detail, the agent sees a better way to slice the fix space (e.g., "the eval proposed one fix but there are actually two distinct approaches"), it can extend the variants to 2-3 just-in-time. Per `references/vocabulary.md`, the user's available actions are:
-      - **Accept variant N** (apply the chosen fix patch to the target artifact)
-      - **Edit** (user provides their own patch)
-      - **Defer** (skip this finding; record decision; move on)
-      - **Reject** (mark not-a-bug or advisory→ignored; record decision; move on)
+      - **`preserve_contract: variant-N`** (apply the chosen fix variant to the target artifact)
+      - **`amend_contract`** (the finding points at an upstream defect; don't fix the downstream artifact — flag for upstream amendment and revert this artifact if any edit was speculatively applied)
+      - **`preserve_existing`** (reject the fix; mark not-a-bug or advisory→ignored; keep current state unchanged)
+      - **`user_defined`** (user supplies their own patch, inline or pre-edited)
+      - **`defer`** (skip this finding; no decision recorded persistently in v1; move on)
 
-   c. **Show the recommended action.** One of the variants OR Edit OR Reject, with one-paragraph rationale. (Defer is never recommended — agents recommend a fix or rejection, not avoidance.)
+   c. **Show the recommended action.** One of the `preserve_contract: variant-N` options OR `amend_contract`, with one-paragraph rationale. Per `references/vocabulary.md`, recommendations are NEVER `preserve_existing`, `user_defined`, or `defer` — those are user-initiated exceptions, not agent suggestions.
 
    d. **Wait for user decision.** No timeout. If the user wants to discuss or modify the recommendation, do so before applying.
 
-   e. **On Accept variant N:**
+   e. **On `preserve_contract: variant-N`:**
       - Apply ONLY the patch for that variant. Use the Edit tool — never Write the whole file, never auto-format unrelated areas.
       - Show the user the diff that was applied.
       - **Verify the patch landed cleanly** (the target file still parses, doesn't have garbage left over from an Edit collision).
 
-   f. **On Edit:** the user provides their own patch (either inline or by pointing to a file they just edited manually). Show the diff. Skip the apply step (user already did it).
+   f. **On `amend_contract`:**
+      - Do NOT modify the target artifact. The finding indicates the upstream is wrong, not the downstream.
+      - Print: "Flagged for upstream amendment. Edit `<upstream artifact>` (intent / manifesto / methodology / implementation as applicable), then re-run `generate <downstream>` followed by `reconcile <downstream>`."
+      - Continue to next finding.
 
-   g. **On Defer / Reject:** record the decision verbally in the response (no persistent decision file in v1).
+   g. **On `user_defined`:** the user provides their own patch (either inline or by pointing to a file they just edited manually). Show the diff. Skip the apply step (user already did it).
 
-   h. **After every 5 accepted/edited fixes,** suggest the user run `vibeloom-dev eval <target>` again to see if those fixes resolved related findings or introduced new ones. Don't auto-rerun; just suggest.
+   h. **On `preserve_existing` or `defer`:** record the decision verbally in the response (no persistent decision file in v1).
+
+   i. **After every 5 applied fixes** (`preserve_contract:variant-N` or `user_defined`), suggest the user run `vibeloom-dev eval <target>` again to see if those fixes resolved related findings or introduced new ones. Don't auto-rerun; just suggest.
 
 4. **At end of walk:**
-   - Print a disposition summary: N findings walked, X accepted, Y edited, Z deferred, W rejected.
-   - List the deferred items so the user has them.
-   - Suggest next: `git diff` to inspect, `git add ... && git commit`, then potentially `vibeloom-dev eval <target>` for a sanity re-run, OR `vibeloom-dev generate <downstream-target>` if upstream changes warrant regenerating downstream.
+   - Print a disposition summary: N findings walked, broken down by decision verb: `preserve_contract:variant-N`, `amend_contract`, `preserve_existing`, `user_defined`, `defer`.
+   - List the `amend_contract` items — these are the upstream artifacts the user should edit and regenerate from.
+   - List the `defer` items so the user has them as TODO.
+   - Suggest next: `git diff` to inspect applied fixes, `git add ... && git commit`, then potentially `vibeloom-dev eval <target>` for a sanity re-run, OR `vibeloom-dev generate <downstream-target>` if upstream changes (via `amend_contract` or otherwise) warrant regenerating downstream.
 
 ## Output
 
-- Modified files under `vNN/canon/`, `vNN/skill/`, `vNN/site/`, or `vNN/intent.md`, per the accepted fixes.
+- Modified files under `vNN/canon/`, `vNN/skill/`, `vNN/site/`, or `vNN/intent.md`, per the `preserve_contract` / `user_defined` decisions.
 - A printed walk summary.
 - No new persistent files (decisions are not persisted in v1).
 
 ## Postconditions
 
-- Every accepted/edited fix has been applied as a single, scoped edit.
-- The user has seen every finding's disposition (Accept / Edit / Defer / Reject).
-- The working tree shows only the accepted edits plus any pre-existing dirty state.
+- Every `preserve_contract` / `user_defined` fix has been applied as a single, scoped edit.
+- The user has seen every finding's disposition (one of the five verbs from `references/vocabulary.md`).
+- The working tree shows only the applied edits plus any pre-existing dirty state.
 
 ## Constraints
 
@@ -78,19 +85,19 @@ Interactive walk of findings from `eval`. Per finding, present the proposed fix(
 
 ## Invariants
 
-- After the walk, every finding that was Accept'd has a corresponding diff in the working tree (or was already applied if the user pre-edited).
-- No finding is silently skipped — every one gets a Disposition.
+- After the walk, every finding with disposition `preserve_contract:variant-N` or `user_defined` has a corresponding diff in the working tree.
+- No finding is silently skipped — every one gets exactly one of the five vocabulary-defined dispositions.
 
 ## Failure modes
 
 - **Findings file not found.** Halt: "No findings for <target>. Run `vibeloom-dev eval <target>` first."
 - **Findings file is malformed.** Halt with the specific parse error and which finding it's in.
-- **A proposed fix doesn't apply cleanly** (e.g., the target file changed since eval ran). Halt the loop, show the user the conflict, ask whether to: (a) rerun eval first, (b) skip this finding, (c) let the user manually resolve.
-- **The accepted fix introduces a new problem** that the user spots immediately. Revert the patch (the user does this — agent doesn't auto-revert), mark the finding Edit or Defer, continue.
+- **A proposed fix doesn't apply cleanly** (e.g., the target file changed since eval ran). Halt the loop, show the user the conflict, ask whether to: (a) rerun eval first, (b) `defer` this finding, (c) `user_defined` (user resolves manually).
+- **The applied fix introduces a new problem** that the user spots immediately. The user reverts the patch manually (agent doesn't auto-revert), the finding's disposition becomes `user_defined` (user fixed it differently) or `defer` (skipping for now), continue.
 - **The user pauses mid-walk.** Exit cleanly. Tell the user how to resume: "Re-run `vibeloom-dev review <target>` and ask me to skip to <last finding id>."
 
 ## Validation gates
 
-- After each accepted fix: target file still parses (HTML files: well-formed; Markdown: still valid; Python: imports cleanly).
+- After each `preserve_contract:variant-N` or `user_defined` fix: target file still parses (HTML files: well-formed; Markdown: still valid; Python: imports cleanly).
 - After the walk: `git status --short` shows changes only under `vNN/` (or the agreed target files), no unexpected modifications.
-- After the walk: the printed summary's count of Accept/Edit/Defer/Reject equals the total number of findings.
+- After the walk: the sum of dispositions across all five verbs equals the total number of findings.

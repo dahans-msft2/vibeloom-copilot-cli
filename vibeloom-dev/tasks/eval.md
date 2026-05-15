@@ -6,7 +6,7 @@ Adversarial consistency/coherence check across vibeloom artifacts. Produces a pr
 
 - Detect drift, contradiction, authority violation, vagueness, and stale claims across the targeted artifacts.
 - Produce a findings packet the user can walk interactively with `review`.
-- Support the multi-agent workflow: each agent (Claude, Codex) writes its own findings file; the other agent can later `feedback <peer> <target>` to critique.
+- Support the multi-agent workflow: each agent writes its own findings file (named with its self-identified name per `references/multi-agent.md`); peers can later run `feedback <peer> <target>` to critique each other.
 
 ## Inputs
 
@@ -17,10 +17,18 @@ Adversarial consistency/coherence check across vibeloom artifacts. Produces a pr
 ## Preconditions
 
 - The target's source files exist under `vNN/`.
-- The current agent identity is detectable (see `references/multi-agent.md`).
-- `reports/` directory exists at repo root (create if not — it's gitignored).
+- The current agent's own name is resolvable per `references/multi-agent.md` (env var, hardcoded install, or ask user — Step 0 below).
+- `reports/` directory exists at repo root (create with `mkdir -p reports/` if not — it's gitignored).
 
 ## Steps
+
+0. **Resolve own agent name.** Per `references/multi-agent.md`:
+   1. If `VIBELOOM_AGENT_NAME` env var is set, use it.
+   2. Else if the skill install has a hardcoded name, use it.
+   3. Else ask the user: "What lowercase, hyphenated name should I use to identify my outputs in this repo? (e.g., `claude`, `codex`, `cursor`, `gemini`)". Use the answer for the session.
+   Bind this to `<self>` for the rest of the task. All filenames written below use this name.
+
+0.5. **Ensure `reports/` exists.** Run `mkdir -p reports/` from the repo root. The directory is gitignored (per `/file-layout.md §5`); creating it is idempotent.
 
 1. **Resolve target → file list.**
    - `intent` → `vNN/intent.md`
@@ -70,7 +78,7 @@ Adversarial consistency/coherence check across vibeloom artifacts. Produces a pr
    - Target, version, agent identity, file written.
    - Count of findings by severity.
    - Top 3 findings (id + one-line summary).
-   - Suggested next: `vibeloom-dev review <target>` to walk findings, OR (if multi-agent is desired) "run `vibeloom-dev eval <target>` in the other agent, then `feedback <other-agent> <target>` here."
+   - Suggested next: `vibeloom-dev review <target>` to walk findings, OR (if multi-agent perspective is desired) "run `vibeloom-dev eval <target>` in another agent (in its own environment), then `feedback <that-agent-name> <target>` here to critique its findings."
 
 ## Output
 
@@ -99,7 +107,7 @@ Adversarial consistency/coherence check across vibeloom artifacts. Produces a pr
 
 - **Target files missing.** Halt with the specific missing path. Suggest `init --version vNN` if vNN doesn't exist, or check the layout per `/file-layout.md`.
 - **Reference pass file missing.** Halt with "missing references/eval-passes-<X>.md — this skill is incomplete; please report." This shouldn't happen in a healthy install.
-- **Agent identity undetectable.** Ask the user: "Running in Claude or Codex?". Use the answer.
+- **Agent name not resolvable from env or install.** Step 0 falls back to asking the user. If the user declines or provides an invalid name (non-lowercase, contains whitespace, or matches an existing peer name in `reports/`), halt and surface the constraint.
 - **More than ~20 findings.** That's expected for first-eval of a fresh version. Proceed; the user will walk Critical/High first via `review`.
 
 ## Validation gates

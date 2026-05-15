@@ -1,12 +1,16 @@
 # vibeloom-dev
 
-A Claude / Codex skill that helps develop vibeloom itself.
+A multi-agent skill that helps develop vibeloom itself.
+
+> This README is for repo browsers / humans. The canonical skill manifest (loaded by Claude/Codex/other skill runtimes) is [`SKILL.md`](SKILL.md); the operational prompts live in `tasks/` and `references/`.
 
 ## What it does
 
 Dogfoods vibeloom's own intent/product/system/code split — eval/review/generate/reconcile — to develop vibeloom's canon, skill, and site. Vibe-mode for v1: no persistent state, no derivation graph, no formal staleness tracking. Eval is the LLM-driven detector; generate is a full rewrite from current upstream.
 
-Designed for the workflow where the user runs Claude Code in one terminal and Codex in another, and wants the two agents to independently eval the same canon and critique each other.
+Designed for the workflow where the user runs two (or more) agents in separate environments — e.g., Claude Code in one terminal and Codex in another — and wants each agent to independently eval the same canon and critique the others' findings. The repo filesystem is the shared substrate; agents self-identify by name (see [references/multi-agent.md](references/multi-agent.md)).
+
+**vibeloom-dev does not yet have its own intent.md or canon.** It's vibe-mode for v1 — dev-skill helps build/eval vibeloom but isn't itself dogfooded against vibeloom-dev. Self-application is future work.
 
 ## Commands (quick reference)
 
@@ -16,7 +20,7 @@ vibeloom-dev eval [<target>]                          # default target: canon
 vibeloom-dev review [<target>]                        # walks findings from latest eval
 vibeloom-dev generate <methodology|implementation|skill|site>
 vibeloom-dev reconcile [<target>]                     # walks recent generate output
-vibeloom-dev feedback <peer-agent> <target>           # claude/codex
+vibeloom-dev feedback <peer> <target>           # e.g. peer = "claude", "codex", "cursor"
 ```
 
 Common flags: `--version vNN` (default: latest mutable), `--from vNN` (init source).
@@ -42,13 +46,14 @@ See [SKILL.md](SKILL.md) for the full command/routing/guardrails reference. See 
 
 ## Multi-agent flow
 
-See [references/multi-agent.md](references/multi-agent.md). Short version:
+See [references/multi-agent.md](references/multi-agent.md). Short version (using `claude` and `codex` as example agent names — substitute whatever names your agents self-identify with):
 
-1. `vibeloom-dev eval canon` in Claude → `reports/eval-canon-claude.md`
-2. `vibeloom-dev eval canon` in Codex → `reports/eval-canon-codex.md`
-3. `vibeloom-dev feedback codex canon` in Claude → `reports/feedback-canon-claude-on-codex.md`
-4. `vibeloom-dev feedback claude canon` in Codex → `reports/feedback-canon-codex-on-claude.md`
-5. User reads everything, decides.
+1. `vibeloom-dev eval canon` in agent A → `reports/eval-canon-claude.md`
+2. `vibeloom-dev eval canon` in agent B → `reports/eval-canon-codex.md`
+3. `vibeloom-dev feedback codex canon` in agent A → `reports/feedback-canon-claude-on-codex.md`
+4. `vibeloom-dev feedback claude canon` in agent B → `reports/feedback-canon-codex-on-claude.md`
+5. (Optionally repeat with a third agent for a third perspective.)
+6. User reads everything, decides.
 
 All output to gitignored `reports/` at repo root. Flat, ephemeral, overwritten on rerun.
 

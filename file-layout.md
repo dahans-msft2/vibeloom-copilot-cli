@@ -74,31 +74,34 @@ A Claude/Codex skill bundle that develops vibeloom itself. Operates on any `vNN/
 vibeloom-dev/
 ├── SKILL.md                            # manifest + command routing
 ├── README.md
-├── tasks/                              # one prompt per operation (separate files)
+├── tasks/                              # one prompt per operation (parameterized on target)
 │   ├── init.md                         # layout-aware version init
-│   ├── eval.md                         # adversarial consistency check (target is parameter)
+│   ├── eval.md                         # adversarial consistency check (loads eval-passes-<target> from refs)
 │   ├── review.md                       # interactive walk of eval findings
-│   ├── generate-methodology.md         # split per target — each generate is meaningfully different
-│   ├── generate-implementation.md
-│   ├── generate-skill.md
-│   ├── generate-site.md
+│   ├── generate.md                     # dispatcher (loads generate-spec-<target> from refs)
 │   ├── reconcile.md                    # interactive walk of generate output
 │   └── feedback.md                     # cross-agent critique (eval-only in v1)
 ├── references/                         # load-on-demand reference docs for the LLM
 │   ├── vocabulary.md                   # decision vocabulary
 │   ├── targets.md                      # what each target is + which commands accept it
-│   ├── multi-agent.md                  # agent auto-detection + handoff conventions
+│   ├── multi-agent.md                  # N-agent coordination (self-identify by name)
 │   ├── interactive-loop.md             # just-in-time variant pattern for review/reconcile
 │   ├── layering.md                     # intent↔manifesto → methodology → impl+templates → skill+engine
 │   ├── file-layout-pointer.md          # short pointer to /file-layout.md at repo root
 │   ├── eval-passes-canon.md            # adversarial passes for canon eval
 │   ├── eval-passes-skill.md            # adversarial passes for skill eval
-│   └── eval-passes-site.md             # adversarial passes for site eval
+│   ├── eval-passes-site.md             # adversarial passes for site eval
+│   ├── generate-spec-methodology.md    # generate procedure for methodology
+│   ├── generate-spec-implementation.md # generate procedure for implementation + templates
+│   ├── generate-spec-skill.md          # generate procedure for skill bundle (+ engine)
+│   └── generate-spec-site.md           # generate procedure for site HTML
 └── scripts/                            # executable helpers
     ├── extract-templates.py            # template extractor (from vibeloom-templates.md)
     ├── check_consistency.py            # site/canon consistency validator
     └── check_site.py                   # site validator
 ```
+
+**Pattern.** Tasks own procedure; references own per-target specifics or shared doctrine. `eval` and `generate` are dispatchers that load the right `references/<op>-{passes,spec}-<target>.md` based on the target arg.
 
 **Commands.** `init`, `eval`, `review`, `generate <target>`, `reconcile`, `feedback <peer-agent> <target>`. See `vibeloom-dev/SKILL.md` for routing.
 

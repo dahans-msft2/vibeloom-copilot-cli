@@ -12,7 +12,7 @@ Adversarial consistency/coherence check across vibeloom artifacts. Produces a pr
 
 - `<target>` (optional, default `canon`) — one of: `intent`, `manifesto`, `methodology`, `implementation`, `skill`, `site`, `canon`, `all`.
 - `--version <vNN>` (optional, default = latest mutable) — which version to eval against.
-- Auto-detected: the running agent's identity (Claude or Codex).
+- Self-identified: the running agent's name (per `references/multi-agent.md`).
 
 ## Preconditions
 

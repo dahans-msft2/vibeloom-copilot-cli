@@ -1,4 +1,6 @@
-# Task: generate site
+# Spec: generate site
+
+Target-specific procedure for `vibeloom-dev generate site`. Loaded on demand by `tasks/generate.md`.
 
 Produce/update `vNN/site/public/**` HTML files from current methodology + implementation (and manifesto for marketing-y framing). Site is marketing register — full HTML, may be abbreviated relative to canon, must not contradict canon.
 

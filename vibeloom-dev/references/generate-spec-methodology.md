@@ -1,4 +1,6 @@
-# Task: generate methodology
+# Spec: generate methodology
+
+Target-specific procedure for `vibeloom-dev generate methodology`. Loaded on demand by `tasks/generate.md`.
 
 Full rewrite of `vNN/canon/vibeloom-methodology.md` from current intent + manifesto. Assumes upstream is consistent (does NOT auto-invoke eval).
 

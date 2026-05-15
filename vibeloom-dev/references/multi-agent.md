@@ -1,25 +1,30 @@
 # Reference: multi-agent
 
-How vibeloom-dev coordinates two agents (Claude Code + Codex) running independently in their own environments.
+How vibeloom-dev coordinates multiple agents (any number, any runtime) running independently in their own environments.
 
-## Why two agents?
+## Why multi-agent?
 
-A second perspective catches things one agent misses. The skill formalizes this without requiring inter-agent API calls (which would be expensive). Both agents run locally in their own environments; the **repo filesystem is the shared substrate**.
+A second perspective catches things one agent misses. A third perspective catches things both missed. The skill formalizes this without requiring inter-agent API calls (which would be expensive). All agents run locally in their own environments; the **repo filesystem is the shared substrate**.
 
-Russian proverb (paraphrased): "one head is good, two are better."
+Russian proverb (paraphrased): "one head is good, two are better." Three is better still, when the cost is just running the same prompt in another window.
 
-## Agent identity
+## The contract (minimum viable)
 
-Auto-detected at runtime.
+1. **Each agent self-identifies with a stable, lowercase, hyphenated name.** Examples: `claude`, `codex`, `cursor`, `gemini`. The name is the agent's identity in this repo across all sessions.
+2. **The agent uses that name in every file it writes** to `reports/`.
+3. That's it.
 
-### Detection signatures
+No central registry of agents. No detection signatures hardcoded into the skill. No "primary vs peer" distinction. Just: every agent knows its name and stamps it on its files.
 
-- **Claude (Claude Code / Cowork)**: presence of `CLAUDE_*` env vars, or the `.claude/` directory in repo root with settings, or `claude` in argv0.
-- **Codex**: presence of Codex-specific env vars (e.g., `OPENAI_*` in a Codex-specific config), or `codex` in argv0, or `.codex/` config directory.
+## How an agent learns its name
 
-If detection ambiguous, **ask the user**: "Running in Claude or Codex?". Use the answer for this session.
+In rough order of preference:
 
-There is **no `--as` flag** — auto-detect only. If a user really needs to spoof identity, they can set the env var explicitly before running.
+1. **Env variable** `VIBELOOM_AGENT_NAME` — if set, use it.
+2. **Hardcoded in the skill install** — if the user pre-configured.
+3. **Ask the user** at first invocation in this repo: "What name should I use to identify my outputs? (e.g., claude, codex, cursor)". Use the answer for the session and suggest the user set `VIBELOOM_AGENT_NAME` if they want it persistent.
+
+The user is free to call the same Claude install `claude-a` and `claude-b` if they want two parallel Claude sessions producing distinct outputs — names are user-defined, not LLM-defined.
 
 ## Filename conventions
 
@@ -28,43 +33,46 @@ All multi-agent files live in `reports/` (flat, at repo root, gitignored).
 | File | Pattern | Example |
 |---|---|---|
 | Own eval output | `eval-<target>-<self>.md` | `reports/eval-canon-claude.md` |
-| Peer's eval output (read-only) | `eval-<target>-<peer>.md` | `reports/eval-canon-codex.md` |
-| Own feedback on peer | `feedback-<target>-<self>-on-<peer>.md` | `reports/feedback-canon-claude-on-codex.md` |
-| Peer's feedback on me (read-only) | `feedback-<target>-<peer>-on-<self>.md` | `reports/feedback-canon-codex-on-claude.md` |
+| Another agent's eval output (read-only from your view) | `eval-<target>-<other>.md` | `reports/eval-canon-codex.md` |
+| Own feedback on someone else | `feedback-<target>-<self>-on-<peer>.md` | `reports/feedback-canon-claude-on-codex.md` |
 
-## The multi-agent flow
+`<self>` and `<peer>` are agent names — whatever names the agents self-identify with.
+
+## The multi-agent flow (N agents)
+
+Generalized — works for 2 agents, 3 agents, or more:
 
 1. **Round 1: independent evals.**
-   - User runs `vibeloom-dev eval canon` in Claude. Claude writes `reports/eval-canon-claude.md`.
-   - User runs `vibeloom-dev eval canon` in Codex. Codex writes `reports/eval-canon-codex.md`.
-   - Eval has **no peer awareness** — each agent eval'd the canon fresh, independently.
+   - Each agent runs `vibeloom-dev eval <target>` in its own environment. Each writes `reports/eval-<target>-<its-name>.md`.
+   - Eval has **no peer awareness** — each agent evals fresh, independently.
 
 2. **Round 2 (optional): cross-critique.**
-   - User runs `vibeloom-dev feedback codex canon` in Claude. Claude reads `reports/eval-canon-codex.md`, independently re-reads canon, writes `reports/feedback-canon-claude-on-codex.md` with: agreement/disagreement per finding, plus new MISS-* findings Codex missed.
-   - User runs `vibeloom-dev feedback claude canon` in Codex. Symmetric: writes `reports/feedback-canon-codex-on-claude.md`.
+   - Any agent can run `vibeloom-dev feedback <peer-name> <target>` to critique any other agent's eval. Writes `reports/feedback-<target>-<self>-on-<peer>.md`.
+   - For 2 agents, this gives 2 feedback files (each on the other).
+   - For 3 agents, up to 6 feedback files (each on each of the other two). User picks which critiques are worth running; not all pairs are required.
 
 3. **Round 3 (user-driven): decision.**
-   - User reads all four files (two evals + two feedbacks).
-   - Decides what to act on.
-   - Runs `vibeloom-dev review canon` in one agent (whichever they trust more for this target, or whichever they're sitting in).
-   - The review uses one agent's findings file as the working list — typically the agent's own. The user mentally synthesizes with the feedbacks.
-
-## What's NOT in v1
-
-- **No iteration loop** — eval is one-shot, not multi-round-with-state-detection. (Earlier design had auto-detected filesystem state mode; rejected as over-engineered.)
-- **No round cap** — there's no "3 rounds and done" because there's no auto-iteration. User does as many rounds as they want by running commands manually.
-- **No synthesize/consensus command** — the synthesis is mental, by the user. Building a "merge both evals into one consensus list" command was deferred because the result is agent-dependent anyway (whichever agent runs synthesize has its own bias).
-- **No feedback for non-eval ops** — `feedback` is eval-only in v1. Generate stays single-agent. Review/reconcile are interactive with the user (cross-agent critique of user decisions is weird). Future extension possible.
+   - User reads everything they care about (evals + feedbacks).
+   - Runs `vibeloom-dev review <target>` in whichever agent they trust most for this target. Walks findings interactively.
+   - The synthesis is mental, by the user. There's no automated consensus step in v1.
 
 ## Handoff convention
 
-The handoff between agents is **manual** ("now run this command in the other agent"). The skill makes the handoff zero-context by writing to deterministic file paths — the other agent reads files, no copy-paste of findings between chat windows needed.
+The handoff between agent sessions is **manual** ("now run this command in <other-window>"). The skill makes it zero-context: the agent reads files at deterministic paths — no copy-paste of findings between chat windows needed.
 
-At the end of an eval/feedback command, the skill should suggest the next handoff step. e.g., after `eval canon` in Claude completes:
-> Suggested next: "Run `vibeloom-dev eval canon` in Codex for a second perspective. Then `vibeloom-dev feedback codex canon` here, and `vibeloom-dev feedback claude canon` in Codex."
+At the end of an eval or feedback command, the skill should suggest the next handoff step. e.g., after `eval canon` in Claude:
+> Suggested next: "Run `vibeloom-dev eval canon` in <other agent> for a second perspective. Then `vibeloom-dev feedback <other-agent> canon` here, and reciprocally in the other window."
+
+## What's NOT in v1
+
+- **No iteration loop** — eval is one-shot. No auto-detected filesystem state mode driving multi-round behavior. (Earlier design considered this; rejected as over-engineered.)
+- **No round cap** — there's no "3 rounds and done" because there's no auto-iteration. User does as many rounds as they want.
+- **No synthesize/consensus command** — the synthesis is mental, by the user. (Earlier design considered automating it; rejected because the synthesis is itself agent-biased.)
+- **No `feedback` for non-eval ops** — feedback is eval-only in v1. Generate stays single-agent. Review/reconcile are interactive with the user. Future extension possible.
 
 ## Anti-patterns
 
-- **Reading the peer's eval during your own eval** — defeats the purpose of independent first-pass evals. Use `feedback` for cross-agent assessment, not eval.
-- **Editing the peer's eval file** — never. Peer's eval is read-only from your agent's perspective.
-- **Inferring agent identity from history/context** — always use the runtime detection. If env signatures change between sessions, identity could flip; check at command start.
+- **Reading the peer's eval during your own eval** — defeats independent first-pass evals. Use `feedback` for cross-agent assessment, not eval.
+- **Editing the peer's file** — never. Each agent writes only files with its own name in the filename. Peer-named files are read-only from your view.
+- **Hardcoding agent names in prompts** — never reference `claude` or `codex` (or any specific name) in task templates. Always parameterize on the runtime-resolved `<self>` and `<peer>`.
+- **Inferring agent identity from heuristics** — always use the explicit name. If `VIBELOOM_AGENT_NAME` isn't set and there's no hardcoded value, ASK.

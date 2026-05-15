@@ -10,7 +10,7 @@ Critique a peer agent's eval. Reads the peer's eval file, evaluates the findings
 
 ## Inputs
 
-- `<peer-agent>` (required) — the other agent: `claude` or `codex`. The current agent (auto-detected) is the AUTHOR of the critique; `<peer-agent>` is whose work is being critiqued.
+- `<peer-agent>` (required) — the agent name whose eval you're critiquing (e.g., `claude`, `codex`, or whatever name appears in the peer's `reports/eval-<target>-<peer>.md` file). The current agent (self-identified per `references/multi-agent.md`) is the AUTHOR of the critique.
 - `<target>` (required) — the target whose eval is being critiqued: one of `canon`, `intent`, `manifesto`, `methodology`, `implementation`, `skill`, `site`.
 - `--version <vNN>` (optional, default = latest mutable).
 

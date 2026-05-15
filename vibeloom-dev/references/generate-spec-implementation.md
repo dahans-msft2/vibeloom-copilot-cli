@@ -1,4 +1,6 @@
-# Task: generate implementation
+# Spec: generate implementation
+
+Target-specific procedure for `vibeloom-dev generate implementation`. Loaded on demand by `tasks/generate.md`.
 
 Full rewrite of `vNN/canon/vibeloom-implementation.md` AND `vNN/canon/vibeloom-templates.md` from current methodology. Treats implementation + templates as one unit. Assumes upstream (methodology) is consistent.
 

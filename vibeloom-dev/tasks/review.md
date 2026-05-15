@@ -12,7 +12,7 @@ Interactive walk of findings from `eval`. Per finding, present the proposed fix(
 
 - `<target>` (optional, default `canon`) — the target whose findings to walk.
 - `--version <vNN>` (optional, default = latest mutable).
-- Auto-detected: the running agent's identity (only for "which findings file to read" — see preconditions).
+- Self-identified: the running agent's name (only for "which findings file to read" — see preconditions).
 
 ## Preconditions
 

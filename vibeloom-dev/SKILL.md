@@ -35,12 +35,16 @@ If this skill file conflicts with the canon of the version being operated on, th
 - **[references/vocabulary.md](references/vocabulary.md)** — decision vocabulary: `preserve_contract` (with variants), `amend_contract`, `preserve_existing`, `user_defined`, `defer`. Plus eval-finding vocabulary: Accept / Edit / Defer / Reject.
 - **[references/targets.md](references/targets.md)** — what each target is (intent, manifesto, methodology, implementation, skill, site, canon, all) and which commands accept it.
 - **[references/layering.md](references/layering.md)** — the dependency chain: `(intent ↔ manifesto) → methodology → implementation+templates → skill (incl. engine)`. Plus the site as a marketing-register sibling that must not contradict canon.
-- **[references/multi-agent.md](references/multi-agent.md)** — agent auto-detection (Claude vs Codex env signatures); per-agent filename conventions; the explicit `feedback` flow.
+- **[references/multi-agent.md](references/multi-agent.md)** — N-agent coordination via shared filesystem; each agent self-identifies with a stable lowercase name; per-agent filename conventions; the explicit `feedback` flow.
 - **[references/interactive-loop.md](references/interactive-loop.md)** — the just-in-time variant pattern for `review` and `reconcile`. Variants live in LLM context only; never persisted as sidecar files.
 - **[references/file-layout-pointer.md](references/file-layout-pointer.md)** — short pointer to /file-layout.md so prompts don't duplicate it.
 - **[references/eval-passes-canon.md](references/eval-passes-canon.md)** — adversarial passes specific to canon (intent ↔ manifesto consistency, authority/separation between methodology and implementation, etc.).
 - **[references/eval-passes-skill.md](references/eval-passes-skill.md)** — adversarial passes specific to skill (canon alignment, coverage/load map, agent efficiency, helper prompt quality).
 - **[references/eval-passes-site.md](references/eval-passes-site.md)** — adversarial passes specific to site (canon alignment, messaging quality, public web integrity).
+- **[references/generate-spec-methodology.md](references/generate-spec-methodology.md)** — target-specific procedure for generating methodology from intent + manifesto.
+- **[references/generate-spec-implementation.md](references/generate-spec-implementation.md)** — target-specific procedure for generating implementation + templates from methodology.
+- **[references/generate-spec-skill.md](references/generate-spec-skill.md)** — target-specific procedure for generating the skill bundle (extract + optional engine regen).
+- **[references/generate-spec-site.md](references/generate-spec-site.md)** — target-specific procedure for generating site HTML pages.
 
 ## Commands and routing
 
@@ -49,10 +53,7 @@ If this skill file conflicts with the canon of the version being operated on, th
 | `init [--from vNN] [--version vNN] [--from-scratch]` | `targets.md`, `file-layout-pointer.md`, `layering.md` | `tasks/init.md` |
 | `eval [<target>]` | `targets.md`, `multi-agent.md`, `eval-passes-<target>.md` (or all three if target=canon/all) | `tasks/eval.md` |
 | `review [<target>]` | `vocabulary.md`, `interactive-loop.md` | `tasks/review.md` |
-| `generate methodology` | `layering.md`, `targets.md` | `tasks/generate-methodology.md` |
-| `generate implementation` | `layering.md`, `targets.md` | `tasks/generate-implementation.md` |
-| `generate skill` | `layering.md`, `targets.md`, `file-layout-pointer.md` | `tasks/generate-skill.md` |
-| `generate site` | `layering.md`, `targets.md` | `tasks/generate-site.md` |
+| `generate <target>` | `layering.md`, `targets.md`, `generate-spec-<target>.md` | `tasks/generate.md` |
 | `reconcile [<target>]` | `vocabulary.md`, `interactive-loop.md` | `tasks/reconcile.md` |
 | `feedback <peer-agent> <target>` | `multi-agent.md`, `vocabulary.md` | `tasks/feedback.md` |
 
@@ -81,11 +82,14 @@ If this skill file conflicts with the canon of the version being operated on, th
 
 ## Agent identity
 
-Auto-detected at runtime from environment signatures:
-- Claude Code: `CLAUDE_*` env vars or `.claude/` directory.
-- Codex: Codex-specific env vars or process layout.
+Each agent **self-identifies with a stable, lowercase, hyphenated name** (e.g., `claude`, `codex`, `cursor`, `gemini`). The name is the agent's identity in this repo across all sessions.
 
-If detection fails, the skill asks. There is **no `--as` flag** — auto-detect only.
+Resolution order:
+1. **Env variable** `VIBELOOM_AGENT_NAME` — if set, use it.
+2. **Hardcoded in the skill install** — if pre-configured by the user.
+3. **Ask the user** at first invocation in this repo. Persist the answer for the session and suggest setting `VIBELOOM_AGENT_NAME` for permanence.
+
+No detection signatures. No hardcoded list of supported agents. The name is what appears in `reports/` filenames (`eval-<target>-<name>.md`, etc.). See `references/multi-agent.md` for the full contract.
 
 ## Output locations
 
@@ -99,7 +103,7 @@ If detection fails, the skill asks. There is **no `--as` flag** — auto-detect 
 - **Propose only, never autonomous edits.** Every change to canon / skill / site / examples / intent requires explicit user Accept (per item, in the interactive loop). No batch auto-apply.
 - **Vibe-mode honesty.** `generate` assumes upstream is consistent. It does NOT invoke `eval` first. The user is the orchestrator — run `eval` before `generate` when you've made upstream changes.
 - **Layering is canonical.** Never generate upstream from downstream. The chain is `(intent ↔ manifesto) → methodology → implementation+templates → skill (incl. engine)`. Site is sibling to skill — derived from methodology + implementation, must not contradict canon.
-- **Cross-agent collaboration is filesystem-only.** Both Claude and Codex run locally and write to shared `reports/` files. There is no API call between agents. The handoff is manual: "now run this in the other agent".
+- **Cross-agent collaboration is filesystem-only.** All agents run locally and write to shared `reports/` files. There is no API call between agents. The handoff is manual: "now run this in the other agent".
 - **No own state.** vibeloom-dev writes only to `reports/` (gitignored) and to the target `vNN/` artifacts (with user approval). No `.vibeloom-dev/` cache, no hidden state file.
 - **Frozen versions are read-only.** v01/v02/v03 (legacy layout) and any version that is current production must not be modified by vibeloom-dev. If asked, refuse and explain.
 - **Site is marketing register.** `generate site` produces full HTML files (not content-only drafts) but they may be abbreviated relative to canon. `eval site` checks that site does not CONTRADICT canon, not that it covers every canon concept.
@@ -112,7 +116,7 @@ Keep responses tight:
 1. **Scope** — what version and target the operation touched.
 2. **Decision** — what the skill did, or what it's asking the user to decide.
 3. **Affected** — files, sections, item IDs changed or surfaced.
-4. **Next** — the suggested next command (e.g., "Run `vibeloom-dev review canon` to walk the findings", or "Now run `vibeloom-dev eval canon` in the other agent and then `feedback codex canon` here").
+4. **Next** — the suggested next command (e.g., "Run `vibeloom-dev review canon` to walk the findings", or "Now run `vibeloom-dev eval canon` in another agent and then `feedback <that-agent> canon` here").
 
 ## Getting started
 

@@ -1,4 +1,6 @@
-# Task: generate skill
+# Spec: generate skill
+
+Target-specific procedure for `vibeloom-dev generate skill`. Loaded on demand by `tasks/generate.md`.
 
 Produce/update `vNN/skill/` from current `vNN/canon/vibeloom-implementation.md` + `vNN/canon/vibeloom-templates.md`. Mostly mechanical (run the template extractor); also regenerates the engine when implementation introduces a structural skill-bundle refactor.
 

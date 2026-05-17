@@ -49,13 +49,16 @@ There are four modes.
 
 The human gives you a goal in plain English ("Build the MVP described in `Documents/Research/Noustiny-Web-App-Architecture.md`", or "Add OAuth login to the API"). If the goal mentions VibeLoom, treat it as Mode D instead.
 
+**For VibeLoom-governed repos** (`.vibeloom/` directory exists with approved specs): new features should be grounded in an approved PRD entity. Before dispatching the PM, check whether the goal maps to an existing `PRD-####` item in `prd.md`. If yes, pass the PRD ID to the PM so subtask AC items can trace to it. If no matching PRD exists, note that in the plan summary — this may warrant a `reconcile` after the feature ships.
+
 1. Mint a new **task id** via `py -m lib.state next-id`.
 2. Call `state.create_task(conn, task_id, goal, branch="develop", source_docs=[...])`. Status starts as `planning`.
 3. Call **project-manager** via `runSubagent` with the goal, the task id, and the source docs. Receive back a plan (summary + subtasks, each with owner / description / acceptance / depends_on).
 4. Persist the plan: `state.set_plan_summary(...)`, then `state.add_subtask(...)` per subtask. Set `status="in-progress"`.
 5. Dispatch engineers in dependency order, using `state.ready_subtasks(conn, task_id)` to find the next batch. For each subtask:
    - Mark `state.set_subtask_status(... "in-progress")`.
-   - Call the right engineer via `runSubagent` with: task id, plan summary, the specific subtask row, and `path/to/.agent-state/`.
+   - **Before dispatching**, record a proactive Huginn-Muninn ledger entry: state the expected result of the subtask and your confidence. After the engineer returns, compare and classify the prediction error.
+   - Call the right engineer via `runSubagent` with: task id, plan summary, the specific subtask row, `path/to/.agent-state/`, and (for VibeLoom-governed repos where `.vibeloom/` exists) the relevant **container spec path** as a scoped load set item — frontend engineers get `app/container.md`, backend engineers get `supabase/container.md`.
    - The engineer returns either `{ result: "done", evidence: … }` or a **BlockerReport** (see §"Handling blockers").
    - On `done`, call `state.set_subtask_status(... "done")` and `state.append_history(...)`.
 6. After all subtasks are `done`, call **qa-engineer** with the task id.
@@ -133,7 +136,8 @@ Triggered when the human:
 5. **Dispatch waves.** For each wave from the engine's plan:
    - Insert the wave's subtasks via `state.add_subtask(..., wave=N, scope=...)`.
    - Use `state.ready_subtasks(conn, task_id, wave=N)` to get the parallel batch.
-   - `runSubagent` each in parallel where the host supports it. Subagents receive **scoped load sets** only (per `v02/references/runtime.md`) — never load the skill, methodology docs, or this prompt.
+   - **Before dispatching each wave**, record a Huginn-Muninn ledger entry: expected output of the wave and confidence. After the wave completes, classify the prediction error and update confidence before proceeding to the next wave.
+   - `runSubagent` each in parallel where the host supports it. Subagents receive **scoped load sets** only (per `v02/references/runtime.md`) — never load the skill, methodology docs, or this prompt. Include the relevant `container.md` for the subagent's scope.
    - When the wave is complete, recompute the next wave. Same-wave outputs are not inputs to other same-wave subagents.
 
 6. **Validate.** After each `generate`, run `py -m vibeloom_engine eval --target <tier>` and surface findings.

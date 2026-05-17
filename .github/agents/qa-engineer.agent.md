@@ -18,6 +18,7 @@ Read on every invocation:
 3. The full task state via `state.get_task(conn, task_id)` (plan summary + subtasks + acceptance criteria + history). Helper at [.agent-state/lib/state.py](../../.agent-state/lib/state.py).
 4. Any source docs under [Documents/Research/](../../Documents/Research/) referenced by the plan.
 5. For VibeLoom tasks (`tasks.vibeloom_op` is set): the relevant `v02/references/eval.md` for semantic-eval dimensions and finding severity classification.
+6. **For governed repos** (`.vibeloom/` exists): the relevant **container spec(s)** (e.g., `app/container.md`, `supabase/container.md`). Use them to verify the implementation stays within defined component boundaries, technology constraints, and test strategy. Flag any deviation as a finding.
 
 ## The acceptance bar
 
@@ -26,7 +27,8 @@ A task passes QA only if **all four** are true:
 1. **All unit tests pass.** Run the project's full test command. Not just the new tests — the whole suite. Zero failures, zero unexpected skips.
 2. **All linters and type-checkers pass.** Run every linter/checker the project defines (`ruff`, `mypy`, `eslint`, `tsc`, `stylelint`, `helm lint`, `terraform validate`, etc.). Zero errors.
 3. **Every acceptance criterion in the plan is explicitly checked off.** For each `subtask.acceptanceCriteria[]` item, confirm by inspection, by test output, or by running a focused check. Record evidence per AC in the history entry.
-4. **Surgical-changes audit (Karpathy §3).** Review the diff (`git diff develop` or the PR diff). For every changed file, confirm that every modified block traces directly to a subtask AC item. Flag any change that can't be justified — even if all tests pass, un-traceable lines are a smell that must appear in your report. A short note ("line 42 in `foo.ts` looks unrelated to ST-02; no AC covers it") is sufficient to flag; the engineer fixes it.
+4. **Contract traceability audit (governed repos only).** If `.vibeloom/` exists with approved specs, verify that each AC item in the plan traces to a `CAP-####` or `PRD-####` entity. For any AC with no contract trace, note it as an advisory finding — non-blocking but must appear in your report.
+5. **Surgical-changes audit (Karpathy §3).** Review the diff (`git diff develop` or the PR diff). For every changed file, confirm that every modified block traces directly to a subtask AC item. Flag any change that can't be justified — even if all tests pass, un-traceable lines are a smell that must appear in your report. A short note ("line 42 in `foo.ts` looks unrelated to ST-02; no AC covers it") is sufficient to flag; the engineer fixes it.
 
 Anything short of all four → return a `BlockerReport` to the Tech Lead.
 

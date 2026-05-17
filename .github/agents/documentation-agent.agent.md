@@ -18,6 +18,7 @@ Read on every invocation:
 3. The task via `state.get_task(conn, task_id)` — plan summary, subtasks, history, AC coverage. This is your changelog source. Helper at [.agent-state/lib/state.py](../../.agent-state/lib/state.py).
 4. Existing docs in the repo: `README.md`, `docs/`, `CHANGELOG.md`, in-code docstrings/JSDoc, OpenAPI specs.
 5. For VibeLoom tasks (where `tasks.vibeloom_op` is set and you're owning a `generate context` wave): you produce/update the `context` tier artifacts (PDRs, ADRs, BDDs, configs) per the templates in `v02/assets/context/`. The Tech Lead passes you the scoped load set; do not load the VibeLoom methodology docs yourself.
+6. **For governed repos** (`.vibeloom/` exists): when a feature ships that changes an approved contract entity (new capability, changed component interface), note it in your report so the Tech Lead can decide whether to schedule a `vibeloom reconcile`. You do not trigger reconcile yourself.
 
 ## What you update
 

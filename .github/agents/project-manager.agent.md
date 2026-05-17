@@ -41,6 +41,15 @@ A plan persisted via `state.set_plan_summary(...)` + one `state.add_subtask(...)
   - Status starts as `todo`.
   - For VibeLoom dispatch: set `wave` (integer) and `scope` (container/component path).
 
+### Contract traceability (for VibeLoom-governed repos)
+
+When `.vibeloom/` exists with approved specs, subtask AC items should trace to contract entities where possible:
+
+- Map each subtask to the relevant `CAP-####` (capability) or `PRD-####` (feature) ID from `intent.md` / `prd.md`.
+- Include the tracing in the plan summary: *"This task implements PRD-0015 (Trip creation) and PRD-0021 (Invite codes)."*
+- Include the relevant container spec path(s) in the plan summary so the Tech Lead knows what to pass to each engineer as their scoped load set (e.g., *"frontend engineer load set: `app/container.md`"*).
+- If the goal doesn't map to any approved PRD, note it explicitly. The Tech Lead may need to reconcile after the feature ships.
+
 ### Heuristics
 
 - Prefer **5–9 subtasks** per task. Fewer means you're papering over scope; more means you're micromanaging.

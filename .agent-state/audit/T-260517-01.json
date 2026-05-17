@@ -1,0 +1,258 @@
+{
+  "task_id": "T-260517-01",
+  "status": "done",
+  "goal": "Implement first-run landing and sign-in UX improvements for Roadtrippin per spec at documentation/research/roadtrippin-first-run-auth-ux.md",
+  "branch": "develop",
+  "vibeloom_op": null,
+  "vibeloom_tier": null,
+  "vibeloom_mode": null,
+  "created_at": "2026-05-17T07:33:06+00:00",
+  "updated_at": "2026-05-17T08:25:41+00:00",
+  "plan_summary": "Implement first-run landing and sign-in UX overhaul for Roadtrippin as specified in roadtrippin-first-run-auth-ux.md. Work covers: (1) branded landing screen, (2) split sign-in into progressive-disclosure Step 1 (email) and Step 2 (OTP), (3) display-name onboarding screen for new users only, (4) empty-state for trip list, (5) authService abstraction for future SMS OTP, (6) invite-code state preservation across auth redirect. COORDINATION DEP: Supabase Confirm signup + Magic Link email templates must be updated to {{ .Token }} by human with dashboard access before new-user OTP flow works end-to-end.",
+  "source_docs": [
+    "c:/GitHub-Repos/roadtrippin-convoy-app/app/src/app/(auth)/sign-in.tsx",
+    "c:/GitHub-Repos/roadtrippin-convoy-app/app/src/services/authService.ts",
+    "c:/GitHub-Repos/roadtrippin-convoy-app/documentation/research/roadtrippin-first-run-auth-ux.md",
+    "c:/GitHub-Repos/roadtrippin-convoy-app/documentation/specs/roadtrippin-frontend-implementation-brief.md",
+    "c:/GitHub-Repos/roadtrippin-convoy-app/documentation/specs/roadtrippin-product-spec.md"
+  ],
+  "subtasks": [
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-01",
+      "owner": "backend-engineer",
+      "description": "Refactor authService: rename requestEmailOtp/verifyEmailOtp to requestOtp/verifyOtp with identifier-type detection (email vs E.164 phone). Phone path returns safe not-enabled error. Update Zod schemas. Update call sites in sign-in.tsx.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "requestOtp and verifyOtp are the only exported auth functions",
+        "Valid email routes to signInWithOtp({ email })",
+        "E.164 phone returns fail(sms_not_enabled)",
+        "Invalid identifier returns fail(invalid_auth_request)",
+        "sign-in.tsx compiles with zero TS errors after call-site update",
+        "Pre-existing sign-in tests pass with updated names"
+      ],
+      "depends_on": []
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-02",
+      "owner": "frontend-engineer",
+      "description": "Replace app/src/app/index.tsx with branded landing screen. Authenticated users skip to /(tabs)/trips. Unauthenticated: wordmark, tagline, 3 value-prop bullets, Get started CTA, Sign in link. Both CTAs navigate to /(auth)/sign-in.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Authenticated session on mount calls router.replace(/(tabs)/trips)",
+        "Three bullets render in exact amended copy",
+        "Tagline is exactly: Road Trippin with your crew.",
+        "Get started and Sign in both navigate to /(auth)/sign-in",
+        "Open trip list and Phase 0 scaffold strings absent from output",
+        "AppScreen is root; no new component files created"
+      ],
+      "depends_on": []
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-03",
+      "owner": "frontend-engineer",
+      "description": "Create authFlowStore.ts (Zustand, in-memory, no AsyncStorage). Rework sign-in.tsx to Step 1: email-only input, Send code CTA, inline errors with safe messages, navigate to /(auth)/sign-in-verify on success. Remove OTP/display-name/Phase 1 elements.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "authFlowStore exports email, setEmail, clearEmail; no AsyncStorage calls",
+        "Rendered sign-in.tsx has only: heading, sub-copy, footnote, email TextInput, Send code button",
+        "No OTP input, no display name, no Phase 1 text in rendered output",
+        "Send code disabled while email empty or invalid",
+        "On success: setEmail called and router.push(/(auth)/sign-in-verify)",
+        "Rate limit error shows user-safe copy",
+        "Zod schema tests: valid email passes; empty/invalid/padded strings handled"
+      ],
+      "depends_on": [
+        "ST-01"
+      ]
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-04",
+      "owner": "frontend-engineer",
+      "description": "Create (auth)/sign-in-verify.tsx (Step 2). Reads email from authFlowStore. OTP input, Verify code button, 30s resend cooldown. On success: profile check -> display-name (new user) or trips (returning). Back nav to Step 1.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Displays email from authFlowStore in sub-copy",
+        "Verify code disabled unless exactly 6 chars entered",
+        "New user (null profile) routes to /(onboarding)/display-name",
+        "Returning user (existing profile) routes to /(tabs)/trips",
+        "Invalid token error shows safe copy",
+        "Resend link hidden for 30s then visible; tapping resets timer",
+        "Back nav goes to /(auth)/sign-in",
+        "Zod tests: 6 digits passes; 5/7 digits fail; 6 non-numeric fails"
+      ],
+      "depends_on": [
+        "ST-01",
+        "ST-03"
+      ]
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-05",
+      "owner": "frontend-engineer",
+      "description": "Create (onboarding)/display-name.tsx. New users only. Progress 1/2. Display name input. On Continue: ensureUserProfile; on success -> permissions; after 2 failures soft-skip to permissions anyway.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "File at app/src/app/(onboarding)/display-name.tsx",
+        "Progress indicator shows 1 of 2",
+        "Exact heading and sub-copy per spec",
+        "Continue disabled when trimmed input is empty",
+        "Success navigates to /(onboarding)/permissions",
+        "After 2 failures logs error and still navigates to /(onboarding)/permissions",
+        "Zod tests: non-empty string passes; empty string fails; whitespace-only fails after trim"
+      ],
+      "depends_on": [
+        "ST-04"
+      ]
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-06",
+      "owner": "frontend-engineer",
+      "description": "Add empty-state branch to (tabs)/trips.tsx. When trips.length===0 and load complete: No trips yet heading, sub-copy, Start a trip primary button (-> /trips/create), Join with a code secondary button. Non-empty: existing trip card list unchanged.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Empty state shows No trips yet. and correct sub-copy when trips===0 and no error",
+        "Start a trip primary button navigates to /trips/create",
+        "Join with a code secondary button navigates to join/code-entry",
+        "Non-empty state: No trips yet. not rendered; trip cards rendered",
+        "Hero card and Refresh button present in both states",
+        "No new component files created"
+      ],
+      "depends_on": []
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-07",
+      "owner": "frontend-engineer",
+      "description": "Invite-code state preservation (Path C). In invites/[code].tsx: persist code to sessionStorage/inviteFlowStore before auth redirect. In sign-in-verify.tsx: after OTP success check for pending code; if found consume and route to invite; if not found use normal ST-04 routing.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "invites/[code].tsx persists code to sessionStorage/inviteFlowStore before nav to sign-in",
+        "After OTP verify with pending code: router.replace to invite with restored code, code removed from storage",
+        "After OTP verify without pending code: normal ST-04 routing unchanged",
+        "Invite code not in any Expo Router href or params during auth flow",
+        "Comment block in sign-in-verify.tsx documents Path C logic",
+        "Zero TS errors in invites/[code].tsx and sign-in-verify.tsx"
+      ],
+      "depends_on": [
+        "ST-03",
+        "ST-04"
+      ]
+    },
+    {
+      "task_id": "T-260517-01",
+      "st_id": "ST-08",
+      "owner": "qa-engineer",
+      "description": "End-to-end QA pass for ST-01 through ST-07. Verify all routing paths A/B/C/D, run all tests, confirm Zod schema tests pass, produce written QA checklist.",
+      "status": "done",
+      "wave": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "All pre-existing (auth) tests pass",
+        "New Zod schema tests from ST-03/04/05 all pass",
+        "Path A/B/C/D manually traced and recorded in QA checklist with no unexpected navigations",
+        "Developer strings (Phase 1, Phase 0 scaffold, Open trip list) absent from all user-facing screens",
+        "tsc --noEmit reports zero errors across all modified/new files"
+      ],
+      "depends_on": [
+        "ST-01",
+        "ST-02",
+        "ST-03",
+        "ST-04",
+        "ST-05",
+        "ST-06",
+        "ST-07"
+      ]
+    }
+  ],
+  "history": [
+    {
+      "at": "2026-05-17T07:33:06+00:00",
+      "agent": "tech-lead",
+      "event": "created task",
+      "details": "Implement first-run landing and sign-in UX improvements for Roadtrippin per spec at documentation/research/roadtrippin-first-run-auth-ux.md",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T07:54:35+00:00",
+      "agent": "tech-lead",
+      "event": "ST-01 done",
+      "details": "Wave 1 complete — all passed tsc + tests",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T07:54:35+00:00",
+      "agent": "tech-lead",
+      "event": "ST-02 done",
+      "details": "Wave 1 complete — all passed tsc + tests",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T07:54:35+00:00",
+      "agent": "tech-lead",
+      "event": "ST-06 done",
+      "details": "Wave 1 complete — all passed tsc + tests",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T08:01:49+00:00",
+      "agent": "tech-lead",
+      "event": "ST-03 done",
+      "details": "authFlowStore + sign-in Step 1. 6 suites 46 tests pass. 0 TS errors.",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T08:09:59+00:00",
+      "agent": "tech-lead",
+      "event": "ST-04 done",
+      "details": "sign-in-verify.tsx. 23 new tests, 179 full suite. 0 TS errors.",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T08:22:54+00:00",
+      "agent": "tech-lead",
+      "event": "ST-05 done",
+      "details": "0 TS errors, all tests pass",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T08:22:54+00:00",
+      "agent": "tech-lead",
+      "event": "ST-07 done",
+      "details": "0 TS errors, all tests pass",
+      "attempts": null
+    },
+    {
+      "at": "2026-05-17T08:25:41+00:00",
+      "agent": "tech-lead",
+      "event": "ST-08 QA APPROVED",
+      "details": "202/202 tests pass, 0 TS errors, all 4 paths verified. Non-blocking: act() warning in sign-in-verify timer test.",
+      "attempts": null
+    }
+  ],
+  "blocker": null,
+  "cursor": null,
+  "artifacts": {
+    "task_id": "T-260517-01",
+    "pr_url": null,
+    "commit_shas": null
+  }
+}

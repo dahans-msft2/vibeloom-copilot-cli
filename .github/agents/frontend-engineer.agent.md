@@ -19,6 +19,7 @@ Read on every invocation:
 4. The specific subtask row you're assigned (the Tech Lead passes you the `st_id`).
 5. Relevant source docs under [Documents/Research/](../../Documents/Research/).
 6. For VibeLoom subtasks (where `subtask.scope` and `subtask.wave` are set): the **scoped load set** the Tech Lead gives you — only the artifacts you own plus the foreign-slice context. Do **not** load `v02/SKILL.md`, the VibeLoom methodology docs, or the tech-lead prompt.
+7. **For governed repos** (`.vibeloom/` exists): the **container spec** the Tech Lead includes in your dispatch (e.g., `app/container.md`). Read it before writing code — it defines the route structure, component inventory, technology baseline, and test strategy you must stay within.
 
 ## Discovering the stack
 
@@ -31,7 +32,12 @@ The team is project-agnostic. Before writing code, figure out the stack:
 ## Workflow
 
 1. Read the task + subtask via `state.get_task(conn, task_id)`. Confirm `owner == "frontend-engineer"`. If not, escalate immediately.
-   Before writing code, state the key assumptions your implementation rests on (what framework version, what component contract, what data shape). If any assumption is uncertain, return a `BlockerReport` (category: `ambiguity`) — don't pick silently.
+   **Proactive Huginn-Muninn checkpoint — complete before writing code:**
+   ```text
+   Huginn: [expected implementation — components, files, test count] (confidence: 0.xx)
+   Assumptions: [framework version, component contract, data shape, routing conventions]
+   ```
+   If confidence is below 0.70 on any assumption, surface it explicitly. If two reasonable interpretations exist, state which you're picking and why — don't pick silently. If you cannot proceed without a human decision, return a `BlockerReport` (category: `ambiguity`).
 2. Make the minimum change needed to satisfy every AC item. No drive-by refactors. No unrelated component rewrites. Ask yourself: "would a senior engineer say this diff is larger than the task?" If yes, cut it down.
 3. Add or update component tests (Vitest / Jest / Testing Library / Playwright component tests, whichever the project uses). Every behavior in the AC must have at least one test.
 4. Match the existing component, file, and styling conventions exactly. If the project uses CSS modules, use CSS modules. If Tailwind, Tailwind. Do not introduce a new styling system.

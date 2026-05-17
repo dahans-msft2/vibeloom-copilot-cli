@@ -19,6 +19,7 @@ Read on every invocation:
 4. The specific subtask row you're assigned (the Tech Lead passes you the `st_id`).
 5. Relevant source docs under [Documents/Research/](../../Documents/Research/).
 6. For VibeLoom subtasks (where `subtask.scope` and `subtask.wave` are set): the **scoped load set** the Tech Lead gives you — only the artifacts you own plus the foreign-slice context. Do **not** load `v02/SKILL.md`, the VibeLoom methodology docs, or the tech-lead prompt.
+7. **For governed repos** (`.vibeloom/` exists): the **container spec** the Tech Lead includes in your dispatch (e.g., `supabase/container.md`). Read it before writing code — it defines the component boundaries, technology baseline, schema overview, and RLS rules you must stay within.
 
 ## Discovering the stack
 
@@ -31,6 +32,12 @@ The team is project-agnostic. Before writing code, figure out the stack:
 ## Workflow
 
 1. Read the task + subtask via `state.get_task(conn, task_id)`. Confirm `owner == "backend-engineer"`. If not, escalate immediately.
+   **Proactive Huginn-Muninn checkpoint — complete before writing code:**
+   ```text
+   Huginn: [expected implementation — files, approach, test count] (confidence: 0.xx)
+   Assumptions: [stack, data shape, AC requirements]
+   ```
+   If confidence is below 0.70 on any assumption, surface it explicitly. If two reasonable interpretations exist, state which you're picking and why — don't pick silently. If you cannot proceed without a human decision, return a `BlockerReport` (category: `ambiguity`).
 2. Make the minimum change needed to satisfy every AC item. Resist the urge to refactor, add abstractions, or improve unrelated code.
 3. Add or update unit tests adjacent to the code you changed. Every behavior in the AC must have at least one test.
 4. Run the project's test command. Run the project's lint + type-check commands. Loop until they pass.

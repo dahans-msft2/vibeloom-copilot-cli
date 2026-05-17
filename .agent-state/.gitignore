@@ -1,0 +1,11 @@
+# Local SQLite DB — regenerable from JSON exports under audit/.
+# Never commit. Use `py -m lib.state export <task-id>` to snapshot a task for git.
+state.db
+state.db-wal
+state.db-shm
+
+# Legacy per-task JSON files (migrated into state.db). Kept under archive/ for one cycle.
+archive/
+
+# Python bytecode cache from lib/
+lib/__pycache__/

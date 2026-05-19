@@ -116,6 +116,13 @@ copy_file "$SOURCE/docs/agent-principles.md"    "$TARGET/docs/agent-principles.m
 copy_file "$SOURCE/docs/escalation-protocol.md" "$TARGET/docs/escalation-protocol.md"
 ok "docs installed"
 
+# The vibeloom skill references ../../../v02/ relative to .github/skills/vibeloom/SKILL.md
+# so v02/ must exist in the target repo.
+step "Installing VibeLoom substrate (v02)..."
+mkdir -p "$TARGET/v02"
+copy_dir "$SOURCE/v02" "$TARGET/v02"
+ok "VibeLoom substrate installed"
+
 step "Installing state library..."
 mkdir -p "$TARGET/.agent-state/lib"
 copy_file "$SOURCE/.agent-state/lib/state.py"    "$TARGET/.agent-state/lib/state.py"
@@ -142,6 +149,7 @@ ok "VERSION written"
 
 step "Checking root .gitignore..."
 add_gitignore_rule "$TARGET" ".agent-state/lib/__pycache__/"
+add_gitignore_rule "$TARGET" "v02/"
 ok "gitignore up to date"
 
 step "Initializing state.db..."

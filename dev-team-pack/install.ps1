@@ -151,6 +151,17 @@ Copy-TeamFile `
     $overwrite
 Write-Ok "docs installed"
 
+# ── Install VibeLoom substrate (v02) ─────────────────────────────────────────
+# The vibeloom skill references ../../../v02/ relative to its location in
+# .github/skills/vibeloom/SKILL.md — so v02/ must exist in the target repo.
+
+Write-Step "Installing VibeLoom substrate (v02)..."
+Copy-TeamDir `
+    (Join-Path $source "v02") `
+    (Join-Path $targetPath "v02") `
+    $overwrite
+Write-Ok "VibeLoom substrate installed"
+
 # ── Install state library ─────────────────────────────────────────────────────
 
 Write-Step "Installing state library..."
@@ -209,6 +220,8 @@ Write-Ok "VERSION written"
 Write-Step "Checking root .gitignore..."
 # Ensure __pycache__ directories under .agent-state are not committed
 Add-GitignoreRule $targetPath ".agent-state/lib/__pycache__/"
+# v02 is vibeloom tooling, not the target project's own source
+Add-GitignoreRule $targetPath "v02/"
 Write-Ok "gitignore up to date"
 
 # ── Initialize state DB ───────────────────────────────────────────────────────
